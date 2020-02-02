@@ -1,39 +1,35 @@
 pool:
-    vmImage: 'windows-2019'
-  
+    vmImage: windows-2019
   steps:
-  - task: NodeTool@0
-    inputs:
-      versionSpec: '10.15.1'
-    displayName: 'Install Node.js'
+    - task: NodeTool@0
+      inputs:
+        versionSpec: 10.15.1
+      displayName: Install Node.js
+    - task: SonarCloudPrepare@1
+      inputs:
+        SonarCloud: Analyze "stance"
+        organization: deviouscreation
+        scannerMode: MSBuild
+        projectKey: DeviousCreation_stance
+        extraProperties: |
+          sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+    - task: Cake@0
+      inputs:
+        script: Build/build.cake
+        target: Default
+        verbosity: Verbose
+    - task: PublishTestResults@2
+      displayName: Publish Test Results coverage/xunit-report.xml
+      inputs:
+        testResultsFormat: XUnit
+        testResultsFiles: build/build-artifacts/cover/xunit-report.xml
+    - task: PublishCodeCoverageResults@1
+      displayName: Publish code coverage from coverage/cobertura-coverage.xml
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: build/build-artifacts/cover/coverage.cobertura.xml
+    - task: SonarCloudAnalyze@1
+    - task: SonarCloudPublish@1
+      inputs:
+        pollingTimeoutSec: '300'
   
-  - task: SonarCloudPrepare@1
-    inputs:
-      SonarCloud: 'Analyze "stance"'
-      organization: 'deviouscreation'
-      scannerMode: 'MSBuild'
-      projectKey: 'DeviousCreation_stance'
-      extraProperties: |
-       sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
-
-  - task: Cake@0
-    inputs:
-      script: 'Build/build.cake'
-      target: 'Default'
-      verbosity: 'Verbose'
-
-  - task: PublishTestResults@2
-    displayName: 'Publish Test Results coverage/xunit-report.xml'
-    inputs:
-      testResultsFormat: XUnit
-      testResultsFiles: 'build/build-artifacts/cover/xunit-report.xml'
-  
-  - task: PublishCodeCoverageResults@1
-    displayName: 'Publish code coverage from coverage/cobertura-coverage.xml'
-    inputs:
-      codeCoverageTool: Cobertura
-      summaryFileLocation: 'build/build-artifacts/cover/coverage.cobertura.xml'
-  - task: SonarCloudAnalyze@1
-  - task: SonarCloudPublish@1
-    inputs:
-      pollingTimeoutSec: '300'
