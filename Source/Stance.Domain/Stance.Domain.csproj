@@ -8,10 +8,15 @@
   <Import Project="..\..\Shared\Stance.Shared\Stance.Shared.projitems" Label="Shared" />
 
   <ItemGroup>
+    <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Stance.Core\Stance.Core.csproj" />
   </ItemGroup>
 
 </Project>

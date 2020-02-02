@@ -9,7 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
+    <PackageReference Include="Moq" Version="4.13.1" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -36,8 +38,6 @@
 
   <ItemGroup>
     <Folder Include="Core\" />
-    <Folder Include="Domain\" />
-    <Folder Include="Infrastructure\" />
     <Folder Include="Queries\" />
     <Folder Include="Web\" />
   </ItemGroup>
