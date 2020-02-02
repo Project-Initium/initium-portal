@@ -48,7 +48,7 @@ Task("__Build")
     });
 Task("__Test")
     .Does(() => {
-        var testResults = MakeAbsolute(coverPath + File("results.xml")).FullPath;
+        var testResults = MakeAbsolute(coverPath + File("xunit-report.xml")).FullPath;
         var testSettings = new DotNetCoreTestSettings {
             Configuration = "Release",
             NoBuild = true,
@@ -57,7 +57,7 @@ Task("__Test")
 
     var coverletSettings = new CoverletSettings {
         CollectCoverage = true,
-        CoverletOutputFormat = CoverletOutputFormat.opencover|CoverletOutputFormat.json,
+        CoverletOutputFormat = CoverletOutputFormat.opencover|(CoverletOutputFormat)12,
         CoverletOutputDirectory = coverPath,
         CoverletOutputName = "coverage"        
     };
