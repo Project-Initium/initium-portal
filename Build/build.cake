@@ -33,7 +33,8 @@ Task("__Clean")
 Task("__RestorePackages")
     .Does(() => {
         var npmInstallSettings = new NpmInstallSettings {
-            WorkingDirectory = "../Source/Stance.Web"
+            WorkingDirectory = "../Source/Stance.Web",
+            LogLevel = NpmLogLevel.Silent
         };
         NpmInstall(npmInstallSettings);
     });
@@ -42,7 +43,8 @@ Task("__Build")
     .Does(() => {
         var npmRunScriptSettings = new NpmRunScriptSettings {
            ScriptName = "release:build",
-           WorkingDirectory = "../Source/Stance.Web"
+           WorkingDirectory = "../Source/Stance.Web",
+           LogLevel = NpmLogLevel.Silent
         };		
         NpmRunScript(npmRunScriptSettings);  
 
