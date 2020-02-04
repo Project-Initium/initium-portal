@@ -17,6 +17,12 @@ Task("__Clean")
 
             CleanDirectories("../**/bin");
             CleanDirectories("../**/obj");
+            if (DirectoryExists("../Source/Stance.Web/node_modules")) {
+                DeleteDirectory("../Source/Stance.Web/node_modules", new DeleteDirectorySettings {
+                    Recursive = true,
+                    Force = true
+                });
+            }
         }  
 
         CreateDirectory(releasePath);
@@ -26,14 +32,20 @@ Task("__Clean")
 
 Task("__RestorePackages")
     .Does(() => {
-        var npmInstallSettings = new NpmInstallSettings();
-        npmInstallSettings.FromPath("../Source/Stance.Web");
-		npmInstallSettings.WithLogLevel(NpmLogLevel.Silent);
+        var npmInstallSettings = new NpmInstallSettings {
+            WorkingDirectory = "../Source/Stance.Web"
+        };
         NpmInstall(npmInstallSettings);
     });
 
 Task("__Build")
     .Does(() => {
+        var npmRunScriptSettings = new NpmRunScriptSettings {
+           ScriptName = "release:build",
+           WorkingDirectory = "../Source/Stance.Web"
+        };		
+        NpmRunScript(npmRunScriptSettings);  
+
         var settings = new DotNetCoreBuildSettings {
             Configuration = "Release"
         };
