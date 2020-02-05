@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Moq;
@@ -78,6 +79,28 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
+        }
+
+        [Fact]
+        public async Task Handle_GivenValidPassword_PasswordShouldBeHashedWithBCrypt()
+        {
+            var password = Guid.NewGuid().ToString();
+            var clock = new Mock<IClock>();
+            var userQueries = new Mock<IUserQueries>();
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.Add(It.IsAny<IUser>())).Callback((IUser user) => {
+                Assert.True(BCrypt.Net.BCrypt.Verify(password, user.PasswordHash));
+            });
+
+            userQueries.Setup(x => x.CheckForPresenceOfAnyUser(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => new StatusCheckModel(false));
+
+            var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);
+            var cmd = new CreateInitialUserCommand(new string('*', 5), password);
+            await handler.Handle(cmd, CancellationToken.None);            
         }
     }
 }
