@@ -19,7 +19,7 @@ namespace Stance.Web.Infrastructure.Extensions
                     kvp.Value.RawValue,
                     kvp.Value.Errors.Select(err => err.ErrorMessage).ToList()));
 
-            return JsonConvert.SerializeObject(errorList);
+            return JsonConvert.SerializeObject(errorList, Formatting.None);
         }
 
         public static ModelStateDictionary DeserializeModelState(this string serializedModelState)

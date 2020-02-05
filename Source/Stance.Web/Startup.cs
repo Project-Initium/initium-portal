@@ -28,6 +28,10 @@ namespace Stance.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .AddDataStores(this.Configuration)
+                .AddConfigurationRoot()
+                .AddCustomizedMediatR()
+                .AddSettings(this.Configuration)
                 .AddCustomizedMvc();
         }
 
