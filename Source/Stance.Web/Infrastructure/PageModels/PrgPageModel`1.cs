@@ -27,7 +27,7 @@ namespace Stance.Web.Infrastructure.PageModels
                 {
                     if (context.Result == null)
                     {
-                        var modelState = serializedModelState.DeserializeModelState();
+                        var modelState = serializedModelState.ToModelState();
                         context.ModelState.Merge(modelState);
                     }
                     else
@@ -57,17 +57,16 @@ namespace Stance.Web.Infrastructure.PageModels
             {
                 if (!context.ModelState.IsValid)
                 {
-                    if (context.ModelState != null)
-                    {
-                        var modelState = context.ModelState.ToSerializedString();
-                        this.TempData[$"{Key}ModelState"] = modelState;
-                    }
+                    var modelState = context.ModelState.ToSerializedString();
+                    this.TempData[$"{Key}ModelState"] = modelState;
 
-                    if (this.PageModel != null)
-                    {
-                        var pageModel = JsonConvert.SerializeObject(this.PageModel);
-                        this.TempData[$"{Key}PageModel"] = pageModel;
-                    }
+                    var pageModel = JsonConvert.SerializeObject(this.PageModel);
+                    this.TempData[$"{Key}PageModel"] = pageModel;
+                }
+                else if (this.PrgState == PrgState.Failed || this.PrgState == PrgState.InError)
+                {
+                    var pageModel = JsonConvert.SerializeObject(this.PageModel);
+                    this.TempData[$"{Key}PageModel"] = pageModel;
                 }
             }
         }

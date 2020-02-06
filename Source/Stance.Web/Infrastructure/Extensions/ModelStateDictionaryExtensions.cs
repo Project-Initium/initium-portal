@@ -22,7 +22,7 @@ namespace Stance.Web.Infrastructure.Extensions
             return JsonConvert.SerializeObject(errorList, Formatting.None);
         }
 
-        public static ModelStateDictionary DeserializeModelState(this string serializedModelState)
+        public static ModelStateDictionary ToModelState(this string serializedModelState)
         {
             var errorList = JsonConvert.DeserializeObject<List<ModelStateTransferContainer>>(serializedModelState);
             var modelState = new ModelStateDictionary();

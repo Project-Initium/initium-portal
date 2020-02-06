@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -58,9 +59,13 @@ namespace Stance.Web.Pages.FirstRun
 
         public class Model
         {
+            [Display(Name = "Email Address")]
             public string EmailAddress { get; set; }
 
             public string Password { get; set; }
+
+            [Display(Name = "Password Confirmation")]
+            public string PasswordConfirmation { get; set; }
         }
 
         public class Validator : AbstractValidator<Model>
@@ -69,6 +74,7 @@ namespace Stance.Web.Pages.FirstRun
             {
                 this.RuleFor(x => x.EmailAddress).NotEmpty().EmailAddress();
                 this.RuleFor(x => x.Password).NotEmpty();
+                this.RuleFor(x => x.PasswordConfirmation).Equal(x => x.Password);
             }
         }
     }

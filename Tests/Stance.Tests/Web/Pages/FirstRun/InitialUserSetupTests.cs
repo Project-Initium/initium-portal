@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -24,7 +25,7 @@ namespace Stance.Tests.Web.Pages.FirstRun
         [Fact]
         public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
         {
-            var model = new InitialUserSetup.Model { EmailAddress = "a@b.com", Password = new string('*', 6) };
+            var model = new InitialUserSetup.Model { EmailAddress = "a@b.com", Password = new string('*', 6), PasswordConfirmation = new string('*', 6) };
             var validator = new InitialUserSetup.Validator();
             var result = validator.Validate(model);
             Assert.True(result.IsValid);
@@ -33,46 +34,61 @@ namespace Stance.Tests.Web.Pages.FirstRun
         [Fact]
         public void Validate_GivenEmailAddressIsEmpty_ExpectValidationFailure()
         {
-            var model = new InitialUserSetup.Model { EmailAddress = string.Empty, Password = new string('*', 6) };
+            var model = new InitialUserSetup.Model { EmailAddress = string.Empty, Password = new string('*', 6), PasswordConfirmation = new string('*', 6) };
             var validator = new InitialUserSetup.Validator();
             var result = validator.Validate(model);
             Assert.False(result.IsValid);
+            Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
         }
 
         [Fact]
         public void Validate_GivenEmailAddressIsNotValidEmailAddress_ExpectValidationFailure()
         {
-            var model = new InitialUserSetup.Model { EmailAddress = new string('*', 5), Password = new string('*', 6) };
+            var model = new InitialUserSetup.Model { EmailAddress = new string('*', 5), Password = new string('*', 6), PasswordConfirmation = new string('*', 6) };
             var validator = new InitialUserSetup.Validator();
             var result = validator.Validate(model);
             Assert.False(result.IsValid);
+            Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
         }
 
         [Fact]
         public void Validate_GivenEmailAddressIsNull_ExpectValidationFailure()
         {
-            var model = new InitialUserSetup.Model { EmailAddress = null, Password = new string('*', 6) };
+            var model = new InitialUserSetup.Model { EmailAddress = null, Password = new string('*', 6), PasswordConfirmation = new string('*', 6) };
             var validator = new InitialUserSetup.Validator();
             var result = validator.Validate(model);
             Assert.False(result.IsValid);
+            Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
         }
 
         [Fact]
         public void Validate_GivenPasswordIsEmpty_ExpectValidationFailure()
         {
-            var model = new InitialUserSetup.Model { EmailAddress = "a@b.com", Password = string.Empty };
+            var model = new InitialUserSetup.Model { EmailAddress = "a@b.com", Password = string.Empty, PasswordConfirmation = string.Empty };
             var validator = new InitialUserSetup.Validator();
             var result = validator.Validate(model);
             Assert.False(result.IsValid);
+            Assert.Contains(result.Errors, x => x.PropertyName == "Password");
         }
 
         [Fact]
         public void Validate_GivenPasswordIsNull_ExpectValidationFailure()
         {
-            var model = new InitialUserSetup.Model { EmailAddress = "a@b.com", Password = null };
+            var model = new InitialUserSetup.Model { EmailAddress = "a@b.com", Password = null, PasswordConfirmation = null };
             var validator = new InitialUserSetup.Validator();
             var result = validator.Validate(model);
             Assert.False(result.IsValid);
+            Assert.Contains(result.Errors, x => x.PropertyName == "Password");
+        }
+
+        [Fact]
+        public void Validate_GivenPasswordDoesNotMatchPasswordConfirmation_ExpectValidationFailure()
+        {
+            var model = new InitialUserSetup.Model { EmailAddress = "a@b.com", Password = new string('*', 6), PasswordConfirmation = null };
+            var validator = new InitialUserSetup.Validator();
+            var result = validator.Validate(model);
+            Assert.False(result.IsValid);
+            Assert.Contains(result.Errors, x => x.PropertyName == "PasswordConfirmation");
         }
 
         [Fact]

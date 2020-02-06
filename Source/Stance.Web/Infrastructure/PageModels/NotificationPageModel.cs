@@ -12,12 +12,7 @@ namespace Stance.Web.Infrastructure.PageModels
     public abstract class NotificationPageModel : PageModel
     {
         private const string Key = "NotificationPageModel";
-        private readonly List<PageNotification> _pageNotifications;
-
-        protected NotificationPageModel()
-        {
-            this._pageNotifications = new List<PageNotification>();
-        }
+        private readonly List<PageNotification> _pageNotifications = new List<PageNotification>();
 
         [ViewData(Key = nameof(PageNotifications))]
         public IReadOnlyList<PageNotification> PageNotifications => this._pageNotifications.AsReadOnly();
@@ -40,6 +35,7 @@ namespace Stance.Web.Infrastructure.PageModels
                         this.TempData.Remove($"{Key}PageNotifications");
                     }
                 }
+  
             }
         }
 
