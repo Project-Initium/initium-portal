@@ -1,11 +1,13 @@
 ﻿// Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Stance.Web.Pages.FirstRun;
 
 namespace Stance.Web.Infrastructure.ServiceConfiguration
 {
@@ -13,7 +15,13 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
     {
         public static IServiceCollection AddCustomizedMvc(this IServiceCollection services)
         {
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+            services
+                .AddMvc().AddFluentValidation(fv =>
+                {
+                    fv.RegisterValidatorsFromAssemblyContaining<InitialUserSetup.Validator>();
+                    fv.ImplicitlyValidateChildProperties = true;
+                })
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddControllers();
             return services;

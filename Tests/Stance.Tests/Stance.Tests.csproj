@@ -39,7 +39,6 @@
   <ItemGroup>
     <Folder Include="Core\" />
     <Folder Include="Queries\" />
-    <Folder Include="Web\" />
   </ItemGroup>
 
   <Import Project="..\..\Shared\Stance.Shared\Stance.Shared.projitems" Label="Shared" />

@@ -1,6 +1,7 @@
 // Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -16,7 +17,8 @@ namespace Stance.Web
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", true, true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true);
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", true)
+                .AddJsonFile($"appsettings.{Environment.MachineName}.json", true, true);
 
             builder.AddEnvironmentVariables();
 
@@ -28,6 +30,10 @@ namespace Stance.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .AddDataStores(this.Configuration)
+                .AddConfigurationRoot()
+                .AddCustomizedMediatR()
+                .AddSettings(this.Configuration)
                 .AddCustomizedMvc();
         }
 
