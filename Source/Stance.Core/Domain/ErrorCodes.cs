@@ -7,5 +7,7 @@ namespace Stance.Core.Domain
     {
         SavingChanges = 1,
         SystemIsAlreadySetup = 2,
+        UserNotFound = 3,
+        AuthenticationFailed = 4,
     }
 }

@@ -35,7 +35,6 @@ namespace Stance.Web.Infrastructure.PageModels
                         this.TempData.Remove($"{Key}PageNotifications");
                     }
                 }
-  
             }
         }
 

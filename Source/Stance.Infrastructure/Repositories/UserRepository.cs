@@ -35,7 +35,7 @@ namespace Stance.Infrastructure.Repositories
 
         public async Task<Maybe<IUser>> Find(Guid userId, CancellationToken cancellationToken = default)
         {
-            var user = await this._context.Users.SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
+            var user = await this._context.Users.FindAsync(new object[] { userId }, cancellationToken);
             await this.Refresh(user);
             return Maybe.From<IUser>(user);
         }
@@ -49,6 +49,13 @@ namespace Stance.Infrastructure.Repositories
             }
 
             return this._context.Users.Add(entity).Entity;
+        }
+
+        public async Task<Maybe<IUser>> FindByEmailAddress(string emailAddress, CancellationToken cancellationToken = default)
+        {
+            var user = await this._context.Users.SingleOrDefaultAsync(x => x.EmailAddress == emailAddress, cancellationToken);
+            await this.Refresh(user);
+            return Maybe.From<IUser>(user);
         }
 
         private async Task Refresh(IUser user)
