@@ -34,6 +34,7 @@ namespace Stance.Web
                 .AddConfigurationRoot()
                 .AddCustomizedMediatR()
                 .AddSettings(this.Configuration)
+                .AddCustomizedAuthentication(this.Configuration)
                 .AddCustomizedMvc();
         }
 

@@ -13,11 +13,11 @@ namespace Stance.Web.Infrastructure.Extensions
 {
     public static class HttpContextExtensions
     {
-        public static async Task SignInUser(this HttpContext httpContext, UserProfile userProfile)
+        internal static async Task SignInUser(this HttpContext httpContext, UserProfile userProfile)
         {
             var realClaims = new List<Claim>
             {
-                new Claim(ClaimTypes.Upn, userProfile.ToString()),
+                new Claim(ClaimTypes.Upn, userProfile.UserId.ToString()),
                 new Claim(ClaimTypes.Email, userProfile.EmailAddress),
             };
 
@@ -32,7 +32,7 @@ namespace Stance.Web.Infrastructure.Extensions
                 authProperties);
         }
 
-        public class UserProfile
+        internal class UserProfile
         {
             public UserProfile(Guid userId, string emailAddress)
             {

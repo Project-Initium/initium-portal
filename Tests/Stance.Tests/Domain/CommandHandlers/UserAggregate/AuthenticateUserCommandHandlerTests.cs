@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
@@ -78,6 +79,10 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         public async Task Handle_GivenUserDoesExistAndPasswordDoesVerify_ExpectSuccessfulResult()
         {
             var user = new Mock<IUser>();
+            var userId = Guid.NewGuid();
+            user.Setup(x => x.Id).Returns(userId);
+            user.Setup(x => x.EmailAddress).Returns(new string('*', 5));
+
             user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 6)));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -91,6 +96,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
+            Assert.Equal(userId, result.Value.UserId);
+            Assert.Equal(new string('*', 5), result.Value.EmailAddress);
         }
     }
 }

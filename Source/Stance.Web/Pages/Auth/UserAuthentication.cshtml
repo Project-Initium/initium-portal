@@ -2,3 +2,32 @@
 @model Stance.Web.Pages.Auth.UserAuthentication
 @{
 }
+
+    <section id="wrapper" class="login-register login-sidebar">
+        <div class="login-box card">
+            <div class="card-body">
+                <form class="form-horizontal form-material" asp-antiforgery="true" method="post" asp-route-returnurl="@Model.ReturnUrl">
+                    <a href="#" class="text-center d-block"></a>
+                    <div class="form-group mt-4">
+                        
+                            <label asp-for="PageModel.EmailAddress"></label>
+                            <input class="form-control" type="text" asp-for="PageModel.EmailAddress">
+                            <span class="text-danger" asp-validation-for="PageModel.EmailAddress"></span>
+                        
+                    </div>
+                    <div class="form-group">
+                        
+                            <label asp-for="PageModel.Password"></label>
+                            <input class="form-control" type="password" asp-for="PageModel.Password">
+                            <span class="text-danger" asp-validation-for="PageModel.Password"></span>
+                        
+                    </div>
+                    <div class="form-group text-center mt-3">
+                        <div class="col-xs-12">
+                            <button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Log In</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>

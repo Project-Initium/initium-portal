@@ -5,6 +5,7 @@ namespace Stance.Web.Infrastructure.Constants
 {
     public static class PageLocations
     {
+        public const string AppDashboard = "/App/Index";
         public const string FirstRunInitialUserSetup = "/FirstRun/InitialUserSetup";
         public const string FirstRunSetupCompleted = "/FirstRun/SetupCompleted";
     }

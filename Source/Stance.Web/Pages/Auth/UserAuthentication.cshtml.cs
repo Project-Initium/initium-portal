@@ -1,13 +1,14 @@
+// Copyright (c) DeviousCreation. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.Extensions;
 using Stance.Web.Infrastructure.PageModels;
 
@@ -19,8 +20,11 @@ namespace Stance.Web.Pages.Auth
 
         public UserAuthentication(IMediator mediator)
         {
-            this._mediator = mediator;
+            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
+
+        [BindProperty(SupportsGet = true)]
+        public string ReturnUrl { get; set; }
 
         public void OnGet()
         {
@@ -30,22 +34,33 @@ namespace Stance.Web.Pages.Auth
         {
             if (!this.ModelState.IsValid)
             {
-                return this.RedirectToPage();
+                return string.IsNullOrEmpty(this.ReturnUrl)
+                    ? this.RedirectToPage()
+                    : this.RedirectToPage(new { this.ReturnUrl });
             }
 
             var result =
-                await this._mediator.Send(new AuthenticateUserCommand(this.PageModel.EmailAddress, this.PageModel.Password));
+                await this._mediator.Send(new AuthenticateUserCommand(
+                    this.PageModel.EmailAddress, this.PageModel.Password));
 
             if (result.IsSuccess)
             {
                 await this.HttpContext.SignInUser(new HttpContextExtensions.UserProfile(
                     result.Value.UserId,
                     result.Value.EmailAddress));
-                // redirect
+
+                if (string.IsNullOrEmpty(this.ReturnUrl))
+                {
+                    return this.RedirectToPage(PageLocations.AppDashboard);
+                }
+
+                return this.LocalRedirect(this.ReturnUrl);
             }
 
             this.PrgState = PrgState.InError;
-            return this.RedirectToPage();
+            return string.IsNullOrEmpty(this.ReturnUrl)
+                    ? this.RedirectToPage()
+                    : this.RedirectToPage(new { this.ReturnUrl });
         }
 
         public class Model
@@ -58,7 +73,11 @@ namespace Stance.Web.Pages.Auth
 
         public class Validator : AbstractValidator<Model>
         {
-
+            public Validator()
+            {
+                this.RuleFor(x => x.EmailAddress).NotEmpty().EmailAddress();
+                this.RuleFor(x => x.Password).NotEmpty();
+            }
         }
     }
 }
