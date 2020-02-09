@@ -42,7 +42,7 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             using var context = new DataContext(options, mediator.Object);
             var userRepository = new UserRepository(context);
-            var user = new User(Guid.NewGuid(), new string('*', 5), new string('*', 6), DateTime.UtcNow);
+            var user = new User(Guid.NewGuid(), new string('*', 5), new string('*', 6), true, DateTime.UtcNow);
             userRepository.Add(user);
             var userInContext = context.ChangeTracker.Entries<User>().FirstOrDefault(x => x.Entity.Id == user.Id);
             Assert.NotNull(userInContext);
@@ -60,7 +60,7 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             using var context = new DataContext(options, mediator.Object);
             var userRepository = new UserRepository(context);
-            var user = new User(Guid.NewGuid(), new string('*', 5), new string('*', 6), DateTime.UtcNow);
+            var user = new User(Guid.NewGuid(), new string('*', 5), new string('*', 6), true, DateTime.UtcNow);
             var returnedUser = userRepository.Add(user);
             Assert.NotNull(returnedUser);
             Assert.Equal(user, returnedUser);
@@ -92,7 +92,7 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             using var context = new DataContext(options, mediator.Object);
             var userRepository = new UserRepository(context);
-            var user = new User(Guid.NewGuid(), new string('*', 5), new string('*', 6), DateTime.UtcNow);
+            var user = new User(Guid.NewGuid(), new string('*', 5), new string('*', 6), true, DateTime.UtcNow);
             userRepository.Add(user);
             userRepository.Update(user);
             var userInContext = context.ChangeTracker.Entries<User>().FirstOrDefault(x => x.Entity.Id == user.Id);
@@ -127,7 +127,7 @@ namespace Stance.Tests.Infrastructure.Repositories
             var userId = Guid.NewGuid();
 
             await using var context = new DataContext(options, mediator.Object);
-            await context.Users.AddAsync(new User(userId, new string('*', 5), new string('*', 6),
+            await context.Users.AddAsync(new User(userId, new string('*', 5), new string('*', 6), true,
                 DateTime.UtcNow));
             await context.SaveChangesAsync();
             var userRepository = new UserRepository(context);

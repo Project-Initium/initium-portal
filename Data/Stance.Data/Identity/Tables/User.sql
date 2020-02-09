@@ -4,5 +4,9 @@
     [EmailAddress] NVARCHAR(320) NOT NULL, 
     [PasswordHash] VARCHAR(100) NOT NULL, 
     [WhenCreated] DATETIME2 NOT NULL,
-    [WhenLastAuthenticated] DATETIME2 NULL
+    [WhenLastAuthenticated] DATETIME2 NULL,
+    [IsLockable] BIT NOT NULL DEFAULT 1,
+    [WhenLocked] DATETIME2 NULL, 
+    [AttemptsSinceLastAuthentication] INT NOT NULL DEFAULT 0,
+    
 )

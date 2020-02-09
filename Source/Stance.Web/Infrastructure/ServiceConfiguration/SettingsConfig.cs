@@ -3,6 +3,7 @@
 
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Stance.Core.Settings;
 using Stance.Queries;
 
 namespace Stance.Web.Infrastructure.ServiceConfiguration
@@ -12,6 +13,7 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
         public static IServiceCollection AddSettings(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<QuerySettings>(configuration.GetSection("query"));
+            services.Configure<SecuritySettings>(configuration.GetSection("Security"));
             return services;
         }
     }
