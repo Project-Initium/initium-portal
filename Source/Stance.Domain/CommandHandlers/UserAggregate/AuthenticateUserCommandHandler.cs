@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using NodaTime;
 using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.UserAggregate;
@@ -16,10 +17,12 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
     public class AuthenticateUserCommandHandler : IRequestHandler<AuthenticateUserCommand, Result<AuthenticateUserCommandResult, ErrorData>>
     {
         private readonly IUserRepository _userRepository;
+        private readonly IClock _clock;
 
-        public AuthenticateUserCommandHandler(IUserRepository userRepository)
+        public AuthenticateUserCommandHandler(IUserRepository userRepository, IClock clock)
         {
             this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
         }
 
         public async Task<Result<AuthenticateUserCommandResult, ErrorData>> Handle(
@@ -50,9 +53,11 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
+                user.ProcessUnsuccessfulAuthenticationAttempt(this._clock.GetCurrentInstant().ToDateTimeUtc());
                 return Result.Fail<AuthenticateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.AuthenticationFailed));
             }
 
+            user.ProcessSuccessfulAuthenticationAttempt(this._clock.GetCurrentInstant().ToDateTimeUtc());
             return Result.Ok<AuthenticateUserCommandResult, ErrorData>(new AuthenticateUserCommandResult(user.Id, user.EmailAddress));
         }
     }

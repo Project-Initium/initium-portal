@@ -45,6 +45,18 @@ namespace Stance.Infrastructure
             users.HasKey(entity => entity.Id);
             users.Ignore(b => b.DomainEvents);
             users.Property(e => e.Id).ValueGeneratedNever();
+
+            var navigation = users.Metadata.FindNavigation(nameof(User.AuthenticationHistories));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            users.OwnsMany<AuthenticationHistory>(user => user.AuthenticationHistories, authenticationHistories =>
+            {
+                authenticationHistories.ToTable("authenticationHistory", "identity");
+                authenticationHistories.HasKey(authenticationHistory => authenticationHistory.Id);
+                authenticationHistories.Property(authenticationHistory => authenticationHistory.Id)
+                    .ValueGeneratedNever();
+                authenticationHistories.Ignore(authenticationHistory => authenticationHistory.DomainEvents);
+            });
         }
     }
 }
