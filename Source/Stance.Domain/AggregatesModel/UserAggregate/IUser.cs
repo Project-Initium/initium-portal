@@ -17,10 +17,16 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         DateTime? WhenLastAuthenticated { get; }
 
+        bool IsLockable { get; }
+
+        DateTime? WhenLocked { get; }
+
+        int AttemptsSinceLastAuthentication { get; }
+
         IReadOnlyList<AuthenticationHistory> AuthenticationHistories { get; }
 
         void ProcessSuccessfulAuthenticationAttempt(DateTime whenAttempted);
 
-        void ProcessUnsuccessfulAuthenticationAttempt(DateTime whenAttempted);
+        void ProcessUnsuccessfulAuthenticationAttempt(DateTime whenAttempted, bool applyLock);
     }
 }

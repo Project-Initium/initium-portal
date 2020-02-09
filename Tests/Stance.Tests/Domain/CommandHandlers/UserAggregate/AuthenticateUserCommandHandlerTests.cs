@@ -5,10 +5,12 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
+using Microsoft.Extensions.Options;
 using Moq;
 using NodaTime;
 using Stance.Core.Contracts.Domain;
 using Stance.Core.Domain;
+using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandHandlers.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
@@ -32,7 +34,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object);
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -52,7 +56,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object);
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -61,11 +67,11 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         }
 
         [Fact]
-        public async Task Handle_GivenUserDoesExistButPasswordDoesNotVerify_ExpectFailedResultAndUnsuccessfulAttemptLogged()
+        public async Task Handle_GivenUserDoesExistButPasswordDoesNotVerifyAndAccountsAreNotLockable_ExpectFailedResultAndUnsuccessfulAttemptLoggedWithOutLockApplied()
         {
             var user = new Mock<IUser>();
             user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 5)));
-            user.Setup(x => x.ProcessUnsuccessfulAuthenticationAttempt(It.IsAny<DateTime>()));
+            user.Setup(x => x.ProcessUnsuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), It.IsAny<bool>()));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -75,13 +81,70 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object);
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(() => new SecuritySettings { AllowedAttempts = -1 });
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
             Assert.Equal(ErrorCodes.AuthenticationFailed, result.Error.Code);
-            user.Verify(x => x.ProcessUnsuccessfulAuthenticationAttempt(It.IsAny<DateTime>()));
+            user.Verify(x => x.ProcessUnsuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), false));
+        }
+
+        [Fact]
+        public async Task Handle_GivenUserDoesExistButPasswordDoesNotVerifyAndAccountsAreLockableAndAttemptsAreLess_ExpectFailedResultAndUnsuccessfulAttemptLoggedWithOutLockApplied()
+        {
+            var user = new Mock<IUser>();
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 5)));
+            user.Setup(x => x.ProcessUnsuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), It.IsAny<bool>()));
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+
+            var clock = new Mock<IClock>();
+
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(() => new SecuritySettings { AllowedAttempts = 1 });
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
+            var result = await handler.Handle(cmd, CancellationToken.None);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal(ErrorCodes.AuthenticationFailed, result.Error.Code);
+            user.Verify(x => x.ProcessUnsuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), false));
+        }
+
+        [Fact]
+        public async Task Handle_GivenUserDoesExistButPasswordDoesNotVerifyAndAccountsAreLockableAndAttemptsNotLess_ExpectFailedResultAndUnsuccessfulAttemptLoggedWithLockApplied()
+        {
+            var user = new Mock<IUser>();
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 5)));
+            user.Setup(x => x.ProcessUnsuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), It.IsAny<bool>()));
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+
+            var clock = new Mock<IClock>();
+
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(() => new SecuritySettings { AllowedAttempts = 0 });
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
+            var result = await handler.Handle(cmd, CancellationToken.None);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal(ErrorCodes.AuthenticationFailed, result.Error.Code);
+            user.Verify(x => x.ProcessUnsuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), true));
         }
 
         [Fact]
@@ -103,7 +166,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object);
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
             var result = await handler.Handle(cmd, CancellationToken.None);
 

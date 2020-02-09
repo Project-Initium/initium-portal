@@ -5,9 +5,11 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.Extensions.Options;
 using NodaTime;
 using ResultMonad;
 using Stance.Core.Domain;
+using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
@@ -18,11 +20,18 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
     {
         private readonly IUserRepository _userRepository;
         private readonly IClock _clock;
+        private readonly SecuritySettings _securitySettings;
 
-        public AuthenticateUserCommandHandler(IUserRepository userRepository, IClock clock)
+        public AuthenticateUserCommandHandler(IUserRepository userRepository, IClock clock, IOptions<SecuritySettings> securitySettings)
         {
+            if (securitySettings == null)
+            {
+                throw new ArgumentNullException(nameof(securitySettings));
+            }
+
             this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            this._securitySettings = securitySettings.Value;
         }
 
         public async Task<Result<AuthenticateUserCommandResult, ErrorData>> Handle(
@@ -53,7 +62,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
-                user.ProcessUnsuccessfulAuthenticationAttempt(this._clock.GetCurrentInstant().ToDateTimeUtc());
+                user.ProcessUnsuccessfulAuthenticationAttempt(this._clock.GetCurrentInstant().ToDateTimeUtc(), this._securitySettings.AllowedAttempts != -1 && user.AttemptsSinceLastAuthentication >= this._securitySettings.AllowedAttempts);
                 return Result.Fail<AuthenticateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.AuthenticationFailed));
             }
 

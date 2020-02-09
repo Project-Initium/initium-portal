@@ -12,12 +12,13 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
     {
         private readonly List<AuthenticationHistory> _authenticationHistories;
 
-        public User(Guid id, string emailAddress, string passwordHash, DateTime whenCreated)
+        public User(Guid id, string emailAddress, string passwordHash, bool isLockable, DateTime whenCreated)
         {
             this.Id = id;
             this.EmailAddress = emailAddress;
             this.PasswordHash = passwordHash;
             this.WhenCreated = whenCreated;
+            this.IsLockable = isLockable;
 
             this._authenticationHistories = new List<AuthenticationHistory>();
         }
@@ -35,6 +36,12 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         public DateTime? WhenLastAuthenticated { get; private set; }
 
+        public bool IsLockable { get; private set; }
+
+        public DateTime? WhenLocked { get; private set; }
+
+        public int AttemptsSinceLastAuthentication { get; private set; }
+
         public IReadOnlyList<AuthenticationHistory> AuthenticationHistories =>
             this._authenticationHistories.AsReadOnly();
 
@@ -42,11 +49,18 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         {
             this._authenticationHistories.Add(new AuthenticationHistory(Guid.NewGuid(), whenAttempted, AuthenticationHistoryType.Success));
             this.WhenLastAuthenticated = whenAttempted;
+            this.WhenLocked = null;
+            this.AttemptsSinceLastAuthentication = 0;
         }
 
-        public void ProcessUnsuccessfulAuthenticationAttempt(DateTime whenAttempted)
+        public void ProcessUnsuccessfulAuthenticationAttempt(DateTime whenAttempted, bool applyLock)
         {
             this._authenticationHistories.Add(new AuthenticationHistory(Guid.NewGuid(), whenAttempted, AuthenticationHistoryType.Failure));
+            this.AttemptsSinceLastAuthentication++;
+            if (applyLock && this.IsLockable)
+            {
+                this.WhenLocked = whenAttempted;
+            }
         }
     }
 }
