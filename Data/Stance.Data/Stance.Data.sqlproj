@@ -74,5 +74,6 @@
   <ItemGroup>
     <Build Include="Security\Schemas\Identity.sql" />
     <Build Include="Identity\Tables\User.sql" />
+    <Build Include="Identity\Tables\AuthenticationHistory.sql" />
   </ItemGroup>
 </Project>
