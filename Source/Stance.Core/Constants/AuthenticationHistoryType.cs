@@ -7,5 +7,6 @@ namespace Stance.Core.Constants
     {
         Failure,
         Success,
+        EmailMfaRequested,
     }
 }

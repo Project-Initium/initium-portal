@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Stance.Core.Constants;
 using Stance.Core.Contracts.Domain;
 
 namespace Stance.Domain.AggregatesModel.UserAggregate
@@ -25,7 +26,11 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         IReadOnlyList<AuthenticationHistory> AuthenticationHistories { get; }
 
+        Guid SecurityStamp { get; }
+
         void ProcessSuccessfulAuthenticationAttempt(DateTime whenAttempted);
+
+        void ProcessPartialSuccessfulAuthenticationAttempt(DateTime whenAttempted, AuthenticationHistoryType stage);
 
         void ProcessUnsuccessfulAuthenticationAttempt(DateTime whenAttempted, bool applyLock);
     }

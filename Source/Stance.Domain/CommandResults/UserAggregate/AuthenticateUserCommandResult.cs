@@ -8,13 +8,27 @@ namespace Stance.Domain.CommandResults.UserAggregate
     public class AuthenticateUserCommandResult
     {
         public AuthenticateUserCommandResult(Guid userId, string emailAddress)
+            : this(userId, emailAddress, AuthenticationState.Completed)
+        {
+        }
+
+        public AuthenticateUserCommandResult(Guid userId, string emailAddress, AuthenticationState authenticationStatus)
         {
             this.UserId = userId;
             this.EmailAddress = emailAddress;
+            this.AuthenticationStatus = authenticationStatus;
+        }
+
+        public enum AuthenticationState
+        {
+            Completed,
+            AwaitingMfaEmailCode,
         }
 
         public Guid UserId { get; }
 
         public string EmailAddress { get; }
+
+        public AuthenticationState AuthenticationStatus { get; }
     }
 }

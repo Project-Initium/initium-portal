@@ -6,5 +6,7 @@ namespace Stance.Core.Settings
     public class SecuritySettings
     {
         public int AllowedAttempts { get; set; }
+
+        public bool EnforceMfa { get; set; }
     }
 }
