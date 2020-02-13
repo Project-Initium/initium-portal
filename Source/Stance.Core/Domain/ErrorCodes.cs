@@ -9,5 +9,6 @@ namespace Stance.Core.Domain
         SystemIsAlreadySetup = 2,
         UserNotFound = 3,
         AuthenticationFailed = 4,
+        MfaCodeNotValid
     }
 }

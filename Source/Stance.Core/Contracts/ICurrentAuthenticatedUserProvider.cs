@@ -1,13 +1,12 @@
 ﻿// Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-namespace Stance.Core.Constants
+using MaybeMonad;
+
+namespace Stance.Core.Contracts
 {
-    public enum AuthenticationHistoryType
+    public interface ICurrentAuthenticatedUserProvider
     {
-        Failure,
-        Success,
-        EmailMfaRequested,
-        EmailMfaFailed
+        Maybe<AuthenticatedUser> CurrentAuthenticatedUser { get; }
     }
 }

@@ -5,14 +5,14 @@ using System;
 
 namespace Stance.Domain.CommandResults.UserAggregate
 {
-    public class AuthenticateUserCommandResult : BaseAuthenticationProcessCommandResult
+    public class ValidateEmailMfaCodeAgainstCurrentUserCommandResult : BaseAuthenticationProcessCommandResult
     {
-        public AuthenticateUserCommandResult(Guid userId, string emailAddress)
+        public ValidateEmailMfaCodeAgainstCurrentUserCommandResult(Guid userId, string emailAddress)
             : base(userId, emailAddress)
         {
         }
 
-        public AuthenticateUserCommandResult(Guid userId, string emailAddress, AuthenticationState authenticationStatus)
+        public ValidateEmailMfaCodeAgainstCurrentUserCommandResult(Guid userId, string emailAddress, AuthenticationState authenticationStatus)
             : base(userId, emailAddress, authenticationStatus)
         {
         }
