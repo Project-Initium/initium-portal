@@ -8,5 +8,5 @@
     [IsLockable] BIT NOT NULL DEFAULT 1,
     [WhenLocked] DATETIME2 NULL, 
     [AttemptsSinceLastAuthentication] INT NOT NULL DEFAULT 0,
-    
+    [SecurityStamp] UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID()
 )

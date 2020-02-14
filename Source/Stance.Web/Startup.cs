@@ -34,8 +34,8 @@ namespace Stance.Web
                 .AddConfigurationRoot()
                 .AddCustomizedMediatR()
                 .AddSettings(this.Configuration)
-                .AddCustomizedAuthentication(this.Configuration)
-                .AddCustomizedMvc();
+                .AddCustomizedMvc()
+                .AddCustomizedAuthentication(this.Configuration);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,6 +45,8 @@ namespace Stance.Web
                 .AddCustomizedErrorResponse(env)
                 .UseStaticFiles()
                 .UseRouting()
+                .UseAuthentication()
+                .UseAuthorization()
                 .UseStackify(env)
                 .UseEndpoints(endpoints =>
                 {

@@ -11,6 +11,7 @@
     <PackageReference Include="BCrypt.Net-Next" Version="3.2.1" />
     <PackageReference Include="FluentValidation" Version="8.6.1" />
     <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.1" />
     <PackageReference Include="NodaTime" Version="2.4.7" />
     <PackageReference Include="Otp.NET" Version="1.2.2" />
     <PackageReference Include="ResultMonad" Version="1.0.1" />

@@ -4,13 +4,26 @@
 using System;
 using System.Threading.Tasks;
 using FluentValidation;
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stance.Domain.Commands.UserAggregate;
+using Stance.Web.Infrastructure.Constants;
+using Stance.Web.Infrastructure.Extensions;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.Auth
 {
+    [Authorize(AuthenticationSchemes = "login-partial")]
     public class ValidateEmailMfaCode : PrgPageModel<ValidateEmailMfaCode.Model>
     {
+        private readonly IMediator _mediator;
+
+        public ValidateEmailMfaCode(IMediator mediator)
+        {
+            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        }
+
         public void OnGet()
         {
         }
@@ -22,7 +35,22 @@ namespace Stance.Web.Pages.Auth
                 return this.RedirectToPage();
             }
 
-            throw new NotImplementedException();
+            var result = await this._mediator.Send(new ValidateEmailMfaCodeAgainstCurrentUserCommand(this.PageModel.Code));
+            if (result.IsSuccess)
+            {
+                var returnUrl = await this.HttpContext.SignInUserFromPartialStateAsync(
+                    new HttpContextExtensions.UserProfile(result.Value.UserId, result.Value.EmailAddress));
+
+                if (string.IsNullOrEmpty(returnUrl))
+                {
+                    return this.RedirectToPage(PageLocations.AppDashboard);
+                }
+
+                return this.LocalRedirect(returnUrl);
+            }
+
+            this.PrgState = PrgState.InError;
+            return this.RedirectToPage();
         }
 
         public class Model

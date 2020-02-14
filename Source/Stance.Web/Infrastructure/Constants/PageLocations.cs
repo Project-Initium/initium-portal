@@ -8,5 +8,6 @@ namespace Stance.Web.Infrastructure.Constants
         public const string AppDashboard = "/App/Index";
         public const string FirstRunInitialUserSetup = "/FirstRun/InitialUserSetup";
         public const string FirstRunSetupCompleted = "/FirstRun/SetupCompleted";
+        public const string AuthEmailMfa = "/Auth/ValidateEmailMfaCode";
     }
 }
