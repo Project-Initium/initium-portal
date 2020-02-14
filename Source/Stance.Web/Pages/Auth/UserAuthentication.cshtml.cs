@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.Extensions;
@@ -45,16 +46,27 @@ namespace Stance.Web.Pages.Auth
 
             if (result.IsSuccess)
             {
-                await this.HttpContext.SignInUser(new HttpContextExtensions.UserProfile(
-                    result.Value.UserId,
-                    result.Value.EmailAddress));
-
-                if (string.IsNullOrEmpty(this.ReturnUrl))
+                if (result.Value.AuthenticationStatus ==
+                    BaseAuthenticationProcessCommandResult.AuthenticationState.Completed)
                 {
-                    return this.RedirectToPage(PageLocations.AppDashboard);
+                    await this.HttpContext.SignInUserAsync(new HttpContextExtensions.UserProfile(
+                        result.Value.UserId,
+                        result.Value.EmailAddress));
+
+                    if (string.IsNullOrEmpty(this.ReturnUrl))
+                    {
+                        return this.RedirectToPage(PageLocations.AppDashboard);
+                    }
+
+                    return this.LocalRedirect(this.ReturnUrl);
                 }
 
-                return this.LocalRedirect(this.ReturnUrl);
+                await this.HttpContext.SignInUserPartiallyAsync(
+                    new HttpContextExtensions.UserProfile(
+                    result.Value.UserId,
+                    result.Value.EmailAddress), this.ReturnUrl);
+
+                return this.RedirectToPage(PageLocations.AuthEmailMfa);
             }
 
             this.PrgState = PrgState.InError;

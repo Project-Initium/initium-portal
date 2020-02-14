@@ -7,22 +7,27 @@ using System.Threading.Tasks;
 using MediatR;
 using Microsoft.Extensions.Options;
 using NodaTime;
+using OtpNet;
 using ResultMonad;
+using Stance.Core.Constants;
 using Stance.Core.Domain;
 using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Domain.Events;
 
 namespace Stance.Domain.CommandHandlers.UserAggregate
 {
-    public class AuthenticateUserCommandHandler : IRequestHandler<AuthenticateUserCommand, Result<AuthenticateUserCommandResult, ErrorData>>
+    public class AuthenticateUserCommandHandler : IRequestHandler<AuthenticateUserCommand,
+        Result<AuthenticateUserCommandResult, ErrorData>>
     {
-        private readonly IUserRepository _userRepository;
         private readonly IClock _clock;
         private readonly SecuritySettings _securitySettings;
+        private readonly IUserRepository _userRepository;
 
-        public AuthenticateUserCommandHandler(IUserRepository userRepository, IClock clock, IOptions<SecuritySettings> securitySettings)
+        public AuthenticateUserCommandHandler(IUserRepository userRepository, IClock clock,
+            IOptions<SecuritySettings> securitySettings)
         {
             if (securitySettings == null)
             {
@@ -62,12 +67,36 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
             {
-                user.ProcessUnsuccessfulAuthenticationAttempt(this._clock.GetCurrentInstant().ToDateTimeUtc(), this._securitySettings.AllowedAttempts != -1 && user.AttemptsSinceLastAuthentication >= this._securitySettings.AllowedAttempts);
-                return Result.Fail<AuthenticateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.AuthenticationFailed));
+                user.ProcessUnsuccessfulAuthenticationAttempt(
+                    this._clock.GetCurrentInstant().ToDateTimeUtc(),
+                    this._securitySettings.AllowedAttempts != -1 && user.AttemptsSinceLastAuthentication >=
+                    this._securitySettings.AllowedAttempts);
+                return Result.Fail<AuthenticateUserCommandResult, ErrorData>(
+                    new ErrorData(ErrorCodes.AuthenticationFailed));
+            }
+
+            if (this._securitySettings.EnforceMfa)
+            {
+                user.ProcessPartialSuccessfulAuthenticationAttempt(
+                    this._clock.GetCurrentInstant().ToDateTimeUtc(),
+                    AuthenticationHistoryType.EmailMfaRequested);
+                var totp = new Totp(user.SecurityStamp.ToByteArray());
+
+                var generated = totp.ComputeTotp();
+
+                user.AddDomainEvent(new EmailMfaTokenGeneratedEvent(
+                    user.Id,
+                    user.EmailAddress,
+                    generated));
+
+                return Result.Ok<AuthenticateUserCommandResult, ErrorData>(new AuthenticateUserCommandResult(
+                    user.Id, user.EmailAddress,
+                    AuthenticateUserCommandResult.AuthenticationState.AwaitingMfaEmailCode));
             }
 
             user.ProcessSuccessfulAuthenticationAttempt(this._clock.GetCurrentInstant().ToDateTimeUtc());
-            return Result.Ok<AuthenticateUserCommandResult, ErrorData>(new AuthenticateUserCommandResult(user.Id, user.EmailAddress));
+            return Result.Ok<AuthenticateUserCommandResult, ErrorData>(
+                new AuthenticateUserCommandResult(user.Id, user.EmailAddress));
         }
     }
 }

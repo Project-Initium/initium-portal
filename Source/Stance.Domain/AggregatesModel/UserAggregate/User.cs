@@ -19,6 +19,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this.PasswordHash = passwordHash;
             this.WhenCreated = whenCreated;
             this.IsLockable = isLockable;
+            this.SecurityStamp = Guid.NewGuid();
 
             this._authenticationHistories = new List<AuthenticationHistory>();
         }
@@ -40,6 +41,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         public DateTime? WhenLocked { get; private set; }
 
+        public Guid SecurityStamp { get; private set; }
+
         public int AttemptsSinceLastAuthentication { get; private set; }
 
         public IReadOnlyList<AuthenticationHistory> AuthenticationHistories =>
@@ -51,6 +54,11 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this.WhenLastAuthenticated = whenAttempted;
             this.WhenLocked = null;
             this.AttemptsSinceLastAuthentication = 0;
+        }
+
+        public void ProcessPartialSuccessfulAuthenticationAttempt(DateTime whenAttempted, AuthenticationHistoryType stage)
+        {
+            this._authenticationHistories.Add(new AuthenticationHistory(Guid.NewGuid(), whenAttempted, stage));
         }
 
         public void ProcessUnsuccessfulAuthenticationAttempt(DateTime whenAttempted, bool applyLock)

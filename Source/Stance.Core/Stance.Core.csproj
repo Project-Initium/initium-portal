@@ -8,6 +8,7 @@
   <Import Project="..\..\Shared\Stance.Shared\Stance.Shared.projitems" Label="Shared" />
 
   <ItemGroup>
+    <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
     <PackageReference Include="MediatR" Version="8.0.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>

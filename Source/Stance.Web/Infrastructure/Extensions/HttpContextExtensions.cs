@@ -3,26 +3,28 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Stance.Web.Infrastructure.Extensions
 {
     public static class HttpContextExtensions
     {
-        internal static async Task SignInUser(this HttpContext httpContext, UserProfile userProfile)
+        internal static async Task SignInUserAsync(this HttpContext httpContext, UserProfile userProfile)
         {
-            var realClaims = new List<Claim>
+            var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Upn, userProfile.UserId.ToString()),
                 new Claim(ClaimTypes.Email, userProfile.EmailAddress),
             };
 
             var claimsIdentity = new ClaimsIdentity(
-                realClaims, CookieAuthenticationDefaults.AuthenticationScheme);
+                claims, CookieAuthenticationDefaults.AuthenticationScheme);
 
             var authProperties = new AuthenticationProperties();
 
@@ -30,6 +32,35 @@ namespace Stance.Web.Infrastructure.Extensions
                 CookieAuthenticationDefaults.AuthenticationScheme,
                 new ClaimsPrincipal(claimsIdentity),
                 authProperties);
+        }
+
+        internal static async Task SignInUserPartiallyAsync(this HttpContext httpContext, UserProfile userProfile,
+            string returnUrl = null)
+        {
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Upn, userProfile.UserId.ToString()),
+                new Claim(ClaimTypes.Email, userProfile.EmailAddress),
+            };
+
+            if (!string.IsNullOrWhiteSpace(returnUrl))
+            {
+                claims.Add(new Claim(ClaimTypes.UserData, returnUrl));
+            }
+
+            await httpContext.SignInAsync("login-partial", new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)));
+        }
+
+        internal static async Task<string> SignInUserFromPartialStateAsync(this HttpContext httpContext, UserProfile userProfile)
+        {
+            var returnUrl = httpContext.User.HasClaim(x => x.Type == ClaimTypes.UserData)
+                ? httpContext.User.Claims.First(x => x.Type == ClaimTypes.UserData).Value
+                : string.Empty;
+            await httpContext.SignOutAsync("login-partial");
+
+            await httpContext.SignInUserAsync(userProfile);
+
+            return returnUrl;
         }
 
         internal class UserProfile

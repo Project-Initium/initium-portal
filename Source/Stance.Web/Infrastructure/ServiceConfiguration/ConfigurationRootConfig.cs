@@ -3,6 +3,7 @@
 
 using Microsoft.Extensions.DependencyInjection;
 using NodaTime;
+using Stance.Core.Contracts;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Infrastructure.Repositories;
 using Stance.Queries;
@@ -17,6 +18,7 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
             serviceCollection.AddSingleton<IClock>(SystemClock.Instance);
             serviceCollection.AddScoped<IUserQueries, UserQueries>();
             serviceCollection.AddScoped<IUserRepository, UserRepository>();
+            serviceCollection.AddScoped<ICurrentAuthenticatedUserProvider, CurrentAuthenticatedUserProvider>();
             return serviceCollection;
         }
     }
