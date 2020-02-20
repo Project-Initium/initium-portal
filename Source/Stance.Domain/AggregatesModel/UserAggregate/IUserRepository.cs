@@ -18,5 +18,6 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         IUser Add(IUser user);
 
         Task<Maybe<IUser>> FindByEmailAddress(string emailAddress, CancellationToken cancellationToken = default);
+        Task<Maybe<IUser>> FindByUserBySecurityToken(Guid requestToken, DateTime whenHappened, CancellationToken cancellationToken);
     }
 }

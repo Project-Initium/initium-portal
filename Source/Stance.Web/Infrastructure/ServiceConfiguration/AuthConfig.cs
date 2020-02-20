@@ -10,7 +10,7 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
     public static class AuthConfig
     {
         public static IServiceCollection AddCustomizedAuthentication(
-            this IServiceCollection services, IConfigurationRoot configuration)
+            this IServiceCollection services)
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
                 .AddCookie(options => { options.LoginPath = "/sign-in"; })

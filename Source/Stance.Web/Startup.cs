@@ -35,7 +35,7 @@ namespace Stance.Web
                 .AddCustomizedMediatR()
                 .AddSettings(this.Configuration)
                 .AddCustomizedMvc()
-                .AddCustomizedAuthentication(this.Configuration);
+                .AddCustomizedAuthentication();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

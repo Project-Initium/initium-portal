@@ -8,6 +8,6 @@ namespace Stance.Core.Constants
         Failure,
         Success,
         EmailMfaRequested,
-        EmailMfaFailed
+        EmailMfaFailed,
     }
 }
