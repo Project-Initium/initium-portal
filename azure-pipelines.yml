@@ -23,7 +23,7 @@ steps:
       displayName: Publish Test Results coverage/xunit-report.xml
       inputs:
         testResultsFormat: XUnit
-        testResultsFiles: **/xunit-report.xml
+        testResultsFiles: '**/xunit-report.xml'
       continueOnError: true
     - task: PublishCodeCoverageResults@1
       displayName: Publish code coverage from coverage/cobertura-coverage.xml
