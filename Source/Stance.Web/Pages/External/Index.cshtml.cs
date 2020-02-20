@@ -7,8 +7,5 @@ namespace Stance.Web.Pages.External
 {
     public class Index : PageModel
     {
-        public void OnGet()
-        {
-        }
     }
 }

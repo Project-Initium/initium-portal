@@ -9,8 +9,5 @@ namespace Stance.Web.Pages.App
     [Authorize]
     public class Index : PageModel
     {
-        public void OnGet()
-        {
-        }
     }
 }

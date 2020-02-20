@@ -35,7 +35,8 @@ namespace Stance.Tests.Web.Infrastructure.Extensions
 
         private class ModelStateChecker
         {
-            public string Name { get; set; }
+            [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S3459:Unassigned members should be removed", Justification = "Used as part of unit testing")]
+            public string Name { get; }
         }
     }
 }
