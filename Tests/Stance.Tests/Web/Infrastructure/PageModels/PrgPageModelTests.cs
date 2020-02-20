@@ -549,7 +549,7 @@ namespace Stance.Tests.Web.Infrastructure.PageModels
             public class Model
             {
                 [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S3459:Unassigned members should be removed", Justification = "Used as part of unit testing")]
-                public string Name { get; }
+                public string Name { get; set; }
             }
         }
     }

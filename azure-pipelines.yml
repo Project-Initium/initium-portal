@@ -23,12 +23,14 @@ steps:
       displayName: Publish Test Results coverage/xunit-report.xml
       inputs:
         testResultsFormat: XUnit
-        testResultsFiles: build/build-artifacts/cover/xunit-report.xml
+        testResultsFiles: **/xunit-report.xml
+      condition: always()
     - task: PublishCodeCoverageResults@1
       displayName: Publish code coverage from coverage/cobertura-coverage.xml
       inputs:
         codeCoverageTool: Cobertura
         summaryFileLocation: build/build-artifacts/cover/coverage.cobertura.xml
+      condition: always()
     - task: SonarCloudAnalyze@1
     - task: SonarCloudPublish@1
       inputs:
