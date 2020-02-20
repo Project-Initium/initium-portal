@@ -40,6 +40,6 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         void ChangePassword(string passwordHash);
 
-        void CompleteTokenLifecycle(Guid convertedToken, DateTime whenHappened);
+        void CompleteTokenLifecycle(Guid token, DateTime whenHappened);
     }
 }

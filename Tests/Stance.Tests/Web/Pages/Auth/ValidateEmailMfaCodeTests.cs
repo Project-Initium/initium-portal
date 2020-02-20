@@ -33,7 +33,7 @@ namespace Stance.Tests.Web.Pages.Auth
 
             var result = await page.OnPost();
 
-            var pageResult = Assert.IsType<RedirectToPageResult>(result);
+            Assert.IsType<RedirectToPageResult>(result);
             Assert.Equal(PrgState.InError, page.PrgState);
         }
 

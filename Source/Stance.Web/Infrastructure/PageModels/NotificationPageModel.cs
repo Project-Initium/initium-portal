@@ -20,20 +20,17 @@ namespace Stance.Web.Infrastructure.PageModels
         public override void OnPageHandlerExecuting(PageHandlerExecutingContext context)
         {
             base.OnPageHandlerExecuting(context);
-            if (!(context.Result is RedirectToPageResult))
+            if (!(context.Result is RedirectToPageResult) && this.TempData[$"{Key}PageNotifications"] is string serializedPageNotifications)
             {
-                if (this.TempData[$"{Key}PageNotifications"] is string serializedPageNotifications)
+                if (context.Result == null)
                 {
-                    if (context.Result == null)
-                    {
-                        var notifications =
-                            JsonConvert.DeserializeObject<List<PageNotification>>(serializedPageNotifications);
-                        this._pageNotifications.AddRange(notifications);
-                    }
-                    else
-                    {
-                        this.TempData.Remove($"{Key}PageNotifications");
-                    }
+                    var notifications =
+                        JsonConvert.DeserializeObject<List<PageNotification>>(serializedPageNotifications);
+                    this._pageNotifications.AddRange(notifications);
+                }
+                else
+                {
+                    this.TempData.Remove($"{Key}PageNotifications");
                 }
             }
         }

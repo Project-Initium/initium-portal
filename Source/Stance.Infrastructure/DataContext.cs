@@ -8,7 +8,6 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Stance.Core.Contracts.Domain;
-using Stance.Domain.AggregatesModel;
 using Stance.Domain.AggregatesModel.UserAggregate;
 
 namespace Stance.Infrastructure

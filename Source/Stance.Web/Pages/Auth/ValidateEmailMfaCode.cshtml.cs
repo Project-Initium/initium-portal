@@ -24,10 +24,6 @@ namespace Stance.Web.Pages.Auth
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        public void OnGet()
-        {
-        }
-
         public async Task<IActionResult> OnPost()
         {
             if (!this.ModelState.IsValid)

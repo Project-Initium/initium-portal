@@ -13,6 +13,7 @@ steps:
         projectKey: DeviousCreation_stance
         extraProperties: |
           sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+          sonar.exclusions=**\Resources\Themes\**
     - task: Cake@0
       inputs:
         script: Build/build.cake

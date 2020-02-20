@@ -7,8 +7,5 @@ namespace Stance.Web.Pages.FirstRun
 {
     public class SetupCompleted : PageModel
     {
-        public void OnGet()
-        {
-        }
     }
 }
