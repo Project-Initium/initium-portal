@@ -26,6 +26,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         IReadOnlyList<AuthenticationHistory> AuthenticationHistories { get; }
 
+        IReadOnlyList<SecurityTokenMapping> SecurityTokenMappings { get; }
+
         Guid SecurityStamp { get; }
 
         void ProcessSuccessfulAuthenticationAttempt(DateTime whenAttempted);
@@ -33,5 +35,11 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         void ProcessPartialSuccessfulAuthenticationAttempt(DateTime whenAttempted, AuthenticationHistoryType stage);
 
         void ProcessUnsuccessfulAuthenticationAttempt(DateTime whenAttempted, bool applyLock);
+
+        void GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration);
+
+        void ChangePassword(string passwordHash);
+
+        void CompleteTokenLifecycle(Guid convertedToken, DateTime whenHappened);
     }
 }

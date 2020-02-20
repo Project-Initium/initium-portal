@@ -2,10 +2,13 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Stance.Core.Contracts.Domain;
 using Stance.Domain.AggregatesModel.UserAggregate;
 
@@ -53,9 +56,21 @@ namespace Stance.Infrastructure.Repositories
 
         public async Task<Maybe<IUser>> FindByEmailAddress(string emailAddress, CancellationToken cancellationToken = default)
         {
-            var user = await this._context.Users.SingleOrDefaultAsync(x => x.EmailAddress == emailAddress, cancellationToken);
+            var user = await this.WithRelatedData().SingleOrDefaultAsync(x => x.EmailAddress == emailAddress, cancellationToken);
             await this.Refresh(user);
             return Maybe.From<IUser>(user);
+        }
+
+        public async Task<Maybe<IUser>> FindByUserBySecurityToken(Guid tokenId, DateTime expiryDate, CancellationToken cancellationToken)
+        {
+            var user = await this.WithRelatedData().SingleOrDefaultAsync(x => x.SecurityTokenMappings.Any(y => y.Id == tokenId && y.WhenExpires > expiryDate), cancellationToken);
+            await this.Refresh(user);
+            return Maybe.From<IUser>(user);
+        }
+
+        private IIncludableQueryable<User, IReadOnlyList<SecurityTokenMapping>> WithRelatedData()
+        {
+            return this._context.Users.Include(x => x.SecurityTokenMappings);
         }
 
         private async Task Refresh(IUser user)

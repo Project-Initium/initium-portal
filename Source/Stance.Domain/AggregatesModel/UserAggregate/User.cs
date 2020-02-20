@@ -3,14 +3,17 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Stance.Core.Constants;
 using Stance.Core.Domain;
+using Stance.Domain.Events;
 
 namespace Stance.Domain.AggregatesModel.UserAggregate
 {
     public sealed class User : Entity, IUser
     {
         private readonly List<AuthenticationHistory> _authenticationHistories;
+        private readonly List<SecurityTokenMapping> _securityTokenMappings;
 
         public User(Guid id, string emailAddress, string passwordHash, bool isLockable, DateTime whenCreated)
         {
@@ -22,11 +25,13 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this.SecurityStamp = Guid.NewGuid();
 
             this._authenticationHistories = new List<AuthenticationHistory>();
+            this._securityTokenMappings = new List<SecurityTokenMapping>();
         }
 
         private User()
         {
             this._authenticationHistories = new List<AuthenticationHistory>();
+            this._securityTokenMappings = new List<SecurityTokenMapping>();
         }
 
         public string EmailAddress { get; private set; }
@@ -47,6 +52,9 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         public IReadOnlyList<AuthenticationHistory> AuthenticationHistories =>
             this._authenticationHistories.AsReadOnly();
+
+        public IReadOnlyList<SecurityTokenMapping> SecurityTokenMappings =>
+            this._securityTokenMappings.AsReadOnly();
 
         public void ProcessSuccessfulAuthenticationAttempt(DateTime whenAttempted)
         {
@@ -69,6 +77,33 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             {
                 this.WhenLocked = whenAttempted;
             }
+        }
+
+        public void GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration)
+        {
+            var token =
+                this._securityTokenMappings.FirstOrDefault(m =>
+                    m.WhenUsed == null && m.WhenExpires >= whenRequest &&
+                    m.Purpose == SecurityTokenMapping.SecurityTokenPurpose.PasswordReset);
+            if (token == null)
+            {
+                token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenMapping.SecurityTokenPurpose.PasswordReset, whenRequest,
+                    whenRequest.Add(duration));
+                this._securityTokenMappings.Add(token);
+            }
+
+            this.AddDomainEvent(new PasswordResetTokenGeneratedEvent(this.Id, this.EmailAddress, token.Token));
+        }
+
+        public void ChangePassword(string passwordHash)
+        {
+            this.PasswordHash = passwordHash;
+        }
+
+        public void CompleteTokenLifecycle(Guid token, DateTime whenHappened)
+        {
+            var securityTokenMapping = this._securityTokenMappings.First(x => x.Id == token);
+            securityTokenMapping.MarkUsed(whenHappened);
         }
     }
 }
