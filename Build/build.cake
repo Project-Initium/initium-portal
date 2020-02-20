@@ -1,5 +1,6 @@
 #addin "nuget:?package=Cake.Npm&version=0.17.0"
 #addin "nuget:?package=Cake.Coverlet&version=2.4.2"
+#tool "nuget:?package=GitVersion.CommandLine&version=5.1.3"
 
 var target = Argument<string>("target", "Default");
 var buildPath = Directory("./build-artifacts");
@@ -28,6 +29,15 @@ Task("__Clean")
         CreateDirectory(releasePath);
         CreateDirectory(publishPath);
         CreateDirectory(coverPath);   
+    });
+
+Task("__Versioning")
+    .Does(() => {
+        var version = GitVersion(new GitVersionSettings {
+            UpdateAssemblyInfo = true
+        });
+    
+        TFBuild.Commands.UpdateBuildNumber(version.SemVer);
     });
 
 Task("__RestorePackages")
@@ -96,6 +106,7 @@ Task("__Package")
 
 Task("Build")
     .IsDependentOn("__Clean")
+    .IsDependentOn("__Versioning")    
     .IsDependentOn("__RestorePackages")
     .IsDependentOn("__Build")
     .IsDependentOn("__Test")
