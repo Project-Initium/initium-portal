@@ -3,6 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <Configurations>Debug;Release;</Configurations>
+    <ProjectGuid>6e2156c6-9eca-42de-9e71-0fc34d26c71c</ProjectGuid>
   </PropertyGroup>
 
   <Import Project="..\..\Shared\Stance.Shared\Stance.Shared.projitems" Label="Shared" />
@@ -10,6 +11,10 @@
   <ItemGroup>
     <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
     <PackageReference Include="MediatR" Version="8.0.0" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.3.0.14607">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
