@@ -1,12 +1,13 @@
 const 
     path = require('path'),
+    webpack = require('webpack'),
     MiniCssExtractPlugin = require('mini-css-extract-plugin'),
     {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
 module.exports = {
     entry: {
         theme: ['./Resources/Styles/theme.sass'],
-        app: ['./Resources/Styles/app.sass']
+        app: ['./Resources/Scripts/app.ts','./Resources/Styles/app.sass']
     },
     output: {
         filename: '[name].js',
@@ -14,6 +15,10 @@ module.exports = {
     },
     module: {
         rules: [
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader'
+            },
             {
                 test: /\.s[ac]ss$/i,
                 use: [
@@ -41,6 +46,12 @@ module.exports = {
             filename: '[name].css',
             chunkFilename: '[id].css',
             ignoreOrder: false
+        }),
+        new webpack.ProvidePlugin({
+            $: "jquery",
+            jQuery: "jquery",
+            'window.jQuery': 'jquery',
+            'window.$': 'jquery',
         })
     ]
 }

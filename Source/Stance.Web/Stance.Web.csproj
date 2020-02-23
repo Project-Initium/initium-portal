@@ -34,4 +34,8 @@
     <ProjectReference Include="..\Stance.Infrastructure\Stance.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\Scripts\" />
+  </ItemGroup>
+
 </Project>

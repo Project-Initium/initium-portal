@@ -11,5 +11,6 @@ namespace Stance.Web.Infrastructure.Constants
         public const string AuthEmailMfa = "/Auth/ValidateEmailMfaCode";
 
         public const string AuthRequestPassword = "/Auth/RequestPassword";
+        public const string AuthSignOut = "/Auth/SignOut";
     }
 }

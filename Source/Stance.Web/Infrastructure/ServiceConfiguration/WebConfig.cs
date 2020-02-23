@@ -21,6 +21,11 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
                     fv.RegisterValidatorsFromAssemblyContaining<InitialUserSetup.Validator>();
                     fv.ImplicitlyValidateChildProperties = true;
                 })
+                .AddRazorOptions(options =>
+                {
+                    options.ViewLocationFormats.Add("/{0}.cshtml");
+                    options.PageViewLocationFormats.Add("/{0}.cshtml");
+                })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
             services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddControllers();
