@@ -4,6 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <Configurations>Debug;Release;</Configurations>
     <ProjectGuid>118dde70-b2cd-4114-ad23-d23e053f3b05</ProjectGuid>
+    <TypeScriptCompileBlocked>True</TypeScriptCompileBlocked>
   </PropertyGroup>
 
   <Import Project="..\..\Shared\Stance.Shared\Stance.Shared.projitems" Label="Shared" />
@@ -32,6 +33,10 @@
     <ProjectReference Include="..\Stance.Domain\Stance.Domain.csproj" />
     <ProjectReference Include="..\Stance.Queries\Stance.Queries.csproj" />
     <ProjectReference Include="..\Stance.Infrastructure\Stance.Infrastructure.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Resources\Scripts\" />
   </ItemGroup>
 
 </Project>

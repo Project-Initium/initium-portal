@@ -16,6 +16,7 @@ namespace Stance.Core.Domain
 
         public List<INotification> DomainEvents { get; private set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Blocker Code Smell", "S3875:\"operator==\" should not be overloaded on reference types", Justification = "Initially suppressing everything before evaluating what's wanted and what's appropriate.")]
         public static bool operator ==(Entity left, Entity right)
         {
             return left?.Equals(right) ?? Equals(right, null);
