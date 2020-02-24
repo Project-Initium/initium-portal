@@ -68,6 +68,15 @@ namespace Stance.Infrastructure
                     .ValueGeneratedNever();
                 securityTokenMappings.Ignore(securityTokenMapping => securityTokenMapping.DomainEvents);
             });
+
+            users.OwnsOne(user => user.Profile, profile =>
+            {
+                profile.ToTable("profile", "identity");
+                profile.WithOwner().HasForeignKey(x => x.Id);
+                profile.HasKey(e => e.Id);
+                profile.Property(x => x.Id).HasColumnName("UserId");
+                profile.Ignore(b => b.DomainEvents);
+            });
         }
     }
 }

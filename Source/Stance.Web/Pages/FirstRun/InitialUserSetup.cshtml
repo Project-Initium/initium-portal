@@ -28,6 +28,18 @@
                         <span class="text-danger" asp-validation-for="PageModel.PasswordConfirmation"></span>
                     </div>
 
+                    <div class="form-group">
+                        <label asp-for="PageModel.FirstName"></label>
+                        <input class="form-control" asp-for="PageModel.FirstName" type="text">
+                        <span class="text-danger" asp-validation-for="PageModel.FirstName"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="PageModel.LastName"></label>
+                        <input class="form-control" asp-for="PageModel.LastName" type="text">
+                        <span class="text-danger" asp-validation-for="PageModel.LastName"></span>
+                    </div>
+
                     <div class="form-group text-center mt-3">
                         <div class="col-xs-12">
                             <button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Setup</button>

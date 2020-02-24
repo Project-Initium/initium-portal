@@ -15,7 +15,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         private readonly List<AuthenticationHistory> _authenticationHistories;
         private readonly List<SecurityTokenMapping> _securityTokenMappings;
 
-        public User(Guid id, string emailAddress, string passwordHash, bool isLockable, DateTime whenCreated)
+        public User(Guid id, string emailAddress, string passwordHash, bool isLockable, DateTime whenCreated, string firstName, string lastName)
         {
             this.Id = id;
             this.EmailAddress = emailAddress;
@@ -23,6 +23,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this.WhenCreated = whenCreated;
             this.IsLockable = isLockable;
             this.SecurityStamp = Guid.NewGuid();
+
+            this.Profile = new Profile(this.Id, firstName, lastName);
 
             this._authenticationHistories = new List<AuthenticationHistory>();
             this._securityTokenMappings = new List<SecurityTokenMapping>();
@@ -47,6 +49,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         public DateTime? WhenLocked { get; private set; }
 
         public Guid SecurityStamp { get; private set; }
+
+        public Profile Profile { get; private set; }
 
         public int AttemptsSinceLastAuthentication { get; private set; }
 
@@ -104,6 +108,11 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         {
             var securityTokenMapping = this._securityTokenMappings.First(x => x.Id == token);
             securityTokenMapping.MarkUsed(whenHappened);
+        }
+
+        public void UpdateProfile(string firstName, string lastName)
+        {
+            this.Profile.UpdateProfile(firstName, lastName);
         }
     }
 }

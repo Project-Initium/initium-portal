@@ -46,7 +46,7 @@ namespace Stance.Web.Pages.FirstRun
 
             var result =
                 await this._mediator.Send(new CreateInitialUserCommand(
-                    this.PageModel.EmailAddress, this.PageModel.Password));
+                    this.PageModel.EmailAddress, this.PageModel.Password, this.PageModel.FirstName, this.PageModel.LastName));
 
             if (result.IsFailure)
             {
@@ -66,6 +66,12 @@ namespace Stance.Web.Pages.FirstRun
 
             [Display(Name = "Password Confirmation")]
             public string PasswordConfirmation { get; set; }
+
+            [Display(Name = "First Name")]
+            public string FirstName { get; set; }
+
+            [Display(Name = "Last Name")]
+            public string LastName { get; set; }
         }
 
         public class Validator : AbstractValidator<Model>

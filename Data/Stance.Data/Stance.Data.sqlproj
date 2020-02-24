@@ -76,5 +76,6 @@
     <Build Include="Identity\Tables\User.sql" />
     <Build Include="Identity\Tables\AuthenticationHistory.sql" />
     <Build Include="Identity\Tables\SecurityTokenMapping.sql" />
+    <Build Include="Identity\Tables\Profile.sql" />
   </ItemGroup>
 </Project>
