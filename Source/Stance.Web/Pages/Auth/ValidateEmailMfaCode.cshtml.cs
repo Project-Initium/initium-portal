@@ -35,7 +35,7 @@ namespace Stance.Web.Pages.Auth
             if (result.IsSuccess)
             {
                 var returnUrl = await this.HttpContext.SignInUserFromPartialStateAsync(
-                    new HttpContextExtensions.UserProfile(result.Value.UserId, result.Value.EmailAddress));
+                    new HttpContextExtensions.UserProfile(result.Value.UserId, result.Value.EmailAddress, result.Value.FirstName, result.Value.LastName));
 
                 if (string.IsNullOrEmpty(returnUrl))
                 {

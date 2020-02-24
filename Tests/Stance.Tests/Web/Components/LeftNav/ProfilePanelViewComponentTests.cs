@@ -9,12 +9,12 @@ using Microsoft.AspNetCore.Mvc.ViewComponents;
 using Moq;
 using Stance.Core;
 using Stance.Core.Contracts;
-using Stance.Web.Components.TopNav;
+using Stance.Web.Components.ProfilePanel;
 using Xunit;
 
 namespace Stance.Tests.Web.Components.LeftNav
 {
-    public class TopNavViewComponentTests
+    public class ProfilePanelViewComponentTests
     {
         [Fact]
         public void Invoke_GivenUserIsAuthenticated_ExpectViewWithPopulatedModel()
@@ -25,17 +25,17 @@ namespace Stance.Tests.Web.Components.LeftNav
                     new AuthenticatedUser(Guid.Empty, new string('*', 3), new string('*', 4), new string('*', 5))));
 
             var httpContext = new DefaultHttpContext();
-            var viewContext = new ViewContext {HttpContext = httpContext};
+            var viewContext = new ViewContext { HttpContext = httpContext };
             var viewComponentContext = new ViewComponentContext { ViewContext = viewContext };
 
-            var topNavViewComponent = new TopNavViewComponent(currentAuthenticatedUserProvider.Object)
+            var component = new ProfilePanelViewComponent(currentAuthenticatedUserProvider.Object)
             {
                 ViewComponentContext = viewComponentContext,
             };
 
-            var result = topNavViewComponent.Invoke();
+            var result = component.Invoke();
             var viewResult = Assert.IsType<ViewViewComponentResult>(result);
-            var model = Assert.IsType<TopNavViewModel>(viewResult.ViewData.Model);
+            var model = Assert.IsType<ProfilePanelViewModel>(viewResult.ViewData.Model);
             Assert.Equal(new string('*', 3), model.EmailAddress);
             Assert.Equal($"{new string('*', 4)} {new string('*', 5)}", model.Name);
         }
@@ -51,14 +51,14 @@ namespace Stance.Tests.Web.Components.LeftNav
             var viewContext = new ViewContext { HttpContext = httpContext };
             var viewComponentContext = new ViewComponentContext { ViewContext = viewContext };
 
-            var topNavViewComponent = new TopNavViewComponent(currentAuthenticatedUserProvider.Object)
+            var component = new ProfilePanelViewComponent(currentAuthenticatedUserProvider.Object)
             {
                 ViewComponentContext = viewComponentContext,
             };
 
-            var result = topNavViewComponent.Invoke();
+            var result = component.Invoke();
             var viewResult = Assert.IsType<ViewViewComponentResult>(result);
-            var model = Assert.IsType<TopNavViewModel>(viewResult.ViewData.Model);
+            var model = Assert.IsType<ProfilePanelViewModel>(viewResult.ViewData.Model);
             Assert.Equal(string.Empty, model.EmailAddress);
             Assert.Equal(string.Empty, model.Name);
         }

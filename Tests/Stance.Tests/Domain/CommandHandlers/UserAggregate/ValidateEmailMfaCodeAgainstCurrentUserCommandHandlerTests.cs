@@ -27,6 +27,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         {
             var securityStamp = Guid.NewGuid();
             var user = new Mock<IUser>();
+            user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
             user.Setup(x => x.SecurityStamp).Returns(securityStamp);
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -59,6 +60,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var securityStamp = Guid.NewGuid();
             var user = new Mock<IUser>();
             user.Setup(x => x.SecurityStamp).Returns(securityStamp);
+            user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -165,6 +167,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.Id).Returns(userId);
             user.Setup(x => x.EmailAddress).Returns(new string('*', 5));
             user.Setup(x => x.SecurityStamp).Returns(securityStamp);
+            user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);

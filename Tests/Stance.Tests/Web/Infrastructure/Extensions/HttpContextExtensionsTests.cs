@@ -20,15 +20,6 @@ namespace Stance.Tests.Web.Infrastructure.Extensions
         {
             var userId = Guid.NewGuid();
             var authServiceMock = new Mock<IAuthenticationService>();
-            authServiceMock
-                .Setup(x => x.SignInAsync(It.IsAny<HttpContext>(), It.IsAny<string>(), It.IsAny<ClaimsPrincipal>(),
-                    It.IsAny<AuthenticationProperties>()))
-                .Callback((HttpContext c, string s, ClaimsPrincipal p, AuthenticationProperties a) =>
-                {
-                    Assert.Contains(p.Claims, x => x.Type == ClaimTypes.Upn && x.Value == userId.ToString());
-                    Assert.Contains(p.Claims, x => x.Type == ClaimTypes.Email && x.Value == new string('*', 6));
-                })
-                .Returns(Task.CompletedTask);
             var serviceProviderMock = new Mock<IServiceProvider>();
             serviceProviderMock
                 .Setup(_ => _.GetService(typeof(IAuthenticationService)))
@@ -38,7 +29,7 @@ namespace Stance.Tests.Web.Infrastructure.Extensions
             {
                 RequestServices = serviceProviderMock.Object,
             };
-            await httpContext.SignInUserAsync(new HttpContextExtensions.UserProfile(userId, new string('*', 6)));
+            await httpContext.SignInUserAsync(new HttpContextExtensions.UserProfile(userId, new string('*', 6), new string('*', 7), new string('*', 8)));
 
             authServiceMock.Verify(
                 x => x.SignInAsync(
@@ -46,7 +37,7 @@ namespace Stance.Tests.Web.Infrastructure.Extensions
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     It.Is<ClaimsPrincipal>(x =>
                         x.HasClaim(c => c.Type == ClaimTypes.Upn && c.Value == userId.ToString()) &&
-                        x.HasClaim(c => c.Type == ClaimTypes.Email && c.Value == new string('*', 6))),
+                        x.HasClaim(c => c.Type == ClaimTypes.UserData)),
                     It.IsAny<AuthenticationProperties>()), Times.Once);
         }
 
@@ -63,16 +54,14 @@ namespace Stance.Tests.Web.Infrastructure.Extensions
             {
                 RequestServices = serviceProviderMock.Object,
             };
-            await httpContext.SignInUserPartiallyAsync(
-                new HttpContextExtensions.UserProfile(userId, new string('*', 6)));
+            await httpContext.SignInUserPartiallyAsync(userId);
 
             authServiceMock.Verify(
                 x => x.SignInAsync(
                     It.IsAny<HttpContext>(),
                     "login-partial",
                     It.Is<ClaimsPrincipal>(x =>
-                        x.HasClaim(c => c.Type == ClaimTypes.Upn && c.Value == userId.ToString()) &&
-                        x.HasClaim(c => c.Type == ClaimTypes.Email && c.Value == new string('*', 6)) &&
+                        x.HasClaim(c => c.Type == ClaimTypes.Anonymous && c.Value == userId.ToString()) &&
                         !x.HasClaim(c => c.Type == ClaimTypes.UserData)),
                     It.IsAny<AuthenticationProperties>()), Times.Once);
         }
@@ -90,16 +79,14 @@ namespace Stance.Tests.Web.Infrastructure.Extensions
             {
                 RequestServices = serviceProviderMock.Object,
             };
-            await httpContext.SignInUserPartiallyAsync(
-                new HttpContextExtensions.UserProfile(userId, new string('*', 6)), new string('*', 7));
+            await httpContext.SignInUserPartiallyAsync(userId, new string('*', 6));
 
             authServiceMock.Verify(
                 x => x.SignInAsync(
                     It.IsAny<HttpContext>(),
                     "login-partial",
                     It.Is<ClaimsPrincipal>(x =>
-                        x.HasClaim(c => c.Type == ClaimTypes.Upn && c.Value == userId.ToString()) &&
-                        x.HasClaim(c => c.Type == ClaimTypes.Email && c.Value == new string('*', 6)) &&
+                        x.HasClaim(c => c.Type == ClaimTypes.Anonymous && c.Value == userId.ToString()) &&
                         x.HasClaim(c => c.Type == ClaimTypes.UserData)),
                     It.IsAny<AuthenticationProperties>()), Times.Once);
         }

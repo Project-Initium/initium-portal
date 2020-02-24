@@ -6,8 +6,10 @@ using System.Linq;
 using System.Security.Claims;
 using MaybeMonad;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 using Stance.Core;
 using Stance.Core.Contracts;
+using Stance.Web.Infrastructure.Extensions;
 
 namespace Stance.Web.Infrastructure
 {
@@ -29,15 +31,24 @@ namespace Stance.Web.Infrastructure
                     return Maybe<AuthenticatedUser>.Nothing;
                 }
 
-                if (!this._httpContextAccessor.HttpContext.User.HasClaim(x => x.Type == ClaimTypes.Upn))
+                if (this._httpContextAccessor.HttpContext.User.HasClaim(x => x.Type == ClaimTypes.Anonymous))
                 {
-                    return Maybe<AuthenticatedUser>.Nothing;
+                    var userId = Guid.Parse(this._httpContextAccessor.HttpContext.User.Claims
+                        .First(x => x.Type == ClaimTypes.Anonymous).Value);
+                    return Maybe.From(new AuthenticatedUser(userId));
                 }
 
-                var userId = Guid.Parse(this._httpContextAccessor.HttpContext.User.Claims
-                    .First(x => x.Type == ClaimTypes.Upn).Value);
+                if (this._httpContextAccessor.HttpContext.User.HasClaim(x => x.Type == ClaimTypes.Upn))
+                {
+                    var profileJson = this._httpContextAccessor.HttpContext.User.Claims
+                        .First(x => x.Type == ClaimTypes.UserData).Value;
 
-                return Maybe.From(new AuthenticatedUser(userId));
+                    var profile = JsonConvert.DeserializeObject<HttpContextExtensions.UserProfile>(profileJson);
+
+                    return Maybe.From(new AuthenticatedUser(profile.UserId, profile.EmailAddress, profile.FirstName, profile.LastName));
+                }
+
+                return Maybe<AuthenticatedUser>.Nothing;
             }
         }
     }

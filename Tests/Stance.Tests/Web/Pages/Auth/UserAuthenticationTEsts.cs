@@ -72,7 +72,7 @@ namespace Stance.Tests.Web.Pages.Auth
             mediator.Setup(x => x.Send(It.IsAny<AuthenticateUserCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() =>
                     Result.Ok<AuthenticateUserCommandResult, ErrorData>(
-                        new AuthenticateUserCommandResult(Guid.NewGuid(), new string('*', 6))));
+                        new AuthenticateUserCommandResult(Guid.NewGuid(), new string('*', 6), new string('*', 7), new string('*', 8))));
 
             var authServiceMock = new Mock<IAuthenticationService>();
             authServiceMock
@@ -115,7 +115,7 @@ namespace Stance.Tests.Web.Pages.Auth
             mediator.Setup(x => x.Send(It.IsAny<AuthenticateUserCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() =>
                     Result.Ok<AuthenticateUserCommandResult, ErrorData>(
-                        new AuthenticateUserCommandResult(Guid.NewGuid(), new string('*', 6))));
+                        new AuthenticateUserCommandResult(Guid.NewGuid(), new string('*', 6), new string('*', 7), new string('*', 8))));
 
             var authServiceMock = new Mock<IAuthenticationService>();
             authServiceMock

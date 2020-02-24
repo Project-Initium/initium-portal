@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
+using Newtonsoft.Json;
 
 namespace Stance.Web.Infrastructure.Extensions
 {
@@ -19,7 +20,7 @@ namespace Stance.Web.Infrastructure.Extensions
             var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.Upn, userProfile.UserId.ToString()),
-                new Claim(ClaimTypes.Email, userProfile.EmailAddress),
+                new Claim(ClaimTypes.UserData, JsonConvert.SerializeObject(userProfile, Formatting.None)),
             };
 
             var claimsIdentity = new ClaimsIdentity(
@@ -33,13 +34,12 @@ namespace Stance.Web.Infrastructure.Extensions
                 authProperties);
         }
 
-        internal static async Task SignInUserPartiallyAsync(this HttpContext httpContext, UserProfile userProfile,
+        internal static async Task SignInUserPartiallyAsync(this HttpContext httpContext, Guid userId,
             string returnUrl = null)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Upn, userProfile.UserId.ToString()),
-                new Claim(ClaimTypes.Email, userProfile.EmailAddress),
+                new Claim(ClaimTypes.Anonymous, userId.ToString()),
             };
 
             if (!string.IsNullOrWhiteSpace(returnUrl))
@@ -64,15 +64,22 @@ namespace Stance.Web.Infrastructure.Extensions
 
         internal class UserProfile
         {
-            public UserProfile(Guid userId, string emailAddress)
+            [JsonConstructor]
+            public UserProfile(Guid userId, string emailAddress, string firstName, string lastName)
             {
                 this.UserId = userId;
                 this.EmailAddress = emailAddress;
+                this.FirstName = firstName;
+                this.LastName = lastName;
             }
 
             public Guid UserId { get; }
 
             public string EmailAddress { get; }
+
+            public string FirstName { get; }
+
+            public string LastName { get; }
         }
     }
 }
