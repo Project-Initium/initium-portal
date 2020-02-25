@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Stance.Infrastructure;
+using Stance.Queries.OData;
 
 namespace Stance.Web.Infrastructure.ServiceConfiguration
 {
@@ -16,6 +17,10 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
             services.AddDistributedMemoryCache();
             services.AddEntityFrameworkSqlServer()
                 .AddDbContext<DataContext>(options =>
+                {
+                    options.UseSqlServer(configuration["query:connectionString"]);
+                });
+            services.AddDbContext<ODataContext>(options =>
                 {
                     options.UseSqlServer(configuration["query:connectionString"]);
                 });
