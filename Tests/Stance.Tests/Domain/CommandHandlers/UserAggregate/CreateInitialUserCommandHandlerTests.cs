@@ -33,7 +33,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => new StatusCheckModel(true));
 
             var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);
-            var cmd = new CreateInitialUserCommand(new string('*', 5), new string('*', 6));
+            var cmd = new CreateInitialUserCommand(new string('*', 5), new string('*', 6), new string('*', 7), new string('*', 8));
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -54,7 +54,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => new StatusCheckModel(false));
 
             var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);
-            var cmd = new CreateInitialUserCommand(new string('*', 5), new string('*', 6));
+            var cmd = new CreateInitialUserCommand(new string('*', 5), new string('*', 6), new string('*', 7), new string('*', 8));
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
@@ -74,7 +74,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => new StatusCheckModel(true));
 
             var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);
-            var cmd = new CreateInitialUserCommand(new string('*', 5), new string('*', 6));
+            var cmd = new CreateInitialUserCommand(new string('*', 5), new string('*', 6), new string('*', 7), new string('*', 8));
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -98,7 +98,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => new StatusCheckModel(false));
 
             var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);
-            var cmd = new CreateInitialUserCommand(new string('*', 5), password);
+            var cmd = new CreateInitialUserCommand(new string('*', 5), password, new string('*', 7), new string('*', 8));
             await handler.Handle(cmd, CancellationToken.None);
         }
     }

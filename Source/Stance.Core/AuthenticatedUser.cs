@@ -12,6 +12,20 @@ namespace Stance.Core
             this.UserId = userId;
         }
 
+        public AuthenticatedUser(Guid userId, string emailAddress, string firstName, string lastName)
+        {
+            this.UserId = userId;
+            this.EmailAddress = emailAddress;
+            this.FirstName = firstName;
+            this.LastName = lastName;
+        }
+
         public Guid UserId { get; }
+
+        public string EmailAddress { get; }
+
+        public string FirstName { get; }
+
+        public string LastName { get; }
     }
 }

@@ -22,7 +22,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 new string('*', 5),
                 new string('*', 6),
                 true,
-                whenCreated);
+                whenCreated,
+                new string('*', 7),
+                new string('*', 8));
 
             Assert.Equal(id, user.Id);
             Assert.Equal(new string('*', 5), user.EmailAddress);
@@ -33,6 +35,8 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
             Assert.Null(user.WhenLocked);
             Assert.Equal(0, user.AttemptsSinceLastAuthentication);
             Assert.True(user.IsLockable);
+            Assert.Equal(new string('*', 7), user.Profile.FirstName);
+            Assert.Equal(new string('*', 8), user.Profile.LastName);
         }
 
         [Fact]
@@ -43,7 +47,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 new string('*', 5),
                 new string('*', 6),
                 true,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8));
 
             var whenAttempted = DateTime.UtcNow;
             user.ProcessUnsuccessfulAuthenticationAttempt(whenAttempted, false);
@@ -69,7 +75,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 new string('*', 5),
                 new string('*', 6),
                 true,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8));
 
             var whenAttempted = DateTime.UtcNow;
             user.ProcessUnsuccessfulAuthenticationAttempt(whenAttempted, false);
@@ -90,7 +98,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 new string('*', 5),
                 new string('*', 6),
                 true,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8));
 
             var whenAttempted = DateTime.UtcNow;
             user.ProcessUnsuccessfulAuthenticationAttempt(whenAttempted, true);
@@ -112,7 +122,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 new string('*', 5),
                 new string('*', 6),
                 false,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8));
 
             var whenAttempted = DateTime.UtcNow;
             user.ProcessUnsuccessfulAuthenticationAttempt(whenAttempted, true);
@@ -134,7 +146,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 new string('*', 5),
                 new string('*', 6),
                 false,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8));
 
             var whenAttempted = DateTime.UtcNow;
 
@@ -157,7 +171,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 new string('*', 5),
                 new string('*', 6),
                 false,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8));
 
             user.ChangePassword(new string('*', 7));
 
@@ -172,7 +188,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 new string('*', 5),
                 new string('*', 6),
                 false,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8));
 
             var whenRequested = DateTime.UtcNow;
             user.GenerateNewPasswordResetToken(whenRequested, TimeSpan.FromHours(1));
@@ -191,7 +209,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 new string('*', 5),
                 new string('*', 6),
                 false,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8));
 
             var whenRequested = DateTime.UtcNow;
             user.GenerateNewPasswordResetToken(whenRequested, TimeSpan.FromHours(1));
@@ -213,7 +233,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 new string('*', 5),
                 new string('*', 6),
                 false,
-                DateTime.UtcNow);
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8));
 
             user.GenerateNewPasswordResetToken(DateTime.UtcNow, TimeSpan.FromHours(1));
 
@@ -227,6 +249,24 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
 
             Assert.Equal(2, user.DomainEvents.Count);
             Assert.IsType<PasswordResetTokenGeneratedEvent>(user.DomainEvents.Last());
+        }
+
+        [Fact]
+        public void UpdateProfile_GivenValidArguments_ExpectProfileToBeUpdated()
+        {
+            var user = new User(
+                Guid.NewGuid(),
+                new string('*', 5),
+                new string('*', 6),
+                false,
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8));
+
+            user.UpdateProfile(new string('*', 9), new string('*', 10));
+
+            Assert.Equal(new string('*', 9), user.Profile.FirstName);
+            Assert.Equal(new string('*', 10), user.Profile.LastName);
         }
     }
 }

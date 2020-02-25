@@ -5,13 +5,13 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Core.Contracts;
 
-namespace Stance.Web.Components.TopNav
+namespace Stance.Web.Components.ProfilePanel
 {
-    public class TopNavViewComponent : ViewComponent
+    public class ProfilePanelViewComponent : ViewComponent
     {
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
-        public TopNavViewComponent(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
+        public ProfilePanelViewComponent(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
         }
@@ -21,10 +21,10 @@ namespace Stance.Web.Components.TopNav
             var currentUser = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
             if (currentUser.HasNoValue)
             {
-                return this.View(new TopNavViewModel());
+                return this.View(new ProfilePanelViewModel());
             }
 
-            return this.View(new TopNavViewModel(
+            return this.View(new ProfilePanelViewModel(
                 currentUser.Value.EmailAddress,
                 $"{currentUser.Value.FirstName} {currentUser.Value.LastName}"));
         }

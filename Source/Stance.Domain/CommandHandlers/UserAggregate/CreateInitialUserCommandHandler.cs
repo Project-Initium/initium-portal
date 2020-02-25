@@ -54,7 +54,8 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             }
 
             var user = new User(Guid.NewGuid(), request.EmailAddress, BCrypt.Net.BCrypt.HashPassword(request.Password),
-                true, this._clock.GetCurrentInstant().ToDateTimeUtc());
+                true, this._clock.GetCurrentInstant().ToDateTimeUtc(),
+                request.FirstName, request.LastName);
 
             this._userRepository.Add(user);
             return ResultWithError.Ok<ErrorData>();

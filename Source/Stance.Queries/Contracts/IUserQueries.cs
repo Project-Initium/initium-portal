@@ -3,12 +3,16 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using MaybeMonad;
 using Stance.Queries.Models;
+using Stance.Queries.Models.User;
 
 namespace Stance.Queries.Contracts
 {
     public interface IUserQueries
     {
         Task<StatusCheckModel> CheckForPresenceOfAnyUser(CancellationToken cancellationToken = default);
+
+        Task<Maybe<ProfileModel>> GetProfileForCurrentUser(CancellationToken cancellationToken = default);
     }
 }

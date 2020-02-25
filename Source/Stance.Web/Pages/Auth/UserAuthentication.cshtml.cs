@@ -47,7 +47,9 @@ namespace Stance.Web.Pages.Auth
                 {
                     await this.HttpContext.SignInUserAsync(new HttpContextExtensions.UserProfile(
                         result.Value.UserId,
-                        result.Value.EmailAddress));
+                        result.Value.EmailAddress,
+                        result.Value.FirstName,
+                        result.Value.LastName));
 
                     if (string.IsNullOrEmpty(this.ReturnUrl))
                     {
@@ -57,10 +59,7 @@ namespace Stance.Web.Pages.Auth
                     return this.LocalRedirect(this.ReturnUrl);
                 }
 
-                await this.HttpContext.SignInUserPartiallyAsync(
-                    new HttpContextExtensions.UserProfile(
-                    result.Value.UserId,
-                    result.Value.EmailAddress), this.ReturnUrl);
+                await this.HttpContext.SignInUserPartiallyAsync(result.Value.UserId, this.ReturnUrl);
 
                 return this.RedirectToPage(PageLocations.AuthEmailMfa);
             }

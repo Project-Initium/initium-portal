@@ -7,13 +7,13 @@ namespace Stance.Domain.CommandResults.UserAggregate
 {
     public class AuthenticateUserCommandResult : BaseAuthenticationProcessCommandResult
     {
-        public AuthenticateUserCommandResult(Guid userId, string emailAddress)
-            : base(userId, emailAddress)
+        public AuthenticateUserCommandResult(Guid userId, string emailAddress, string firstName, string lastName)
+            : base(userId, emailAddress, firstName, lastName)
         {
         }
 
-        public AuthenticateUserCommandResult(Guid userId, string emailAddress, AuthenticationState authenticationStatus)
-            : base(userId, emailAddress, authenticationStatus)
+        public AuthenticateUserCommandResult(Guid userId, AuthenticationState authenticationStatus)
+            : base(userId, authenticationStatus)
         {
         }
     }

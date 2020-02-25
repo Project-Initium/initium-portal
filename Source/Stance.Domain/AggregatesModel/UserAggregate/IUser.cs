@@ -30,6 +30,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         Guid SecurityStamp { get; }
 
+        Profile Profile { get; }
+
         void ProcessSuccessfulAuthenticationAttempt(DateTime whenAttempted);
 
         void ProcessPartialSuccessfulAuthenticationAttempt(DateTime whenAttempted, AuthenticationHistoryType stage);
@@ -41,5 +43,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         void ChangePassword(string passwordHash);
 
         void CompleteTokenLifecycle(Guid token, DateTime whenHappened);
+
+        void UpdateProfile(string firstName, string lastName);
     }
 }
