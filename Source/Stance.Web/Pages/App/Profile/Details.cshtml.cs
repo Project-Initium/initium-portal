@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
@@ -62,8 +63,10 @@ namespace Stance.Web.Pages.App.Profile
 
         public class Model
         {
+            [Display(Name = "First Name")]
             public string FirstName { get; set; }
 
+            [Display(Name = "Last Name")]
             public string LastName { get; set; }
         }
 

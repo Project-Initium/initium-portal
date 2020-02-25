@@ -25,7 +25,7 @@ namespace Stance.Tests.Web.Components.LeftNav
                     new AuthenticatedUser(Guid.Empty, new string('*', 3), new string('*', 4), new string('*', 5))));
 
             var httpContext = new DefaultHttpContext();
-            var viewContext = new ViewContext {HttpContext = httpContext};
+            var viewContext = new ViewContext { HttpContext = httpContext };
             var viewComponentContext = new ViewComponentContext { ViewContext = viewContext };
 
             var topNavViewComponent = new TopNavViewComponent(currentAuthenticatedUserProvider.Object)
