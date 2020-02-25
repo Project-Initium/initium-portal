@@ -14,5 +14,7 @@ namespace Stance.Queries.Contracts
         Task<StatusCheckModel> CheckForPresenceOfAnyUser(CancellationToken cancellationToken = default);
 
         Task<Maybe<ProfileModel>> GetProfileForCurrentUser(CancellationToken cancellationToken = default);
+
+        Task<StatusCheckModel> CheckForPresenceOfUserByEmailAddress(string emailAddress, CancellationToken cancellationToken = default);
     }
 }

@@ -73,5 +73,22 @@ namespace Stance.Queries
             var dataItems = res as ProfileDto[] ?? res.ToArray();
             return dataItems.Length != 1 ? Maybe<ProfileModel>.Nothing : Maybe.From(new ProfileModel(dataItems.First().FirstName, dataItems.First().LastName));
         }
+
+        public async Task<StatusCheckModel> CheckForPresenceOfUserByEmailAddress(string emailAddress, CancellationToken cancellationToken = default)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("emailAddress", emailAddress, DbType.Guid);
+
+            var command = new CommandDefinition(
+                "select top 1 id from [identity].[user] where emailAddress = @emailAddress",
+                cancellationToken: cancellationToken);
+
+            using var connection = new SqlConnection(this._querySettings.ConnectionString);
+            connection.Open();
+
+            var res = await connection.QueryAsync<PresenceCheckDto<Guid>>(command);
+            var dataItems = res as PresenceCheckDto<Guid>[] ?? res.ToArray();
+            return new StatusCheckModel(dataItems.Length > 0);
+        }
     }
 }
