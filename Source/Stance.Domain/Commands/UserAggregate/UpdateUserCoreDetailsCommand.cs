@@ -1,0 +1,33 @@
+﻿// Copyright (c) DeviousCreation. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using System;
+using MediatR;
+using ResultMonad;
+using Stance.Core.Domain;
+
+namespace Stance.Domain.Commands.UserAggregate
+{
+    public class UpdateUserCoreDetailsCommand : IRequest<ResultWithError<ErrorData>>
+    {
+        public UpdateUserCoreDetailsCommand(Guid userId, string emailAddress, string firstName, string lastName,
+            bool isLockable)
+        {
+            this.UserId = userId;
+            this.EmailAddress = emailAddress;
+            this.FirstName = firstName;
+            this.LastName = lastName;
+            this.IsLockable = isLockable;
+        }
+
+        public Guid UserId { get; }
+
+        public string EmailAddress { get; }
+
+        public string FirstName { get; }
+
+        public string LastName { get; }
+
+        public bool IsLockable { get; }
+    }
+}
