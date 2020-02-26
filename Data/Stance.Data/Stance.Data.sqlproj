@@ -72,6 +72,8 @@
     <Folder Include="Identity\Tables" />
     <Folder Include="ReadAggregation" />
     <Folder Include="ReadAggregation\Views" />
+    <Folder Include="AccessProtection" />
+    <Folder Include="AccessProtection\Tables" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Security\Schemas\Identity.sql" />
@@ -81,5 +83,12 @@
     <Build Include="Identity\Tables\Profile.sql" />
     <Build Include="Security\Schemas\ReadAggregation.sql" />
     <Build Include="ReadAggregation\Views\vwUser.sql" />
+    <Build Include="Security\Schemas\AccessProtection.sql" />
+    <Build Include="AccessProtection\Tables\Resource.sql" />
+    <Build Include="AccessProtection\Tables\Role.sql" />
+    <Build Include="AccessProtection\Tables\RoleResource.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Stance.Data.refactorlog" />
   </ItemGroup>
 </Project>
