@@ -114,5 +114,11 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         {
             this.Profile.UpdateProfile(firstName, lastName);
         }
+
+        public void UpdateSystemAccessDetails(string emailAddress, bool isLockable)
+        {
+            this.EmailAddress = emailAddress;
+            this.IsLockable = isLockable;
+        }
     }
 }

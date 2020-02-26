@@ -1,0 +1,64 @@
+﻿@page "/app/user-management/users/create"
+@using Stance.Web.Infrastructure.Constants
+@model Stance.Web.Pages.App.UserManagement.Users.CreateUser
+@{
+    Layout = "Shared/_AppLayout";
+}
+
+        <div class="row page-titles">
+            <div class="col-md-5 col-8 align-self-center">
+                <h3 class="text-themecolor m-b-0 m-t-0">Create User</h3>
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+                    <li class="breadcrumb-item">User Management</li>
+                    <li class="breadcrumb-item"><a asp-page="@PageLocations.UserListing">Users</a></li>
+                    <li class="breadcrumb-item active">Create New User</li>
+                </ol>
+            </div>
+        </div>
+        <form method="post">
+            <div class="row">
+                <div class="col-12">
+                    <!-- Column -->
+                    <div class="card card-outline-info">
+                        <div class="card-header">
+                            <h4 class="mb-0 text-white">Details</h4>
+                        </div>
+                        <div class="card-body">
+                            <div class="form-group">
+                                <label asp-for="PageModel.EmailAddress"></label>
+                                <input class="form-control" asp-for="PageModel.EmailAddress" />
+                                <span class="text-danger" asp-validation-for="PageModel.EmailAddress"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="PageModel.FirstName"></label>
+                                <input class="form-control" asp-for="PageModel.FirstName" />
+                                <span class="text-danger" asp-validation-for="PageModel.FirstName"></span>
+                            </div>
+                            <div class="form-group">
+                                <label asp-for="PageModel.LastName"></label>
+                                <input class="form-control" asp-for="PageModel.LastName" />
+                                <span class="text-danger" asp-validation-for="PageModel.LastName"></span>
+                            </div>
+                            <div class="form-check pl-0">
+                                <input asp-for="PageModel.IsLockable" class="form-check-input filled-in" type="checkbox" data-val="false">
+                                <label class="form-check-label" asp-for="PageModel.IsLockable"></label>
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                
+
+            </div>
+            <div class="row">
+                <div class="col-6">
+                    <a class="btn btn-secondary cancel" asp-page="@PageLocations.AppDashboard">Go Back</a>
+                </div>
+                <div class="col-6 text-right">
+                    <button class="btn btn-info text-white mr-2" type="submit">Create</button>
+                </div>
+            </div>
+        </form>

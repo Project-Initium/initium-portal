@@ -268,5 +268,22 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
             Assert.Equal(new string('*', 9), user.Profile.FirstName);
             Assert.Equal(new string('*', 10), user.Profile.LastName);
         }
+
+        [Fact]
+        public void UpdateSystemAccessDetails_GivenValidArguments_ExpectPropertiesToBeUpdated()
+        {
+            var user = new User(
+                Guid.NewGuid(),
+                new string('*', 5),
+                new string('*', 6),
+                false,
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8));
+
+            user.UpdateSystemAccessDetails(new string('+', 5), true);
+            Assert.Equal(new string('+', 5), user.EmailAddress);
+            Assert.True(user.IsLockable);
+        }
     }
 }

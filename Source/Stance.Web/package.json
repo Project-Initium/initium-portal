@@ -12,7 +12,10 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
+    "@types/datatables.net": "^1.10.18",
+    "@types/jquery": "^3.3.33",
     "bootstrap": "^4.4.1",
+    "datatables.net-bs4": "^1.10.20",
     "jquery": "^3.4.1",
     "popper.js": "^1.16.1",
     "themify-icons": "^1.0.0"

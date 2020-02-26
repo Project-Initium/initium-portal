@@ -70,6 +70,8 @@
     <Folder Include="Security\Schemas" />
     <Folder Include="Identity" />
     <Folder Include="Identity\Tables" />
+    <Folder Include="ReadAggregation" />
+    <Folder Include="ReadAggregation\Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Security\Schemas\Identity.sql" />
@@ -77,5 +79,7 @@
     <Build Include="Identity\Tables\AuthenticationHistory.sql" />
     <Build Include="Identity\Tables\SecurityTokenMapping.sql" />
     <Build Include="Identity\Tables\Profile.sql" />
+    <Build Include="Security\Schemas\ReadAggregation.sql" />
+    <Build Include="ReadAggregation\Views\vwUser.sql" />
   </ItemGroup>
 </Project>

@@ -48,11 +48,7 @@ namespace Stance.Web
                 .UseAuthentication()
                 .UseAuthorization()
                 .UseStackify(env)
-                .UseEndpoints(endpoints =>
-                {
-                    endpoints.MapRazorPages();
-                    endpoints.MapControllerRoute("areaRoute", "{area:exists}/{controller=Home}/{action=Index}/{id?}");
-                });
+                .UseCustomizedEndpoints();
         }
     }
 }

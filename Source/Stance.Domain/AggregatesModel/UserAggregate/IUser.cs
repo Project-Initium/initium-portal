@@ -45,5 +45,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         void CompleteTokenLifecycle(Guid token, DateTime whenHappened);
 
         void UpdateProfile(string firstName, string lastName);
+
+        void UpdateSystemAccessDetails(string emailAddress, bool isLockable);
     }
 }
