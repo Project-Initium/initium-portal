@@ -38,11 +38,6 @@ namespace Stance.Web.Pages.App.UserManagement.Users
 
         public async Task<IActionResult> OnGetAsync()
         {
-            if (this.PageModel != null)
-            {
-                this.Id = this.PageModel.Id;
-            }
-
             var userMaybe = await this._userQueries.GetDetailsOfUserById(this.Id);
             if (userMaybe.HasNoValue)
             {

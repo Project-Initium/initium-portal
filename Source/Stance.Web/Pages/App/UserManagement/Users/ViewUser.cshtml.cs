@@ -24,7 +24,7 @@ namespace Stance.Web.Pages.App.UserManagement.Users
 
         public DetailedUserModel DetailedUser { get; private set; }
 
-        public async Task<IActionResult> OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
             var userMaybe = await this._userQueries.GetDetailsOfUserById(this.Id);
             if (userMaybe.HasNoValue)
