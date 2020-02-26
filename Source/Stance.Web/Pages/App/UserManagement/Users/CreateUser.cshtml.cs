@@ -7,6 +7,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.UserManagement.Users
@@ -32,7 +33,7 @@ namespace Stance.Web.Pages.App.UserManagement.Users
 
             if (result.IsSuccess)
             {
-                return this.RedirectToPage("");
+                return this.RedirectToPage(PageLocations.UserListing);
             }
 
             this.PrgState = PrgState.Failed;

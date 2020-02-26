@@ -1,0 +1,74 @@
+﻿@page "/app/user-management/users/view/{id}"
+@using Stance.Web.Infrastructure.Constants
+@model Stance.Web.Pages.App.UserManagement.Users.ViewUser
+@{
+    Layout = "Shared/_AppLayout";
+}
+
+<div class="row page-titles">
+    <div class="col-md-5 col-8 align-self-center">
+        <h3 class="text-themecolor m-b-0 m-t-0">View User</h3>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.UserListing">Users</a></li>
+            <li class="breadcrumb-item active">Viewing User @Model.DetailedUser.FirstName @Model.DetailedUser.LastName</li>
+        </ol>
+    </div>
+</div>
+
+    <div class="row">
+        <div class="col-7">
+            <!-- Column -->
+            <div class="card card-outline-info">
+                <div class="card-header">
+                    <h4 class="mb-0 text-white">Details</h4>
+                </div>
+                <div class="card-body">
+                    <div class="form-group">
+                        <label asp-for="DetailedUser.EmailAddress"></label>
+                        <input readonly class="form-control-plaintext"  asp-for="DetailedUser.EmailAddress" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DetailedUser.FirstName"></label>
+                        <input readonly class="form-control-plaintext"  asp-for="DetailedUser.FirstName" />
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="DetailedUser.LastName"></label>
+                        <input readonly class="form-control-plaintext"  asp-for="DetailedUser.LastName" />
+                    </div>
+                    
+                </div>
+            </div>
+
+
+        </div>
+        <div class="col-5">
+            <div class="card card-outline-info">
+                <div class="card-header">
+                    <h4 class="mb-0 text-white">User Activity</h4>
+                </div>
+                <div class="card-body">
+                    <dl>
+                        <dt>Date Created</dt>
+                        <dd>@Model.DetailedUser.WhenCreated</dd>
+                        <dt>Authentication Status</dt>
+                        <dd>@(Model.DetailedUser.WhenLastAuthenticated.HasValue ? Model.DetailedUser.WhenLastAuthenticated.ToString() : "Never Authenticated")</dd>
+                        <dt>Locked Status</dt>
+                        <dd>@(Model.DetailedUser.IsLockable ? Model.DetailedUser.WhenLocked.HasValue ? Model.DetailedUser.WhenLocked.ToString() : "Not Locked" : "User is not lockable")</dd>
+                    </dl>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+    <div class="row">
+        <div class="col-6">
+            <a class="btn btn-secondary cancel" asp-page="@PageLocations.UserListing">Go Back</a>
+        </div>
+        <div class="col-6 text-right">
+            <a class="btn btn-info text-white mr-2" asp-page="@PageLocations.UserEdit" asp-route-id="@Model.DetailedUser.UserId">Edit</a>
+        </div>
+    </div>

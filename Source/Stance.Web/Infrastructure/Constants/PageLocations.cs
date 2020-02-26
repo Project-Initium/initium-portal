@@ -13,5 +13,11 @@ namespace Stance.Web.Infrastructure.Constants
         public const string AuthRequestPassword = "/Auth/RequestPassword";
         public const string AuthSignOut = "/Auth/SignOut";
         public const string AppProfileDetails = "/App/Profile/Details";
+
+        public const string UserListing = "/App/UserManagement/Users/ListUsers";
+        public const string UserCreate = "/App/UserManagement/Users/CreateUser";
+        public const string UserEdit = "/App/UserManagement/Users/EditUser";
+
+        public const string UserView = "/App/UserManagement/Users/ViewUser";
     }
 }

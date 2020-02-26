@@ -21,10 +21,9 @@ export class UsersList {
         $('#users').DataTable({
             processing: true,
             serverSide: true,
-            ajax: DataTablesODataProvider.providerFunction('/odata/user'),
+            ajax: DataTablesODataProvider.providerFunction($('#users').data('route')),
             columns: [
                 { data: "EmailAddress" },
-                { data: "Username" },
                 {
                     data: "Id",
                     render: (data: any, type: any, row: any, meta: DataTables.CellMetaSettings) => contextThis.renderActions(data, type, row, meta)
