@@ -1,0 +1,51 @@
+﻿@page "/app/user-management/roles"
+@using Stance.Web.Infrastructure.Constants
+@model Stance.Web.Pages.App.UserManagement.Roles.ListRoles
+@{
+
+}
+
+    <div class="row page-titles">
+        <div class="col-md-5 col-8 align-self-center">
+            <h3 class="text-themecolor m-b-0 m-t-0">Users</h3>
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+                <li class="breadcrumb-item">User Management</li>
+                <li class="breadcrumb-item active">Roles</li>
+            </ol>
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-12">
+            <!-- Column -->
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">Role Management</h3>
+                    <h6 class="card-subtitle">Create new, edit existing, or delete roles</h6>
+                    <div class="table-responsive">
+                        <table class="table" id="resources">
+                            <thead>
+                                <tr>
+                                    <th>@Html.DisplayName("Name")</th>
+                                    <th>@Html.DisplayName("Resource Total")</th>
+
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-between">
+                            <div class="mr-auto">
+                                <a asp-page="@PageLocations.RoleCreate" class="btn btn-info text-white">Create new role</a>
+                            </div>
+                            <nav aria-label="Page navigation ml-auto">
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>

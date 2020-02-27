@@ -91,4 +91,7 @@
   <ItemGroup>
     <RefactorLog Include="Stance.Data.refactorlog" />
   </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Script.PostDeployment.sql" />
+  </ItemGroup>
 </Project>
