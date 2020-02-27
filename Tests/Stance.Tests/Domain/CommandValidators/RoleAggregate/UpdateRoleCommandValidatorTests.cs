@@ -59,7 +59,5 @@ namespace Stance.Tests.Domain.CommandValidators.RoleAggregate
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
                            failure.PropertyName == "Name");
         }
-
-
     }
 }

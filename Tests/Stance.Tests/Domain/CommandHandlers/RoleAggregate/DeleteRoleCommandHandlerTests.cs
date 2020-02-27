@@ -29,7 +29,8 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Maybe<IRole>.Nothing);
+            roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe<IRole>.Nothing);
             var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object);
             var cmd = new DeleteRoleCommand(Guid.Empty);
 
@@ -50,14 +51,15 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Maybe.From(role.Object));
+            roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(role.Object));
             var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object);
             var cmd = new DeleteRoleCommand(Guid.Empty);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
-            roleRepository.Verify(x=>x.Delete(It.IsAny<IRole>()));
+            roleRepository.Verify(x => x.Delete(It.IsAny<IRole>()));
         }
 
         [Fact]
@@ -71,7 +73,8 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Maybe.From(role.Object));
+            roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(role.Object));
             var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object);
             var cmd = new DeleteRoleCommand(Guid.Empty);
 
@@ -92,7 +95,8 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Maybe.From(role.Object));
+            roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(role.Object));
             var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object);
             var cmd = new DeleteRoleCommand(Guid.Empty);
 
@@ -113,7 +117,8 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Maybe.From(role.Object));
+            roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(role.Object));
             var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object);
             var cmd = new DeleteRoleCommand(Guid.Empty);
 

@@ -95,7 +95,6 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
         [Fact]
         public async Task Handle_GivenRoleDoesNotExist_ExpectFailedResult()
         {
-            
             var roleQueries = new Mock<IRoleQueries>();
             roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
