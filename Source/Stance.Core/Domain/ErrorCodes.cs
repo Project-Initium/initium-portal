@@ -11,5 +11,8 @@ namespace Stance.Core.Domain
         AuthenticationFailed = 4,
         MfaCodeNotValid = 5,
         UserAlreadyExists = 6,
+        RoleAlreadyExists = 7,
+        RoleNotFound = 8,
+        RoleInUse = 9,
     }
 }

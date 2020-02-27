@@ -8,6 +8,7 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Stance.Core.Contracts.Domain;
+using Stance.Domain.AggregatesModel.RoleAggregate;
 using Stance.Domain.AggregatesModel.UserAggregate;
 
 namespace Stance.Infrastructure
@@ -24,6 +25,8 @@ namespace Stance.Infrastructure
 
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Role> Roles { get; set; }
+
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
             await this.SaveChangesAsync(cancellationToken);
@@ -36,6 +39,27 @@ namespace Stance.Infrastructure
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.Entity<User>(this.ConfigureUser);
+            modelBuilder.Entity<Role>(this.ConfigureRole);
+        }
+
+        private void ConfigureRole(EntityTypeBuilder<Role> roles)
+        {
+            roles.ToTable("role", "accessProtection");
+            roles.HasKey(entity => entity.Id);
+            roles.Ignore(b => b.DomainEvents);
+            roles.Property(e => e.Id).ValueGeneratedNever();
+
+            var navigation = roles.Metadata.FindNavigation(nameof(Role.RoleResources));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            roles.OwnsMany(role => role.RoleResources, roleResources =>
+            {
+                roleResources.ToTable("roleResource", "accessProtection");
+                roleResources.HasKey(entity => entity.Id);
+                roleResources.Property(e => e.Id).ValueGeneratedNever();
+                roleResources.Property(x => x.Id).HasColumnName("resourceId");
+                roleResources.Ignore(b => b.DomainEvents);
+            });
         }
 
         private void ConfigureUser(EntityTypeBuilder<User> users)
@@ -74,7 +98,7 @@ namespace Stance.Infrastructure
                 profile.ToTable("profile", "identity");
                 profile.WithOwner().HasForeignKey(x => x.Id);
                 profile.HasKey(e => e.Id);
-                profile.Property(x => x.Id).HasColumnName("UserId");
+                profile.Property(x => x.Id).HasColumnName("userId");
                 profile.Ignore(b => b.DomainEvents);
             });
         }

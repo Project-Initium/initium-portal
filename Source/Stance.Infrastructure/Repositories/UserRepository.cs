@@ -38,7 +38,7 @@ namespace Stance.Infrastructure.Repositories
 
         public async Task<Maybe<IUser>> Find(Guid userId, CancellationToken cancellationToken = default)
         {
-            var user = await this._context.Users.FindAsync(new object[] { userId }, cancellationToken);
+            var user = await this.WithRelatedData().SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
             await this.Refresh(user);
             return Maybe.From<IUser>(user);
         }
