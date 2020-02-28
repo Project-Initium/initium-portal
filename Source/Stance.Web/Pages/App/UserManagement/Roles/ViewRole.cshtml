@@ -1,0 +1,62 @@
+﻿@page
+@using Stance.Web.Infrastructure.Constants
+@model Stance.Web.Pages.App.UserManagement.Roles.ViewRole
+@{
+    Layout = "Shared/_AppLayout";
+}
+
+
+<div class="row page-titles">
+    <div class="col-md-5 col-8 align-self-center">
+        <h3 class="text-themecolor m-b-0 m-t-0">Create Role</h3>
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a asp-page="@PageLocations.AppDashboard">Home</a>
+            </li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.RoleListing"></a>Roles</li>
+            <li class="breadcrumb-item active">View Role</li>
+        </ol>
+    </div>
+</div>
+
+@foreach (var resource in Model.Role.Resources)
+{
+    <input type="hidden" name="pagemodel.resources" value="@resource" />
+}
+<div class="row">
+    <div class="col-7">
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="mb-0 text-white">Details</h4>
+            </div>
+            <div class="card-body">
+                <div class="form-group">
+                    <label class="control-label" asp-for="Role.Name"></label>
+                    <input class="form-control" asp-for="Role.Name" />
+                    <span class="text-danger" asp-validation-for="Role.Name"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-5">
+        <div class="card card-outline-info">
+            <div class="card-header">
+                <h4 class="mb-0 text-white">Resources</h4>
+            </div>
+            <div class="card-body">
+                <div id="tree" data-route="@Url.Action("GetNestResources", "Resource")"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6">
+        <a class="btn btn-secondary cancel" asp-page="@PageLocations.RoleListing">Go Back</a>
+    </div>
+    <div class="col-6 text-right">
+        <button class="btn btn-info text-white mr-2" type="submit">Create</button>
+    </div>
+</div>

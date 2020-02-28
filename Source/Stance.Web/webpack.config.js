@@ -7,8 +7,10 @@ const
 module.exports = {
     entry: {
         theme: ['./Resources/Styles/theme.sass'],
-        app: ['./Resources/Scripts/app.ts','./Resources/Styles/app.sass'],
+        'vendors-styles': './Resources/Styles/vendors.sass',
+        app: ['./Resources/Scripts/app.ts', './Resources/Styles/app.sass'],
         'user-listing': './Resources/Scripts/pages/users-list.ts',
+        'role-create': './Resources/Scripts/pages/role-create.ts',
     },
     devtool: 'inline-source-map',
     output: {
@@ -29,13 +31,29 @@ module.exports = {
                 use: 'ts-loader'
             },
             {
-                test: /\.s[ac]ss$/i,
+                test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
+                 use: 'file-loader'
+            },
+            {
+                test: /theme\.s[ac]ss$/i,
                 use: [
                     MiniCssExtractPlugin.loader,
-                    'css-loader',
+                    'css-loader',                    
                     'sass-loader'
                 ]
             }, 
+            {
+                test: /\.s[ac]ss$/i,
+                exclude: /theme\.s[ac]ss$/i,
+                //include: [/node_modules/],
+
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'css-loader', 
+                    'resolve-url-loader',             
+                    'sass-loader'
+                ]
+            },            
             {
                 test: /\.(png|svg|jpg|gif)$/,
                 use: [
