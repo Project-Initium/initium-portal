@@ -115,5 +115,24 @@ namespace Stance.Queries
 
             return Maybe.From(new List<SimpleResourceModel>(items.Where(n => n.ParentId == Guid.Empty)));
         }
+
+        public async Task<Maybe<List<SimpleRoleModel>>> GetSimpleRoles(CancellationToken cancellationToken = default)
+        {
+            var command = new CommandDefinition(
+                "SELECT Id, Name FROM [AccessProtection].[Role]",
+                cancellationToken: cancellationToken);
+
+            using var connection = new SqlConnection(this._querySettings.ConnectionString);
+            connection.Open();
+
+            var res = await connection.QueryAsync<SimpleRoleDto>(command);
+            var dtos = res as SimpleRoleDto[] ?? res.ToArray();
+            if (dtos.Length < 1)
+            {
+                return Maybe<List<SimpleRoleModel>>.Nothing;
+            }
+
+            return Maybe.From(new List<SimpleRoleModel>(dtos.Select(x => new SimpleRoleModel(x.Id, x.Name))));
+        }
     }
 }

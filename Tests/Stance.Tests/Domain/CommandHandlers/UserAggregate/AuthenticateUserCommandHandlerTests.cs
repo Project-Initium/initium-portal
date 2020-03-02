@@ -187,7 +187,6 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             Assert.True(result.IsSuccess);
             Assert.Equal(userId, result.Value.UserId);
-            Assert.Equal(new string('*', 5), result.Value.EmailAddress);
             Assert.Equal(BaseAuthenticationProcessCommandResult.AuthenticationState.Completed, result.Value.AuthenticationStatus);
             user.Verify(x => x.ProcessSuccessfulAuthenticationAttempt(It.IsAny<DateTime>()));
         }

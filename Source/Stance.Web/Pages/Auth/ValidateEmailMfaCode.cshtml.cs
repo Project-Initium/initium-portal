@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Infrastructure.Constants;
-using Stance.Web.Infrastructure.Extensions;
+using Stance.Web.Infrastructure.Contracts;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.Auth
@@ -17,11 +17,14 @@ namespace Stance.Web.Pages.Auth
     [Authorize(AuthenticationSchemes = "login-partial")]
     public class ValidateEmailMfaCode : PrgPageModel<ValidateEmailMfaCode.Model>
     {
+        private readonly IAuthenticationService _authenticationService;
         private readonly IMediator _mediator;
 
-        public ValidateEmailMfaCode(IMediator mediator)
+        public ValidateEmailMfaCode(IMediator mediator, IAuthenticationService authenticationService)
         {
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._authenticationService =
+                authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
         }
 
         public async Task<IActionResult> OnPost()
@@ -31,11 +34,11 @@ namespace Stance.Web.Pages.Auth
                 return this.RedirectToPage();
             }
 
-            var result = await this._mediator.Send(new ValidateEmailMfaCodeAgainstCurrentUserCommand(this.PageModel.Code));
+            var result =
+                await this._mediator.Send(new ValidateEmailMfaCodeAgainstCurrentUserCommand(this.PageModel.Code));
             if (result.IsSuccess)
             {
-                var returnUrl = await this.HttpContext.SignInUserFromPartialStateAsync(
-                    new HttpContextExtensions.UserProfile(result.Value.UserId, result.Value.EmailAddress, result.Value.FirstName, result.Value.LastName));
+                var returnUrl = await this._authenticationService.SignInUserFromPartialStateAsync(result.Value.UserId);
 
                 if (string.IsNullOrEmpty(returnUrl))
                 {

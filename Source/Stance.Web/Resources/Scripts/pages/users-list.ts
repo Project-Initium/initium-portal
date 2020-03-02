@@ -15,7 +15,7 @@ export class UsersList {
     }
 
     private rowClicked(event: JQuery.ClickEvent): void {
-        window.location.href = this.detailsUrl.replace('__id__', (<any>this.tableApi.row(event.currentTarget).data()).Id);
+        window.location.href = this.detailsUrl.replace('__ID__', (<any>this.tableApi.row(event.currentTarget).data()).Id);
     }
 
     init() {
@@ -31,7 +31,7 @@ export class UsersList {
                 { data: 'EmailAddress' },
                 { data: 'FirstName' },
                 { data: 'LastName' },
-                { data: 'Locked' },
+                { data: 'IsLocked' },
                 { data: 'WhenLastAuthenticated' },
                 {
                     data: 'Id',

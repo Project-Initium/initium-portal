@@ -73,7 +73,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             user.ProcessSuccessfulAuthenticationAttempt(this._clock.GetCurrentInstant().ToDateTimeUtc());
             return Result.Ok<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>(
-                new ValidateEmailMfaCodeAgainstCurrentUserCommandResult(user.Id, user.EmailAddress, user.Profile.FirstName, user.Profile.LastName));
+                new ValidateEmailMfaCodeAgainstCurrentUserCommandResult(user.Id));
         }
     }
 }

@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Stance.Core.Constants;
 using Stance.Domain.AggregatesModel.UserAggregate;
@@ -24,7 +25,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 true,
                 whenCreated,
                 new string('*', 7),
-                new string('*', 8));
+                new string('*', 8),
+                new List<Guid> { Guid.NewGuid() }.AsReadOnly(),
+                true);
 
             Assert.Equal(id, user.Id);
             Assert.Equal(new string('*', 5), user.EmailAddress);
@@ -35,8 +38,10 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
             Assert.Null(user.WhenLocked);
             Assert.Equal(0, user.AttemptsSinceLastAuthentication);
             Assert.True(user.IsLockable);
+            Assert.True(user.IsAdmin);
             Assert.Equal(new string('*', 7), user.Profile.FirstName);
             Assert.Equal(new string('*', 8), user.Profile.LastName);
+            Assert.Single(user.UserRoles);
         }
 
         [Fact]
@@ -49,7 +54,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 true,
                 DateTime.UtcNow,
                 new string('*', 7),
-                new string('*', 8));
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
 
             var whenAttempted = DateTime.UtcNow;
             user.ProcessUnsuccessfulAuthenticationAttempt(whenAttempted, false);
@@ -77,7 +84,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 true,
                 DateTime.UtcNow,
                 new string('*', 7),
-                new string('*', 8));
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
 
             var whenAttempted = DateTime.UtcNow;
             user.ProcessUnsuccessfulAuthenticationAttempt(whenAttempted, false);
@@ -100,7 +109,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 true,
                 DateTime.UtcNow,
                 new string('*', 7),
-                new string('*', 8));
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
 
             var whenAttempted = DateTime.UtcNow;
             user.ProcessUnsuccessfulAuthenticationAttempt(whenAttempted, true);
@@ -124,7 +135,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 false,
                 DateTime.UtcNow,
                 new string('*', 7),
-                new string('*', 8));
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
 
             var whenAttempted = DateTime.UtcNow;
             user.ProcessUnsuccessfulAuthenticationAttempt(whenAttempted, true);
@@ -148,7 +161,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 false,
                 DateTime.UtcNow,
                 new string('*', 7),
-                new string('*', 8));
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
 
             var whenAttempted = DateTime.UtcNow;
 
@@ -173,7 +188,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 false,
                 DateTime.UtcNow,
                 new string('*', 7),
-                new string('*', 8));
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
 
             user.ChangePassword(new string('*', 7));
 
@@ -190,7 +207,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 false,
                 DateTime.UtcNow,
                 new string('*', 7),
-                new string('*', 8));
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
 
             var whenRequested = DateTime.UtcNow;
             user.GenerateNewPasswordResetToken(whenRequested, TimeSpan.FromHours(1));
@@ -211,7 +230,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 false,
                 DateTime.UtcNow,
                 new string('*', 7),
-                new string('*', 8));
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
 
             var whenRequested = DateTime.UtcNow;
             user.GenerateNewPasswordResetToken(whenRequested, TimeSpan.FromHours(1));
@@ -235,7 +256,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 false,
                 DateTime.UtcNow,
                 new string('*', 7),
-                new string('*', 8));
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
 
             user.GenerateNewPasswordResetToken(DateTime.UtcNow, TimeSpan.FromHours(1));
 
@@ -261,7 +284,9 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 false,
                 DateTime.UtcNow,
                 new string('*', 7),
-                new string('*', 8));
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
 
             user.UpdateProfile(new string('*', 9), new string('*', 10));
 
@@ -279,11 +304,63 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 false,
                 DateTime.UtcNow,
                 new string('*', 7),
-                new string('*', 8));
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
 
             user.UpdateSystemAccessDetails(new string('+', 5), true);
             Assert.Equal(new string('+', 5), user.EmailAddress);
             Assert.True(user.IsLockable);
+        }
+
+        [Fact]
+        public void SetAdminStatus_GivenValidArgument_ExpectAdminStatusChange()
+        {
+            var user = new User(
+                Guid.NewGuid(),
+                new string('*', 5),
+                new string('*', 6),
+                false,
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
+
+            user.SetAdminStatus(false);
+
+            Assert.False(user.IsAdmin);
+        }
+
+        [Fact]
+        public void SetRoles_GiveValidArguments_ExpectRolesToBeUpdated()
+        {
+            var permRole = Guid.NewGuid();
+            var tempRole = Guid.NewGuid();
+            var newRole = Guid.NewGuid();
+            var dupeRole = permRole;
+
+            var user = new User(
+                Guid.NewGuid(),
+                new string('*', 5),
+                new string('*', 6),
+                false,
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8),
+                new List<Guid> { permRole, tempRole }.AsReadOnly(),
+                true);
+
+            user.SetRoles(new List<Guid>
+            {
+                permRole,
+                newRole,
+                dupeRole,
+            });
+
+            Assert.Single(user.UserRoles, x => x.Id == permRole);
+            Assert.Single(user.UserRoles, x => x.Id == newRole);
+            Assert.DoesNotContain(user.UserRoles, role => role.Id == tempRole);
         }
     }
 }

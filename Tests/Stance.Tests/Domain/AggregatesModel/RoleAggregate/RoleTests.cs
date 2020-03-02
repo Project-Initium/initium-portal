@@ -28,7 +28,7 @@ namespace Stance.Tests.Domain.AggregatesModel.RoleAggregate
         }
 
         [Fact]
-        public void SetResources_GiveValidArguments_ExpectResourcesByUpdate()
+        public void SetResources_GiveValidArguments_ExpectResourcesToBeUpdate()
         {
             var permResource = Guid.NewGuid();
             var tempResource = Guid.NewGuid();

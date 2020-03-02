@@ -10,6 +10,7 @@ using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Web.Infrastructure.Contracts;
 using Stance.Web.Infrastructure.PageModels;
 using Stance.Web.Pages.Auth;
 using Xunit;
@@ -28,8 +29,9 @@ namespace Stance.Tests.Web.Pages.Auth
                     It.IsAny<CancellationToken>())).ReturnsAsync(() =>
                     Result.Fail<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>(
                         new ErrorData(ErrorCodes.SavingChanges)));
+            var authenticationService = new Mock<IAuthenticationService>();
 
-            var page = new ValidateEmailMfaCode(mediator.Object) { PageModel = new ValidateEmailMfaCode.Model() };
+            var page = new ValidateEmailMfaCode(mediator.Object, authenticationService.Object) { PageModel = new ValidateEmailMfaCode.Model() };
 
             var result = await page.OnPost();
 
@@ -41,8 +43,8 @@ namespace Stance.Tests.Web.Pages.Auth
         public async Task OnPost_GivenInvalidModelState_ExpectRedirectToPageResult()
         {
             var mediator = new Mock<IMediator>();
-
-            var page = new ValidateEmailMfaCode(mediator.Object);
+            var authenticationService = new Mock<IAuthenticationService>();
+            var page = new ValidateEmailMfaCode(mediator.Object, authenticationService.Object);
             page.ModelState.AddModelError("Error", "Error");
 
             var result = await page.OnPost();

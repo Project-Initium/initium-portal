@@ -96,7 +96,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             user.ProcessSuccessfulAuthenticationAttempt(this._clock.GetCurrentInstant().ToDateTimeUtc());
             return Result.Ok<AuthenticateUserCommandResult, ErrorData>(
-                new AuthenticateUserCommandResult(user.Id, user.EmailAddress, user.Profile.FirstName, user.Profile.LastName));
+                new AuthenticateUserCommandResult(user.Id));
         }
     }
 }

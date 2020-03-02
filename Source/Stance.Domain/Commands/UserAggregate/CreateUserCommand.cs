@@ -6,10 +6,11 @@ using System.Collections.Generic;
 using MediatR;
 using ResultMonad;
 using Stance.Core.Domain;
+using Stance.Domain.CommandResults.UserAggregate;
 
 namespace Stance.Domain.Commands.UserAggregate
 {
-    public class CreateUserCommand : IRequest<ResultWithError<ErrorData>>
+    public class CreateUserCommand : IRequest<Result<CreateUserCommandResult, ErrorData>>
     {
         private readonly List<Guid> _roles;
 

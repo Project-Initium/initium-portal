@@ -2,12 +2,15 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 
 namespace Stance.Queries.Models.User
 {
     public class DetailedUserModel
     {
-        public DetailedUserModel(Guid userId, string emailAddress, string firstName, string lastName, bool isLockable, DateTime whenCreated, DateTime? whenLastAuthenticated, DateTime? whenLocked)
+        private readonly List<Guid> _roles;
+
+        public DetailedUserModel(Guid userId, string emailAddress, string firstName, string lastName, bool isLockable, DateTime whenCreated, DateTime? whenLastAuthenticated, DateTime? whenLocked, bool isAdmin, List<Guid> roles)
         {
             this.UserId = userId;
             this.EmailAddress = emailAddress;
@@ -17,6 +20,8 @@ namespace Stance.Queries.Models.User
             this.WhenCreated = whenCreated;
             this.WhenLastAuthenticated = whenLastAuthenticated;
             this.WhenLocked = whenLocked;
+            this.IsAdmin = isAdmin;
+            this._roles = roles;
         }
 
         public Guid UserId { get; }
@@ -34,5 +39,9 @@ namespace Stance.Queries.Models.User
         public DateTime? WhenLastAuthenticated { get; }
 
         public DateTime? WhenLocked { get; }
+
+        public bool IsAdmin { get; }
+
+        public IReadOnlyList<Guid> Roles => this._roles.AsReadOnly();
     }
 }

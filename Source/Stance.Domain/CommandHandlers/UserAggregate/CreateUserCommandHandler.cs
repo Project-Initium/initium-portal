@@ -10,12 +10,13 @@ using NodaTime;
 using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.UserAggregate;
+using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Queries.Contracts;
 
 namespace Stance.Domain.CommandHandlers.UserAggregate
 {
-    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, ResultWithError<ErrorData>>
+    public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<CreateUserCommandResult, ErrorData>>
     {
         private readonly IClock _clock;
         private readonly IUserQueries _userQueries;
@@ -28,7 +29,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             this._userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
         }
 
-        public async Task<ResultWithError<ErrorData>> Handle(
+        public async Task<Result<CreateUserCommandResult, ErrorData>> Handle(
             CreateUserCommand request, CancellationToken cancellationToken)
         {
             var result = await this.Process(request, cancellationToken);
@@ -36,7 +37,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             if (!dbResult)
             {
-                return ResultWithError.Fail(new ErrorData(
+                return Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(
                     ErrorCodes.SavingChanges, "Failed To Save Database"));
             }
 
@@ -53,20 +54,20 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             }
         }
 
-        private async Task<ResultWithError<ErrorData>> Process(
+        private async Task<Result<CreateUserCommandResult, ErrorData>> Process(
             CreateUserCommand request, CancellationToken cancellationToken)
         {
             var statusCheck =
                 await this._userQueries.CheckForPresenceOfUserByEmailAddress(request.EmailAddress, cancellationToken);
             if (statusCheck.IsPresent)
             {
-                return ResultWithError.Fail(new ErrorData(ErrorCodes.UserAlreadyExists));
+                return Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.UserAlreadyExists));
             }
 
             var user = new User(Guid.NewGuid(), request.EmailAddress, GenerateRandomPassword(), request.IsLockable,
                 this._clock.GetCurrentInstant().ToDateTimeUtc(), request.FirstName, request.LastName, request.Roles, request.IsAdmin);
             this._userRepository.Add(user);
-            return ResultWithError.Ok<ErrorData>();
+            return Result.Ok<CreateUserCommandResult, ErrorData>(new CreateUserCommandResult(user.Id));
         }
     }
 }

@@ -6,19 +6,15 @@ using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Routing;
 using Moq;
 using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Infrastructure.Constants;
+using Stance.Web.Infrastructure.Contracts;
 using Stance.Web.Infrastructure.PageModels;
 using Stance.Web.Pages.Auth;
 using Xunit;
@@ -34,8 +30,9 @@ namespace Stance.Tests.Web.Pages.Auth
             mediator.Setup(x => x.Send(It.IsAny<AuthenticateUserCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() =>
                     Result.Fail<AuthenticateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.SavingChanges)));
+            var authenticationService = new Mock<IAuthenticationService>();
 
-            var page = new UserAuthentication(mediator.Object) { PageModel = new UserAuthentication.Model() };
+            var page = new UserAuthentication(mediator.Object, authenticationService.Object) { PageModel = new UserAuthentication.Model() };
 
             var result = await page.OnPost();
 
@@ -51,8 +48,9 @@ namespace Stance.Tests.Web.Pages.Auth
             mediator.Setup(x => x.Send(It.IsAny<AuthenticateUserCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() =>
                     Result.Fail<AuthenticateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.SavingChanges)));
+            var authenticationService = new Mock<IAuthenticationService>();
 
-            var page = new UserAuthentication(mediator.Object)
+            var page = new UserAuthentication(mediator.Object, authenticationService.Object)
             {
                 PageModel = new UserAuthentication.Model(),
                 ReturnUrl = "some-url",
@@ -72,30 +70,12 @@ namespace Stance.Tests.Web.Pages.Auth
             mediator.Setup(x => x.Send(It.IsAny<AuthenticateUserCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() =>
                     Result.Ok<AuthenticateUserCommandResult, ErrorData>(
-                        new AuthenticateUserCommandResult(Guid.NewGuid(), new string('*', 6), new string('*', 7), new string('*', 8))));
+                        new AuthenticateUserCommandResult(Guid.NewGuid())));
+            var authenticationService = new Mock<IAuthenticationService>();
 
-            var authServiceMock = new Mock<IAuthenticationService>();
-            authServiceMock
-                .Setup(x => x.SignInAsync(It.IsAny<HttpContext>(), It.IsAny<string>(), It.IsAny<ClaimsPrincipal>(),
-                    It.IsAny<AuthenticationProperties>()))
-                .Returns(Task.CompletedTask);
-            var serviceProviderMock = new Mock<IServiceProvider>();
-            serviceProviderMock
-                .Setup(_ => _.GetService(typeof(IAuthenticationService)))
-                .Returns(authServiceMock.Object);
 
-            var httpContext = new DefaultHttpContext
+            var page = new UserAuthentication(mediator.Object, authenticationService.Object)
             {
-                RequestServices = serviceProviderMock.Object,
-            };
-
-            var actionContext = new ActionContext(httpContext, new RouteData(), new PageActionDescriptor(),
-                new ModelStateDictionary());
-            var pageContext = new PageContext(actionContext);
-
-            var page = new UserAuthentication(mediator.Object)
-            {
-                PageContext = pageContext,
                 PageModel = new UserAuthentication.Model(),
             };
 
@@ -103,9 +83,7 @@ namespace Stance.Tests.Web.Pages.Auth
 
             var pageResult = Assert.IsType<RedirectToPageResult>(result);
             Assert.Equal(PageLocations.AppDashboard, pageResult.PageName);
-            authServiceMock.Verify(
-                x => x.SignInAsync(It.IsAny<HttpContext>(), CookieAuthenticationDefaults.AuthenticationScheme,
-                    It.IsAny<ClaimsPrincipal>(), It.IsAny<AuthenticationProperties>()), Times.Once);
+            
         }
 
         [Fact]
@@ -115,30 +93,12 @@ namespace Stance.Tests.Web.Pages.Auth
             mediator.Setup(x => x.Send(It.IsAny<AuthenticateUserCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() =>
                     Result.Ok<AuthenticateUserCommandResult, ErrorData>(
-                        new AuthenticateUserCommandResult(Guid.NewGuid(), new string('*', 6), new string('*', 7), new string('*', 8))));
+                        new AuthenticateUserCommandResult(Guid.NewGuid())));
 
             var authServiceMock = new Mock<IAuthenticationService>();
-            authServiceMock
-                .Setup(x => x.SignInAsync(It.IsAny<HttpContext>(), It.IsAny<string>(), It.IsAny<ClaimsPrincipal>(),
-                    It.IsAny<AuthenticationProperties>()))
-                .Returns(Task.CompletedTask);
-            var serviceProviderMock = new Mock<IServiceProvider>();
-            serviceProviderMock
-                .Setup(_ => _.GetService(typeof(IAuthenticationService)))
-                .Returns(authServiceMock.Object);
-
-            var httpContext = new DefaultHttpContext
+            
+            var page = new UserAuthentication(mediator.Object, authServiceMock.Object)
             {
-                RequestServices = serviceProviderMock.Object,
-            };
-
-            var actionContext = new ActionContext(httpContext, new RouteData(), new PageActionDescriptor(),
-                new ModelStateDictionary());
-            var pageContext = new PageContext(actionContext);
-
-            var page = new UserAuthentication(mediator.Object)
-            {
-                PageContext = pageContext,
                 PageModel = new UserAuthentication.Model(),
                 ReturnUrl = "some-url",
             };
@@ -147,9 +107,6 @@ namespace Stance.Tests.Web.Pages.Auth
 
             var pageResult = Assert.IsType<LocalRedirectResult>(result);
             Assert.Equal("some-url", pageResult.Url);
-            authServiceMock.Verify(
-                x => x.SignInAsync(It.IsAny<HttpContext>(), CookieAuthenticationDefaults.AuthenticationScheme,
-                    It.IsAny<ClaimsPrincipal>(), It.IsAny<AuthenticationProperties>()), Times.Once);
         }
 
         [Fact]
@@ -157,7 +114,9 @@ namespace Stance.Tests.Web.Pages.Auth
         {
             var mediator = new Mock<IMediator>();
 
-            var page = new UserAuthentication(mediator.Object);
+            var authServiceMock = new Mock<IAuthenticationService>();
+
+            var page = new UserAuthentication(mediator.Object, authServiceMock.Object);
             page.ModelState.AddModelError("Error", "Error");
 
             var result = await page.OnPost();
@@ -169,8 +128,9 @@ namespace Stance.Tests.Web.Pages.Auth
             OnPost_GivenInvalidModelStateAndReturnUrlIsNotEmpty_ExpectRedirectToPageResultWithRedirectUrl()
         {
             var mediator = new Mock<IMediator>();
+            var authServiceMock = new Mock<IAuthenticationService>();
 
-            var page = new UserAuthentication(mediator.Object);
+            var page = new UserAuthentication(mediator.Object, authServiceMock.Object);
             page.ModelState.AddModelError("Error", "Error");
 
             page.ReturnUrl = "some-url";

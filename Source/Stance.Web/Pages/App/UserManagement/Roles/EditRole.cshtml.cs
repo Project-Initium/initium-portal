@@ -31,7 +31,7 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
 
         public string Name { get; private set; }
 
-        public async Task<IActionResult> OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
             var roleMaybe = await this._roleQueries.GetDetailsOfRoleById(this.Id);
             if (roleMaybe.HasNoValue)
