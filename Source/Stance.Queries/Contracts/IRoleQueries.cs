@@ -19,7 +19,7 @@ namespace Stance.Queries.Contracts
 
         Task<Maybe<DetailedRoleModel>> GetDetailsOfRoleById(Guid roleId, CancellationToken cancellationToken = default);
 
-        Task<Maybe<List<SimpleResourceModel>>> GetNestedSimpleResources(CancellationToken none = default);
+        Task<Maybe<List<SimpleResourceModel>>> GetNestedSimpleResources(CancellationToken cancellationToken = default);
 
         Task<Maybe<List<SimpleRoleModel>>> GetSimpleRoles(CancellationToken cancellationToken = default);
     }

@@ -1,6 +1,7 @@
-﻿using System;
+﻿// Copyright (c) DeviousCreation. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
 using System.Collections.Generic;
-using System.Text;
 
 namespace Stance.Queries.Models.User
 {
@@ -8,7 +9,8 @@ namespace Stance.Queries.Models.User
     {
         private readonly List<string> _resources;
 
-        public SystemProfileModel(string emailAddress, string firstName, string lastName, bool isAdmin, List<string> resources)
+        public SystemProfileModel(string emailAddress, string firstName, string lastName, bool isAdmin,
+            List<string> resources)
         {
             this._resources = resources;
             this.EmailAddress = emailAddress;

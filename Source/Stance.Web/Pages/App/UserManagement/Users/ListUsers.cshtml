@@ -77,16 +77,16 @@
                 <div class="card-body">
                     <a asp-page="@PageLocations.UserCreate" class="btn btn-sm float-right btn-info text-white">Create new user</a>
                     <h3 class="card-title">User Management</h3>
-                    <h6 class="card-subtitle">Create new, edit existing, or delete users</h6>
+                    <h6 class="card-subtitle" id="table-description">Create new, edit existing, or delete users</h6>
                     <div class="table-responsive">
-                        <table class="table" id="users" data-route="@ODataLocations.UserListing" data-details="@Url.PageLink(pageName: PageLocations.UserView, values: new {id = "__ID__"})">
+                        <table class="table" id="users" aria-describedby="table-description" data-route="@ODataLocations.UserListing" data-details="@Url.PageLink(pageName: PageLocations.UserView, values: new {id = "__ID__"})">
                             <thead>
                                 <tr>
-                                    <th>Email Address</th>
-                                    <th>First Name</th>
-                                    <th>Last Name</th>
-                                    <th>Locked</th>
-                                    <th>Last Login</th>
+                                    <th id="email-address">Email Address</th>
+                                    <th id="first-name">First Name</th>
+                                    <th id="last-name">Last Name</th>
+                                    <th id="locked">Locked</th>
+                                    <th id="last-login">Last Login</th>
                                 </tr>
                             </thead>
                             <tbody>

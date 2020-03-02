@@ -105,8 +105,7 @@ namespace Stance.Queries
             }
 
             var items = dtos.Select(
-                i => new SimpleResourceModel(i.Id, i.Name, i.ParentResourceId)
-            ).ToList();
+                i => new SimpleResourceModel(i.Id, i.Name, i.ParentResourceId)).ToList();
 
             foreach (var i in items)
             {

@@ -22,9 +22,9 @@ namespace Stance.Queries.Models.Role
 
         public string Name { get; }
 
-        internal Guid? ParentId { get; }
-
         public IReadOnlyList<SimpleResourceModel> SimpleResources => this._simpleResources.AsReadOnly();
+
+        internal Guid? ParentId { get; }
 
         internal void SetSimpleResources(List<SimpleResourceModel> simpleResources)
         {

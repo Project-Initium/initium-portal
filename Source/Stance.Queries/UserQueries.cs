@@ -119,7 +119,7 @@ SELECT uR.RoleId FROM [Identity].[UserRole] uR WHERE uR.UserId = @userId;",
             var resourceResult = await res.ReadAsync<Guid>();
 
             return Maybe.From(
-                new DetailedUserModel(entity.Id,entity.EmailAddress, entity.FirstName, entity.LastName, entity.IsLockable, entity.WhenCreated, entity.WhenLastAuthenticated, entity.WhenLocked, entity.IsAdmin, resourceResult.ToList()));
+                new DetailedUserModel(entity.Id, entity.EmailAddress, entity.FirstName, entity.LastName, entity.IsLockable, entity.WhenCreated, entity.WhenLastAuthenticated, entity.WhenLocked, entity.IsAdmin, resourceResult.ToList()));
         }
 
         public async Task<Maybe<AuthenticationStatsModel>> GetAuthenticationStats(CancellationToken cancellationToken = default)
