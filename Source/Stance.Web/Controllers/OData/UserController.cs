@@ -8,7 +8,7 @@ using Microsoft.AspNet.OData.Routing;
 using Stance.Queries.OData;
 using Stance.Queries.OData.Entities;
 
-namespace Stance.Web.Areas.OData
+namespace Stance.Web.Controllers.OData
 {
     [ODataRoutePrefix("User")]
     public class UserController : ODataController
@@ -25,6 +25,24 @@ namespace Stance.Web.Areas.OData
         public IQueryable<User> Get()
         {
             return this._context.Users;
+        }
+    }
+
+    [ODataRoutePrefix("Role")]
+    public class RoleController : ODataController
+    {
+        private readonly ODataContext _context;
+
+        public RoleController(ODataContext context)
+        {
+            this._context = context;
+        }
+
+        [EnableQuery(AllowedQueryOptions = AllowedQueryOptions.All)]
+        [ODataRoute("")]
+        public IQueryable<Role> Get()
+        {
+            return this._context.Roles;
         }
     }
 }

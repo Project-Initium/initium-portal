@@ -2,7 +2,7 @@
 @using Stance.Web.Infrastructure.Constants
 @model Stance.Web.Pages.App.UserManagement.Roles.ListRoles
 @{
-
+    Layout = "Shared/_AppLayout";
 }
 
     <div class="row page-titles">
@@ -17,35 +17,38 @@
     </div>
 
 
-    <div class="row">
-        <div class="col-12">
-            <!-- Column -->
-            <div class="card">
-                <div class="card-body">
-                    <h3 class="card-title">Role Management</h3>
-                    <h6 class="card-subtitle">Create new, edit existing, or delete roles</h6>
-                    <div class="table-responsive">
-                        <table class="table" id="resources">
-                            <thead>
-                                <tr>
-                                    <th>@Html.DisplayName("Name")</th>
-                                    <th>@Html.DisplayName("Resource Total")</th>
-
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                            </tbody>
-                        </table>
-                        <div class="d-flex justify-content-between">
-                            <div class="mr-auto">
-                                <a asp-page="@PageLocations.RoleCreate" class="btn btn-info text-white">Create new role</a>
-                            </div>
-                            <nav aria-label="Page navigation ml-auto">
-                            </nav>
+<div class="row">
+    <div class="col-12">
+        <!-- Column -->
+        <div class="card">
+            <div class="card-body">
+                <h3 class="card-title">Role Management</h3>
+                <h6 class="card-subtitle">Create new, edit existing, or delete roles</h6>
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="roles" data-route="@ODataLocations.RoleListing" data-details="@Url.Page(PageLocations.RoleView, new {id = "__ID__"})">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Resource Total</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+                    <div class="d-flex justify-content-between">
+                        <div class="mr-auto">
+                            <a asp-page="@PageLocations.RoleCreate" class="btn btn-info text-white">Create new role</a>
                         </div>
+                        <nav aria-label="Page navigation ml-auto">
+                        </nav>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+@section scripts
+{
+    <script src="~/role-listing.js" asp-append-version="true"></script>
+}

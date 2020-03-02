@@ -14,8 +14,9 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
     {
         private readonly List<AuthenticationHistory> _authenticationHistories;
         private readonly List<SecurityTokenMapping> _securityTokenMappings;
+        private readonly List<UserRole> _userRoles;
 
-        public User(Guid id, string emailAddress, string passwordHash, bool isLockable, DateTime whenCreated, string firstName, string lastName)
+        public User(Guid id, string emailAddress, string passwordHash, bool isLockable, DateTime whenCreated, string firstName, string lastName, IReadOnlyList<Guid> roles, bool isAdmin)
         {
             this.Id = id;
             this.EmailAddress = emailAddress;
@@ -23,17 +24,20 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this.WhenCreated = whenCreated;
             this.IsLockable = isLockable;
             this.SecurityStamp = Guid.NewGuid();
+            this.IsAdmin = isAdmin;
 
             this.Profile = new Profile(this.Id, firstName, lastName);
 
             this._authenticationHistories = new List<AuthenticationHistory>();
             this._securityTokenMappings = new List<SecurityTokenMapping>();
+            this._userRoles = roles.Select(x => new UserRole(x)).ToList();
         }
 
         private User()
         {
             this._authenticationHistories = new List<AuthenticationHistory>();
             this._securityTokenMappings = new List<SecurityTokenMapping>();
+            this._userRoles = new List<UserRole>();
         }
 
         public string EmailAddress { get; private set; }
@@ -54,11 +58,15 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         public int AttemptsSinceLastAuthentication { get; private set; }
 
+        public bool IsAdmin { get; private set; }
+
         public IReadOnlyList<AuthenticationHistory> AuthenticationHistories =>
             this._authenticationHistories.AsReadOnly();
 
         public IReadOnlyList<SecurityTokenMapping> SecurityTokenMappings =>
             this._securityTokenMappings.AsReadOnly();
+
+        public IReadOnlyCollection<UserRole> UserRoles => this._userRoles.AsReadOnly();
 
         public void ProcessSuccessfulAuthenticationAttempt(DateTime whenAttempted)
         {
@@ -119,6 +127,26 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         {
             this.EmailAddress = emailAddress;
             this.IsLockable = isLockable;
+        }
+
+        public void SetRoles(IReadOnlyList<Guid> roles)
+        {
+            var distinctRoles = roles.Distinct().ToList();
+            var currentRoles = this._userRoles.Select(x => x.Id).ToList();
+            var toAdd = distinctRoles.Except(currentRoles);
+            var toRemove = currentRoles.Except(distinctRoles);
+
+            foreach (var item in toRemove)
+            {
+                this._userRoles.Remove(this._userRoles.Single(x => x.Id == item));
+            }
+
+            this._userRoles.AddRange(toAdd.Select(x => new UserRole(x)));
+        }
+
+        public void SetAdminStatus(bool isAdmin)
+        {
+            this.IsAdmin = isAdmin;
         }
     }
 }

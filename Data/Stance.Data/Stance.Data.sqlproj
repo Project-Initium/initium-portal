@@ -87,6 +87,8 @@
     <Build Include="AccessProtection\Tables\Resource.sql" />
     <Build Include="AccessProtection\Tables\Role.sql" />
     <Build Include="AccessProtection\Tables\RoleResource.sql" />
+    <Build Include="ReadAggregation\Views\vwRole.sql" />
+    <Build Include="Identity\Tables\UserRole.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Stance.Data.refactorlog" />

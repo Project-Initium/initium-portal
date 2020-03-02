@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/app/user-management/roles/view/{id}"
 @using Stance.Web.Infrastructure.Constants
 @model Stance.Web.Pages.App.UserManagement.Roles.ViewRole
 @{
@@ -57,6 +57,6 @@
         <a class="btn btn-secondary cancel" asp-page="@PageLocations.RoleListing">Go Back</a>
     </div>
     <div class="col-6 text-right">
-        <button class="btn btn-info text-white mr-2" type="submit">Create</button>
+        <a class="btn btn-info text-white mr-2" asp-page="@PageLocations.RoleEdit" asp-route-id="@Model.Id" >Edit</a>
     </div>
 </div>

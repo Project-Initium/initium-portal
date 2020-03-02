@@ -1,11 +1,11 @@
-import * as $ from 'jquery'
 import 'datatables.net'
 import 'datatables.net-bs4'
-
-import {DataTablesODataProvider} from '../services/datatables-odata-provider'
+import { DataTablesODataProvider } from '../services/datatables-odata-provider'
 
 export class UsersList {
-    private actions: JQuery;
+    private tableApi: DataTables.Api;
+    private detailsUrl: string;
+
     constructor() {
         if (document.readyState !== 'loading') {
             this.init();
@@ -14,30 +14,35 @@ export class UsersList {
         }
     }
 
+    private rowClicked(event: JQuery.ClickEvent): void {
+        window.location.href = this.detailsUrl.replace('__id__', (<any>this.tableApi.row(event.currentTarget).data()).Id);
+    }
+
     init() {
         var contextThis = this;
-        this.actions = $($('#actions').html());
+        const $tableElement = $('#users')
+        this.detailsUrl = $tableElement.data('details')
 
-        $('#users').DataTable({
+        this.tableApi = $tableElement.DataTable({
             processing: true,
             serverSide: true,
-            ajax: DataTablesODataProvider.providerFunction($('#users').data('route')),
+            ajax: DataTablesODataProvider.providerFunction($tableElement.data('route')),
             columns: [
-                { data: "EmailAddress" },
+                { data: 'EmailAddress' },
+                { data: 'FirstName' },
+                { data: 'LastName' },
+                { data: 'Locked' },
+                { data: 'WhenLastAuthenticated' },
                 {
-                    data: "Id",
-                    render: (data: any, type: any, row: any, meta: DataTables.CellMetaSettings) => contextThis.renderActions(data, type, row, meta)
-                }             
+                    data: 'Id',
+                    visible: false,
+                    searchable: false
+                },
             ],
         });
-    }
 
-    renderActions(data: any, type: any, row: any, meta: DataTables.CellMetaSettings): any {
-        const editAnchor = this.actions.find('a[data-edit]')
-        editAnchor.attr('href', editAnchor.attr('href').replace('__ID__', data));
-        return this.actions[0].innerHTML;
+        $tableElement.on('click', 'tbody tr', (event) => contextThis.rowClicked(event));
     }
-
 }
-
+$(document).ready(function() { console.log('here')});
 new UsersList();

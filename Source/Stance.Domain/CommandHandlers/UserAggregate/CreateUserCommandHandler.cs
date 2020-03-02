@@ -64,7 +64,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             }
 
             var user = new User(Guid.NewGuid(), request.EmailAddress, GenerateRandomPassword(), request.IsLockable,
-                this._clock.GetCurrentInstant().ToDateTimeUtc(), request.FirstName, request.LastName);
+                this._clock.GetCurrentInstant().ToDateTimeUtc(), request.FirstName, request.LastName, request.Roles, request.IsAdmin);
             this._userRepository.Add(user);
             return ResultWithError.Ok<ErrorData>();
         }

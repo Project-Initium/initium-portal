@@ -6,5 +6,6 @@ namespace Stance.Web.Infrastructure.Constants
     public static class ODataLocations
     {
         public const string UserListing = "/odata/user";
+        public const string RoleListing = "/odata/role";
     }
 }

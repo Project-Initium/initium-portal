@@ -101,6 +101,15 @@ namespace Stance.Infrastructure
                 profile.Property(x => x.Id).HasColumnName("userId");
                 profile.Ignore(b => b.DomainEvents);
             });
+
+            users.OwnsMany(user => user.UserRoles, userRole =>
+            {
+                userRole.ToTable("userRole", "identity");
+                userRole.HasKey(entity => entity.Id);
+                userRole.Property(e => e.Id).ValueGeneratedNever();
+                userRole.Property(x => x.Id).HasColumnName("roleId");
+                userRole.Ignore(b => b.DomainEvents);
+            });
         }
     }
 }

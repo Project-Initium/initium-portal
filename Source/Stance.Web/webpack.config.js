@@ -9,8 +9,10 @@ module.exports = {
         theme: ['./Resources/Styles/theme.sass'],
         'vendors-styles': './Resources/Styles/vendors.sass',
         app: ['./Resources/Scripts/app.ts', './Resources/Styles/app.sass'],
-        'user-listing': './Resources/Scripts/pages/users-list.ts',
+        'users-list': './Resources/Scripts/pages/users-list.ts',
         'role-create': './Resources/Scripts/pages/role-create.ts',
+        'role-edit': './Resources/Scripts/pages/role-edit.ts',
+        'role-listing': './Resources/Scripts/pages/role-list.ts',
     },
     devtool: 'inline-source-map',
     output: {
@@ -68,23 +70,23 @@ module.exports = {
         ]
     },
     optimization: {
-        splitChunks: {
-           // include all types of chunks
-           cacheGroups: {
-            vendors: {
-                test: /[\\/]node_modules[\\/]/,
-                name: 'vendors',
-                chunks: 'all'
-              },
-            commons: {
-                name: 'commons',
-                test: /[\\/]Scripts[\\/](services)[\\/]/,
-                chunks: 'all'
-              },
+         splitChunks: {
+            // include all types of chunks
+            cacheGroups: {
+             vendors: {
+                 test: /[\\/]node_modules[\\/]/,
+                 name: 'vendors',
+                 chunks: 'all'
+               },
+             commons: {
+                 name: 'commons',
+                 test: /[\\/]Scripts[\\/](services)[\\/]/,
+                 chunks: 'all'
+               },
               
-          }
-        }
-      },
+         }
+         }
+       },
     plugins: [
         new CleanWebpackPlugin(),
         new MiniCssExtractPlugin({

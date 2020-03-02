@@ -1,7 +1,7 @@
 import 'gijgo'
 
 
-export class RoleCreate {
+export class RoleEdit {
     private tree: Types.Tree;
     private form: HTMLFormElement;
     constructor() {
@@ -21,31 +21,30 @@ export class RoleCreate {
             primaryKey: 'id',
             childrenField: 'simpleResources',
             textField: 'name',
-            checkboxes: true,  
-            dataBound: (e: any) => contextThis.treeOnDataBound(e)     
+            checkboxes: true,
+            dataBound: (e: any) => contextThis.treeOnDataBound(e)
         });
 
         
          this.form = document.querySelector('form#role-create') as HTMLFormElement;
-         
+                 
          this.form.addEventListener('submit', (e) => { contextThis.formSubmit(e); });        
     }
 
      private formSubmit(event: Event): void {
          
-         
             this.tree.find('input[type=checkbox]:checked').each((index, value) => {
                 var checkbox = $(value)
-                checkbox.attr('name', 'pagemodel.roles')
+                checkbox.attr('name', 'pagemodel.resources')
 
                 var parentLi = checkbox.closest('li');
                 checkbox.val(parentLi.data('id'))
     
             })
-         
+            console.log(this.tree.getCheckedNodes());
      }
 
-     private treeOnDataBound(e: Event){
+    private treeOnDataBound(e: Event){
         const contextThis = this;
 
         var resources = document.querySelectorAll('input[type="hidden"][name="pagemodel.resources"]');
@@ -63,4 +62,4 @@ export class RoleCreate {
     }
 }
 
-new RoleCreate();
+new RoleEdit();

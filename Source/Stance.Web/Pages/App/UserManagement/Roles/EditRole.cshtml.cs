@@ -44,7 +44,7 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
             {
                 this.PageModel = new Model
                 {
-                    Id = role.Id,
+                    RoleId = role.Id,
                     Name = role.Name,
                     Resources = role.Resources.ToList(),
                 };
@@ -62,12 +62,12 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
                 return this.RedirectToPage();
             }
 
-            var result = await this._mediator.Send(new UpdateRoleCommand(this.PageModel.Id, this.PageModel.Name,
+            var result = await this._mediator.Send(new UpdateRoleCommand(this.PageModel.RoleId, this.PageModel.Name,
                 this.PageModel.Resources));
 
             if (result.IsSuccess)
             {
-                return this.RedirectToPage(PageLocations.RoleView, new { id = this.PageModel.Id });
+                return this.RedirectToPage(PageLocations.RoleView, new { id = this.PageModel.RoleId });
             }
 
             this.PrgState = PrgState.Failed;
@@ -76,11 +76,11 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
 
         public class Model
         {
-            public Guid Id { get; set; }
-
             public string Name { get; set; }
 
             public List<Guid> Resources { get; set; }
+
+            public Guid RoleId { get; set; }
         }
 
         public class Validator : AbstractValidator<Model>
@@ -89,7 +89,7 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
             {
                 this.RuleFor(x => x.Name)
                     .NotEmpty();
-                this.RuleFor(x => x.Id)
+                this.RuleFor(x => x.RoleId)
                     .NotEqual(Guid.Empty);
             }
         }
