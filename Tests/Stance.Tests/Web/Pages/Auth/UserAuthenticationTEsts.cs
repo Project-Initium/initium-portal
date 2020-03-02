@@ -2,11 +2,9 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Security.Claims;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ResultMonad;
@@ -73,7 +71,6 @@ namespace Stance.Tests.Web.Pages.Auth
                         new AuthenticateUserCommandResult(Guid.NewGuid())));
             var authenticationService = new Mock<IAuthenticationService>();
 
-
             var page = new UserAuthentication(mediator.Object, authenticationService.Object)
             {
                 PageModel = new UserAuthentication.Model(),
@@ -83,7 +80,6 @@ namespace Stance.Tests.Web.Pages.Auth
 
             var pageResult = Assert.IsType<RedirectToPageResult>(result);
             Assert.Equal(PageLocations.AppDashboard, pageResult.PageName);
-            
         }
 
         [Fact]
@@ -96,7 +92,7 @@ namespace Stance.Tests.Web.Pages.Auth
                         new AuthenticateUserCommandResult(Guid.NewGuid())));
 
             var authServiceMock = new Mock<IAuthenticationService>();
-            
+
             var page = new UserAuthentication(mediator.Object, authServiceMock.Object)
             {
                 PageModel = new UserAuthentication.Model(),

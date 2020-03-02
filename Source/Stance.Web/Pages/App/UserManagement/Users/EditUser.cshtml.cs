@@ -40,7 +40,7 @@ namespace Stance.Web.Pages.App.UserManagement.Users
         public DateTime WhenCreated { get; private set; }
 
         public string Name { get; private set; }
-        
+
         public List<SelectListItem> AvailableRoles { get; set; }
 
         public async Task<IActionResult> OnGetAsync()

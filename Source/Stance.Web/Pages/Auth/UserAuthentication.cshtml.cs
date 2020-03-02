@@ -11,7 +11,6 @@ using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.Contracts;
-using Stance.Web.Infrastructure.Extensions;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.Auth

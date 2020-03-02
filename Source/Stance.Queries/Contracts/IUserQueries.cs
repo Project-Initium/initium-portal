@@ -22,7 +22,7 @@ namespace Stance.Queries.Contracts
 
         Task<Maybe<AuthenticationStatsModel>> GetAuthenticationStats(CancellationToken cancellationToken = default);
 
-        Task<Maybe<SystemProfileModel>> GetSystemProfileByUserId(Guid userId,
-            CancellationToken cancellationToken = default);
+        Task<Maybe<SystemProfileModel>> GetSystemProfileByUserId(
+            Guid userId, CancellationToken cancellationToken = default);
     }
 }

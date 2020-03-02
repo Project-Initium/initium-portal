@@ -19,13 +19,14 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
             this._roleQueries = roleQueries;
         }
 
-        [BindProperty(SupportsGet = true)] public Guid Id { get; set; }
+        [BindProperty(SupportsGet = true)]
+        public Guid Id { get; set; }
 
         public string Name { get; private set; }
 
         public DetailedRoleModel Role { get; private set; }
 
-        public async Task<IActionResult> OnGet()
+        public async Task<IActionResult> OnGetAsync()
         {
             var roleMaybe = await this._roleQueries.GetDetailsOfRoleById(this.Id);
             if (roleMaybe.HasNoValue)

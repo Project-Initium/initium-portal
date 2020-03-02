@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Stance.Core;
 using Stance.Core.Contracts;
-using Stance.Web.Infrastructure.Extensions;
 using Stance.Web.Infrastructure.Services;
 
 namespace Stance.Web.Infrastructure

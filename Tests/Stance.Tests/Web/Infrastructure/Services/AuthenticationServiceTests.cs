@@ -20,7 +20,22 @@ namespace Stance.Tests.Web.Infrastructure.Services
     public class AuthenticationServiceTests
     {
         [Fact]
-        public async Task SignInUserAsync_GivenValidUser_ExpectIdentityToBeSet()
+        public async Task SignInUserAsync_GivenUserDoesNotExist_ExpectException()
+        {
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
+            var userQueries = new Mock<IUserQueries>();
+            userQueries.Setup(x => x.GetSystemProfileByUserId(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe<SystemProfileModel>.Nothing);
+
+            var authenticationService =
+                new Stance.Web.Infrastructure.Services.AuthenticationService(
+                    httpContextAccessor.Object, userQueries.Object);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => authenticationService.SignInUserAsync(Guid.Empty));
+        }
+
+        [Fact]
+        public async Task SignInUserAsync_GivenUserExists_ExpectIdentityToBeSet()
         {
             var userId = Guid.NewGuid();
             var authServiceMock = new Mock<IAuthenticationService>();

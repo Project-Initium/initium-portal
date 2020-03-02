@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) DeviousCreation. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
@@ -8,7 +11,6 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Stance.Queries.Contracts;
-using Stance.Web.Infrastructure.Extensions;
 using IAuthenticationService = Stance.Web.Infrastructure.Contracts.IAuthenticationService;
 
 namespace Stance.Web.Infrastructure.Services
@@ -68,7 +70,8 @@ namespace Stance.Web.Infrastructure.Services
                 claims.Add(new Claim(ClaimTypes.UserData, returnUrl));
             }
 
-            await this._httpContextAccessor.HttpContext.SignInAsync("login-partial",
+            await this._httpContextAccessor.HttpContext.SignInAsync(
+                "login-partial",
                 new ClaimsPrincipal(new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme)));
         }
 

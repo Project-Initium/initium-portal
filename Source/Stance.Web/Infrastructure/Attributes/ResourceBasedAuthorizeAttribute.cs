@@ -26,7 +26,7 @@ namespace Stance.Web.Infrastructure.Attributes
 
             if (!user.Identity.IsAuthenticated)
             {
-                return;
+                context.Result = new StatusCodeResult((int)HttpStatusCode.Unauthorized);
             }
 
             if (user.HasClaim(x => x.Type == ClaimTypes.System))
@@ -39,7 +39,7 @@ namespace Stance.Web.Infrastructure.Attributes
                 return;
             }
 
-            context.Result = new StatusCodeResult((int) HttpStatusCode.Forbidden);
+            context.Result = new StatusCodeResult((int)HttpStatusCode.Forbidden);
         }
     }
 }
