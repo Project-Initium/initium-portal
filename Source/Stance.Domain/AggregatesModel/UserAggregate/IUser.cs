@@ -32,6 +32,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         IReadOnlyCollection<UserRole> UserRoles { get; }
 
+        IReadOnlyCollection<AuthenticatorApp> AuthenticatorApps { get; }
+
         Guid SecurityStamp { get; }
 
         Profile Profile { get; }
@@ -55,5 +57,9 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         void SetRoles(IReadOnlyList<Guid> roles);
 
         void SetAdminStatus(bool isAdmin);
+
+        AuthenticatorApp EnrollAuthenticatorApp(Guid id, string key, DateTime whenEnrolled);
+
+        void RevokeAuthenticatorApp(DateTime whenRevoked);
     }
 }

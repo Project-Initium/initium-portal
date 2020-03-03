@@ -102,6 +102,9 @@ namespace Stance.Infrastructure
                 profile.Ignore(b => b.DomainEvents);
             });
 
+            navigation = users.Metadata.FindNavigation(nameof(User.UserRoles));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
             users.OwnsMany(user => user.UserRoles, userRole =>
             {
                 userRole.ToTable("userRole", "identity");
@@ -109,6 +112,18 @@ namespace Stance.Infrastructure
                 userRole.Property(e => e.Id).ValueGeneratedNever();
                 userRole.Property(x => x.Id).HasColumnName("roleId");
                 userRole.Ignore(b => b.DomainEvents);
+            });
+
+            navigation = users.Metadata.FindNavigation(nameof(User.AuthenticatorApps));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            users.OwnsMany(user => user.AuthenticatorApps, authenticatorApps =>
+            {
+                authenticatorApps.ToTable("securityTokenMapping", "identity");
+                authenticatorApps.HasKey(authenticatorApp => authenticatorApp.Id);
+                authenticatorApps.Property(authenticatorApp => authenticatorApp.Id)
+                    .ValueGeneratedNever();
+                authenticatorApps.Ignore(authenticatorApp => authenticatorApp.DomainEvents);
             });
         }
     }
