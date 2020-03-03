@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
@@ -35,7 +36,7 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var userQueries = new Mock<IUserQueries>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, null, null)));
+                    new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
 
             var page = new ViewUser(userQueries.Object);
             var result = await page.OnGetAsync();

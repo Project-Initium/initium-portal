@@ -22,5 +22,7 @@ namespace Stance.Queries.TransferObjects.User
         public DateTime? WhenLastAuthenticated { get; set; }
 
         public DateTime? WhenLocked { get; set; }
+
+        public bool IsAdmin { get; set; }
     }
 }

@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Infrastructure.Constants;
-using Stance.Web.Infrastructure.Extensions;
+using Stance.Web.Infrastructure.Contracts;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.Auth
@@ -18,10 +18,12 @@ namespace Stance.Web.Pages.Auth
     public class UserAuthentication : PrgPageModel<UserAuthentication.Model>
     {
         private readonly IMediator _mediator;
+        private readonly IAuthenticationService _authenticationService;
 
-        public UserAuthentication(IMediator mediator)
+        public UserAuthentication(IMediator mediator, IAuthenticationService authenticationService)
         {
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
         }
 
         [BindProperty(SupportsGet = true)]
@@ -45,11 +47,7 @@ namespace Stance.Web.Pages.Auth
                 if (result.Value.AuthenticationStatus ==
                     BaseAuthenticationProcessCommandResult.AuthenticationState.Completed)
                 {
-                    await this.HttpContext.SignInUserAsync(new HttpContextExtensions.UserProfile(
-                        result.Value.UserId,
-                        result.Value.EmailAddress,
-                        result.Value.FirstName,
-                        result.Value.LastName));
+                    await this._authenticationService.SignInUserAsync(result.Value.UserId);
 
                     if (string.IsNullOrEmpty(this.ReturnUrl))
                     {
@@ -59,7 +57,7 @@ namespace Stance.Web.Pages.Auth
                     return this.LocalRedirect(this.ReturnUrl);
                 }
 
-                await this.HttpContext.SignInUserPartiallyAsync(result.Value.UserId, this.ReturnUrl);
+                await this._authenticationService.SignInUserPartiallyAsync(result.Value.UserId, this.ReturnUrl);
 
                 return this.RedirectToPage(PageLocations.AuthEmailMfa);
             }

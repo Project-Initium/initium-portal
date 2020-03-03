@@ -1,7 +1,46 @@
-@import "~bootstrap/scss/bootstrap"
-
 /* THEME OVERRIDES */
+
+@import '../Themes/material-pro-lite-master/html/scss/variable'
+$themecolor: #1e88e5
+$themecolor-dark: #028ee1
+$topbar: #1e88e5
+$themecolor-alt: #26c6da
+
 .page-titles .breadcrumb .breadcrumb-item + .breadcrumb-item::before 
     content: "\f054" !important
     font-family: "Font Awesome 5 Free" !important
     font-weight: 900
+
+.sidebar-nav 
+    background: $sidebar
+    ul 
+        li 
+            a 
+                color: $sidebar-text
+                &.mm-active,
+                &:hover 
+                    color: $themecolor-alt
+                &.mm-active 
+                    color: $dark
+            &.nav-small-cap 
+                color: $muted
+    > ul > li 
+        &.mm-active > a,
+        &.active:hover > a 
+            color: $white
+            background: $themecolor-alt
+            i 
+                color: $white   
+            &:after 
+                border-color: $white            
+    > ul > li > a 
+        &.mm-active,
+        &:hover 
+            i 
+                color: $themecolor-alt
+        i 
+            color: $sidebar-icons
+        &.mm-active
+            font-weight: 400
+            background: $white
+            color: $themecolor

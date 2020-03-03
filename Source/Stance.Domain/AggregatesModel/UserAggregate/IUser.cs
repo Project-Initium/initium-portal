@@ -24,9 +24,13 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         int AttemptsSinceLastAuthentication { get; }
 
+        bool IsAdmin { get; }
+
         IReadOnlyList<AuthenticationHistory> AuthenticationHistories { get; }
 
         IReadOnlyList<SecurityTokenMapping> SecurityTokenMappings { get; }
+
+        IReadOnlyCollection<UserRole> UserRoles { get; }
 
         Guid SecurityStamp { get; }
 
@@ -47,5 +51,9 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         void UpdateProfile(string firstName, string lastName);
 
         void UpdateSystemAccessDetails(string emailAddress, bool isLockable);
+
+        void SetRoles(IReadOnlyList<Guid> roles);
+
+        void SetAdminStatus(bool isAdmin);
     }
 }

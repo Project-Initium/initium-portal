@@ -9,7 +9,7 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Stance.Core;
 using Stance.Core.Contracts;
-using Stance.Web.Infrastructure.Extensions;
+using Stance.Web.Infrastructure.Services;
 
 namespace Stance.Web.Infrastructure
 {
@@ -43,7 +43,7 @@ namespace Stance.Web.Infrastructure
                     var profileJson = this._httpContextAccessor.HttpContext.User.Claims
                         .First(x => x.Type == ClaimTypes.UserData).Value;
 
-                    var profile = JsonConvert.DeserializeObject<HttpContextExtensions.UserProfile>(profileJson);
+                    var profile = JsonConvert.DeserializeObject<AuthenticationService.UserProfile>(profileJson);
 
                     return Maybe.From(new AuthenticatedUser(profile.UserId, profile.EmailAddress, profile.FirstName, profile.LastName));
                 }

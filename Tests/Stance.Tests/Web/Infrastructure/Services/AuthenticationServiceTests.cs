@@ -2,21 +2,40 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Security.Claims;
+using System.Threading;
 using System.Threading.Tasks;
+using MaybeMonad;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Moq;
-using Stance.Web.Infrastructure.Extensions;
+using Stance.Queries.Contracts;
+using Stance.Queries.Models.User;
 using Xunit;
 
-namespace Stance.Tests.Web.Infrastructure.Extensions
+namespace Stance.Tests.Web.Infrastructure.Services
 {
-    public class HttpContextExtensionsTests
+    public class AuthenticationServiceTests
     {
         [Fact]
-        public async Task SignInUser_GivenValidUserProfile_ExpectIdentityToBeSet()
+        public async Task SignInUserAsync_GivenUserDoesNotExist_ExpectException()
+        {
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
+            var userQueries = new Mock<IUserQueries>();
+            userQueries.Setup(x => x.GetSystemProfileByUserId(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe<SystemProfileModel>.Nothing);
+
+            var authenticationService =
+                new Stance.Web.Infrastructure.Services.AuthenticationService(
+                    httpContextAccessor.Object, userQueries.Object);
+
+            await Assert.ThrowsAsync<InvalidOperationException>(() => authenticationService.SignInUserAsync(Guid.Empty));
+        }
+
+        [Fact]
+        public async Task SignInUserAsync_GivenUserExists_ExpectIdentityToBeSet()
         {
             var userId = Guid.NewGuid();
             var authServiceMock = new Mock<IAuthenticationService>();
@@ -29,7 +48,23 @@ namespace Stance.Tests.Web.Infrastructure.Extensions
             {
                 RequestServices = serviceProviderMock.Object,
             };
-            await httpContext.SignInUserAsync(new HttpContextExtensions.UserProfile(userId, new string('*', 6), new string('*', 7), new string('*', 8)));
+
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
+            httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
+            var userQueries = new Mock<IUserQueries>();
+            userQueries.Setup(x => x.GetSystemProfileByUserId(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(
+                    () => Maybe.From(new SystemProfileModel(
+                        new string('*', 5),
+                        new string('*', 5),
+                        new string('*', 5),
+                        true,
+                        new List<string>())));
+            var authenticationService =
+                new Stance.Web.Infrastructure.Services.AuthenticationService(
+                    httpContextAccessor.Object, userQueries.Object);
+
+            await authenticationService.SignInUserAsync(userId);
 
             authServiceMock.Verify(
                 x => x.SignInAsync(
@@ -54,7 +89,15 @@ namespace Stance.Tests.Web.Infrastructure.Extensions
             {
                 RequestServices = serviceProviderMock.Object,
             };
-            await httpContext.SignInUserPartiallyAsync(userId);
+
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
+            httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
+            var userQueries = new Mock<IUserQueries>();
+
+            var authenticationService =
+                new Stance.Web.Infrastructure.Services.AuthenticationService(
+                    httpContextAccessor.Object, userQueries.Object);
+            await authenticationService.SignInUserPartiallyAsync(userId);
 
             authServiceMock.Verify(
                 x => x.SignInAsync(
@@ -79,7 +122,14 @@ namespace Stance.Tests.Web.Infrastructure.Extensions
             {
                 RequestServices = serviceProviderMock.Object,
             };
-            await httpContext.SignInUserPartiallyAsync(userId, new string('*', 6));
+            var httpContextAccessor = new Mock<IHttpContextAccessor>();
+            httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
+            var userQueries = new Mock<IUserQueries>();
+
+            var authenticationService =
+                new Stance.Web.Infrastructure.Services.AuthenticationService(
+                    httpContextAccessor.Object, userQueries.Object);
+            await authenticationService.SignInUserPartiallyAsync(userId, new string('*', 6));
 
             authServiceMock.Verify(
                 x => x.SignInAsync(

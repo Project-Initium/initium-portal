@@ -7,9 +7,8 @@ namespace Stance.Domain.CommandResults.UserAggregate
 {
     public class ValidateEmailMfaCodeAgainstCurrentUserCommandResult : BaseAuthenticationProcessCommandResult
     {
-        public ValidateEmailMfaCodeAgainstCurrentUserCommandResult(Guid userId, string emailAddress, string firstName,
-            string lastName)
-            : base(userId, emailAddress, firstName, lastName)
+        public ValidateEmailMfaCodeAgainstCurrentUserCommandResult(Guid userId)
+            : base(userId, AuthenticationState.Completed)
         {
         }
 

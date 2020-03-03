@@ -98,26 +98,28 @@ namespace Stance.Queries
             parameters.Add("userId", userId, DbType.Guid);
 
             var command = new CommandDefinition(
-                "select u.id, u.emailAddress, p.firstName, p.lastName, u.isLockable, u.whenCreated, u.whenLastAuthenticated, u.whenLocked from [identity].[user] u join [identity].[profile] p on u.Id = p.UserId where id = @userId",
+                @"select u.id, u.emailAddress, p.firstName, p.lastName, u.isLockable, u.whenCreated, u.whenLastAuthenticated, u.whenLocked, u.IsAdmin from [identity].[user] u join [identity].[profile] p on u.Id = p.UserId where id = @userId
+SELECT uR.RoleId FROM [Identity].[UserRole] uR WHERE uR.UserId = @userId;",
                 parameters,
                 cancellationToken: cancellationToken);
 
             using var connection = new SqlConnection(this._querySettings.ConnectionString);
             connection.Open();
 
-            var res = await connection.QueryAsync<DetailedUserDto>(command);
-            var dataItems = res as DetailedUserDto[] ?? res.ToArray();
-            return dataItems.Length != 1
-                ? Maybe<DetailedUserModel>.Nothing
-                : Maybe.From(new DetailedUserModel(
-                    dataItems.First().Id,
-                    dataItems.First().EmailAddress,
-                    dataItems.First().FirstName,
-                    dataItems.First().LastName,
-                    dataItems.First().IsLockable,
-                    dataItems.First().WhenCreated,
-                    dataItems.First().WhenLastAuthenticated,
-                    dataItems.First().WhenLocked));
+            var res = await connection.QueryMultipleAsync(command);
+            var detailedUseResult = await res.ReadAsync<DetailedUserDto>();
+            var dtos = detailedUseResult as DetailedUserDto[] ?? detailedUseResult.ToArray();
+            if (dtos.Length != 1)
+            {
+                return Maybe<DetailedUserModel>.Nothing;
+            }
+
+            var entity = dtos.Single();
+
+            var resourceResult = await res.ReadAsync<Guid>();
+
+            return Maybe.From(
+                new DetailedUserModel(entity.Id, entity.EmailAddress, entity.FirstName, entity.LastName, entity.IsLockable, entity.WhenCreated, entity.WhenLastAuthenticated, entity.WhenLocked, entity.IsAdmin, resourceResult.ToList()));
         }
 
         public async Task<Maybe<AuthenticationStatsModel>> GetAuthenticationStats(CancellationToken cancellationToken = default)
@@ -140,6 +142,36 @@ namespace Stance.Queries
                 dataItems.First().TotalActiveUsers,
                 dataItems.First().TotalLogins,
                 dataItems.First().TotalLockedAccounts));
+        }
+
+        public async Task<Maybe<SystemProfileModel>> GetSystemProfileByUserId(Guid userId, CancellationToken cancellationToken = default)
+        {
+            var parameters = new DynamicParameters();
+            parameters.Add("userId", userId, DbType.Guid);
+
+            var command = new CommandDefinition(
+                "SELECT u.Username, u.EmailAddress, p.FirstName, p.LastName, u.IsAdmin FROM [Identity].[User] u left join [Identity].[Profile] p on u.Id = p.UserId WHERE u.Id = @userId;" +
+                "SELECT r.NormalizedName FROM[Identity].[UserRole] uR JOIN[AccessProtection].[RoleResource] rR ON rR.RoleId = uR.RoleId JOIN[AccessProtection].[Resource] r ON r.Id = rR.ResourceId WHERE uR.UserId = @userId;",
+                parameters,
+                cancellationToken: cancellationToken);
+
+            using var connection = new SqlConnection(this._querySettings.ConnectionString);
+            connection.Open();
+
+            var res = await connection.QueryMultipleAsync(command);
+            var profileResult = await res.ReadAsync<SystemProfileDto>();
+            var dtos = profileResult as SystemProfileDto[] ?? profileResult.ToArray();
+            if (dtos.Length != 1)
+            {
+                return Maybe<SystemProfileModel>.Nothing;
+            }
+
+            var entity = dtos.Single();
+
+            var resourceResult = await res.ReadAsync<string>();
+
+            return Maybe.From(
+                new SystemProfileModel(entity.EmailAddress, entity.FirstName, entity.LastName, entity.IsAdmin, resourceResult.ToList()));
         }
     }
 }

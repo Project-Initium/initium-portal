@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
@@ -13,6 +14,7 @@ using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Queries.Contracts;
+using Stance.Queries.Models.Role;
 using Stance.Queries.Models.User;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
@@ -30,9 +32,12 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var userQueries = new Mock<IUserQueries>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, null, null)));
+                    new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
+            var roleQueries = new Mock<IRoleQueries>();
+            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
-            var page = new EditUser(userQueries.Object, mediator.Object) { PageModel = new EditUser.Model() };
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object) { PageModel = new EditUser.Model() };
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Null(page.PageModel.EmailAddress);
@@ -45,9 +50,12 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var userQueries = new Mock<IUserQueries>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, null, null)));
+                    new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
+            var roleQueries = new Mock<IRoleQueries>();
+            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
-            var page = new EditUser(userQueries.Object, mediator.Object);
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal(new string('*', 4), page.PageModel.EmailAddress);
@@ -61,9 +69,12 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var whenLocked = DateTime.UtcNow;
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, null, whenLocked)));
+                    new string('*', 6), true, DateTime.UtcNow, null, whenLocked, true, new List<Guid>())));
+            var roleQueries = new Mock<IRoleQueries>();
+            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
-            var page = new EditUser(userQueries.Object, mediator.Object);
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal(whenLocked.ToString(), page.LockedStatus);
@@ -76,9 +87,12 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var userQueries = new Mock<IUserQueries>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, null, null)));
+                    new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
+            var roleQueries = new Mock<IRoleQueries>();
+            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
-            var page = new EditUser(userQueries.Object, mediator.Object);
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal("Not Locked", page.LockedStatus);
@@ -91,8 +105,9 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var userQueries = new Mock<IUserQueries>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe<DetailedUserModel>.Nothing);
+            var roleQueries = new Mock<IRoleQueries>();
 
-            var page = new EditUser(userQueries.Object, mediator.Object);
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<NotFoundResult>(result);
         }
@@ -105,9 +120,12 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
 
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), false, DateTime.UtcNow, null, null)));
+                    new string('*', 6), false, DateTime.UtcNow, null, null, true, new List<Guid>())));
+            var roleQueries = new Mock<IRoleQueries>();
+            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
-            var page = new EditUser(userQueries.Object, mediator.Object);
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal("User is not lockable", page.LockedStatus);
@@ -122,9 +140,12 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var whenLastAuthenticated = DateTime.UtcNow;
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, whenLastAuthenticated, null)));
+                    new string('*', 6), true, DateTime.UtcNow, whenLastAuthenticated, null, true, new List<Guid>())));
+            var roleQueries = new Mock<IRoleQueries>();
+            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
-            var page = new EditUser(userQueries.Object, mediator.Object);
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal(whenLastAuthenticated.ToString(), page.AuthenticationStatus);
@@ -137,9 +158,12 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var userQueries = new Mock<IUserQueries>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, null, null)));
+                    new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
+            var roleQueries = new Mock<IRoleQueries>();
+            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
-            var page = new EditUser(userQueries.Object, mediator.Object);
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal("Never Authenticated", page.AuthenticationStatus);
@@ -150,8 +174,9 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
+            var roleQueries = new Mock<IRoleQueries>();
 
-            var page = new EditUser(userQueries.Object, mediator.Object);
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
             page.ModelState.AddModelError("Error", "Error");
 
             var result = await page.OnPostAsync();
@@ -166,8 +191,9 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             mediator.Setup(x => x.Send(It.IsAny<UpdateUserCoreDetailsCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Ok<ErrorData>());
             var userQueries = new Mock<IUserQueries>();
+            var roleQueries = new Mock<IRoleQueries>();
 
-            var page = new EditUser(userQueries.Object, mediator.Object) { PageModel = new EditUser.Model() };
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object) { PageModel = new EditUser.Model() };
 
             var result = await page.OnPostAsync();
             var pageResult = Assert.IsType<RedirectToPageResult>(result);
@@ -182,8 +208,9 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             mediator.Setup(x => x.Send(It.IsAny<UpdateUserCoreDetailsCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Fail(new ErrorData(ErrorCodes.SavingChanges)));
             var userQueries = new Mock<IUserQueries>();
+            var roleQueries = new Mock<IRoleQueries>();
 
-            var page = new EditUser(userQueries.Object, mediator.Object) { PageModel = new EditUser.Model() };
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object) { PageModel = new EditUser.Model() };
 
             var result = await page.OnPostAsync();
             Assert.IsType<RedirectToPageResult>(result);

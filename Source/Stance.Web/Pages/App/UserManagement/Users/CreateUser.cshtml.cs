@@ -1,6 +1,8 @@
 // Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -29,7 +31,7 @@ namespace Stance.Web.Pages.App.UserManagement.Users
             }
 
             var result = await this._mediator.Send(new CreateUserCommand(this.PageModel.EmailAddress, this.PageModel.FirstName,
-                this.PageModel.LastName, this.PageModel.IsLockable));
+                this.PageModel.LastName, this.PageModel.IsLockable, this.PageModel.IsAdmin, this.PageModel.Roles));
 
             if (result.IsSuccess)
             {
@@ -53,6 +55,10 @@ namespace Stance.Web.Pages.App.UserManagement.Users
 
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
+
+            public bool IsAdmin { get; set; }
+
+            public List<Guid> Roles { get; set; }
         }
 
         public class Validator : AbstractValidator<Model>

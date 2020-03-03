@@ -62,6 +62,8 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             user.UpdateSystemAccessDetails(request.EmailAddress, request.IsLockable);
             user.UpdateProfile(request.FirstName, request.LastName);
+            user.SetAdminStatus(request.IsAdmin);
+            user.SetRoles(request.Roles);
 
             this._userRepository.Update(user);
             return ResultWithError.Ok<ErrorData>();

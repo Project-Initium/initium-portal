@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
     @*<link href="~/vendor.css" rel="stylesheet" asp-append-version="true">*@
-    <link href="~/app.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/theme.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/vendors-styles.css" rel="stylesheet" asp-append-version="true" />
+    <link href="~/app.css" rel="stylesheet" asp-append-version="true" />
     @RenderSection("styles", false)
 </head>
 <body class="@ViewData["page-class"]">
@@ -15,6 +16,7 @@
 
 <script src="~/vendors.js" asp-append-version="true"></script>
 <script src="~/theme.js" asp-append-version="true"></script>
+<script src="~/commons.js" asp-append-version="true"></script>
 <script src="~/app.js" asp-append-version="true"></script>
 @RenderSection("scripts", false)
 </body>

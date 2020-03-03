@@ -17,9 +17,18 @@ namespace Stance.Queries.OData
 
         public DbSet<User> Users { get; set; }
 
+        public DbSet<Role> Roles { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(this.ConfigureUser);
+            modelBuilder.Entity<Role>(this.ConfigureRole);
+        }
+
+        private void ConfigureRole(EntityTypeBuilder<Role> config)
+        {
+            config.ToTable("vwRole", "ReadAggregation");
+            config.HasKey(x => x.Id);
         }
 
         private void ConfigureUser(EntityTypeBuilder<User> config)

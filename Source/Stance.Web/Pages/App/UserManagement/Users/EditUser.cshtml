@@ -17,13 +17,13 @@
     </div>
 </div>
 
-<form method="post">
+<form method="post" asp-route-id="@Model.PageModel.Id">
     <div class="row">
         <div class="col-7">
             <!-- Column -->
             <div class="card card-outline-info">
                 <div class="card-header">
-                    <h4 class="mb-0 text-white">Details</h4>
+                    <h5 class="mb-0 text-white">Details</h5>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
@@ -45,6 +45,7 @@
                         <input asp-for="PageModel.IsLockable" class="form-check-input filled-in" type="checkbox" data-val="false">
                         <label class="form-check-label" asp-for="PageModel.IsLockable"></label>
                     </div>
+                    <input type="hidden" asp-for="PageModel.Id"/>
                 </div>
             </div>
 
@@ -53,17 +54,17 @@
         <div class="col-5">
             <div class="card card-outline-info">
                 <div class="card-header">
-                    <h4 class="mb-0 text-white">User Activity</h4>
+                    <h5 class="mb-0 text-white">Roles</h5>
                 </div>
                 <div class="card-body">
-                    <dl>
-                        <dt>Date Created</dt>
-                        <dd>@Model.WhenCreated</dd>
-                        <dt>Authentication Status</dt>
-                        <dd>@Model.AuthenticationStatus</dd>
-                        <dt>Locked Status</dt>
-                        <dd>@Model.LockedStatus</dd>
-                    </dl>
+                    <div class="form-check pl-0">
+                        <input asp-for="PageModel.IsAdmin" class="form-check-input filled-in" type="checkbox" data-val="false">
+                        <label class="form-check-label" asp-for="PageModel.IsAdmin"></label>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PageModel.Roles"></label>
+                        <select multiple class="form-control" asp-for="PageModel.Roles" asp-items="Model.AvailableRoles"></select>
+                    </div>
                 </div>
             </div>
         </div>
@@ -76,7 +77,7 @@
             <a class="btn btn-secondary cancel" asp-page="@PageLocations.AppDashboard">Go Back</a>
         </div>
         <div class="col-6 text-right">
-            <button class="btn btn-info text-white mr-2" type="submit">Create</button>
+            <button class="btn btn-info text-white mr-2" type="submit">Update</button>
         </div>
     </div>
 </form>

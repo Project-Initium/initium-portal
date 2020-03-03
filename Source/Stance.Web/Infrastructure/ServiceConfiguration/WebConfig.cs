@@ -73,6 +73,7 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
         {
             ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
             builder.EntitySet<User>("User");
+            builder.EntitySet<Role>("Role");
             return builder.GetEdmModel();
         }
     }

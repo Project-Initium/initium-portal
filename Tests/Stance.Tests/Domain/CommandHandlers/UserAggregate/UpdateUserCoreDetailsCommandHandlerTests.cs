@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
@@ -34,7 +35,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object);
             var cmd = new UpdateUserCoreDetailsCommand(Guid.NewGuid(), new string('*', 5), new string('*', 6),
-                new string('*', 7), false);
+                new string('*', 7), false, false, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -57,7 +58,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object);
             var cmd = new UpdateUserCoreDetailsCommand(Guid.NewGuid(), new string('*', 5), new string('*', 6),
-                new string('*', 7), false);
+                new string('*', 7), false, false, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
@@ -76,7 +77,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object);
             var cmd = new UpdateUserCoreDetailsCommand(Guid.NewGuid(), new string('*', 5), new string('*', 6),
-                new string('*', 7), false);
+                new string('*', 7), false, false, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -101,7 +102,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object);
             var cmd = new UpdateUserCoreDetailsCommand(Guid.NewGuid(), new string('*', 6), new string('*', 6),
-                new string('*', 7), false);
+                new string('*', 7), false, false, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -128,7 +129,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object);
             var cmd = new UpdateUserCoreDetailsCommand(Guid.NewGuid(), new string('*', 6), new string('*', 6),
-                new string('*', 7), false);
+                new string('*', 7), false, false, new List<Guid>());
             await handler.Handle(cmd, CancellationToken.None);
 
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
@@ -151,7 +152,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object);
             var cmd = new UpdateUserCoreDetailsCommand(Guid.NewGuid(), new string('*', 6), new string('*', 6),
-                new string('*', 7), false);
+                new string('*', 7), false, false, new List<Guid>());
             await handler.Handle(cmd, CancellationToken.None);
 
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);

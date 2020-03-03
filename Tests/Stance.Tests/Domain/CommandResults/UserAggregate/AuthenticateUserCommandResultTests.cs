@@ -13,10 +13,7 @@ namespace Stance.Tests.Domain.CommandResults.UserAggregate
         public void AuthenticatedConstructor_GiveValidArguments_PropertiesAreSet()
         {
             var userId = Guid.NewGuid();
-            var commandResult = new AuthenticateUserCommandResult(userId, new string('*', 6), new string('*', 7), new string('*', 8));
-            Assert.Equal(new string('*', 6), commandResult.EmailAddress);
-            Assert.Equal(new string('*', 7), commandResult.FirstName);
-            Assert.Equal(new string('*', 8), commandResult.LastName);
+            var commandResult = new AuthenticateUserCommandResult(userId);
             Assert.Equal(userId, commandResult.UserId);
             Assert.Equal(BaseAuthenticationProcessCommandResult.AuthenticationState.Completed, commandResult.AuthenticationStatus);
         }
@@ -28,9 +25,6 @@ namespace Stance.Tests.Domain.CommandResults.UserAggregate
             var commandResult = new AuthenticateUserCommandResult(userId, BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaEmailCode);
             Assert.Equal(userId, commandResult.UserId);
             Assert.Equal(BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaEmailCode, commandResult.AuthenticationStatus);
-            Assert.Throws<InvalidOperationException>(() => commandResult.EmailAddress);
-            Assert.Throws<InvalidOperationException>(() => commandResult.FirstName);
-            Assert.Throws<InvalidOperationException>(() => commandResult.LastName);
         }
     }
 }

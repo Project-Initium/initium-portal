@@ -17,7 +17,11 @@ namespace Stance.Web.Infrastructure.Constants
         public const string UserListing = "/App/UserManagement/Users/ListUsers";
         public const string UserCreate = "/App/UserManagement/Users/CreateUser";
         public const string UserEdit = "/App/UserManagement/Users/EditUser";
-
         public const string UserView = "/App/UserManagement/Users/ViewUser";
+
+        public const string RoleListing = "/App/UserManagement/Roles/ListRoles";
+        public const string RoleCreate = "/App/UserManagement/Roles/CreateRole";
+        public const string RoleEdit = "/App/UserManagement/Roles/EditRole";
+        public const string RoleView = "/App/UserManagement/Roles/ViewRole";
     }
 }

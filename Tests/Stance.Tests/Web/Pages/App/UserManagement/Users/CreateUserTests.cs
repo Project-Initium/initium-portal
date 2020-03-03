@@ -1,6 +1,7 @@
 ﻿// Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -8,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ResultMonad;
 using Stance.Core.Domain;
+using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
@@ -36,7 +38,7 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.Send(It.IsAny<CreateUserCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(ResultWithError.Fail(new ErrorData(ErrorCodes.SavingChanges)));
+                .ReturnsAsync(Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.SavingChanges)));
 
             var page = new CreateUser(mediator.Object) { PageModel = new CreateUser.Model() };
 
@@ -51,7 +53,7 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.Send(It.IsAny<CreateUserCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(ResultWithError.Ok<ErrorData>());
+                .ReturnsAsync(Result.Ok<CreateUserCommandResult, ErrorData>(new CreateUserCommandResult(Guid.NewGuid())));
 
             var page = new CreateUser(mediator.Object) { PageModel = new CreateUser.Model() };
 
