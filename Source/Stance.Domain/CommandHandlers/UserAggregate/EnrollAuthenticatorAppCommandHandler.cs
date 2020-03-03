@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) DeviousCreation. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,8 +34,8 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
                                                          nameof(currentAuthenticatedUserProvider));
         }
 
-        public async Task<ResultWithError<ErrorData>> Handle(EnrollAuthenticatorAppCommand request,
-            CancellationToken cancellationToken)
+        public async Task<ResultWithError<ErrorData>> Handle(
+            EnrollAuthenticatorAppCommand request, CancellationToken cancellationToken)
         {
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
@@ -46,10 +49,9 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             return result;
         }
 
-        private async Task<ResultWithError<ErrorData>> Process(EnrollAuthenticatorAppCommand request,
-            CancellationToken cancellationToken)
+        private async Task<ResultWithError<ErrorData>> Process(
+            EnrollAuthenticatorAppCommand request, CancellationToken cancellationToken)
         {
-            var whenHappened = this._clock.GetCurrentInstant().ToDateTimeUtc();
             var currentUserMaybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
             if (currentUserMaybe.HasNoValue)
             {
@@ -72,13 +74,13 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             var secretBytes = Base32Encoding.ToBytes(request.Key);
             var topt = new Totp(secretBytes);
-            var isVerifed = topt.VerifyTotp(request.Code, out _);
-            if (!isVerifed)
+            var isVerified = topt.VerifyTotp(request.Code, out _);
+            if (!isVerified)
             {
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.FailedVerifyingAuthenticatorCode));
             }
 
-            user.EnrollAuthenticatorApp(Guid.NewGuid(), request.Key, whenHappened);
+            user.EnrollAuthenticatorApp(Guid.NewGuid(), request.Key, this._clock.GetCurrentInstant().ToDateTimeUtc());
 
             return ResultWithError.Ok<ErrorData>();
         }
