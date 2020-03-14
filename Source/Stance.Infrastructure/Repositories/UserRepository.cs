@@ -61,7 +61,7 @@ namespace Stance.Infrastructure.Repositories
             return Maybe.From<IUser>(user);
         }
 
-        public async Task<Maybe<IUser>> FindByUserBySecurityToken(Guid tokenId, DateTime expiryDate, CancellationToken cancellationToken)
+        public async Task<Maybe<IUser>> FindByUserBySecurityToken(Guid tokenId, DateTime expiryDate, CancellationToken cancellationToken = default)
         {
             var user = await this.WithRelatedData().SingleOrDefaultAsync(x => x.SecurityTokenMappings.Any(y => y.Id == tokenId && y.WhenExpires > expiryDate), cancellationToken);
             await this.Refresh(user);

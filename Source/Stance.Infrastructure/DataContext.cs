@@ -119,7 +119,7 @@ namespace Stance.Infrastructure
 
             users.OwnsMany(user => user.AuthenticatorApps, authenticatorApps =>
             {
-                authenticatorApps.ToTable("securityTokenMapping", "identity");
+                authenticatorApps.ToTable("authenticatorApp", "identity");
                 authenticatorApps.HasKey(authenticatorApp => authenticatorApp.Id);
                 authenticatorApps.Property(authenticatorApp => authenticatorApp.Id)
                     .ValueGeneratedNever();

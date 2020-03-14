@@ -173,5 +173,29 @@ SELECT uR.RoleId FROM [Identity].[UserRole] uR WHERE uR.UserId = @userId;",
             return Maybe.From(
                 new SystemProfileModel(entity.EmailAddress, entity.FirstName, entity.LastName, entity.IsAdmin, resourceResult.ToList()));
         }
+
+        public async Task<StatusCheckModel> CheckForPresenceOfAuthAppForCurrentUser(CancellationToken cancellationToken = default)
+        {
+            var currentUserMaybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
+            if (currentUserMaybe.HasNoValue)
+            {
+                return new StatusCheckModel(false);
+            }
+
+            var parameters = new DynamicParameters();
+            parameters.Add("userId", currentUserMaybe.Value.UserId, DbType.Guid);
+
+            var command = new CommandDefinition(
+                "SELECT top 1 id FROM [Identity].AuthenticatorApp WHERE UserId = @userId AND WhenRevoked is NULL",
+                parameters,
+                cancellationToken: cancellationToken);
+
+            using var connection = new SqlConnection(this._querySettings.ConnectionString);
+            connection.Open();
+
+            var res = await connection.QueryAsync<PresenceCheckDto<Guid>>(command);
+            var dtos = res as PresenceCheckDto<Guid>[] ?? res.ToArray();
+            return new StatusCheckModel(dtos.Length > 0);
+        }
     }
 }

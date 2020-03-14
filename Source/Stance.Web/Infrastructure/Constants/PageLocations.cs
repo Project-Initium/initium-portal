@@ -23,5 +23,7 @@ namespace Stance.Web.Infrastructure.Constants
         public const string RoleCreate = "/App/UserManagement/Roles/CreateRole";
         public const string RoleEdit = "/App/UserManagement/Roles/EditRole";
         public const string RoleView = "/App/UserManagement/Roles/ViewRole";
+
+        public const string EnrollAuthenticatorApp = "/App/Profile/AuthenticatorApp";
     }
 }

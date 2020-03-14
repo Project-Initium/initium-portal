@@ -19,7 +19,7 @@ namespace Stance.Web.Infrastructure
 
         public CurrentAuthenticatedUserProvider(IHttpContextAccessor httpContextAccessor)
         {
-            this._httpContextAccessor = httpContextAccessor;
+            this._httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
         public Maybe<AuthenticatedUser> CurrentAuthenticatedUser

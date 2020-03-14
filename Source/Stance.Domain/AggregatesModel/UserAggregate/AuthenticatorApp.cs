@@ -19,9 +19,9 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         {
         }
 
-        public string Key { get; }
+        public string Key { get; private set; }
 
-        public DateTime WhenEnrolled { get; }
+        public DateTime WhenEnrolled { get; private set; }
 
         public DateTime? WhenRevoked { get; private set; }
 
