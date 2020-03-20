@@ -27,6 +27,7 @@ namespace Stance.Web.Infrastructure.Attributes
             if (!user.Identity.IsAuthenticated)
             {
                 context.Result = new StatusCodeResult((int)HttpStatusCode.Unauthorized);
+                return;
             }
 
             if (user.HasClaim(x => x.Type == ClaimTypes.System))

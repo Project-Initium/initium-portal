@@ -7,6 +7,9 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stance.Core;
+using Stance.Core.Constants;
+using Stance.Core.Contracts;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.Contracts;
@@ -19,12 +22,25 @@ namespace Stance.Web.Pages.Auth
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IMediator _mediator;
+        private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
-        public ValidateEmailMfaCode(IMediator mediator, IAuthenticationService authenticationService)
+        public ValidateEmailMfaCode(IMediator mediator, IAuthenticationService authenticationService, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             this._authenticationService =
                 authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+        }
+
+        public bool HasApp { get; set; }
+
+        public void OnGet()
+        {
+            var maybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
+            if (maybe.HasValue && maybe.Value is UnauthenticatedUser user)
+            {
+                this.HasApp = user.SetupMfaProviders.HasFlag(MfaProvider.App);
+            }
         }
 
         public async Task<IActionResult> OnPost()

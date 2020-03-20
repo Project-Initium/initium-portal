@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using MaybeMonad;
 using Moq;
 using Stance.Core;
+using Stance.Core.Constants;
 using Stance.Core.Contracts;
 using Stance.Core.Contracts.Domain;
 using Stance.Core.Domain;
@@ -32,7 +33,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From<AuthenticatedUser>(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
 
             var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
             var result = await handler.Handle(new UpdateProfileCommand(string.Empty, string.Empty), CancellationToken.None);
@@ -54,7 +55,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From<AuthenticatedUser>(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
 
             var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
             var result = await handler.Handle(new UpdateProfileCommand(string.Empty, string.Empty), CancellationToken.None);
@@ -74,7 +75,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From<AuthenticatedUser>(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
 
             var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
             var result = await handler.Handle(new UpdateProfileCommand(string.Empty, string.Empty), CancellationToken.None);
@@ -93,7 +94,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe<AuthenticatedUser>.Nothing);
+                .Returns(Maybe<ISystemUser>.Nothing);
 
             var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
             var result = await handler.Handle(new UpdateProfileCommand(string.Empty, string.Empty), CancellationToken.None);
@@ -115,7 +116,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From<AuthenticatedUser>(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
 
             var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
             var result = await handler.Handle(new UpdateProfileCommand(string.Empty, string.Empty), CancellationToken.None);

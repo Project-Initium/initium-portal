@@ -44,22 +44,16 @@ namespace Stance.Web.Pages.Auth
 
             if (result.IsSuccess)
             {
+                await this._authenticationService.SignInUserPartiallyAsync(result.Value.UserId, result.Value.SetupMfaProviders, this.ReturnUrl);
                 if (result.Value.AuthenticationStatus ==
-                    BaseAuthenticationProcessCommandResult.AuthenticationState.Completed)
+                    BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaAppCode)
                 {
-                    await this._authenticationService.SignInUserAsync(result.Value.UserId);
-
-                    if (string.IsNullOrEmpty(this.ReturnUrl))
-                    {
-                        return this.RedirectToPage(PageLocations.AppDashboard);
-                    }
-
-                    return this.LocalRedirect(this.ReturnUrl);
+                    return this.RedirectToPage(PageLocations.AuthAppMfa);
                 }
-
-                await this._authenticationService.SignInUserPartiallyAsync(result.Value.UserId, this.ReturnUrl);
-
-                return this.RedirectToPage(PageLocations.AuthEmailMfa);
+                else
+                {
+                    return this.RedirectToPage(PageLocations.AuthEmailMfa);
+                }
             }
 
             this.PrgState = PrgState.InError;

@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.AspNetCore.Mvc;
+using Stance.Core;
 using Stance.Core.Contracts;
 
 namespace Stance.Web.Components.TopNav
@@ -19,14 +20,14 @@ namespace Stance.Web.Components.TopNav
         public IViewComponentResult Invoke()
         {
             var currentUser = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
-            if (currentUser.HasNoValue)
+            if (currentUser.HasValue && currentUser.Value is AuthenticatedUser user)
             {
-                return this.View(new TopNavViewModel());
+                return this.View(new TopNavViewModel(
+                    user.EmailAddress,
+                    $"{user.FirstName} {user.LastName}"));
             }
 
-            return this.View(new TopNavViewModel(
-                currentUser.Value.EmailAddress,
-                $"{currentUser.Value.FirstName} {currentUser.Value.LastName}"));
+            return this.View(new TopNavViewModel());
         }
     }
 }

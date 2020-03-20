@@ -15,6 +15,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         private readonly List<AuthenticationHistory> _authenticationHistories;
         private readonly List<SecurityTokenMapping> _securityTokenMappings;
         private readonly List<UserRole> _userRoles;
+        private readonly List<AuthenticatorApp> _authenticatorApps;
 
         public User(Guid id, string emailAddress, string passwordHash, bool isLockable, DateTime whenCreated, string firstName, string lastName, IReadOnlyList<Guid> roles, bool isAdmin)
         {
@@ -31,6 +32,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this._authenticationHistories = new List<AuthenticationHistory>();
             this._securityTokenMappings = new List<SecurityTokenMapping>();
             this._userRoles = roles.Select(x => new UserRole(x)).ToList();
+            this._authenticatorApps = new List<AuthenticatorApp>();
         }
 
         private User()
@@ -38,6 +40,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this._authenticationHistories = new List<AuthenticationHistory>();
             this._securityTokenMappings = new List<SecurityTokenMapping>();
             this._userRoles = new List<UserRole>();
+            this._authenticatorApps = new List<AuthenticatorApp>();
         }
 
         public string EmailAddress { get; private set; }
@@ -67,6 +70,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this._securityTokenMappings.AsReadOnly();
 
         public IReadOnlyCollection<UserRole> UserRoles => this._userRoles.AsReadOnly();
+
+        public IReadOnlyCollection<AuthenticatorApp> AuthenticatorApps => this._authenticatorApps.AsReadOnly();
 
         public void ProcessSuccessfulAuthenticationAttempt(DateTime whenAttempted)
         {
@@ -147,6 +152,18 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         public void SetAdminStatus(bool isAdmin)
         {
             this.IsAdmin = isAdmin;
+        }
+
+        public AuthenticatorApp EnrollAuthenticatorApp(Guid id, string key, DateTime whenEnrolled)
+        {
+            var authenticatorApp = new AuthenticatorApp(id, key, whenEnrolled);
+            this._authenticatorApps.Add(authenticatorApp);
+            return authenticatorApp;
+        }
+
+        public void RevokeAuthenticatorApp(DateTime whenRevoked)
+        {
+            this._authenticatorApps.Single(x => x.WhenRevoked == null).RevokeApp(whenRevoked);
         }
     }
 }

@@ -21,6 +21,23 @@
                     </div>
                 </div>
             </form>
+            <div class="message-box contact-box">
+
+                <form class="message-widget contact-widget" method="post">
+                    @if (Model.HasApp)
+                    {
+
+                        <button asp-page-handler="AppMfa">
+                            <div class="user-img">
+                                <span class="round"><i class="icon-mail"></i></span>
+                            </div>
+                            <div class="mail-contnet">
+                                <h5>App</h5> <span class="mail-desc">&nbsp;</span>
+                            </div>
+                        </button>
+                    }
+                </form>
+            </div>
         </div>
     </div>
 </section>

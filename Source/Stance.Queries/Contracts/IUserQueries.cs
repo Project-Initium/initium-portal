@@ -24,5 +24,7 @@ namespace Stance.Queries.Contracts
 
         Task<Maybe<SystemProfileModel>> GetSystemProfileByUserId(
             Guid userId, CancellationToken cancellationToken = default);
+
+        Task<StatusCheckModel> CheckForPresenceOfAuthAppForCurrentUser(CancellationToken cancellationToken = default);
     }
 }

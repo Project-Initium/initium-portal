@@ -14,5 +14,8 @@ namespace Stance.Core.Domain
         RoleAlreadyExists = 7,
         RoleNotFound = 8,
         RoleInUse = 9,
+        AuthenticatorAppAlreadyEnrolled,
+        FailedVerifyingAuthenticatorCode,
+        NoAuthenticatorAppEnrolled,
     }
 }

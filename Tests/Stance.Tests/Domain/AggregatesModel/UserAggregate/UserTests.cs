@@ -362,5 +362,45 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
             Assert.Single(user.UserRoles, x => x.Id == newRole);
             Assert.DoesNotContain(user.UserRoles, role => role.Id == tempRole);
         }
+
+        [Fact]
+        public void EnrollAuthenticatorApp_GivenValidArguments_ExpectAuthenticatorAppAdded()
+        {
+            var user = new User(
+                Guid.NewGuid(),
+                new string('*', 5),
+                new string('*', 6),
+                false,
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
+
+            var authenticatorApp = user.EnrollAuthenticatorApp(Guid.NewGuid(), new string('*', 5), DateTime.UtcNow);
+            Assert.Single(user.AuthenticatorApps);
+            Assert.Contains(authenticatorApp, user.AuthenticatorApps);
+        }
+
+        [Fact]
+        public void RevokeAuthenticatorApp_GivenThereIsAnAppEnrolled_ExpectAppToBeRevoked()
+        {
+            var user = new User(
+                Guid.NewGuid(),
+                new string('*', 5),
+                new string('*', 6),
+                false,
+                DateTime.UtcNow,
+                new string('*', 7),
+                new string('*', 8),
+                new List<Guid>().AsReadOnly(),
+                true);
+
+            user.EnrollAuthenticatorApp(Guid.NewGuid(), new string('*', 5), DateTime.UtcNow);
+            var whenRevoked = DateTime.UtcNow;
+            user.RevokeAuthenticatorApp(whenRevoked);
+            Assert.Single(user.AuthenticatorApps);
+            Assert.DoesNotContain(user.AuthenticatorApps, x => !x.WhenRevoked.HasValue);
+        }
     }
 }

@@ -3,14 +3,16 @@
 
 using System;
 using System.Threading.Tasks;
+using Stance.Core.Constants;
 
 namespace Stance.Web.Infrastructure.Contracts
 {
     public interface IAuthenticationService
     {
-        Task SignInUserAsync(Guid userId);
-
-        Task SignInUserPartiallyAsync(Guid userId, string returnUrl = null);
+        Task SignInUserPartiallyAsync(
+            Guid userId,
+            MfaProvider setupMfaProviders,
+            string returnUrl = null);
 
         Task<string> SignInUserFromPartialStateAsync(Guid userId);
     }

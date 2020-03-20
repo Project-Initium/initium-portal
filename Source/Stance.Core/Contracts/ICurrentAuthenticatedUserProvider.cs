@@ -7,6 +7,6 @@ namespace Stance.Core.Contracts
 {
     public interface ICurrentAuthenticatedUserProvider
     {
-        Maybe<AuthenticatedUser> CurrentAuthenticatedUser { get; }
+        Maybe<ISystemUser> CurrentAuthenticatedUser { get; }
     }
 }

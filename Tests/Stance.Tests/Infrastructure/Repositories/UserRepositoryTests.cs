@@ -139,5 +139,83 @@ namespace Stance.Tests.Infrastructure.Repositories
             Assert.NotNull(userInContext);
             Assert.Equal(EntityState.Modified, userInContext.State);
         }
+
+        [Fact]
+        public async Task FindByUserBySecurityToken_GivenUserDoesExist_ExpectMaybeWithData()
+        {
+            var options = new DbContextOptionsBuilder<DataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .Options;
+
+            var mediator = new Mock<IMediator>();
+
+            var userId = Guid.NewGuid();
+
+            var user = new User(userId, new string('*', 5), new string('*', 6), true,
+                DateTime.UtcNow, new string('*', 7), new string('*', 8), new List<Guid>().AsReadOnly(), true);
+            user.GenerateNewPasswordResetToken(DateTime.UtcNow, TimeSpan.FromHours(2));
+            var tokenId = user.SecurityTokenMappings.First().Id;
+
+            await using var context = new DataContext(options, mediator.Object);
+            await context.Users.AddAsync(user);
+            await context.SaveChangesAsync();
+            var userRepository = new UserRepository(context);
+            var maybe = await userRepository.FindByUserBySecurityToken(tokenId, DateTime.UtcNow);
+
+            Assert.True(maybe.HasValue);
+        }
+
+        [Fact]
+        public async Task FindByUserBySecurityToken_GivenUserDoesNotExist_ExpectMaybeWithNoValue()
+        {
+            var options = new DbContextOptionsBuilder<DataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .Options;
+
+            var mediator = new Mock<IMediator>();
+
+            await using var context = new DataContext(options, mediator.Object);
+            var userRepository = new UserRepository(context);
+            var maybe = await userRepository.FindByUserBySecurityToken(Guid.Empty, DateTime.UtcNow);
+            Assert.True(maybe.HasNoValue);
+        }
+
+        [Fact]
+        public async Task FindByEmailAddress_GivenUserDoesExist_ExpectMaybeWithData()
+        {
+            var options = new DbContextOptionsBuilder<DataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .Options;
+
+            var mediator = new Mock<IMediator>();
+
+            var userId = Guid.NewGuid();
+
+            var user = new User(userId, new string('*', 5), new string('*', 6), true,
+                DateTime.UtcNow, new string('*', 7), new string('*', 8), new List<Guid>().AsReadOnly(), true);
+
+            await using var context = new DataContext(options, mediator.Object);
+            await context.Users.AddAsync(user);
+            await context.SaveChangesAsync();
+            var userRepository = new UserRepository(context);
+            var maybe = await userRepository.FindByEmailAddress(new string('*', 5));
+
+            Assert.True(maybe.HasValue);
+        }
+
+        [Fact]
+        public async Task FindByEmailAddress_GivenUserDoesNotExist_ExpectMaybeWithNoValue()
+        {
+            var options = new DbContextOptionsBuilder<DataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .Options;
+
+            var mediator = new Mock<IMediator>();
+
+            await using var context = new DataContext(options, mediator.Object);
+            var userRepository = new UserRepository(context);
+            var maybe = await userRepository.FindByEmailAddress(string.Empty);
+            Assert.True(maybe.HasNoValue);
+        }
     }
 }

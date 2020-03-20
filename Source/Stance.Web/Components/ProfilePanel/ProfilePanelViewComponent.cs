@@ -3,6 +3,7 @@
 
 using System;
 using Microsoft.AspNetCore.Mvc;
+using Stance.Core;
 using Stance.Core.Contracts;
 
 namespace Stance.Web.Components.ProfilePanel
@@ -19,14 +20,14 @@ namespace Stance.Web.Components.ProfilePanel
         public IViewComponentResult Invoke()
         {
             var currentUser = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
-            if (currentUser.HasNoValue)
+            if (currentUser.HasValue && currentUser.Value is AuthenticatedUser user)
             {
-                return this.View(new ProfilePanelViewModel());
+                return this.View(new ProfilePanelViewModel(
+                    user.EmailAddress,
+                    $"{user.FirstName} {user.LastName}"));
             }
 
-            return this.View(new ProfilePanelViewModel(
-                currentUser.Value.EmailAddress,
-                $"{currentUser.Value.FirstName} {currentUser.Value.LastName}"));
+            return this.View(new ProfilePanelViewModel());
         }
     }
 }

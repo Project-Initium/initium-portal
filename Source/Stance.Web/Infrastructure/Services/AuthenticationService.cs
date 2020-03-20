@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
+using Stance.Core.Constants;
 using Stance.Queries.Contracts;
 using IAuthenticationService = Stance.Web.Infrastructure.Contracts.IAuthenticationService;
 
@@ -58,11 +59,14 @@ namespace Stance.Web.Infrastructure.Services
                 authProperties);
         }
 
-        public async Task SignInUserPartiallyAsync(Guid userId, string returnUrl = null)
+        public async Task SignInUserPartiallyAsync(
+            Guid userId,
+            MfaProvider setupMfaProviders,
+            string returnUrl = null)
         {
             var claims = new List<Claim>
             {
-                new Claim(ClaimTypes.Anonymous, userId.ToString()),
+                new Claim(ClaimTypes.Anonymous, JsonConvert.SerializeObject(new AuthenticationProfile(userId, setupMfaProviders))),
             };
 
             if (!string.IsNullOrWhiteSpace(returnUrl))
@@ -87,15 +91,27 @@ namespace Stance.Web.Infrastructure.Services
             return returnUrl;
         }
 
+        internal class AuthenticationProfile
+        {
+            [JsonConstructor]
+            public AuthenticationProfile(Guid userId, MfaProvider setupMfaProviders)
+            {
+                this.UserId = userId;
+                this.SetupMfaProviders = setupMfaProviders;
+            }
+
+            public Guid UserId { get; }
+
+            public MfaProvider SetupMfaProviders { get; }
+        }
+
         internal class UserProfile
         {
-            private readonly List<string> _resources;
-
             [JsonConstructor]
             public UserProfile(Guid userId, string emailAddress, string firstName, string lastName, bool isAdmin,
                 List<string> resources)
             {
-                this._resources = resources;
+                this.Resources = resources;
                 this.UserId = userId;
                 this.EmailAddress = emailAddress;
                 this.FirstName = firstName;
@@ -113,7 +129,7 @@ namespace Stance.Web.Infrastructure.Services
 
             public bool IsAdmin { get; }
 
-            public IReadOnlyList<string> Resources => this._resources;
+            public IReadOnlyList<string> Resources { get; }
         }
     }
 }

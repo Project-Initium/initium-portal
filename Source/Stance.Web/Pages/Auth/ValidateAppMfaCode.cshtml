@@ -1,0 +1,39 @@
+﻿@page
+@using Stance.Web.Infrastructure.Constants
+@model Stance.Web.Pages.Auth.ValidateAppMfaCode
+@{
+}
+    <section id="wrapper" class="login-register login-sidebar" style="background-image:url(https://picsum.photos/1920/1080);">
+        <div class="login-box card">
+            <div class="card-body">
+                <form class="form-horizontal form-material" asp-antiforgery="true" method="post">
+                    <a href="#" class="text-center d-block"><img src="~/myci-logo-100.png" alt="Home" /></a>
+                    <div class="form-group mt-4">
+                        <div class="col-xs-12">
+                            <input class="form-control" type="text" asp-for="PageModel.Code" placeholder="Code">
+                            <span asp-validation-for="PageModel.Code"></span>
+                        </div>
+                    </div>
+                    <div class="form-group text-center mt-3">
+                        <div class="col-xs-12">
+                            <button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Log In</button>
+                        </div>
+                    </div>
+                </form>
+                <div class="message-box contact-box">
+
+                    <form class="message-widget contact-widget" method="post">
+                        <!-- Message -->
+                        <button asp-page-handler="EmailMfa">
+                            <div class="user-img">
+                                <span class="round"><i class="icon-mail"></i></span>
+                            </div>
+                            <div class="mail-contnet">
+                                <h5>Email</h5> <span class="mail-desc">&nbsp;</span>
+                            </div>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>

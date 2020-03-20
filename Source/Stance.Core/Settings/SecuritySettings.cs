@@ -7,8 +7,8 @@ namespace Stance.Core.Settings
     {
         public int AllowedAttempts { get; set; }
 
-        public bool EnforceMfa { get; set; }
-
         public int PasswordTokenLifetime { get; set; }
+
+        public string SiteName { get; set; }
     }
 }

@@ -9,5 +9,6 @@ namespace Stance.Core.Constants
         Success,
         EmailMfaRequested,
         EmailMfaFailed,
+        AppMfaRequested,
     }
 }

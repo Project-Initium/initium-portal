@@ -11,7 +11,7 @@ using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Web.Infrastructure.Constants;
+
 using Stance.Web.Infrastructure.Contracts;
 using Stance.Web.Infrastructure.PageModels;
 using Stance.Web.Pages.Auth;
@@ -59,50 +59,6 @@ namespace Stance.Tests.Web.Pages.Auth
             var pageResult = Assert.IsType<RedirectToPageResult>(result);
             Assert.Equal(PrgState.InError, page.PrgState);
             Assert.Equal("some-url", pageResult.RouteValues["ReturnUrl"]);
-        }
-
-        [Fact]
-        public async Task OnPost_GivenCommandSuccess_ExpectRedirectToPageResult()
-        {
-            var mediator = new Mock<IMediator>();
-            mediator.Setup(x => x.Send(It.IsAny<AuthenticateUserCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() =>
-                    Result.Ok<AuthenticateUserCommandResult, ErrorData>(
-                        new AuthenticateUserCommandResult(Guid.NewGuid())));
-            var authenticationService = new Mock<IAuthenticationService>();
-
-            var page = new UserAuthentication(mediator.Object, authenticationService.Object)
-            {
-                PageModel = new UserAuthentication.Model(),
-            };
-
-            var result = await page.OnPost();
-
-            var pageResult = Assert.IsType<RedirectToPageResult>(result);
-            Assert.Equal(PageLocations.AppDashboard, pageResult.PageName);
-        }
-
-        [Fact]
-        public async Task OnPost_GivenCommandSuccessAndReturnUrlIsNotEmpty_ExpectLocalRedirectResult()
-        {
-            var mediator = new Mock<IMediator>();
-            mediator.Setup(x => x.Send(It.IsAny<AuthenticateUserCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() =>
-                    Result.Ok<AuthenticateUserCommandResult, ErrorData>(
-                        new AuthenticateUserCommandResult(Guid.NewGuid())));
-
-            var authServiceMock = new Mock<IAuthenticationService>();
-
-            var page = new UserAuthentication(mediator.Object, authServiceMock.Object)
-            {
-                PageModel = new UserAuthentication.Model(),
-                ReturnUrl = "some-url",
-            };
-
-            var result = await page.OnPost();
-
-            var pageResult = Assert.IsType<LocalRedirectResult>(result);
-            Assert.Equal("some-url", pageResult.Url);
         }
 
         [Fact]

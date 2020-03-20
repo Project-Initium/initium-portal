@@ -44,7 +44,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{523A69A7-7
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Shared\Stance.Shared\Stance.Shared.projitems*{118dde70-b2cd-4114-ad23-d23e053f3b05}*SharedItemsImports = 5
+		Shared\Stance.Shared\Stance.Shared.projitems*{3ac2b2c3-2dc6-46e4-8f6e-3fb3cbacc971}*SharedItemsImports = 5
+		Shared\Stance.Shared\Stance.Shared.projitems*{6aa67298-04b7-45f2-b0a2-bba5b7ab7d4e}*SharedItemsImports = 5
+		Shared\Stance.Shared\Stance.Shared.projitems*{6e2156c6-9eca-42de-9e71-0fc34d26c71c}*SharedItemsImports = 5
 		Shared\Stance.Shared\Stance.Shared.projitems*{76b216e2-126d-4a1c-b7f7-94e78adc2f7c}*SharedItemsImports = 13
+		Shared\Stance.Shared\Stance.Shared.projitems*{b7f5acda-266e-4849-9d0f-7a9fc5c718e7}*SharedItemsImports = 5
+		Shared\Stance.Shared\Stance.Shared.projitems*{f2149164-cc5e-4af4-9e85-1bf0cc9694ee}*SharedItemsImports = 5
 	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Database|Any CPU = Database|Any CPU
