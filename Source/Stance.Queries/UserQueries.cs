@@ -150,7 +150,7 @@ SELECT uR.RoleId FROM [Identity].[UserRole] uR WHERE uR.UserId = @userId;",
             parameters.Add("userId", userId, DbType.Guid);
 
             var command = new CommandDefinition(
-                "SELECT u.Username, u.EmailAddress, p.FirstName, p.LastName, u.IsAdmin FROM [Identity].[User] u left join [Identity].[Profile] p on u.Id = p.UserId WHERE u.Id = @userId;" +
+                "SELECT u.EmailAddress, p.FirstName, p.LastName, u.IsAdmin FROM [Identity].[User] u left join [Identity].[Profile] p on u.Id = p.UserId WHERE u.Id = @userId;" +
                 "SELECT r.NormalizedName FROM[Identity].[UserRole] uR JOIN[AccessProtection].[RoleResource] rR ON rR.RoleId = uR.RoleId JOIN[AccessProtection].[Resource] r ON r.Id = rR.ResourceId WHERE uR.UserId = @userId;",
                 parameters,
                 cancellationToken: cancellationToken);

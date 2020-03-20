@@ -9,6 +9,8 @@ using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Infrastructure.Repositories;
 using Stance.Queries;
 using Stance.Queries.Contracts;
+using Stance.Web.Infrastructure.Contracts;
+using Stance.Web.Infrastructure.Services;
 
 namespace Stance.Web.Infrastructure.ServiceConfiguration
 {
@@ -24,6 +26,7 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
             serviceCollection.AddScoped<IRoleRepository, RoleRepository>();
 
             serviceCollection.AddScoped<ICurrentAuthenticatedUserProvider, CurrentAuthenticatedUserProvider>();
+            serviceCollection.AddScoped<IAuthenticationService, AuthenticationService>();
             return serviceCollection;
         }
     }

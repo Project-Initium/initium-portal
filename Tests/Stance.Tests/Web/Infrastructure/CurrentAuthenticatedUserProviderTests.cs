@@ -7,6 +7,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Newtonsoft.Json;
+using Stance.Core;
+using Stance.Core.Constants;
 using Stance.Web.Infrastructure;
 using Stance.Web.Infrastructure.Services;
 using Xunit;
@@ -30,21 +32,23 @@ namespace Stance.Tests.Web.Infrastructure
         [Fact]
         public void CurrentAuthenticatedUser_GivenUserHasAnonymousClaim_ExpectMaybeWithDataHaveIdPropertySet()
         {
-            var userId = Guid.NewGuid();
+            var unauthenticatedUser = new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None);
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext.User.Identity.IsAuthenticated).Returns(true);
             httpContextAccessor.Setup(x => x.HttpContext.User.HasClaim(It.IsAny<Predicate<Claim>>()))
                 .Returns((Predicate<Claim> x) => x.Invoke(new Claim(ClaimTypes.Anonymous, string.Empty)));
             httpContextAccessor.Setup(x => x.HttpContext.User.Claims).Returns(new List<Claim>
             {
-                new Claim(ClaimTypes.Anonymous, userId.ToString()),
+                new Claim(ClaimTypes.Anonymous, JsonConvert.SerializeObject(unauthenticatedUser)),
             });
 
             var currentAuthenticatedUserProvider = new CurrentAuthenticatedUserProvider(httpContextAccessor.Object);
             var maybe = currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
 
             Assert.True(maybe.HasValue);
-            Assert.Equal(userId, maybe.Value.UserId);
+            var user = Assert.IsType<UnauthenticatedUser>(maybe.Value);
+            Assert.Equal(unauthenticatedUser.UserId, user.UserId);
+            Assert.Equal(unauthenticatedUser.SetupMfaProviders, user.SetupMfaProviders);
         }
 
         [Fact]
@@ -66,10 +70,11 @@ namespace Stance.Tests.Web.Infrastructure
             var maybe = currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
 
             Assert.True(maybe.HasValue);
+            var user = Assert.IsType<AuthenticatedUser>(maybe.Value);
             Assert.Equal(userProfile.UserId, maybe.Value.UserId);
-            Assert.Equal(userProfile.FirstName, maybe.Value.FirstName);
-            Assert.Equal(userProfile.LastName, maybe.Value.LastName);
-            Assert.Equal(userProfile.EmailAddress, maybe.Value.EmailAddress);
+            Assert.Equal(userProfile.FirstName, user.FirstName);
+            Assert.Equal(userProfile.LastName, user.LastName);
+            Assert.Equal(userProfile.EmailAddress, user.EmailAddress);
         }
 
         [Fact]

@@ -9,6 +9,7 @@ using MediatR;
 using NodaTime;
 using OtpNet;
 using ResultMonad;
+using Stance.Core;
 using Stance.Core.Contracts;
 using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.UserAggregate;
@@ -53,36 +54,36 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             EnrollAuthenticatorAppCommand request, CancellationToken cancellationToken)
         {
             var currentUserMaybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
-            if (currentUserMaybe.HasNoValue)
+            if (currentUserMaybe.HasValue && currentUserMaybe.Value is AuthenticatedUser currentUser)
             {
-                return ResultWithError.Fail(new ErrorData(ErrorCodes.UserNotFound));
+                var userMaybe = await this._userRepository.Find(currentUser.UserId, cancellationToken);
+
+                if (userMaybe.HasNoValue)
+                {
+                    return ResultWithError.Fail(new ErrorData(ErrorCodes.UserNotFound));
+                }
+
+                var user = userMaybe.Value;
+
+                if (user.AuthenticatorApps.Any(x => x.WhenRevoked == null))
+                {
+                    return ResultWithError.Fail(new ErrorData(ErrorCodes.AuthenticatorAppAlreadyEnrolled));
+                }
+
+                var secretBytes = Base32Encoding.ToBytes(request.Key);
+                var topt = new Totp(secretBytes);
+                var isVerified = topt.VerifyTotp(request.Code, out _);
+                if (!isVerified)
+                {
+                    return ResultWithError.Fail(new ErrorData(ErrorCodes.FailedVerifyingAuthenticatorCode));
+                }
+
+                user.EnrollAuthenticatorApp(Guid.NewGuid(), request.Key, this._clock.GetCurrentInstant().ToDateTimeUtc());
+
+                return ResultWithError.Ok<ErrorData>();
             }
 
-            var userMaybe = await this._userRepository.Find(currentUserMaybe.Value.UserId, cancellationToken);
-
-            if (userMaybe.HasNoValue)
-            {
-                return ResultWithError.Fail(new ErrorData(ErrorCodes.UserNotFound));
-            }
-
-            var user = userMaybe.Value;
-
-            if (user.AuthenticatorApps.Any(x => x.WhenRevoked == null))
-            {
-                return ResultWithError.Fail(new ErrorData(ErrorCodes.AuthenticatorAppAlreadyEnrolled));
-            }
-
-            var secretBytes = Base32Encoding.ToBytes(request.Key);
-            var topt = new Totp(secretBytes);
-            var isVerified = topt.VerifyTotp(request.Code, out _);
-            if (!isVerified)
-            {
-                return ResultWithError.Fail(new ErrorData(ErrorCodes.FailedVerifyingAuthenticatorCode));
-            }
-
-            user.EnrollAuthenticatorApp(Guid.NewGuid(), request.Key, this._clock.GetCurrentInstant().ToDateTimeUtc());
-
-            return ResultWithError.Ok<ErrorData>();
+            return ResultWithError.Fail(new ErrorData(ErrorCodes.UserNotFound));
         }
     }
 }

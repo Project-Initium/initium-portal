@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
 using ResultMonad;
+using Stance.Core.Contracts;
 using Stance.Core.Domain;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
@@ -30,8 +31,9 @@ namespace Stance.Tests.Web.Pages.Auth
                     Result.Fail<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>(
                         new ErrorData(ErrorCodes.SavingChanges)));
             var authenticationService = new Mock<IAuthenticationService>();
+            var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
 
-            var page = new ValidateEmailMfaCode(mediator.Object, authenticationService.Object) { PageModel = new ValidateEmailMfaCode.Model() };
+            var page = new ValidateEmailMfaCode(mediator.Object, authenticationService.Object, currentAuthenticatedUserProvider.Object) { PageModel = new ValidateEmailMfaCode.Model() };
 
             var result = await page.OnPost();
 
@@ -44,7 +46,8 @@ namespace Stance.Tests.Web.Pages.Auth
         {
             var mediator = new Mock<IMediator>();
             var authenticationService = new Mock<IAuthenticationService>();
-            var page = new ValidateEmailMfaCode(mediator.Object, authenticationService.Object);
+            var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
+            var page = new ValidateEmailMfaCode(mediator.Object, authenticationService.Object, currentAuthenticatedUserProvider.Object);
             page.ModelState.AddModelError("Error", "Error");
 
             var result = await page.OnPost();

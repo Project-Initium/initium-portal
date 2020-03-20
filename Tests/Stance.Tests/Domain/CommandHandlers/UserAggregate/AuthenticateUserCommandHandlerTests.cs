@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
@@ -29,6 +30,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 6)));
             user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
+            user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>());
+
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
@@ -39,10 +42,6 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
-            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
-            {
-                EnforceMfa = false,
-            });
 
             var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
@@ -156,15 +155,14 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         }
 
         [Fact]
-        public async Task Handle_GivenUserDoesExistAndPasswordDoesVerifyAndMfaIsNotRequired_ExpectSuccessfulResultWithCompletedStateAndSuccessfulAttemptLogged()
+        public async Task Handle_GivenUserDoesExistAndPasswordDoesVerifyButHasNoAppSetUp_ExpectSuccessfulResultWithAwaitingMfaEmailCodeStateDomainEventRaisedAndAPartialAttemptLogged()
         {
             var user = new Mock<IUser>();
             var userId = Guid.NewGuid();
             user.Setup(x => x.Id).Returns(userId);
             user.Setup(x => x.EmailAddress).Returns(new string('*', 5));
             user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 6)));
-            user.Setup(x => x.ProcessSuccessfulAuthenticationAttempt(It.IsAny<DateTime>()));
-            user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
+            user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>());
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -176,10 +174,6 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
-            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
-            {
-                EnforceMfa = false,
-            });
 
             var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
@@ -187,43 +181,47 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             Assert.True(result.IsSuccess);
             Assert.Equal(userId, result.Value.UserId);
-            Assert.Equal(BaseAuthenticationProcessCommandResult.AuthenticationState.Completed, result.Value.AuthenticationStatus);
-            user.Verify(x => x.ProcessSuccessfulAuthenticationAttempt(It.IsAny<DateTime>()));
-        }
-
-        [Fact]
-        public async Task Handle_GivenUserDoesExistAndPasswordDoesVerifyAndMfaIsRequired_ExpectSuccessfulResultWithAwaitingMfaEmailCodeStateDomainEventRaisedAndAPartialAttemptLogged()
-        {
-            var user = new Mock<IUser>();
-            var userId = Guid.NewGuid();
-            user.Setup(x => x.Id).Returns(userId);
-            user.Setup(x => x.EmailAddress).Returns(new string('*', 5));
-            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 6)));
-
-            var userRepository = new Mock<IUserRepository>();
-            var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
-            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => Maybe.From(user.Object));
-
-            var clock = new Mock<IClock>();
-
-            var securitySettings = new Mock<IOptions<SecuritySettings>>();
-            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
-            {
-                EnforceMfa = true,
-            });
-
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
-            var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
-            var result = await handler.Handle(cmd, CancellationToken.None);
-
-            Assert.True(result.IsSuccess);
-            Assert.Equal(userId, result.Value.UserId);
+            Assert.False(result.Value.SetupMfaProviders.HasFlag(MfaProvider.App));
+            Assert.True(result.Value.SetupMfaProviders.HasFlag(MfaProvider.Email));
             Assert.Equal(BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaEmailCode, result.Value.AuthenticationStatus);
             user.Verify(x => x.ProcessPartialSuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), AuthenticationHistoryType.EmailMfaRequested));
             user.Verify(x => x.AddDomainEvent(It.IsAny<EmailMfaTokenGeneratedEvent>()));
+        }
+
+        [Fact]
+        public async Task Handle_GivenUserDoesExistAndPasswordDoesVerifyAndHasAppSetUp_ExpectSuccessfulResultWithAwaitingMfaAppCodeAndAPartialAttemptLogged()
+        {
+            var user = new Mock<IUser>();
+            var userId = Guid.NewGuid();
+            user.Setup(x => x.Id).Returns(userId);
+            user.Setup(x => x.EmailAddress).Returns(new string('*', 5));
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 6)));
+            user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>
+            {
+                new AuthenticatorApp(Guid.Empty, "some-key", DateTime.UtcNow),
+            });
+
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+
+            var clock = new Mock<IClock>();
+
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
+            var result = await handler.Handle(cmd, CancellationToken.None);
+
+            Assert.True(result.IsSuccess);
+            Assert.Equal(userId, result.Value.UserId);
+            Assert.True(result.Value.SetupMfaProviders.HasFlag(MfaProvider.App));
+            Assert.True(result.Value.SetupMfaProviders.HasFlag(MfaProvider.Email));
+            Assert.Equal(BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaAppCode, result.Value.AuthenticationStatus);
+            user.Verify(x => x.ProcessPartialSuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), AuthenticationHistoryType.AppMfaRequested));
         }
     }
 }

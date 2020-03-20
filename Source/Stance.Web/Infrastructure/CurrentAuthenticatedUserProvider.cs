@@ -22,20 +22,22 @@ namespace Stance.Web.Infrastructure
             this._httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
         }
 
-        public Maybe<AuthenticatedUser> CurrentAuthenticatedUser
+        public Maybe<ISystemUser> CurrentAuthenticatedUser
         {
             get
             {
                 if (!this._httpContextAccessor.HttpContext.User.Identity.IsAuthenticated)
                 {
-                    return Maybe<AuthenticatedUser>.Nothing;
+                    return Maybe<ISystemUser>.Nothing;
                 }
 
                 if (this._httpContextAccessor.HttpContext.User.HasClaim(x => x.Type == ClaimTypes.Anonymous))
                 {
-                    var userId = Guid.Parse(this._httpContextAccessor.HttpContext.User.Claims
-                        .First(x => x.Type == ClaimTypes.Anonymous).Value);
-                    return Maybe.From(new AuthenticatedUser(userId));
+                    var profileJson = this._httpContextAccessor.HttpContext.User.Claims
+                        .First(x => x.Type == ClaimTypes.Anonymous).Value;
+                    var profile = JsonConvert.DeserializeObject<AuthenticationService.AuthenticationProfile>(profileJson);
+                    ISystemUser user = new UnauthenticatedUser(profile.UserId, profile.SetupMfaProviders);
+                    return Maybe.From(user);
                 }
 
                 if (this._httpContextAccessor.HttpContext.User.HasClaim(x => x.Type == ClaimTypes.Upn))
@@ -45,10 +47,12 @@ namespace Stance.Web.Infrastructure
 
                     var profile = JsonConvert.DeserializeObject<AuthenticationService.UserProfile>(profileJson);
 
-                    return Maybe.From(new AuthenticatedUser(profile.UserId, profile.EmailAddress, profile.FirstName, profile.LastName));
+                    ISystemUser user = new AuthenticatedUser(profile.UserId, profile.EmailAddress, profile.FirstName,
+                        profile.LastName);
+                    return Maybe.From(user);
                 }
 
-                return Maybe<AuthenticatedUser>.Nothing;
+                return Maybe<ISystemUser>.Nothing;
             }
         }
     }

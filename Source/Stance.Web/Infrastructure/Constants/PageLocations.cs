@@ -9,6 +9,7 @@ namespace Stance.Web.Infrastructure.Constants
         public const string FirstRunInitialUserSetup = "/FirstRun/InitialUserSetup";
         public const string FirstRunSetupCompleted = "/FirstRun/SetupCompleted";
         public const string AuthEmailMfa = "/Auth/ValidateEmailMfaCode";
+        public const string AuthAppMfa = "/Auth/ValidateAppMfaCode";
 
         public const string AuthRequestPassword = "/Auth/RequestPassword";
         public const string AuthSignOut = "/Auth/SignOut";

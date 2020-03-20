@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -75,7 +76,19 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
                     new ErrorData(ErrorCodes.AuthenticationFailed));
             }
 
-            if (this._securitySettings.EnforceMfa)
+            var authenticationState = BaseAuthenticationProcessCommandResult.AuthenticationState.Unknown;
+            var mfaProvider = MfaProvider.None;
+
+            if (user.AuthenticatorApps.Any(x => x.WhenRevoked == null))
+            {
+                user.ProcessPartialSuccessfulAuthenticationAttempt(
+                    this._clock.GetCurrentInstant().ToDateTimeUtc(),
+                    AuthenticationHistoryType.AppMfaRequested);
+                authenticationState = BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaAppCode;
+                mfaProvider |= MfaProvider.App;
+            }
+
+            if (authenticationState == BaseAuthenticationProcessCommandResult.AuthenticationState.Unknown)
             {
                 user.ProcessPartialSuccessfulAuthenticationAttempt(
                     this._clock.GetCurrentInstant().ToDateTimeUtc(),
@@ -88,15 +101,15 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
                     user.Id,
                     user.EmailAddress,
                     generated));
-
-                return Result.Ok<AuthenticateUserCommandResult, ErrorData>(new AuthenticateUserCommandResult(
-                    user.Id,
-                    AuthenticateUserCommandResult.AuthenticationState.AwaitingMfaEmailCode));
+                authenticationState = BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaEmailCode;
             }
 
-            user.ProcessSuccessfulAuthenticationAttempt(this._clock.GetCurrentInstant().ToDateTimeUtc());
-            return Result.Ok<AuthenticateUserCommandResult, ErrorData>(
-                new AuthenticateUserCommandResult(user.Id));
+            mfaProvider |= MfaProvider.Email;
+
+            return Result.Ok<AuthenticateUserCommandResult, ErrorData>(new AuthenticateUserCommandResult(
+                user.Id,
+                authenticationState,
+                mfaProvider));
         }
     }
 }

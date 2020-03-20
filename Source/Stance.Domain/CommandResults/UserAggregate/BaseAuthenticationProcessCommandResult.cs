@@ -16,8 +16,10 @@ namespace Stance.Domain.CommandResults.UserAggregate
 
         public enum AuthenticationState
         {
+            Unknown,
             Completed,
             AwaitingMfaEmailCode,
+            AwaitingMfaAppCode,
         }
 
         public Guid UserId { get; }

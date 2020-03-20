@@ -4,18 +4,18 @@
 using MediatR;
 using ResultMonad;
 using Stance.Core.Domain;
+using Stance.Domain.CommandResults.UserAggregate;
 
 namespace Stance.Domain.Commands.UserAggregate
 {
-    public class EnrollAuthenticatorAppCommand : IRequest<ResultWithError<ErrorData>>
+    public class
+        ValidateAppMfaCodeAgainstCurrentUserCommand : IRequest<
+            Result<ValidateAppMfaCodeAgainstCurrentUserCommandResult, ErrorData>>
     {
-        public EnrollAuthenticatorAppCommand(string key, string code)
+        public ValidateAppMfaCodeAgainstCurrentUserCommand(string code)
         {
-            this.Key = key;
             this.Code = code;
         }
-
-        public string Key { get; }
 
         public string Code { get; }
     }

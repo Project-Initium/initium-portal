@@ -8,6 +8,5 @@ namespace Stance.Domain.CommandValidators.UserAggregate
 {
     public class EmailMfaRequestedCommandValidator : AbstractValidator<EmailMfaRequestedCommand>
     {
-
     }
 }

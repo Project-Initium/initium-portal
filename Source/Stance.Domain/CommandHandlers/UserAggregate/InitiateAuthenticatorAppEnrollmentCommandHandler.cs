@@ -7,7 +7,6 @@ using MediatR;
 using OtpNet;
 using ResultMonad;
 using Stance.Core.Domain;
-using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
 

@@ -11,6 +11,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Moq;
+using Stance.Core.Constants;
 using Stance.Queries.Contracts;
 using Stance.Queries.Models.User;
 using Xunit;
@@ -97,14 +98,14 @@ namespace Stance.Tests.Web.Infrastructure.Services
             var authenticationService =
                 new Stance.Web.Infrastructure.Services.AuthenticationService(
                     httpContextAccessor.Object, userQueries.Object);
-            await authenticationService.SignInUserPartiallyAsync(userId);
+            await authenticationService.SignInUserPartiallyAsync(userId, MfaProvider.App);
 
             authServiceMock.Verify(
                 x => x.SignInAsync(
                     It.IsAny<HttpContext>(),
                     "login-partial",
                     It.Is<ClaimsPrincipal>(x =>
-                        x.HasClaim(c => c.Type == ClaimTypes.Anonymous && c.Value == userId.ToString()) &&
+                        x.HasClaim(c => c.Type == ClaimTypes.Anonymous) &&
                         !x.HasClaim(c => c.Type == ClaimTypes.UserData)),
                     It.IsAny<AuthenticationProperties>()), Times.Once);
         }
@@ -129,14 +130,14 @@ namespace Stance.Tests.Web.Infrastructure.Services
             var authenticationService =
                 new Stance.Web.Infrastructure.Services.AuthenticationService(
                     httpContextAccessor.Object, userQueries.Object);
-            await authenticationService.SignInUserPartiallyAsync(userId, new string('*', 6));
+            await authenticationService.SignInUserPartiallyAsync(userId, MfaProvider.App, new string('*', 6));
 
             authServiceMock.Verify(
                 x => x.SignInAsync(
                     It.IsAny<HttpContext>(),
                     "login-partial",
                     It.Is<ClaimsPrincipal>(x =>
-                        x.HasClaim(c => c.Type == ClaimTypes.Anonymous && c.Value == userId.ToString()) &&
+                        x.HasClaim(c => c.Type == ClaimTypes.Anonymous) &&
                         x.HasClaim(c => c.Type == ClaimTypes.UserData)),
                     It.IsAny<AuthenticationProperties>()), Times.Once);
         }

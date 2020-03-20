@@ -191,7 +191,7 @@ namespace Stance.Tests.Web.Pages.App.Profile
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe<AuthenticatedUser>.Nothing);
+                .Returns(Maybe<ISystemUser>.Nothing);
 
             var page = new AuthenticatorApp(userQueries.Object, mediator.Object, urlEncoder.Object,
                 securitySettings.Object, currentAuthenticatedUserProvider.Object);
@@ -202,7 +202,7 @@ namespace Stance.Tests.Web.Pages.App.Profile
         }
 
         [Fact]
-        public async Task OnGetAsync_GivenUserHssAnAppEnrolled_ExpectSetupToBeTrue()
+        public async Task OnGetAsync_GivenUserHasAnAppEnrolled_ExpectSetupToBeTrue()
         {
             var userQueries = new Mock<IUserQueries>();
             userQueries.Setup(x => x.CheckForPresenceOfAuthAppForCurrentUser(It.IsAny<CancellationToken>()))
@@ -213,7 +213,11 @@ namespace Stance.Tests.Web.Pages.App.Profile
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(() =>
+                {
+                    ISystemUser user = new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name");
+                    return Maybe.From(user);
+                });
 
             var page = new AuthenticatorApp(userQueries.Object, mediator.Object, urlEncoder.Object,
                 securitySettings.Object, currentAuthenticatedUserProvider.Object);
@@ -244,7 +248,11 @@ namespace Stance.Tests.Web.Pages.App.Profile
             });
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(() =>
+                {
+                    ISystemUser user = new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name");
+                    return Maybe.From(user);
+                });
 
             var page = new AuthenticatorApp(userQueries.Object, mediator.Object, urlEncoder.Object,
                 securitySettings.Object, currentAuthenticatedUserProvider.Object);
@@ -279,7 +287,11 @@ namespace Stance.Tests.Web.Pages.App.Profile
             });
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(() =>
+                {
+                    ISystemUser user = new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name");
+                    return Maybe.From(user);
+                });
 
             var page = new AuthenticatorApp(userQueries.Object, mediator.Object, urlEncoder.Object,
                 securitySettings.Object, currentAuthenticatedUserProvider.Object)

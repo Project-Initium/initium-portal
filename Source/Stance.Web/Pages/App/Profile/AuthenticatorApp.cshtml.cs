@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Diagnostics.CodeAnalysis;
 using System.DrawingCore.Imaging;
 using System.IO;
 using System.Text;
@@ -12,6 +13,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using QRCoder;
+using Stance.Core;
 using Stance.Core.Contracts;
 using Stance.Core.Settings;
 using Stance.Domain.Commands.UserAggregate;
@@ -22,8 +24,10 @@ namespace Stance.Web.Pages.App.Profile
 {
     public class AuthenticatorApp : PrgPageModel<AuthenticatorApp.Model>
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded", Justification = "This is the fix template used by totp apps")]
+        [SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded",
+            Justification = "This is the fix template used by totp apps")]
         private const string AuthenticatorUriFormat = "otpauth://totp/{0}:{1}?secret={2}&issuer={0}&digits=6";
+
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IMediator _mediator;
         private readonly SecuritySettings _securitySettings;
@@ -66,47 +70,54 @@ namespace Stance.Web.Pages.App.Profile
                 return;
             }
 
-            var userCheck = await this._userQueries.CheckForPresenceOfAuthAppForCurrentUser();
-
-            if (userCheck.IsPresent)
+            if (currentUserMaybe.Value is AuthenticatedUser user)
             {
-                this.IsSetup = true;
+                var userCheck = await this._userQueries.CheckForPresenceOfAuthAppForCurrentUser();
+
+                if (userCheck.IsPresent)
+                {
+                    this.IsSetup = true;
+                }
+                else
+                {
+                    if (this.PageModel == null)
+                    {
+                        var result = await this._mediator.Send(new InitiateAuthenticatorAppEnrollmentCommand());
+                        if (result.IsFailure)
+                        {
+                            this.PrgState = PrgState.InError;
+                            return;
+                        }
+
+                        this.PageModel = new Model
+                        {
+                            SharedKey = result.Value.SharedKey,
+                        };
+                    }
+
+                    this.SharedKey = FormatAuthenticatorAppKey(this.PageModel.SharedKey);
+                    this.AuthenticatorUri = string.Format(
+                        AuthenticatorUriFormat,
+                        this._urlEncoder.Encode(this._securitySettings.SiteName),
+                        this._urlEncoder.Encode(user.EmailAddress),
+                        this.PageModel.SharedKey);
+
+                    var qrGenerator = new QRCodeGenerator();
+
+                    var qrCodeData = qrGenerator.CreateQrCode(this.AuthenticatorUri, QRCodeGenerator.ECCLevel.Q);
+
+                    var qrCode = new QRCode(qrCodeData);
+                    var qrCodeImage = qrCode.GetGraphic(20);
+
+                    await using var stream = new MemoryStream();
+                    qrCodeImage.Save(stream, ImageFormat.Png);
+                    var bytes = stream.ToArray();
+                    this.Code = Convert.ToBase64String(bytes);
+                }
             }
             else
             {
-                if (this.PageModel == null)
-                {
-                    var result = await this._mediator.Send(new InitiateAuthenticatorAppEnrollmentCommand());
-                    if (result.IsFailure)
-                    {
-                        this.PrgState = PrgState.InError;
-                        return;
-                    }
-
-                    this.PageModel = new Model
-                    {
-                        SharedKey = result.Value.SharedKey,
-                    };
-                }
-
-                this.SharedKey = FormatAuthenticatorAppKey(this.PageModel.SharedKey);
-                this.AuthenticatorUri = string.Format(
-                    AuthenticatorUriFormat,
-                    this._urlEncoder.Encode(this._securitySettings.SiteName),
-                    this._urlEncoder.Encode(currentUserMaybe.Value.EmailAddress),
-                    this.PageModel.SharedKey);
-
-                var qrGenerator = new QRCodeGenerator();
-
-                var qrCodeData = qrGenerator.CreateQrCode(this.AuthenticatorUri, QRCodeGenerator.ECCLevel.Q);
-
-                var qrCode = new QRCode(qrCodeData);
-                var qrCodeImage = qrCode.GetGraphic(20);
-
-                await using var stream = new MemoryStream();
-                qrCodeImage.Save(stream, ImageFormat.Png);
-                var bytes = stream.ToArray();
-                this.Code = Convert.ToBase64String(bytes);
+                this.PrgState = PrgState.InError;
             }
         }
 

@@ -5,13 +5,8 @@ using System;
 
 namespace Stance.Core
 {
-    public sealed class AuthenticatedUser
+    public sealed class AuthenticatedUser : ISystemUser
     {
-        public AuthenticatedUser(Guid userId)
-        {
-            this.UserId = userId;
-        }
-
         public AuthenticatedUser(Guid userId, string emailAddress, string firstName, string lastName)
         {
             this.UserId = userId;

@@ -22,7 +22,7 @@ namespace Stance.Tests.Web.Components.LeftNav
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(
                 Maybe.From(
-                    new AuthenticatedUser(Guid.Empty, new string('*', 3), new string('*', 4), new string('*', 5))));
+                    new AuthenticatedUser(Guid.Empty, new string('*', 3), new string('*', 4), new string('*', 5)) as ISystemUser));
 
             var httpContext = new DefaultHttpContext();
             var viewContext = new ViewContext { HttpContext = httpContext };
@@ -45,7 +45,7 @@ namespace Stance.Tests.Web.Components.LeftNav
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(
-                Maybe<AuthenticatedUser>.Nothing);
+                Maybe<ISystemUser>.Nothing);
 
             var httpContext = new DefaultHttpContext();
             var viewContext = new ViewContext { HttpContext = httpContext };

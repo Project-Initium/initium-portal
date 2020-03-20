@@ -37,7 +37,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name") as ISystemUser));
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);
@@ -70,7 +70,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name") as ISystemUser));
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);
@@ -104,7 +104,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe<AuthenticatedUser>.Nothing);
+                .Returns(Maybe<ISystemUser>.Nothing);
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);
@@ -140,7 +140,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name") as ISystemUser));
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);
@@ -172,7 +172,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name") as ISystemUser));
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);
@@ -206,7 +206,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name") as ISystemUser));
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);
@@ -242,7 +242,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid())));
+                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name") as ISystemUser));
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);

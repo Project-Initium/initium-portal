@@ -1,12 +1,15 @@
 ﻿// Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using MaybeMonad;
+using System;
 
-namespace Stance.Core.Contracts
+namespace Stance.Core.Constants
 {
-    public interface ICurrentAuthenticatedUserProvider
+    [Flags]
+    public enum MfaProvider
     {
-        Maybe<ISystemUser> CurrentAuthenticatedUser { get; }
+        None,
+        Email,
+        App,
     }
 }

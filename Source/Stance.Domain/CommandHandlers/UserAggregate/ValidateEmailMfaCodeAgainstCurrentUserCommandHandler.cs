@@ -8,6 +8,7 @@ using MediatR;
 using NodaTime;
 using OtpNet;
 using ResultMonad;
+using Stance.Core;
 using Stance.Core.Constants;
 using Stance.Core.Contracts;
 using Stance.Core.Domain;
@@ -47,16 +48,18 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
         private async Task<Result<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>> Process(ValidateEmailMfaCodeAgainstCurrentUserCommand request, CancellationToken cancellationToken)
         {
             var currentUserMaybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
-            if (currentUserMaybe.HasNoValue)
+            if (!currentUserMaybe.HasValue || !(currentUserMaybe.Value is UnauthenticatedUser currentUser))
             {
-                return Result.Fail<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.UserNotFound));
+                return Result.Fail<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>(
+                    new ErrorData(ErrorCodes.UserNotFound));
             }
 
-            var userMaybe = await this._userRepository.Find(currentUserMaybe.Value.UserId, cancellationToken);
+            var userMaybe = await this._userRepository.Find(currentUser.UserId, cancellationToken);
 
             if (userMaybe.HasNoValue)
             {
-                return Result.Fail<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.UserNotFound));
+                return Result.Fail<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>(
+                    new ErrorData(ErrorCodes.UserNotFound));
             }
 
             var user = userMaybe.Value;
