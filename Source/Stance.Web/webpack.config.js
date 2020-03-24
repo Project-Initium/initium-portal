@@ -2,6 +2,7 @@ const
     path = require('path'),
     webpack = require('webpack'),
     MiniCssExtractPlugin = require('mini-css-extract-plugin'),
+    CopyWebpackPlugin = require('copy-webpack-plugin'),
     {CleanWebpackPlugin} = require('clean-webpack-plugin');
 
 module.exports = {
@@ -13,6 +14,9 @@ module.exports = {
         'role-create': './Resources/Scripts/pages/role-create.ts',
         'role-edit': './Resources/Scripts/pages/role-edit.ts',
         'role-listing': './Resources/Scripts/pages/role-list.ts',
+        'profile-device': './Resources/Scripts/pages/profile-device.ts',
+        'validate-device-mfa': './Resources/Scripts/pages/validate-device-mfa.ts',
+        'validate-email-mfa': './Resources/Scripts/pages/validate-email-mfa.ts'
     },
     devtool: 'inline-source-map',
     output: {
@@ -94,6 +98,9 @@ module.exports = {
             chunkFilename: '[id].css',
             ignoreOrder: false
         }),
+        new CopyWebpackPlugin([
+            './Resources/Assets/logo.png'           
+        ]),
         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",

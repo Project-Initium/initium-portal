@@ -10,5 +10,6 @@ namespace Stance.Core.Constants
         EmailMfaRequested,
         EmailMfaFailed,
         AppMfaRequested,
+        DeviceMfaRequested,
     }
 }

@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
@@ -196,6 +197,36 @@ SELECT uR.RoleId FROM [Identity].[UserRole] uR WHERE uR.UserId = @userId;",
             var res = await connection.QueryAsync<PresenceCheckDto<Guid>>(command);
             var dtos = res as PresenceCheckDto<Guid>[] ?? res.ToArray();
             return new StatusCheckModel(dtos.Length > 0);
+        }
+
+        public async Task<Maybe<List<DeviceInfo>>> GetDeviceInfoForCurrentUser(CancellationToken cancellationToken = default)
+        {
+            var currentUserMaybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
+            if (currentUserMaybe.HasNoValue)
+            {
+                return Maybe<List<DeviceInfo>>.Nothing;
+            }
+
+            var parameters = new DynamicParameters();
+            parameters.Add("userId", currentUserMaybe.Value.UserId, DbType.Guid);
+
+            var command = new CommandDefinition(
+                "SELECT Id, Name, WhenEnrolled, WhenLastUsed FROM [Identity].[AuthenticatorDevice] WHERE UserId = @userId and WhenRevoked is null",
+                parameters,
+                cancellationToken: cancellationToken);
+
+            using var connection = new SqlConnection(this._querySettings.ConnectionString);
+            connection.Open();
+
+            var res = await connection.QueryAsync<DeviceInfoDto>(command);
+            var dtos = res as DeviceInfoDto[] ?? res.ToArray();
+            if (dtos.Length < 1)
+            {
+                return Maybe<List<DeviceInfo>>.Nothing;
+            }
+
+            return Maybe.From(new List<DeviceInfo>(dtos.Select(x =>
+                new DeviceInfo(x.Id, x.Name, x.WhenEnrolled, x.WhenLastUsed))));
         }
     }
 }

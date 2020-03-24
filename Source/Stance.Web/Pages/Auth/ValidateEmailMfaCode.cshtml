@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/auth/multi-factor-email"
 @model Stance.Web.Pages.Auth.ValidateEmailMfaCode
 @{
 }
@@ -7,12 +7,14 @@
     <div class="login-box card">
         <div class="card-body">
             <form class="form-horizontal form-material" asp-antiforgery="true" method="post">
-                <a href="#" class="text-center d-block"></a>
+                <a href="#" class="text-center d-block"><img src="~/logo.png" alt="Home" /></a>
+                <h4 class="rounded-title mt-4 mb-0">Use Email</h4>
+                <small>An email has been sent to you with an authentication code.  If you are missing the email click <a href="@Url.Action("RequestMfaEmail", "AuthEmail")" data-resend>here to resend</a>.</small>
                 <div class="form-group mt-4">
 
-                    <label asp-for="PageModel.Code"></label>
-                    <input class="form-control" type="text" asp-for="PageModel.Code">
-                    <span class="text-danger" asp-validation-for="PageModel.Code"></span>
+                    <label asp-for="PageModel.Code" class="sr-only"></label>
+                    <input class="form-control" type="text" asp-for="PageModel.Code"  placeholder="@Html.DisplayNameFor(x=>x.PageModel.Code)">
+                    <span class="text-danger small" asp-validation-for="PageModel.Code"></span>
 
                 </div>
                 <div class="form-group text-center mt-3">
@@ -21,18 +23,28 @@
                     </div>
                 </div>
             </form>
-            <div class="message-box contact-box">
+            <div class="list-group">
 
-                <form class="message-widget contact-widget" method="post">
+                <form class="feeds m-0 p-0 mt-3 pt-2" method="post">
+
+                    @if (Model.HasDevice)
+                    {
+
+                        <button asp-page-handler="DeviceMfa" class="feed-item d-flex py-2 align-items-center w-100 b-0 bg-white">
+                            <span class="btn btn-info btn-circle font-18 text-white d-flex align-items-center justify-content-center"><i class="fab fa-usb"></i></span>
+                            <div class="ml-3">
+                                <span class="">Fido Device</span>
+                            </div>
+                        </button>
+                        <hr class="m-t-5 m-b-5" />
+                    }
                     @if (Model.HasApp)
                     {
 
-                        <button asp-page-handler="AppMfa">
-                            <div class="user-img">
-                                <span class="round"><i class="icon-mail"></i></span>
-                            </div>
-                            <div class="mail-contnet">
-                                <h5>App</h5> <span class="mail-desc">&nbsp;</span>
+                        <button asp-page-handler="AppMfa" class="feed-item d-flex py-2 align-items-center w-100 b-0 bg-white">
+                            <span class="btn btn-info btn-circle font-18 text-white d-flex align-items-center justify-content-center"><i class="fas fa-mobile-alt"></i></span>
+                            <div class="ml-3">
+                                <span class="">Authenticator App</span>
                             </div>
                         </button>
                     }
@@ -41,3 +53,7 @@
         </div>
     </div>
 </section>
+
+@section scripts {
+    <script src="~/validate-email-mfa.js" type="text/javascript"></script>
+}

@@ -2,6 +2,8 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
@@ -38,7 +40,7 @@ namespace Stance.Web.Pages.Auth
         {
             if (!this.ModelState.IsValid)
             {
-                return this.RedirectToPage();
+                return this.RedirectToPage(new { this.PageModel.Token });
             }
 
             var result =
@@ -46,7 +48,7 @@ namespace Stance.Web.Pages.Auth
 
             this.PrgState = result.IsFailure ? PrgState.Failed : PrgState.Success;
 
-            return this.RedirectToPage();
+            return this.RedirectToPage(new { this.PageModel.Token });
         }
 
         public class Model
@@ -55,6 +57,7 @@ namespace Stance.Web.Pages.Auth
 
             public string Password { get; set; }
 
+            [Display(Name = "Password Confirmation")]
             public string PasswordConfirmation { get; set; }
         }
 
@@ -63,8 +66,9 @@ namespace Stance.Web.Pages.Auth
             public Validator()
             {
                 this.RuleFor(x => x.Token).NotEmpty();
-                this.RuleFor(x => x.Password).NotEmpty();
-                this.RuleFor(x => x.PasswordConfirmation).Equal(x => x.Password);
+                this.RuleFor(x => x.Password)
+                    .NotEmpty().WithMessage("Please enter your new password.");
+                this.RuleFor(x => x.PasswordConfirmation).Equal(x => x.Password).WithMessage("Please confirm your new password.");
             }
         }
     }

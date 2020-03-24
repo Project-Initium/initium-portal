@@ -15,9 +15,8 @@ namespace Stance.Tests.Domain.Events
             var id = Guid.NewGuid();
             var email = new string('*', 5);
             var token = new string('*', 6);
-            var @event = new PasswordResetTokenGeneratedEvent(id, email, token);
+            var @event = new PasswordResetTokenGeneratedEvent(email, token);
 
-            Assert.Equal(id, @event.UserId);
             Assert.Equal(email, @event.EmailAddress);
             Assert.Equal(token, @event.Token);
         }

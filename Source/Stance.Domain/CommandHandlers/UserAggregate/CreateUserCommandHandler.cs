@@ -6,9 +6,11 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.Extensions.Options;
 using NodaTime;
 using ResultMonad;
 using Stance.Core.Domain;
+using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
@@ -21,12 +23,14 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
         private readonly IClock _clock;
         private readonly IUserQueries _userQueries;
         private readonly IUserRepository _userRepository;
+        private readonly SecuritySettings _securitySettings;
 
-        public CreateUserCommandHandler(IUserRepository userRepository, IClock clock, IUserQueries userQueries)
+        public CreateUserCommandHandler(IUserRepository userRepository, IClock clock, IUserQueries userQueries, IOptions<SecuritySettings> securitySettings)
         {
             this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
             this._userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
+            this._securitySettings = securitySettings.Value;
         }
 
         public async Task<Result<CreateUserCommandResult, ErrorData>> Handle(
@@ -64,8 +68,10 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
                 return Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.UserAlreadyExists));
             }
 
+            var whenHappened = this._clock.GetCurrentInstant().ToDateTimeUtc();
             var user = new User(Guid.NewGuid(), request.EmailAddress, GenerateRandomPassword(), request.IsLockable,
-                this._clock.GetCurrentInstant().ToDateTimeUtc(), request.FirstName, request.LastName, request.Roles, request.IsAdmin);
+                whenHappened, request.FirstName, request.LastName, request.Roles, request.IsAdmin);
+            user.GenerateNewAccountConfirmationToken(whenHappened, TimeSpan.FromMinutes(this._securitySettings.AccountVerificationTokenLifetime));
             this._userRepository.Add(user);
             return Result.Ok<CreateUserCommandResult, ErrorData>(new CreateUserCommandResult(user.Id));
         }

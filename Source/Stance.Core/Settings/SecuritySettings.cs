@@ -10,5 +10,11 @@ namespace Stance.Core.Settings
         public int PasswordTokenLifetime { get; set; }
 
         public string SiteName { get; set; }
+
+        public string ServerDomain { get; set; }
+
+        public string Origin { get; set; }
+
+        public int AccountVerificationTokenLifetime { get; set; }
     }
 }

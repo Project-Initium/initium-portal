@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
@@ -29,12 +30,13 @@ namespace Stance.Web.Pages.Auth
 
             await this._mediator.Send(new RequestPasswordResetCommand(this.PageModel.EmailAddress));
 
-            this.PrgState = PrgState.Success;
+            this.AddPageNotification("Password reset request", "You will shortly receive an email with a reset link.", PageNotification.Info);
             return this.RedirectToPage();
         }
 
         public class Model
         {
+            [Display(Name = "Email Address")]
             public string EmailAddress { get; set; }
         }
 
@@ -42,7 +44,9 @@ namespace Stance.Web.Pages.Auth
         {
             public Validator()
             {
-                this.RuleFor(x => x.EmailAddress).EmailAddress().NotEmpty();
+                this.RuleFor(x => x.EmailAddress)
+                    .NotEmpty().WithMessage("Please enter your email address.")
+                    .EmailAddress().WithMessage("The email address is not valid");
             }
         }
     }

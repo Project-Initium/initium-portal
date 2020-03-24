@@ -45,26 +45,34 @@ namespace Stance.Web.Infrastructure.PageModels
             }
         }
 
-        protected void AddPageNotification(string title, string message)
+        protected void AddPageNotification(string title, string message, string pageNotificationType)
         {
-            this._pageNotifications.Add(new PageNotification(title, message));
+            this._pageNotifications.Add(new PageNotification(title, message, pageNotificationType));
         }
 
         public class PageNotification
         {
+            public const string Info = "info";
+            public const string Error = "error";
+            public const string Success = "success";
+
             public PageNotification()
             {
             }
 
-            public PageNotification(string title, string message)
+            public PageNotification(string title, string message, string pageNotificationType)
             {
                 this.Title = title;
                 this.Message = message;
+                this.PageNotificationType = pageNotificationType;
             }
 
             public string Title { get; set; }
 
             public string Message { get; set; }
+
+            public string PageNotificationType { get; set; }
         }
+
     }
 }

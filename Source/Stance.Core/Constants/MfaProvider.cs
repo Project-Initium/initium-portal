@@ -11,5 +11,6 @@ namespace Stance.Core.Constants
         None,
         Email,
         App,
+        Device,
     }
 }

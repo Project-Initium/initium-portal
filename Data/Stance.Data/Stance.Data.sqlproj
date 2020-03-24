@@ -90,6 +90,7 @@
     <Build Include="ReadAggregation\Views\vwRole.sql" />
     <Build Include="Identity\Tables\UserRole.sql" />
     <Build Include="Identity\Tables\AuthenticatorApp.sql" />
+    <Build Include="Identity\Tables\AuthenticatorDevice.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Stance.Data.refactorlog" />

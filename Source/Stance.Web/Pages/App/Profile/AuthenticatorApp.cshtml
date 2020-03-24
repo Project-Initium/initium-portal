@@ -1,4 +1,4 @@
-﻿@page
+﻿@page "/app/profile/authentictor-app"
 @using Stance.Web.Infrastructure.Constants
 @model Stance.Web.Pages.App.Profile.AuthenticatorApp
 @{
@@ -24,72 +24,74 @@
                 <div class="card">
                     <ul class="nav nav-tabs profile-tab" role="tablist" id="profileTabs">
                         <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.AppProfileDetails">My Details</a> </li>
+                        <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.ChangePassword">Password</a> </li>
                         <li class="nav-item"> <a class="nav-link active" role="tab" asp-page="@PageLocations.EnrollAuthenticatorApp">Authenticator App</a> </li>
+                        <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.SecurityKeys">Security Keys</a> </li>
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div class="tab-pane active" id="profile" role="tabpanel">
                             <div class="card-body">
-                                
-                                    @if (Model.IsSetup)
-                                    {
-                                        <div class="alert alert-warning" role="alert">
+
+                                @if (Model.IsSetup)
+                                {
+                                    <div class="alert alert-warning" role="alert">
+                                        <p>
+                                            <span class="glyphicon glyphicon-warning-sign"></span>
+                                            <strong>If you reset your authenticator key your authenticator app will not work until you reconfigure it.</strong>
+                                        </p>
+                                        <p>
+                                            This process disables 2FA until you verify your authenticator app and will also reset your 2FA recovery codes.
+                                            If you do not complete your authenticator app configuration you may lose access to your account.
+                                        </p>
+                                    </div>
+                                    <div>
+                                        <form method="post" class="form-group" asp-page-handler="revoke">
+                                            <button class="btn btn-danger" type="submit">Reset authenticator key</button>
+                                        </form>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <p>To use an authenticator app go through the following steps:</p>
+                                    <ol class="list">
+                                        <li>
                                             <p>
-                                                <span class="glyphicon glyphicon-warning-sign"></span>
-                                                <strong>If you reset your authenticator key your authenticator app will not work until you reconfigure it.</strong>
+                                                Download a two-factor authenticator app like Microsoft Authenticator for
+                                                <a href="https://go.microsoft.com/fwlink/?Linkid=825072">Android</a> and
+                                                <a href="https://go.microsoft.com/fwlink/?Linkid=825073">iOS</a> or
+                                                Google Authenticator for
+                                                <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en">Android</a> and
+                                                <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8">iOS</a>.
                                             </p>
+                                        </li>
+                                        <li>
+                                            <p>Scan the QR Code or enter this key <kbd>@Model.SharedKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
+                                            <div class="alert alert-info">To enable QR code generation please read our <a href="https://go.microsoft.com/fwlink/?Linkid=852423">documentation</a>.</div>
+                                            <img src="@String.Format("data:image/png;base64,{0}", Model.Code)" style="width: 250px" />
+                                        </li>
+                                        <li>
                                             <p>
-                                                This process disables 2FA until you verify your authenticator app and will also reset your 2FA recovery codes.
-                                                If you do not complete your authenticator app configuration you may lose access to your account.
+                                                Once you have scanned the QR code or input the key above, your two factor authentication app will provide you
+                                                with a unique code. Enter the code in the confirmation box below.
                                             </p>
-                                        </div>
-                                        <div>
-                                            <form method="post" class="form-group" asp-page-handler="revoke">
-                                                <button class="btn btn-danger" type="submit">Reset authenticator key</button>
-                                            </form>
-                                        </div>
-                                    }
-                                    else
-                                    {
-                                        <p>To use an authenticator app go through the following steps:</p>
-                                        <ol class="list">
-                                            <li>
-                                                <p>
-                                                    Download a two-factor authenticator app like Microsoft Authenticator for
-                                                    <a href="https://go.microsoft.com/fwlink/?Linkid=825072">Android</a> and
-                                                    <a href="https://go.microsoft.com/fwlink/?Linkid=825073">iOS</a> or
-                                                    Google Authenticator for
-                                                    <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en">Android</a> and
-                                                    <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8">iOS</a>.
-                                                </p>
-                                            </li>
-                                            <li>
-                                                <p>Scan the QR Code or enter this key <kbd>@Model.SharedKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
-                                                <div class="alert alert-info">To enable QR code generation please read our <a href="https://go.microsoft.com/fwlink/?Linkid=852423">documentation</a>.</div>
-                                                <img src="@String.Format("data:image/png;base64,{0}", Model.Code)" style="width: 250px" />
-                                            </li>
-                                            <li>
-                                                <p>
-                                                    Once you have scanned the QR code or input the key above, your two factor authentication app will provide you
-                                                    with a unique code. Enter the code in the confirmation box below.
-                                                </p>
-                                                <div class="row">
-                                                    <div class="col-md-6">
-                                                        <form method="post">
-                                                            <input type="hidden" asp-for="PageModel.SharedKey" />
-                                                            <div class="form-group">
-                                                                <label asp-for="PageModel.Code" class="control-label">Verification Code</label>
-                                                                <input asp-for="PageModel.Code" class="form-control" autocomplete="off" />
-                                                                <span asp-validation-for="PageModel.Code" class="text-danger"></span>
-                                                            </div>
-                                                            <button type="submit" class="btn btn-info">Verify</button>
-                                                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                                        </form>
-                                                    </div>
+                                            <div class="row">
+                                                <div class="col-md-6">
+                                                    <form method="post">
+                                                        <input type="hidden" asp-for="PageModel.SharedKey" />
+                                                        <div class="form-group">
+                                                            <label asp-for="PageModel.Code" class="control-label">Verification Code</label>
+                                                            <input asp-for="PageModel.Code" class="form-control" autocomplete="off" />
+                                                            <span asp-validation-for="PageModel.Code" class="text-danger"></span>
+                                                        </div>
+                                                        <button type="submit" class="btn btn-info">Verify</button>
+                                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                                                    </form>
                                                 </div>
-                                            </li>
-                                        </ol>
-                                    }
+                                            </div>
+                                        </li>
+                                    </ol>
+                                }
                             </div>
                         </div>
                     </div>

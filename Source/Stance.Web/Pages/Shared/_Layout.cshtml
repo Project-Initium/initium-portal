@@ -1,23 +1,32 @@
-﻿<!DOCTYPE html>
+﻿@using Stance.Web.Infrastructure.PageModels
+<!DOCTYPE html>
 
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>@ViewBag.Title</title>
-    @*<link href="~/vendor.css" rel="stylesheet" asp-append-version="true">*@
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css" integrity="sha256-3sPp8BkKUE7QyPSl6VfBByBroQbKxKG7tsusY2mhbVY=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous" />
     <link href="~/theme.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/vendors-styles.css" rel="stylesheet" asp-append-version="true" />
     <link href="~/app.css" rel="stylesheet" asp-append-version="true" />
     @RenderSection("styles", false)
 </head>
 <body class="@ViewData["page-class"]">
+    @if (ViewData["PageNotifications"] is IReadOnlyList<NotificationPageModel.PageNotification> notifications)
+    {
+        foreach (var pageNotification in notifications)
+        {
+            <span data-page-notification data-title="@pageNotification.Title" data-message="@pageNotification.Message" data-type="@pageNotification.PageNotificationType"></span>
+        }
+    }
 
     @RenderBody()
 
-<script src="~/vendors.js" asp-append-version="true"></script>
-<script src="~/theme.js" asp-append-version="true"></script>
-<script src="~/commons.js" asp-append-version="true"></script>
-<script src="~/app.js" asp-append-version="true"></script>
-@RenderSection("scripts", false)
+    <script src="~/vendors.js" asp-append-version="true"></script>
+    <script src="~/theme.js" asp-append-version="true"></script>
+    <script src="~/commons.js" asp-append-version="true"></script>
+    <script src="~/app.js" asp-append-version="true"></script>
+    @RenderSection("scripts", false)
 </body>
 </html>

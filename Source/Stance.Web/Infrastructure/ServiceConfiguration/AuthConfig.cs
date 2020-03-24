@@ -12,7 +12,7 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
             this IServiceCollection services)
         {
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options => { options.LoginPath = "/sign-in"; })
+                .AddCookie(options => { options.LoginPath = "/auth/sign-in"; })
                 .AddCookie("login-partial");
 
             return services;

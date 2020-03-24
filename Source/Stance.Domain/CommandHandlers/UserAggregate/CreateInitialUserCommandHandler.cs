@@ -54,9 +54,13 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.SystemIsAlreadySetup));
             }
 
+            var whenHappened = this._clock.GetCurrentInstant().ToDateTimeUtc();
+
             var user = new User(Guid.NewGuid(), request.EmailAddress, BCrypt.Net.BCrypt.HashPassword(request.Password),
-                true, this._clock.GetCurrentInstant().ToDateTimeUtc(),
+                true, whenHappened,
                 request.FirstName, request.LastName, new List<Guid>(), true);
+
+            user.VerifyAccount(whenHappened);
 
             this._userRepository.Add(user);
             return ResultWithError.Ok<ErrorData>();

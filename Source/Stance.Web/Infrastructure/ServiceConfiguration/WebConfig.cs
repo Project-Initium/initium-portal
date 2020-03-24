@@ -31,7 +31,9 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
                     options.ViewLocationFormats.Add("/{0}.cshtml");
                     options.PageViewLocationFormats.Add("/{0}.cshtml");
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson();
+
             services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddControllers(mvc => { mvc.EnableEndpointRouting = false; });
             return services;

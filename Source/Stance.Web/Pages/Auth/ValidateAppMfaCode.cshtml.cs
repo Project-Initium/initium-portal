@@ -6,6 +6,9 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Stance.Core;
+using Stance.Core.Constants;
+using Stance.Core.Contracts;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.Contracts;
@@ -18,11 +21,24 @@ namespace Stance.Web.Pages.Auth
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IMediator _mediator;
+        private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
-        public ValidateAppMfaCode(IMediator mediator, IAuthenticationService authenticationService)
+        public ValidateAppMfaCode(IMediator mediator, IAuthenticationService authenticationService, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
             this._mediator = mediator;
             this._authenticationService = authenticationService;
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+        }
+
+        public bool HasDevice { get; set; }
+
+        public void OnGet()
+        {
+            var maybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
+            if (maybe.HasValue && maybe.Value is UnauthenticatedUser user)
+            {
+                this.HasDevice = user.SetupMfaProviders.HasFlag(MfaProvider.Device);
+            }
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -47,18 +63,34 @@ namespace Stance.Web.Pages.Auth
                 return this.LocalRedirect(returnUrl);
             }
 
+            this.AddPageNotification("Authentication App Issue", "Authentication failed, please try again.", PageNotification.Error);
+            this.PrgState = PrgState.Failed;
+            return this.RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostEmailMfaAsync()
+        {
+            var result =
+                await this._mediator.Send(new EmailMfaRequestedCommand());
+
+            if (result.IsSuccess)
+            {
+                return this.RedirectToPage(PageLocations.AuthEmailMfa);
+            }
+
             this.PrgState = PrgState.InError;
             return this.RedirectToPage();
         }
 
-        public async Task<IActionResult> OnPostAppMfaAsync()
+        public async Task<IActionResult> OnPostDeviceMfaAsync()
         {
             var result =
-                await this._mediator.Send(new AppMfaRequestedCommand());
+                await this._mediator.Send(new DeviceMfaRequestCommand());
 
             if (result.IsSuccess)
             {
-                return this.RedirectToPage(PageLocations.AuthAppMfa);
+                this.TempData["fido2.assertionOptions"] = result.Value.AssertionOptions.ToJson();
+                return this.RedirectToPage(PageLocations.AuthEmailMfa);
             }
 
             this.PrgState = PrgState.InError;
@@ -74,7 +106,7 @@ namespace Stance.Web.Pages.Auth
         {
             public Validator()
             {
-                this.RuleFor(x => x.Code).NotEmpty();
+                this.RuleFor(x => x.Code).NotEmpty().WithMessage("Please enter your verification code.");
             }
         }
     }

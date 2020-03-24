@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Fido2NetLib;
 using MaybeMonad;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -31,6 +32,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 6)));
             user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>());
+            user.Setup(x => x.AuthenticatorDevices).Returns(new List<AuthenticatorDevice>());
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -42,8 +44,11 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var fido = new Mock<IFido2>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -64,8 +69,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            var fido = new Mock<IFido2>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -79,6 +85,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 5)));
             user.Setup(x => x.ProcessUnsuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), It.IsAny<bool>()));
+            user.Setup(x => x.IsVerified).Returns(true);
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -91,7 +98,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(() => new SecuritySettings { AllowedAttempts = -1 });
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var fido = new Mock<IFido2>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -106,6 +115,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 5)));
             user.Setup(x => x.ProcessUnsuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), It.IsAny<bool>()));
+            user.Setup(x => x.IsVerified).Returns(true);
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -118,7 +128,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(() => new SecuritySettings { AllowedAttempts = 1 });
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var fido = new Mock<IFido2>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -133,6 +145,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 5)));
             user.Setup(x => x.ProcessUnsuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), It.IsAny<bool>()));
+            user.Setup(x => x.IsVerified).Returns(true);
+
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -145,7 +159,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(() => new SecuritySettings { AllowedAttempts = 0 });
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var fido = new Mock<IFido2>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -163,6 +179,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.EmailAddress).Returns(new string('*', 5));
             user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword(new string('*', 6)));
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>());
+            user.Setup(x => x.AuthenticatorDevices).Returns(new List<AuthenticatorDevice>());
+            user.Setup(x => x.IsVerified).Returns(true);
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -174,8 +192,11 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var fido = new Mock<IFido2>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -200,6 +221,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             {
                 new AuthenticatorApp(Guid.Empty, "some-key", DateTime.UtcNow),
             });
+            user.Setup(x => x.AuthenticatorDevices).Returns(new List<AuthenticatorDevice>());
+            user.Setup(x => x.IsVerified).Returns(true);
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -211,8 +234,11 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var fido = new Mock<IFido2>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
             var cmd = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
             var result = await handler.Handle(cmd, CancellationToken.None);
 

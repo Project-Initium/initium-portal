@@ -125,6 +125,15 @@ namespace Stance.Infrastructure
                     .ValueGeneratedNever();
                 authenticatorApps.Ignore(authenticatorApp => authenticatorApp.DomainEvents);
             });
+
+            users.OwnsMany(user => user.AuthenticatorDevices, authenticatorDevices =>
+            {
+                authenticatorDevices.ToTable("authenticatorDevice", "identity");
+                authenticatorDevices.HasKey(authenticatorDevice => authenticatorDevice.Id);
+                authenticatorDevices.Property(authenticatorDevice => authenticatorDevice.Id)
+                    .ValueGeneratedNever();
+                authenticatorDevices.Ignore(authenticatorDevice => authenticatorDevice.DomainEvents);
+            });
         }
     }
 }
