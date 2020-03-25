@@ -36,8 +36,7 @@ namespace Stance.Tests.Web.Pages.App.Profile
             mediator.Setup(x => x.Send(It.IsAny<ChangePasswordCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Ok<ErrorData>);
 
-            var page = new Password(mediator.Object);
-            page.PageModel = new Password.Model();
+            var page = new Password(mediator.Object) { PageModel = new Password.Model() };
 
             var result = await page.OnPostAsync();
             Assert.IsType<RedirectToPageResult>(result);
@@ -51,8 +50,7 @@ namespace Stance.Tests.Web.Pages.App.Profile
             mediator.Setup(x => x.Send(It.IsAny<ChangePasswordCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Fail(new ErrorData(ErrorCodes.SavingChanges)));
 
-            var page = new Password(mediator.Object);
-            page.PageModel = new Password.Model();
+            var page = new Password(mediator.Object) { PageModel = new Password.Model() };
 
             var result = await page.OnPostAsync();
             Assert.IsType<RedirectToPageResult>(result);
