@@ -1,131 +1,179 @@
 export class DataTablesODataProvider {
     public static providerFunction(url: string): (data: object, callback: ((data: any) => void), settings: DataTables.SettingsLegacy) => void {
-        return (data: object, callback: ((data: any) => void), settings: DataTables.SettingsLegacy) => {
-            let params: any = {};
-            $.each(data, function (i, value: any) {
-                params[i] = value;
-            });
-
-            console.log(params);
-
-            var odataQuery: any = {
-                $format: 'json'
-            };
+        return (data: any, callback: ((data: any) => void), settings: DataTables.SettingsLegacy) => {
+            const request: any = {};
 
             $.each(settings.aoColumns, function (i, value) {
-                var sFieldName = ((typeof value.mData === 'string') ? value.mData : null);
-                if (sFieldName === null || !isNaN(Number(sFieldName))) {
+                var fieldName = DataTablesODataProvider.getColumnFieldName(value);
+                if (!fieldName) {
                     return;
                 }
-                if (odataQuery.$select == null) {
-                    odataQuery.$select = sFieldName;
+                if (!request.$select) {
+                    request.$select = fieldName;
                 } else {
-                    odataQuery.$select += "," + sFieldName;
+                    request.$select += ',' + fieldName;
                 }
-            });
-
-            console.log(odataQuery)
-
+            });   
             
-
-            odataQuery.$skip = settings._iDisplayStart;
+            request.$skip = settings._iDisplayStart;
             if (settings._iDisplayLength > -1) {
-                odataQuery.$top = settings._iDisplayLength;
+                request.$top = settings._iDisplayLength;
             }
-        
-            odataQuery.$count = true;
-                
-        
-            var asFilters = [];
-            var asColumnFilters = []; //used for jquery.dataTables.columnFilter.js
+            request.$count = true;
+
+            var filters = [];
+            var columnFilters = [];
+            var globalFilter = data.search.value;
             $.each(settings.aoColumns, function (i, value) {
-                var sFieldName = value.sName || value.mData;
-                var columnFilter = params["sSearch_" + i]; //fortunately columnFilter's _number matches the index of aoColumns
-        
-                if ((params.search && params.search.value || columnFilter) && value.bSearchable) {
-                    switch (value.sType) {
-                        case 'string':
-                        case 'html':
-                            if (params.search && params.search.value) {
-                                asFilters.push("indexof(tolower(" + sFieldName + "), '" + params.search.value.toLowerCase() + "') gt -1");
+                var fieldName = DataTablesODataProvider.getColumnFieldName(value);
+                var columnFilter = data.columns[i].search.value;
+                var columnType = (value as any).type || 'string';
+
+                if ((!globalFilter && !columnFilter) || !value.bSearchable || !fieldName) {
+                    return;
+                }
+
+                switch (columnType) {
+                    case "string":
+                    case "html":
+                        if (globalFilter && globalFilter.trim()) {
+                            filters.push("indexof(tolower(" + fieldName + "), '" + globalFilter.toLowerCase() + "') gt -1");
+                        }
+
+                        if (columnFilter && columnFilter.trim()) {
+                            columnFilters.push("indexof(tolower(" + fieldName + "), '" + columnFilter.toLowerCase() + "') gt -1");
+                        }
+                        break;
+
+                    case "date":
+                    case "num":
+                    case "numeric":
+                    case "number":
+                        var parseValue: any = function (val) {
+                            var f = Number.parseFloat(val);
+                            if (isNaN(f)) return null;
+                            return f;
+                        }
+                        if (columnType === "date") {
+                            parseValue = function (val) {
+                                var d:Date = new Date(val);
+                                if (!d) return null;
+                                return d.toISOString();
                             }
-        
-                            if (columnFilter) {
-                                asColumnFilters.push("indexof(tolower(" + sFieldName + "), '" + columnFilter.toLowerCase() + "') gt -1");
-                            }
-                            break;
-        
-                        case 'date':
-                        case 'numeric':
-                            var fnFormatValue =  (value.sType == 'numeric') ? function(val) { return val; } : function(val) { return (new Date(val)).toISOString(); }
-                                    
-                            if (columnFilter !== null && columnFilter !== "" && columnFilter !== "~") {
-                                let asRanges = columnFilter.split("~");
-                                if (asRanges[0] !== "") {
-                                    asColumnFilters.push("(" + sFieldName + " gt " + fnFormatValue(asRanges[0]) + ")");
+                        }
+
+                        var processRange = function (val) {
+                            var result = "";
+                            var separator = "";
+                            var range = val.split("~");
+                            var formattedValue;
+
+                            if (range.length > 1) {
+                                formattedValue = parseValue(range[0]);
+                                if (formattedValue) {
+                                    result = fieldName + " ge " + formattedValue;
+                                    separator = " and ";
                                 }
-        
-                                if (asRanges[1] !== "") {
-                                    asColumnFilters.push("(" + sFieldName + " lt " + fnFormatValue(asRanges[1]) + ")");
+                                formattedValue = parseValue(range[1]);
+                                if (formattedValue) {
+                                    result += separator + fieldName + " le " + formattedValue;
+                                }
+                            } else {
+                                formattedValue = parseValue(val);
+                                if (formattedValue) {
+                                    result = fieldName + " eq " + formattedValue;
                                 }
                             }
-                            break;
-                        default:
-                            break;
-                    }
+
+                            if (result) {
+                                result = "(" + result + ")";
+                            }
+
+                            return result;
+                        }
+
+                        // Numeric and date filters are supported also in form lower~upper
+                        if (columnFilter && columnFilter !== "~") {
+                            var colFilter = processRange(columnFilter);
+                            if (colFilter) { columnFilters.push(colFilter); }
+                        }
+
+                        if (globalFilter && globalFilter !== "~") {
+                            var globFilter = processRange(globalFilter);
+                            if (globFilter) { filters.push(globFilter); }
+                        }
+
+                        break;
+                    default:
                 }
             });
-        
-            if (asFilters.length > 0) {
-                odataQuery.$filter = asFilters.join(" or ");
+
+            if (filters.length > 0) {
+                request.$filter = filters.join(' or ');
             }
-        
-            if (asColumnFilters.length > 0) {
-                if (odataQuery.$filter !== undefined) {
-                    odataQuery.$filter = " ( " + odataQuery.$filter + " ) and ( " + asColumnFilters.join(" and ") + " ) ";
+
+            if (columnFilters.length > 0) {
+                if (request.$filter) {
+                    request.$filter = ' ( ' + request.$filter + ' ) and ( ' + columnFilters.join(' and ') + ' ) ';
                 } else {
-                    odataQuery.$filter = asColumnFilters.join(" and ");
+                    request.$filter = columnFilters.join(' and ');
                 }
             }
 
-            console.log(odataQuery)
+            var orderBy = [];
+            $.each(data.order, function (i, value) {
+                orderBy.push(DataTablesODataProvider.getColumnFieldName(settings.aoColumns[value.column]) + ' ' + value.dir);
+            });
 
-            var asOrderBy = [];
-            for (var i = 0; i < params.iSortingCols; i++) {
-                asOrderBy.push(params["mDataProp_" + params["iSortCol_" + i]] + " " + (params["sSortDir_" + i] || ""));
+            if (orderBy.length > 0) {
+                request.$orderby = orderBy.join();
             }
 
-            if (asOrderBy.length > 0) {
-                odataQuery.$orderby = asOrderBy.join();
+            if (settings.oInit.oDataAbort) {
+                if (settings.jqXHR && settings.jqXHR.readystate != 4) {
+                    settings.jqXHR.abort();
+                }
             }
 
-            console.log(odataQuery)
 
-            $.ajax({
+            var jqXHR = $.ajax(jQuery.extend({}, settings.oInit.ajax, {
                 url: url,
-                data: odataQuery,
-                success: function(returnedData) {
-                    var oDataSource:any = {};
+                data: request,
+                dataType: 'json',
+                cache: false,
+                success: function (ajaxData) {
+                    var dataSource: any = {
+                        draw: parseInt(data.draw) // Cast for security reason
+                    };
         
-                    // Probe data structures for V4, V3, and V2 versions of OData response
-                    oDataSource.aaData = returnedData.value || (returnedData.d && returnedData.d.results) || returnedData.d;
-                    var iCount = (returnedData["@odata.count"]) ? returnedData["@odata.count"] : ((returnedData["odata.count"]) ? returnedData["odata.count"] : ((returnedData.__count) ? returnedData.__count : (returnedData.d && returnedData.d.__count)));
+                    dataSource.data = ajaxData.value;
+                    var recordCount = ajaxData['@odata.count'];
         
-                    if (iCount == null) {
-                        if (oDataSource.aaData.length === settings._iDisplayLength) {
-                            oDataSource.iTotalRecords = settings._iDisplayStart + settings._iDisplayLength + 1;
-                        } else {
-                            oDataSource.iTotalRecords = settings._iDisplayStart + oDataSource.aaData.length;
-                        }
+                    if (recordCount != null) {
+                        dataSource.recordsFiltered = recordCount;
                     } else {
-                        oDataSource.iTotalRecords = iCount;
+                        if (dataSource.data.length === settings._iDisplayLength) {
+                            dataSource.recordsFiltered = settings._iDisplayStart + settings._iDisplayLength + 1;
+                        } else {
+                            dataSource.recordsFiltered = settings._iDisplayStart + dataSource.data.length;
+                        }
                     }
+                    dataSource.recordsTotal = dataSource.recordsFiltered;
         
-                    oDataSource.iTotalDisplayRecords = oDataSource.iTotalRecords;
-        
-                    callback(oDataSource);
+                    callback(dataSource);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    settings.oApi._fnCallbackFire(settings, null, 'xhr', [settings, null, settings.jqXHR]);
+                    settings.oApi._fnProcessingDisplay(settings, false);
+                    settings.oApi._fnLog(settings, 0, 'Error while loading data: ' + textStatus + ' - ' + errorThrown);
                 }
-              });                
+            }));
+
+            return jqXHR;
         }
-    } 
+    }
+
+    private static getColumnFieldName(column: any) {
+        return column.name || column.data;
+    }
 }

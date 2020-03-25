@@ -16,9 +16,9 @@
                 </ol>
             </div>
         </div>
-        <form method="post">
+        <form method="post" class="form-material">
             <div class="row">
-                <div class="col-12">
+                <div class="col-7">
                     <!-- Column -->
                     <div class="card card-outline-info">
                         <div class="card-header">
@@ -49,6 +49,23 @@
 
 
                 </div>
+                <div class="col-5">
+            <div class="card card-outline-info">
+                <div class="card-header">
+                    <h5 class="mb-0 text-white">Roles</h5>
+                </div>
+                <div class="card-body">
+                    <div class="form-check pl-0">
+                        <input asp-for="PageModel.IsAdmin" class="form-check-input filled-in" type="checkbox" data-val="false">
+                        <label class="form-check-label" asp-for="PageModel.IsAdmin"></label>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PageModel.Roles"></label>
+                        <select multiple class="form-control" asp-for="PageModel.Roles" asp-items="Model.AvailableRoles"></select>
+                    </div>
+                </div>
+            </div>
+        </div>
 
                 
 

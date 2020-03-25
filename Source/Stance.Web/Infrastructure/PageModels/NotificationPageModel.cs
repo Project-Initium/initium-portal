@@ -73,6 +73,5 @@ namespace Stance.Web.Infrastructure.PageModels
 
             public string PageNotificationType { get; set; }
         }
-
     }
 }

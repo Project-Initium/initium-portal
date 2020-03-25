@@ -11,6 +11,7 @@ using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Queries.Contracts.Static;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 using Stance.Web.Pages.App.UserManagement.Users;
@@ -24,8 +25,9 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnPostAsync_GivenInvalidModelState_ExpectRedirectToPageResult()
         {
             var mediator = new Mock<IMediator>();
+            var roleQueries = new Mock<IRoleQueries>();
 
-            var page = new CreateUser(mediator.Object);
+            var page = new CreateUser(mediator.Object, roleQueries.Object);
             page.ModelState.AddModelError("Error", "Error");
 
             var result = await page.OnPostAsync();
@@ -39,8 +41,9 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.Send(It.IsAny<CreateUserCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.SavingChanges)));
+            var roleQueries = new Mock<IRoleQueries>();
 
-            var page = new CreateUser(mediator.Object) { PageModel = new CreateUser.Model() };
+            var page = new CreateUser(mediator.Object, roleQueries.Object) { PageModel = new CreateUser.Model() };
 
             var result = await page.OnPostAsync();
             Assert.IsType<RedirectToPageResult>(result);
@@ -55,11 +58,13 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             mediator.Setup(x => x.Send(It.IsAny<CreateUserCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Result.Ok<CreateUserCommandResult, ErrorData>(new CreateUserCommandResult(Guid.NewGuid())));
 
-            var page = new CreateUser(mediator.Object) { PageModel = new CreateUser.Model() };
+            var roleQueries = new Mock<IRoleQueries>();
+
+            var page = new CreateUser(mediator.Object, roleQueries.Object) { PageModel = new CreateUser.Model() };
 
             var result = await page.OnPostAsync();
             var pageResult = Assert.IsType<RedirectToPageResult>(result);
-            Assert.Equal(PageLocations.UserListing, pageResult.PageName);
+            Assert.Equal(PageLocations.UserView, pageResult.PageName);
         }
 
         [Fact]

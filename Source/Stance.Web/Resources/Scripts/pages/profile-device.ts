@@ -15,7 +15,7 @@ export class ProfileDevice {
         event.preventDefault();
         let makeCredentialOptions;
         try {
-            makeCredentialOptions = await this.startDeviceRegistration(this.name.value);
+            makeCredentialOptions = await this.startDeviceRegistration(this.name.value, (document.activeElement as HTMLButtonElement).dataset.type);
         } catch (e) {
             console.error(e);
         }
@@ -64,11 +64,15 @@ export class ProfileDevice {
         }
     }
 
-    private async startDeviceRegistration(name: string): Promise<PublicKeyCredentialCreationOptions> {
+    private async startDeviceRegistration(name: string, authenticatorAttachment: string): Promise<PublicKeyCredentialCreationOptions> {
         const response = await fetch('/api/auth-device/initiate-registration', {
             method: 'POST',
             mode: 'same-origin',
             cache: 'no-cache',
+            body: JSON.stringify({
+                name: name,
+                authenticatorAttachment: authenticatorAttachment
+            }),
             credentials: 'same-origin',
             headers: {
                 'Accept': 'application/json',

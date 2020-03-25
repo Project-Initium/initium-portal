@@ -11,7 +11,7 @@ using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 
 namespace Stance.Domain.CommandHandlers.UserAggregate
 {
@@ -32,7 +32,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
         public async Task<ResultWithError<ErrorData>> Handle(
             CreateInitialUserCommand request, CancellationToken cancellationToken)
         {
-            var result = await this.Process(request, cancellationToken);
+            var result = await this.Process(request);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
             if (!dbResult)
@@ -45,9 +45,9 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
         }
 
         private async Task<ResultWithError<ErrorData>> Process(
-            CreateInitialUserCommand request, CancellationToken cancellationToken)
+            CreateInitialUserCommand request)
         {
-            var statusCheck = await this._userQueries.CheckForPresenceOfAnyUser(cancellationToken);
+            var statusCheck = await this._userQueries.CheckForPresenceOfAnyUser();
 
             if (statusCheck.IsPresent)
             {

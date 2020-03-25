@@ -12,8 +12,8 @@ using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandHandlers.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models;
 using Xunit;
 
 namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
@@ -91,7 +91,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.EmailAddress).Returns(new string('*', 5));
             var userQueries = new Mock<IUserQueries>();
             userQueries.Setup(x =>
-                    x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(true));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -117,7 +117,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var userQueries = new Mock<IUserQueries>();
             userQueries.Setup(x =>
-                    x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                    x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
 
             var userRepository = new Mock<IUserRepository>();
@@ -156,7 +156,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             await handler.Handle(cmd, CancellationToken.None);
 
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
-            userQueries.Verify(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()), Times.Never);
+            userQueries.Verify(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()), Times.Never);
         }
     }
 }

@@ -13,9 +13,9 @@ using Moq;
 using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models.Role;
-using Stance.Queries.Models.User;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models.Role;
+using Stance.Queries.Static.Models.User;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 using Stance.Web.Pages.App.UserManagement.Users;
@@ -30,11 +30,11 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
                     new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object) { PageModel = new EditUser.Model() };
@@ -48,11 +48,11 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
                     new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
@@ -67,11 +67,11 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
             var whenLocked = DateTime.UtcNow;
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
                     new string('*', 6), true, DateTime.UtcNow, null, whenLocked, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
@@ -85,11 +85,11 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
                     new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
@@ -103,7 +103,7 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe<DetailedUserModel>.Nothing);
             var roleQueries = new Mock<IRoleQueries>();
 
@@ -118,11 +118,11 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
 
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
                     new string('*', 6), false, DateTime.UtcNow, null, null, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
@@ -138,11 +138,11 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
             var whenLastAuthenticated = DateTime.UtcNow;
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
                     new string('*', 6), true, DateTime.UtcNow, whenLastAuthenticated, null, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
@@ -156,11 +156,11 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
                     new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);

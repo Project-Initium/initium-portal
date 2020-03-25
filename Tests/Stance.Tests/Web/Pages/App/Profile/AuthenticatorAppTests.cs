@@ -17,8 +17,8 @@ using Stance.Core.Domain;
 using Stance.Core.Settings;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models;
 using Stance.Web.Infrastructure.PageModels;
 using Stance.Web.Pages.App.Profile;
 using Xunit;
@@ -205,7 +205,7 @@ namespace Stance.Tests.Web.Pages.App.Profile
         public async Task OnGetAsync_GivenUserHasAnAppEnrolled_ExpectSetupToBeTrue()
         {
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.CheckForPresenceOfAuthAppForCurrentUser(It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfAuthAppForCurrentUser())
                 .ReturnsAsync(
                     () => new StatusCheckModel(true));
             var mediator = new Mock<IMediator>();
@@ -231,7 +231,7 @@ namespace Stance.Tests.Web.Pages.App.Profile
         public async Task OnGetAsync_GivenUserHasNoAppEnrolledAndPageModelIsNull_ExpectPageDetailsFromCommand()
         {
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.CheckForPresenceOfAuthAppForCurrentUser(It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfAuthAppForCurrentUser())
                 .ReturnsAsync(
                     () => new StatusCheckModel(false));
 
@@ -270,7 +270,7 @@ namespace Stance.Tests.Web.Pages.App.Profile
         public async Task OnGetAsync_GivenUserHasNoAppEnrolledAndPageModelIsNotNull_ExpectPageDetailsFromPageModel()
         {
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.CheckForPresenceOfAuthAppForCurrentUser(It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfAuthAppForCurrentUser())
                 .ReturnsAsync(
                     () => new StatusCheckModel(false));
 

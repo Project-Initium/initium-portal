@@ -5,8 +5,8 @@ using System.Linq;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNet.OData.Routing;
-using Stance.Queries.OData;
-using Stance.Queries.OData.Entities;
+using Stance.Queries.Dynamic;
+using Stance.Queries.Dynamic.Entities;
 
 namespace Stance.Web.Controllers.OData
 {

@@ -3,14 +3,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Moq;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models.User;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models.User;
 using Stance.Web.Pages.App.UserManagement.Users;
 using Xunit;
 
@@ -22,7 +21,7 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenUserDoesNotExist_ExpectNotFoundResultReturn()
         {
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe<DetailedUserModel>.Nothing);
 
             var page = new ViewUser(userQueries.Object);
@@ -34,7 +33,7 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenUserExists_ExpectDataToBeSetAndPageResultReturn()
         {
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
                     new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
 

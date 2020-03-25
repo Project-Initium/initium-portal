@@ -1,30 +1,23 @@
 ﻿@using Stance.Web.Infrastructure.Constants
+
 <aside class="left-sidebar">
     <div class="scroll-sidebar">
         <nav class="sidebar-nav">
-            <ul id="menu1">
+            <ul id="sidebarnav" class="in">
+                <li><a class="waves-effect waves-dark" href="@Url.Page(PageLocations.AppDashboard)" aria-expanded="false"><i class="fa fa-tachometer"></i>&nbsp;<span class="hide-menu">Dashboard </span></a></li>
+                <li class="nav-small-cap">USER MANAGEMENT</li>
                 <li>
-                    <a class="has-arrow" href="#" aria-expanded="false">
-                        <i class="fas fa-users-cog"></i><span class="hide-menu">User Management</span>
-                    </a>
-                    <ul>
-                        <li>
-                            <a href="@Url.Page(PageLocations.UserListing)">
-                                <i class="fas fa-users"></i> Users
-                            </a>
-                        </li>
-                        <li>
-                            <a href="@Url.Page(PageLocations.RoleListing)">
-                                <i class="fas fa-user-tag"></i> Roles
-                            </a>
-                        </li>
-                    </ul>
+                    <a class="waves-effect waves-dark" href="@Url.Page(PageLocations.UserListing)" aria-expanded="false"><i class="fa fa-users"></i>&nbsp;<span class="hide-menu">Users </span></a>
                 </li>
+                <li>
+                    <a class="waves-effect waves-dark" href="@Url.Page(PageLocations.RoleListing)" aria-expanded="false"><i class="fa fa-key"></i>&nbsp;<span class="hide-menu">Roles</span></a>
+                </li>
+
             </ul>
         </nav>
     </div>
     <div class="sidebar-footer">
-        <a href="@Url.Page(PageLocations.AuthSignOut)" class="link" data-toggle="tooltip" title="Logout"><i class="fas fa-power-off"></i></a>
+        <a href="@Url.Page(PageLocations.AuthSignOut)" class="link" data-toggle="tooltip" title="Logout"><i class="fa fa-power-off"></i></a>
     </div>
     <!-- End Bottom points-->
 </aside>

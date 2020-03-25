@@ -9,7 +9,7 @@ using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 
 namespace Stance.Domain.CommandHandlers.UserAggregate
 {
@@ -53,7 +53,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             if (!string.Equals(request.EmailAddress, user.EmailAddress, StringComparison.InvariantCultureIgnoreCase))
             {
                 var statusCheck =
-                    await this._userQueries.CheckForPresenceOfUserByEmailAddress(request.EmailAddress, cancellationToken);
+                    await this._userQueries.CheckForPresenceOfUserByEmailAddress(request.EmailAddress);
                 if (statusCheck.IsPresent)
                 {
                     return ResultWithError.Fail(new ErrorData(ErrorCodes.UserAlreadyExists));

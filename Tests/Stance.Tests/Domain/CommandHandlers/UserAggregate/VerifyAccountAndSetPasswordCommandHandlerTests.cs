@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Copyright (c) DeviousCreation. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
@@ -17,7 +18,6 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 {
     public class VerifyAccountAndSetPasswordCommandHandlerTests
     {
-        
         [Fact]
         public async Task Handle_GivenSavingFails_ExpectFailedResult()
         {
@@ -61,7 +61,6 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsSuccess);
-
         }
 
         [Fact]
@@ -109,7 +108,6 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             user.Verify(x => x.ChangePassword(It.IsAny<string>()), Times.Once);
             user.Verify(x => x.CompleteTokenLifecycle(It.IsAny<Guid>(), It.IsAny<DateTime>()), Times.Once);
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
-
         }
     }
 }

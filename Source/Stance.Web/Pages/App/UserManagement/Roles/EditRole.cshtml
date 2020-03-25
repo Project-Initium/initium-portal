@@ -5,19 +5,19 @@
     Layout = "Shared/_AppLayout";
 }
 <div class="row page-titles">
-    <div class="col-md-5 col-8 align-self-center">
+    <div class="align-self-center">
         <h3 class="text-themecolor m-b-0 m-t-0">Create Role</h3>
         <ol class="breadcrumb">
             <li class="breadcrumb-item">
-                <a asp-page="/App/Index">Home</a>
+                <a asp-page="@PageLocations.AppDashboard">Home</a>
             </li>
             <li class="breadcrumb-item">User Management</li>
             <li class="breadcrumb-item"><a asp-page="@PageLocations.RoleListing">Roles</a></li>
-            <li class="breadcrumb-item active">Edit Role</li>
+            <li class="breadcrumb-item active">Editing Role @Model.Name</li>
         </ol>
     </div>
 </div>
-<form method="post" data-no-auto-validation id="role-create">
+<form method="post" data-no-auto-validation id="role-create" class="form-material">
     <input type="hidden" asp-for="PageModel.RoleId" />
     @foreach (var resource in Model.PageModel.Resources)
     {
@@ -31,9 +31,9 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label class="control-label" asp-for="PageModel.Name"></label>
+                        <label asp-for="PageModel.Name"></label>
                         <input class="form-control" asp-for="PageModel.Name" />
-                        <span class="text-danger" asp-validation-for="PageModel.Name"></span>
+                        <span class="text-danger small" asp-validation-for="PageModel.Name"></span>
                     </div>
                 </div>
             </div>

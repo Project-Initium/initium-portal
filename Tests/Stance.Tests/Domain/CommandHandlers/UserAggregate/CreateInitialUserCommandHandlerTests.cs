@@ -11,8 +11,8 @@ using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandHandlers.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models;
 using Xunit;
 
 namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
@@ -29,7 +29,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            userQueries.Setup(x => x.CheckForPresenceOfAnyUser(It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfAnyUser())
                 .ReturnsAsync(() => new StatusCheckModel(true));
 
             var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);
@@ -50,7 +50,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            userQueries.Setup(x => x.CheckForPresenceOfAnyUser(It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfAnyUser())
                 .ReturnsAsync(() => new StatusCheckModel(false));
 
             var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);
@@ -70,7 +70,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            userQueries.Setup(x => x.CheckForPresenceOfAnyUser(It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfAnyUser())
                 .ReturnsAsync(() => new StatusCheckModel(true));
 
             var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);
@@ -94,7 +94,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Add(It.IsAny<IUser>()))
                 .Callback((IUser user) => { Assert.True(BCrypt.Net.BCrypt.Verify(password, user.PasswordHash)); });
 
-            userQueries.Setup(x => x.CheckForPresenceOfAnyUser(It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfAnyUser())
                 .ReturnsAsync(() => new StatusCheckModel(false));
 
             var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);

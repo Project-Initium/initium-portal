@@ -3,13 +3,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models.User;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models.User;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.Profile
@@ -29,7 +28,7 @@ namespace Stance.Web.Pages.App.Profile
 
         public async Task OnGet()
         {
-            var devices = await this._userQueries.GetDeviceInfoForCurrentUser(CancellationToken.None);
+            var devices = await this._userQueries.GetDeviceInfoForCurrentUser();
             if (devices.HasValue)
             {
                 this.DeviceInfos = devices.Value;
@@ -38,13 +37,13 @@ namespace Stance.Web.Pages.App.Profile
 
         public async Task<IActionResult> OnPostAsync()
         {
-            var result = await this._mediator.Send(new RevokeAuthenticatorDeviceCommand(this.PageModel.DeviceId));
+            await this._mediator.Send(new RevokeAuthenticatorDeviceCommand(this.PageModel.DeviceId));
             return this.RedirectToPage();
         }
 
         public class Model
         {
-            public Guid DeviceId { get; }
+            public Guid DeviceId { get; set; }
         }
     }
 }

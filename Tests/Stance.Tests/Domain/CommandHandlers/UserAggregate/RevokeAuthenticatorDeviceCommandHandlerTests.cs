@@ -1,6 +1,8 @@
-﻿using System;
+﻿// Copyright (c) DeviousCreation. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
@@ -171,7 +173,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             await handler.Handle(cmd, CancellationToken.None);
 
-            user.Verify(x=>x.RevokeAuthenticatorDevice(It.IsAny<Guid>(), It.IsAny<DateTime>()), Times.Once);
+            user.Verify(x => x.RevokeAuthenticatorDevice(It.IsAny<Guid>(), It.IsAny<DateTime>()), Times.Once);
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
         }
     }

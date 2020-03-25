@@ -13,8 +13,8 @@ using Moq;
 using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.Commands.RoleAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models.Role;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models.Role;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 using Stance.Web.Pages.App.UserManagement.Roles;
@@ -29,7 +29,7 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Roles
         {
             var mediator = new Mock<IMediator>();
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => Maybe<DetailedRoleModel>.Nothing);
 
             var page = new EditRole(mediator.Object, roleQueries.Object);
@@ -44,7 +44,7 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Roles
             var roleId = Guid.NewGuid();
             var mediator = new Mock<IMediator>();
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => Maybe.From(new DetailedRoleModel(Guid.Empty, string.Empty, new List<Guid>())));
 
             var page = new EditRole(mediator.Object, roleQueries.Object)
@@ -70,7 +70,7 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Roles
             var roleId = Guid.NewGuid();
             var mediator = new Mock<IMediator>();
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => Maybe.From(new DetailedRoleModel(roleId, new string('*', 5), new List<Guid> { Guid.NewGuid() })));
 
             var page = new EditRole(mediator.Object, roleQueries.Object);

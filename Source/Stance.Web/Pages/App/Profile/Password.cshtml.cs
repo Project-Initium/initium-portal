@@ -1,6 +1,7 @@
 // Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
@@ -31,17 +32,29 @@ namespace Stance.Web.Pages.App.Profile
             var result = await this._mediator.Send(new ChangePasswordCommand(
                 this.PageModel.OldPassword, this.PageModel.NewPassword));
 
-            this.PrgState = result.IsSuccess ? PrgState.Success : PrgState.Failed;
+            if (result.IsSuccess)
+            {
+                this.PrgState = PrgState.Success;
+                this.AddPageNotification("Password Update", "Your password has been changed.", PageNotification.Success);
+            }
+            else
+            {
+                this.PrgState = PrgState.Failed;
+                this.AddPageNotification("Password Update", "There has been an issue changing your password.", PageNotification.Error);
+            }
 
             return this.RedirectToPage();
         }
 
         public class Model
         {
+            [Display(Name="Old Password")]
             public string OldPassword { get; set; }
 
+            [Display(Name = "New Password")]
             public string NewPassword { get; set; }
 
+            [Display(Name = "Confirm Password")]
             public string ConfirmPassword { get; set; }
         }
 

@@ -17,7 +17,7 @@ using Stance.Core;
 using Stance.Core.Contracts;
 using Stance.Core.Settings;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.Profile
@@ -134,9 +134,11 @@ namespace Stance.Web.Pages.App.Profile
             if (result.IsSuccess)
             {
                 this.PrgState = PrgState.Success;
+                this.AddPageNotification("Authenticator App", "Your app has been setup.", PageNotification.Success);
             }
             else
             {
+                this.AddPageNotification("Authenticator App", "There has been an issue setting up your app.", PageNotification.Error);
                 this.PrgState = PrgState.Failed;
             }
 
@@ -149,9 +151,11 @@ namespace Stance.Web.Pages.App.Profile
             if (result.IsSuccess)
             {
                 this.PrgState = PrgState.Success;
+                this.AddPageNotification("Authenticator App", "Your app has been revoked.", PageNotification.Success);
             }
             else
             {
+                this.AddPageNotification("Authenticator App", "There has been an issue revoking up your app.", PageNotification.Error);
                 this.PrgState = PrgState.Failed;
             }
 
@@ -190,7 +194,7 @@ namespace Stance.Web.Pages.App.Profile
                 this.RuleFor(x => x.SharedKey)
                     .NotEmpty();
                 this.RuleFor(x => x.Code)
-                    .NotEmpty();
+                    .NotEmpty().WithMessage("Please enter the code from your authenticator app.");
             }
         }
     }

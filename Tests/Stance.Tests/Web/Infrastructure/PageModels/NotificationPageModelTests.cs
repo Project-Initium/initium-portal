@@ -222,7 +222,7 @@ namespace Stance.Tests.Web.Infrastructure.PageModels
         {
             public void AddNotification()
             {
-                this.AddPageNotification("some-title", "some-message");
+                this.AddPageNotification("some-title", "some-message", PageNotification.Success);
             }
         }
     }

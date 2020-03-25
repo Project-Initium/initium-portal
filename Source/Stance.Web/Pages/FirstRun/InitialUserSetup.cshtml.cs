@@ -3,13 +3,12 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 
@@ -28,7 +27,7 @@ namespace Stance.Web.Pages.FirstRun
 
         public async Task<IActionResult> OnGet()
         {
-            var check = await this._userQueries.CheckForPresenceOfAnyUser(CancellationToken.None);
+            var check = await this._userQueries.CheckForPresenceOfAnyUser();
             if (check.IsPresent)
             {
                 return this.NotFound();

@@ -9,7 +9,7 @@ using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.RoleAggregate;
 using Stance.Domain.Commands.RoleAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 
 namespace Stance.Domain.CommandHandlers.RoleAggregate
 {
@@ -53,7 +53,7 @@ namespace Stance.Domain.CommandHandlers.RoleAggregate
             if (!string.Equals(role.Name, request.Name, StringComparison.InvariantCultureIgnoreCase))
             {
                 var presenceResult =
-                    await this._roleQueries.CheckForPresenceOfRoleByName(request.Name, cancellationToken);
+                    await this._roleQueries.CheckForPresenceOfRoleByName(request.Name);
                 if (presenceResult.IsPresent)
                 {
                     return ResultWithError.Fail(new ErrorData(ErrorCodes.RoleAlreadyExists));

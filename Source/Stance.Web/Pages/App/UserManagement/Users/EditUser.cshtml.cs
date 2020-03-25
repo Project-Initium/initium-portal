@@ -11,7 +11,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 
@@ -73,9 +73,14 @@ namespace Stance.Web.Pages.App.UserManagement.Users
                 ? user.WhenLastAuthenticated.ToString()
                 : "Never Authenticated";
 
-            this.LockedStatus = user.IsLockable
-                ? user.WhenLocked.HasValue ? user.WhenLocked.ToString() : "Not Locked"
-                : "User is not lockable";
+            if (user.IsLockable)
+            {
+                this.LockedStatus = user.WhenLocked.HasValue ? user.WhenLocked.ToString() : "Not Locked";
+            }
+            else
+            {
+                this.LockedStatus = "User is not lockable";
+            }
 
             this.AvailableRoles = new List<SelectListItem>();
             var roles = await this._roleQueries.GetSimpleRoles();
@@ -105,15 +110,23 @@ namespace Stance.Web.Pages.App.UserManagement.Users
 
             if (result.IsSuccess)
             {
+                this.PrgState = PrgState.Success;
+                this.AddPageNotification("User Editing", "The user was updated successfully", PageNotification.Success);
                 return this.RedirectToPage(PageLocations.UserView, new { id = this.PageModel.Id });
             }
 
+            this.AddPageNotification("User Editing", "There was an issue updating the user.", PageNotification.Error);
             this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }
 
         public class Model
         {
+            public Model()
+            {
+                this.Roles = new List<Guid>();
+            }
+
             [Display(Name = "Email Address")]
             public string EmailAddress { get; set; }
 
@@ -128,6 +141,7 @@ namespace Stance.Web.Pages.App.UserManagement.Users
 
             public Guid Id { get; set; }
 
+            [Display(Name = "Is Admin")]
             public bool IsAdmin { get; set; }
 
             public List<Guid> Roles { get; set; }

@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Stance.Core.Constants;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 using IAuthenticationService = Stance.Web.Infrastructure.Contracts.IAuthenticationService;
 
 namespace Stance.Web.Infrastructure.Services

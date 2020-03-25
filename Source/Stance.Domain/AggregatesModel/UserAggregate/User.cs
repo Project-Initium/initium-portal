@@ -121,16 +121,16 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this.AddDomainEvent(new PasswordResetTokenGeneratedEvent(this.EmailAddress, token.Token));
         }
 
-        public void GenerateNewAccountConfirmationToken(DateTime whenRequest, TimeSpan duration)
+        public void GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration)
         {
             var token =
                 this.SecurityTokenMappings.FirstOrDefault(m =>
-                    m.WhenUsed == null && m.WhenExpires >= whenRequest &&
+                    m.WhenUsed == null && m.WhenExpires >= whenRequested &&
                     m.Purpose == SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation);
             if (token == null)
             {
-                token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation, whenRequest,
-                    whenRequest.Add(duration));
+                token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation, whenRequested,
+                    whenRequested.Add(duration));
                 this._securityTokenMappings.Add(token);
             }
 

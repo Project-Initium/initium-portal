@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Security.Claims;
-using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
 using Microsoft.AspNetCore.Authentication;
@@ -12,8 +11,8 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Moq;
 using Stance.Core.Constants;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models.User;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models.User;
 using Xunit;
 
 namespace Stance.Tests.Web.Infrastructure.Services
@@ -25,7 +24,7 @@ namespace Stance.Tests.Web.Infrastructure.Services
         {
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetSystemProfileByUserId(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetSystemProfileByUserId(It.IsAny<Guid>()))
                 .ReturnsAsync(() => Maybe<SystemProfileModel>.Nothing);
 
             var authenticationService =
@@ -53,7 +52,7 @@ namespace Stance.Tests.Web.Infrastructure.Services
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetSystemProfileByUserId(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetSystemProfileByUserId(It.IsAny<Guid>()))
                 .ReturnsAsync(
                     () => Maybe.From(new SystemProfileModel(
                         new string('*', 5),

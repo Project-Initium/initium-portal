@@ -8,9 +8,9 @@ namespace Stance.Core.Constants
     [Flags]
     public enum MfaProvider
     {
-        None,
-        Email,
-        App,
-        Device,
+        None = 0,
+        Email = 1,
+        App = 2,
+        Device = 4,
     }
 }

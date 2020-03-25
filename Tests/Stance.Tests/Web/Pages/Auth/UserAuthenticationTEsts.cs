@@ -35,7 +35,7 @@ namespace Stance.Tests.Web.Pages.Auth
             var result = await page.OnPost();
 
             Assert.IsType<RedirectToPageResult>(result);
-            Assert.Equal(PrgState.InError, page.PrgState);
+            Assert.Equal(PrgState.Failed, page.PrgState);
         }
 
         [Fact]
@@ -57,7 +57,7 @@ namespace Stance.Tests.Web.Pages.Auth
             var result = await page.OnPost();
 
             var pageResult = Assert.IsType<RedirectToPageResult>(result);
-            Assert.Equal(PrgState.InError, page.PrgState);
+            Assert.Equal(PrgState.Failed, page.PrgState);
             Assert.Equal("some-url", pageResult.RouteValues["ReturnUrl"]);
         }
 

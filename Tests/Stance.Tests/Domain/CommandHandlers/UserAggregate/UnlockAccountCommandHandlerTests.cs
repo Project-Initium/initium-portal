@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Copyright (c) DeviousCreation. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
@@ -90,7 +91,6 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
             var handler = new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
-
 
             var cmd = new UnlockAccountCommand(Guid.NewGuid());
             await handler.Handle(cmd, CancellationToken.None);

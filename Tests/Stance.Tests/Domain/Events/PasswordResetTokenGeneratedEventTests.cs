@@ -12,7 +12,6 @@ namespace Stance.Tests.Domain.Events
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var id = Guid.NewGuid();
             var email = new string('*', 5);
             var token = new string('*', 6);
             var @event = new PasswordResetTokenGeneratedEvent(email, token);

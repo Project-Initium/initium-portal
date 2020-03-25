@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models.Role;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models.Role;
 
 namespace Stance.Web.Controllers.Api.Resource
 {

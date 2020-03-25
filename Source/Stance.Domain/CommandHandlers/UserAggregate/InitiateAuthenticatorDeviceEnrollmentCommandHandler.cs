@@ -67,7 +67,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             {
                 RequireResidentKey = false,
                 UserVerification = UserVerificationRequirement.Preferred,
-                AuthenticatorAttachment = AuthenticatorAttachment.CrossPlatform,
+                AuthenticatorAttachment = request.AuthenticatorAttachment,
             };
 
             var authenticationExtensionsClientInputs = new AuthenticationExtensionsClientInputs

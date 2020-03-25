@@ -21,6 +21,14 @@ namespace Stance.Web.Pages.Auth
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        public void OnGet()
+        {
+            if (this.PrgState == PrgState.Success)
+            {
+                this.PrgState = PrgState.Default;
+            }
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
             if (!this.ModelState.IsValid)
@@ -30,6 +38,7 @@ namespace Stance.Web.Pages.Auth
 
             await this._mediator.Send(new RequestPasswordResetCommand(this.PageModel.EmailAddress));
 
+            this.PrgState = PrgState.Success;
             this.AddPageNotification("Password reset request", "You will shortly receive an email with a reset link.", PageNotification.Info);
             return this.RedirectToPage();
         }

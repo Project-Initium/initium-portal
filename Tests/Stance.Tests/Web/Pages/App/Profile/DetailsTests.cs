@@ -11,8 +11,8 @@ using Moq;
 using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models.User;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models.User;
 using Stance.Web.Infrastructure.PageModels;
 using Stance.Web.Pages.App.Profile;
 using Xunit;
@@ -26,7 +26,7 @@ namespace Stance.Tests.Web.Pages.App.Profile
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetProfileForCurrentUser(It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetProfileForCurrentUser())
                 .ReturnsAsync(() => Maybe<ProfileModel>.Nothing);
 
             var page = new Details(mediator.Object, userQueries.Object);
@@ -39,7 +39,7 @@ namespace Stance.Tests.Web.Pages.App.Profile
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetProfileForCurrentUser(It.IsAny<CancellationToken>())).ReturnsAsync(() =>
+            userQueries.Setup(x => x.GetProfileForCurrentUser()).ReturnsAsync(() =>
                 Maybe.From(new ProfileModel(new string('*', 5), new string('*', 6))));
 
             var page = new Details(mediator.Object, userQueries.Object);
@@ -59,7 +59,7 @@ namespace Stance.Tests.Web.Pages.App.Profile
 
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
-            userQueries.Verify(x => x.GetProfileForCurrentUser(It.IsAny<CancellationToken>()), Times.Never);
+            userQueries.Verify(x => x.GetProfileForCurrentUser(), Times.Never);
         }
 
         [Fact]

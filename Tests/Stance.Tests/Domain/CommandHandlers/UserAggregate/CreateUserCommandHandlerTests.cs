@@ -14,8 +14,8 @@ using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandHandlers.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models;
 using Xunit;
 
 namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
@@ -32,7 +32,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(true));
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
@@ -55,7 +55,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
@@ -78,7 +78,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(true));
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
@@ -103,7 +103,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.Add(It.IsAny<IUser>())).Callback((IUser user) => { userId = user.Id; });
 
-            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();

@@ -1,5 +1,6 @@
 import 'datatables.net'
 import 'datatables.net-bs4'
+import * as moment from 'moment';
 import { DataTablesODataProvider } from '../services/datatables-odata-provider'
 
 export class UsersList {
@@ -31,8 +32,33 @@ export class UsersList {
                 { data: 'EmailAddress' },
                 { data: 'FirstName' },
                 { data: 'LastName' },
-                { data: 'IsLocked' },
-                { data: 'WhenLastAuthenticated' },
+                { 
+                    data: 'IsLocked',
+                    searchable: false,
+                    render: function (data, type, full, meta) {
+                        if (data === true) {
+                            return '<i class="fa fa-check" aria-hidden="true"></i>';
+                        }
+                        return '<i class="fa fa-times" aria-hidden="true"></i>';
+                    }
+                },
+                { 
+                    data: 'WhenLastAuthenticated',
+                    searchable: false,
+                    render: function (data, type, full, meta) {
+                        const m = moment(data);
+                        if(m.isValid)
+                        {
+                            const parsed = m.format('DD/MM/YYYY HH:mm')
+                            if (parsed !== 'Invalid date')
+                            {
+                                return parsed;
+                            }
+                        }
+                        return '';
+                        
+                    }
+                },
                 {
                     data: 'Id',
                     visible: false,

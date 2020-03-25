@@ -4,13 +4,13 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models.Role;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models.Role;
+using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.UserManagement.Roles
 {
-    public class ViewRole : PageModel
+    public class ViewRole : NotificationPageModel
     {
         private readonly IRoleQueries _roleQueries;
 

@@ -9,7 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.Profile
@@ -56,7 +56,16 @@ namespace Stance.Web.Pages.App.Profile
             var result =
                 await this._mediator.Send(new UpdateProfileCommand(this.PageModel.FirstName, this.PageModel.LastName));
 
-            this.PrgState = result.IsFailure ? PrgState.Failed : PrgState.Success;
+            if (result.IsSuccess)
+            {
+                this.PrgState = PrgState.Success;
+                this.AddPageNotification("Profile Update", "Your details have been changed.", PageNotification.Success);
+            }
+            else
+            {
+                this.PrgState = PrgState.Failed;
+                this.AddPageNotification("Profile Update", "There has been an issue changing your details.", PageNotification.Error);
+            }
 
             return this.RedirectToPage();
         }

@@ -74,7 +74,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             {
                 Task<bool> IsCredentialIdUniqueToUser(IsCredentialIdUniqueToUserParams param)
                 {
-                    return Task.FromResult(user.AuthenticatorDevices.Any(x=>x.CredentialId == param.CredentialId));
+                    return Task.FromResult(user.AuthenticatorDevices.All(x => x.CredentialId != param.CredentialId));
                 }
 
                 credentialMakeResult = await this._fido2.MakeNewCredentialAsync(

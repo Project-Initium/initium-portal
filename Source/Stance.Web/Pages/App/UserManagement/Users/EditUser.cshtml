@@ -6,7 +6,7 @@
 }
 
 <div class="row page-titles">
-    <div class="col-md-5 col-8 align-self-center">
+    <div class="align-self-center">
         <h3 class="text-themecolor m-b-0 m-t-0">Edit User</h3>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
@@ -17,7 +17,7 @@
     </div>
 </div>
 
-<form method="post" asp-route-id="@Model.PageModel.Id">
+<form method="post" asp-route-id="@Model.PageModel.Id" class="form-material">
     <div class="row">
         <div class="col-7">
             <!-- Column -->

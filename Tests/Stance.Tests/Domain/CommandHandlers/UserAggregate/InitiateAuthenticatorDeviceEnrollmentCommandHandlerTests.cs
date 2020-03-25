@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) DeviousCreation. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,10 +37,10 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var fido2 = new Mock<IFido2>();
 
             var handler =
-                new InitiateAuthenticatorDeviceEnrollmentCommandHandler(currentAuthenticatedUserProvider.Object,
-                    userRepository.Object, fido2.Object);
+                new InitiateAuthenticatorDeviceEnrollmentCommandHandler(
+                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object);
 
-            var cmd = new InitiateAuthenticatorDeviceEnrollmentCommand();
+            var cmd = new InitiateAuthenticatorDeviceEnrollmentCommand(AuthenticatorAttachment.CrossPlatform);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsFailure);
@@ -62,21 +65,20 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .Returns(Maybe.From(systemUser.Object));
 
             var fido2 = new Mock<IFido2>();
-            
 
             var handler =
-                new InitiateAuthenticatorDeviceEnrollmentCommandHandler(currentAuthenticatedUserProvider.Object,
-                    userRepository.Object, fido2.Object);
+                new InitiateAuthenticatorDeviceEnrollmentCommandHandler(
+                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object);
 
-            var cmd = new InitiateAuthenticatorDeviceEnrollmentCommand();
+            var cmd = new InitiateAuthenticatorDeviceEnrollmentCommand(AuthenticatorAttachment.CrossPlatform);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsSuccess);
-            fido2.Verify(x => x.RequestNewCredential(It.IsAny<Fido2User>(),
-                It.IsAny<List<PublicKeyCredentialDescriptor>>(), It.IsAny<AuthenticatorSelection>(),
-                It.IsAny<AttestationConveyancePreference>(), It.IsAny<AuthenticationExtensionsClientInputs>()));
+            fido2.Verify(x => x.RequestNewCredential(
+                It.IsAny<Fido2User>(), It.IsAny<List<PublicKeyCredentialDescriptor>>(),
+                It.IsAny<AuthenticatorSelection>(), It.IsAny<AttestationConveyancePreference>(),
+                It.IsAny<AuthenticationExtensionsClientInputs>()));
         }
-
 
         [Fact]
         public async Task Handle_GivenUserDoesNotExist_ExpectFailedResult()
@@ -96,10 +98,10 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var fido2 = new Mock<IFido2>();
 
             var handler =
-                new InitiateAuthenticatorDeviceEnrollmentCommandHandler(currentAuthenticatedUserProvider.Object,
-                    userRepository.Object, fido2.Object);
+                new InitiateAuthenticatorDeviceEnrollmentCommandHandler(
+                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object);
 
-            var cmd = new InitiateAuthenticatorDeviceEnrollmentCommand();
+            var cmd = new InitiateAuthenticatorDeviceEnrollmentCommand(AuthenticatorAttachment.CrossPlatform);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsFailure);

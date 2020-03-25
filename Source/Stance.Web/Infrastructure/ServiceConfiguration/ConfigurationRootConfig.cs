@@ -11,8 +11,8 @@ using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.RoleAggregate;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Infrastructure.Repositories;
-using Stance.Queries;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static;
 using Stance.Web.Infrastructure.Contracts;
 using Stance.Web.Infrastructure.Services;
 

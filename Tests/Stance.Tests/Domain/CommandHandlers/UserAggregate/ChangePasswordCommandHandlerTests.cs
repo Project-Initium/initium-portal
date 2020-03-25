@@ -1,6 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿// Copyright (c) DeviousCreation. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
@@ -70,7 +71,6 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             Assert.Equal(ErrorCodes.SavingChanges, result.Error.Code);
         }
 
-        
         [Fact]
         public async Task Handle_GivenSavingSucceeds_ExpectSuccessfulResult()
         {
@@ -172,8 +172,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var cmd = new ChangePasswordCommand("current-password", "new-password");
 
             await handler.Handle(cmd, CancellationToken.None);
-            user.Verify(x=>x.ChangePassword(It.IsAny<string>()), Times.Once);
-            userRepository.Verify(x=>x.Update(It.IsAny<IUser>()), Times.Once);
+            user.Verify(x => x.ChangePassword(It.IsAny<string>()), Times.Once);
+            userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
         }
     }
 }

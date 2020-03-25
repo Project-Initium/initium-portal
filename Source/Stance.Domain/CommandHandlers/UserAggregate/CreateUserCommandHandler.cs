@@ -14,7 +14,7 @@ using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 
 namespace Stance.Domain.CommandHandlers.UserAggregate
 {
@@ -36,7 +36,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
         public async Task<Result<CreateUserCommandResult, ErrorData>> Handle(
             CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var result = await this.Process(request, cancellationToken);
+            var result = await this.Process(request);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
             if (!dbResult)
@@ -59,10 +59,10 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
         }
 
         private async Task<Result<CreateUserCommandResult, ErrorData>> Process(
-            CreateUserCommand request, CancellationToken cancellationToken)
+            CreateUserCommand request)
         {
             var statusCheck =
-                await this._userQueries.CheckForPresenceOfUserByEmailAddress(request.EmailAddress, cancellationToken);
+                await this._userQueries.CheckForPresenceOfUserByEmailAddress(request.EmailAddress);
             if (statusCheck.IsPresent)
             {
                 return Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.UserAlreadyExists));

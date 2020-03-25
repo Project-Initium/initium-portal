@@ -46,7 +46,7 @@
                                         </p>
                                     </div>
                                     <div>
-                                        <form method="post" class="form-group" asp-page-handler="revoke">
+                                        <form method="post" class="form-group text-right" asp-page-handler="revoke">
                                             <button class="btn btn-danger" type="submit">Reset authenticator key</button>
                                         </form>
                                     </div>
@@ -68,7 +68,7 @@
                                         <li>
                                             <p>Scan the QR Code or enter this key <kbd>@Model.SharedKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
                                             <div class="alert alert-info">To enable QR code generation please read our <a href="https://go.microsoft.com/fwlink/?Linkid=852423">documentation</a>.</div>
-                                            <img src="@String.Format("data:image/png;base64,{0}", Model.Code)" style="width: 250px" />
+                                            <img src="@($"data:image/png;base64,{Model.Code}")" style="width: 250px" />
                                         </li>
                                         <li>
                                             <p>

@@ -10,8 +10,8 @@ using Moq;
 using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 using Stance.Web.Pages.FirstRun;
@@ -94,7 +94,7 @@ namespace Stance.Tests.Web.Pages.FirstRun
         public async Task OnGet_GivenUserInSystem_ExpectNotFoundResult()
         {
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.CheckForPresenceOfAnyUser(It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfAnyUser())
                 .ReturnsAsync(() => new StatusCheckModel(true));
             var mediator = new Mock<IMediator>();
 
@@ -108,7 +108,7 @@ namespace Stance.Tests.Web.Pages.FirstRun
         public async Task OnGet_GivenNoUserInSystem_ExpectPageResult()
         {
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.CheckForPresenceOfAnyUser(It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfAnyUser())
                 .ReturnsAsync(() => new StatusCheckModel(false));
             var mediator = new Mock<IMediator>();
 

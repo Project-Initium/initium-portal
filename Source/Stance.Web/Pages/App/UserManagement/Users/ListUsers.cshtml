@@ -6,8 +6,8 @@
 }
 
     <div class="row page-titles">
-        <div class="col-md-5 col-8 align-self-center">
-            <h3 class="text-themecolor m-b-0 m-t-0">Users</h3>
+        <div class="align-self-center">
+            <h4 class="text-themecolor m-b-0 m-t-0">Users</h4>
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
                 <li class="breadcrumb-item">User Management</li>
@@ -16,60 +16,7 @@
         </div>
     </div>
 
-    <div class="row">
-        <div class="col-lg-3 col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex flex-row">
-                        <div class="round round-lg align-self-center round-info"><i class="fa fa-user-plus"></i></div>
-                        <div class="m-l-10 align-self-center">
-                            <h3 class="m-b-0 font-light">@Model.TotalNewUsers</h3>
-                            <h5 class="text-muted m-b-0">Total New Users</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex flex-row">
-                        <div class="round round-lg align-self-center round-warning"><i class="fa fa-clock"></i></div>
-                        <div class="m-l-10 align-self-center">
-                            <h3 class="m-b-0 font-lgiht">@Model.TotalActiveUsers</h3>
-                            <h5 class="text-muted m-b-0">Total Active Users</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex flex-row">
-                        <div class="round round-lg align-self-center round-primary"><i class="fa fa-sign-in-alt"></i></div>
-                        <div class="m-l-10 align-self-center">
-                            <h3 class="m-b-0 font-lgiht">@Model.TotalLogins</h3>
-                            <h5 class="text-muted m-b-0">Total Logins (past month)</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-3 col-md-6">
-            <div class="card">
-                <div class="card-body">
-                    <div class="d-flex flex-row">
-                        <div class="round round-lg align-self-center round-danger"><i class="fa fa-lock"></i></div>
-                        <div class="m-l-10 align-self-center">
-                            <h3 class="m-b-0 font-lgiht">@Model.TotalLockedAccounts</h3>
-                            <h5 class="text-muted m-b-0">Total Locked accounts</h5>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    
     <div class="row">
         <div class="col-12">
             <!-- Column -->
@@ -78,8 +25,8 @@
                     <a asp-page="@PageLocations.UserCreate" class="btn btn-sm float-right btn-info text-white">Create new user</a>
                     <h3 class="card-title">User Management</h3>
                     <h6 class="card-subtitle" id="table-description">Create new, edit existing, or delete users</h6>
-                    <div class="table-responsive">
-                        <table class="table" id="users" aria-describedby="table-description" data-route="@ODataLocations.UserListing" data-details="@Url.PageLink(pageName: PageLocations.UserView, values: new {id = "__ID__"})">
+                    <div class="table-responsive form-material">
+                        <table class="table table-hover clickable" id="users" aria-describedby="table-description" data-route="@ODataLocations.UserListing" data-details="@Url.PageLink(pageName: PageLocations.UserView, values: new {id = "__ID__"})">
                             <thead>
                                 <tr>
                                     <th id="email-address">Email Address</th>

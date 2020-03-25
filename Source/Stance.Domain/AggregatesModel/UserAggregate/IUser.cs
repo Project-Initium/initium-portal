@@ -52,7 +52,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         void GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration);
 
-        void GenerateNewAccountConfirmationToken(DateTime whenCreated, TimeSpan duration);
+        void GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration);
 
         void ChangePassword(string passwordHash);
 

@@ -1,4 +1,5 @@
 ﻿@page "/app/profile/fido-security-keys"
+@using Fido2NetLib.Objects
 @using Stance.Web.Infrastructure.Constants
 @model Stance.Web.Pages.App.Profile.SecurityKeys
 @{ this.Layout = "Shared/_AppLayout"; }
@@ -31,19 +32,22 @@
                         <div class="tab-pane active" id="profile" role="tabpanel">
                             <div class="card-body">
                                 <p>Security keys are hardware devices containing cryptographic keys. They can be used for two-factor authentication. Security keys must support the FIDO U2F standard.</p>
-                                <form method="post" data-device-registration>
-                                    <div class="form-group">
-                                        <label class="col-md-12">Nickname</label>
-                                        <div class="input-group mb-3">
-                                            <input type="text" class="form-control" data-name />
-                                            <div class="input-group-append">
-                                                <button class="btn btn-outline-secondary" type="submit">Add</button>
-                                            </div>
-                                        </div>
-                                        <input type="hidden" data-challenge />
-                                        <input type="hidden" data-client-data />
-                                        <input type="hidden" data-registration-data />
+                                <p class="text-muted small">There are two types, Cross Platform (Token) and Platform (TPM).  Cross Platform devices are portable devices like Yubikey (<a href="https://www.yubico.com/" target="_blank">www.yubico.com</a>) and Titan Security Key from Google (<a href="https://cloud.google.com/titan-security-key" target="_blank">cloud.google.com/titan-security-key</a>). Platform keys are device specific and feature items like Windows Hello (<a href="https://www.microsoft.com/en-gb/windows/windows-hello">www.microsoft.com/en-gb/windows/windows-hello</a>)</p>
+                                <form data-device-registration>
+                                    <button type="submit" disabled style="display: none" aria-hidden="true"></button>
+                                    <div class="form-group m-b-5">
+                                        <label>Nickname</label>
+                                        <input type="text" class="form-control" data-name />
                                     </div>
+                                    <div class="text-right m-t-0">
+                                        <button class="btn btn-sm btn-primary" type="submit" data-type="@AuthenticatorAttachment.CrossPlatform">Add Token</button>
+                                        <button class="btn btn-sm btn-primary" type="submit" data-type="@AuthenticatorAttachment.Platform">Add TPM</button>
+                                    </div>
+
+                                    <input type="hidden" data-challenge />
+                                    <input type="hidden" data-client-data />
+                                    <input type="hidden" data-registration-data />
+
                                 </form>
                                 <hr />
 
@@ -57,8 +61,8 @@
                                                 <button class="btn btn-danger btn-sm" type="submit" name="PageModel.DeviceId" value="@device.Id">Remove</button>
                                             </div>
                                             <div class="d-flex w-100 justify-content-between">
-                                                <p class="mb-1">When Enrolled: <small>@device.WhenEnrolled</small></p>
-                                                <p class="mb-1">When Last Used: <small>@device.WhenLastUsed</small></p>
+                                                <p class="mb-1">When Enrolled: <small>@device.WhenEnrolled.ToString("dd/MM/yyyy")</small></p>
+                                                <p class="mb-1">When Last Used: <small>@(device.WhenLastUsed.HasValue ? device.WhenLastUsed.Value.ToString("dd/MM/yyyy"): "Not Used")</small></p>
                                             </div>
                                         </div>
                                     }

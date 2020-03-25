@@ -11,8 +11,8 @@ using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.RoleAggregate;
 using Stance.Domain.CommandHandlers.RoleAggregate;
 using Stance.Domain.Commands.RoleAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models;
 using Xunit;
 
 namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
@@ -23,7 +23,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
         public async Task Handle_GivenRoleAlreadyExists_ExpectFailedResult()
         {
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(true));
             var roleRepository = new Mock<IRoleRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -45,7 +45,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
         {
             var roleId = Guid.Empty;
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
             var roleRepository = new Mock<IRoleRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -67,7 +67,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
         public async Task Handle_GivenSavingFails_ExpectFailedResult()
         {
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
             var roleRepository = new Mock<IRoleRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -87,7 +87,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
         public async Task Handle_GivenSavingSucceeds_ExpectSuccessfulResult()
         {
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
             var roleRepository = new Mock<IRoleRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();

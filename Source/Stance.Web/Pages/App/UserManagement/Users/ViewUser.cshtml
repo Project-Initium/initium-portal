@@ -6,8 +6,8 @@
 }
 
 <div class="row page-titles">
-    <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor m-b-0 m-t-0">View User</h3>
+    <div class="align-self-center">
+        <h4 class="text-themecolor m-b-0 m-t-0">View User</h4>
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
             <li class="breadcrumb-item">User Management</li>
@@ -26,15 +26,15 @@
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label asp-for="DetailedUser.EmailAddress"></label>
+                        <label asp-for="DetailedUser.EmailAddress">Email Address</label>
                         <input readonly class="form-control-plaintext"  asp-for="DetailedUser.EmailAddress" />
                     </div>
                     <div class="form-group">
-                        <label asp-for="DetailedUser.FirstName"></label>
+                        <label asp-for="DetailedUser.FirstName">First Name</label>
                         <input readonly class="form-control-plaintext"  asp-for="DetailedUser.FirstName" />
                     </div>
                     <div class="form-group">
-                        <label asp-for="DetailedUser.LastName"></label>
+                        <label asp-for="DetailedUser.LastName">Last Name</label>
                         <input readonly class="form-control-plaintext"  asp-for="DetailedUser.LastName" />
                     </div>
                     

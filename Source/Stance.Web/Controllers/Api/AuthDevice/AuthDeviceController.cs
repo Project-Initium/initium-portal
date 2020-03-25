@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.Contracts;
 
 namespace Stance.Web.Controllers.Api.AuthDevice
@@ -26,9 +27,9 @@ namespace Stance.Web.Controllers.Api.AuthDevice
 
         [Authorize]
         [HttpPost("api/auth-device/initiate-registration")]
-        public async Task<IActionResult> InitialAuthDeviceRegistration()
+        public async Task<IActionResult> InitialAuthDeviceRegistration([FromBody]InitialAuthDeviceRegistrationRequest request)
         {
-            var result = await this._mediator.Send(new InitiateAuthenticatorDeviceEnrollmentCommand());
+            var result = await this._mediator.Send(new InitiateAuthenticatorDeviceEnrollmentCommand(request.AuthenticatorAttachment));
             if (result.IsSuccess)
             {
                 this.TempData["CredentialData"] = result.Value.Options.ToJson();
@@ -86,9 +87,10 @@ namespace Stance.Web.Controllers.Api.AuthDevice
             }
 
             var url = await this._authenticationService.SignInUserFromPartialStateAsync(result.Value.UserId);
+
             return this.Json(new
             {
-                url,
+                url = string.IsNullOrWhiteSpace(url) ? this.Url.Page(PageLocations.AppDashboard) : this.LocalRedirect(url).Url,
                 assertionVerificationResult = result.Value.AssertionVerificationResult,
             });
         }

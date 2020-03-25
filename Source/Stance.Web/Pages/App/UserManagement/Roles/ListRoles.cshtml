@@ -22,10 +22,11 @@
         <!-- Column -->
         <div class="card">
             <div class="card-body">
+                <a asp-page="@PageLocations.RoleCreate" class="btn btn-sm float-right btn-info text-white">Create new role</a>
                 <h3 class="card-title">Role Management</h3>
                 <h6 class="card-subtitle" id="table-description">Create new, edit existing, or delete roles</h6>
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="roles" aria-describedby="table-description" data-route="@ODataLocations.RoleListing" data-details="@Url.Page(PageLocations.RoleView, new {id = "__ID__"})">
+                <div class="table-responsive form-material">
+                    <table class="table table-hover clickable nowrap" id="roles" cellspacing="0" width="100%" aria-describedby="table-description" data-route="@ODataLocations.RoleListing" data-details="@Url.Page(PageLocations.RoleView, new {id = "__ID__"})">
                         <thead>
                         <tr>
                             <th id="name">Name</th>
@@ -34,14 +35,7 @@
                         </thead>
                         <tbody>
                         </tbody>
-                    </table>
-                    <div class="d-flex justify-content-between">
-                        <div class="mr-auto">
-                            <a asp-page="@PageLocations.RoleCreate" class="btn btn-info text-white">Create new role</a>
-                        </div>
-                        <nav aria-label="Page navigation ml-auto">
-                        </nav>
-                    </div>
+                    </table>                    
                 </div>
             </div>
         </div>
