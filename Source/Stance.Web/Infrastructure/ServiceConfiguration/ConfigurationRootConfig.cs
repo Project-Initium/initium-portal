@@ -28,6 +28,7 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
 
             serviceCollection.AddScoped<IUserRepository, UserRepository>();
             serviceCollection.AddScoped<IRoleRepository, RoleRepository>();
+            serviceCollection.AddScoped<IConnectionProvider, ConnectionProvider>();
 
             serviceCollection.AddScoped<ICurrentAuthenticatedUserProvider, CurrentAuthenticatedUserProvider>();
             serviceCollection.AddScoped<IAuthenticationService, AuthenticationService>();

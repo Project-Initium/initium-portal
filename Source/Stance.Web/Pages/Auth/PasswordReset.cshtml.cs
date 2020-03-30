@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Stance.Core.Settings;
+using Stance.Core.Validation;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Infrastructure.PageModels;
 
@@ -62,11 +65,17 @@ namespace Stance.Web.Pages.Auth
 
         public class Validator : AbstractValidator<Model>
         {
-            public Validator()
+            public Validator(IOptions<SecuritySettings> securitySettings)
             {
+                if (securitySettings == null)
+                {
+                    throw new ArgumentNullException(nameof(securitySettings));
+                }
+
                 this.RuleFor(x => x.Token).NotEmpty();
                 this.RuleFor(x => x.Password)
-                    .NotEmpty().WithMessage("Please enter your new password.");
+                    .NotEmpty().WithMessage("Please enter your new password.")
+                    .SetValidator(new PasswordValidator(securitySettings.Value));
                 this.RuleFor(x => x.PasswordConfirmation).Equal(x => x.Password).WithMessage("Please confirm your new password.");
             }
         }

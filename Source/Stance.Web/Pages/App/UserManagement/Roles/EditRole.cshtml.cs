@@ -10,11 +10,13 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.RoleAggregate;
 using Stance.Queries.Contracts.Static;
+using Stance.Web.Infrastructure.Attributes;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.UserManagement.Roles
 {
+    [ResourceBasedAuthorize("role-edit")]
     public class EditRole : PrgPageModel<EditRole.Model>
     {
         private readonly IMediator _mediator;

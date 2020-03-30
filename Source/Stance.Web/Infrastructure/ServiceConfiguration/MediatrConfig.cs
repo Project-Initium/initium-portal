@@ -6,6 +6,8 @@ using MediatR;
 using MediatR.Extensions.FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using Stance.Domain.CommandHandlers.UserAggregate;
+using Stance.Infrastructure;
+using Stance.Infrastructure.Extensions;
 
 namespace Stance.Web.Infrastructure.ServiceConfiguration
 {
@@ -16,6 +18,7 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
             var assembly = typeof(CreateInitialUserCommandHandler).GetTypeInfo().Assembly;
             serviceCollection.AddMediatR(assembly);
             serviceCollection.AddFluentValidation(new[] { assembly });
+            serviceCollection.AddDomainAuditLogging();
             return serviceCollection;
         }
     }

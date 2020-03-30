@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Queries.Contracts.Static;
@@ -13,6 +14,7 @@ using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.Profile
 {
+    [Authorize]
     public class SecurityKeys : PrgPageModel<SecurityKeys.Model>
     {
         private readonly IMediator _mediator;

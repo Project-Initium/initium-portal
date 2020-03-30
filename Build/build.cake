@@ -106,12 +106,12 @@ Task("__Package")
 
 Task("Build")
     .IsDependentOn("__Clean")
-    .IsDependentOn("__Versioning")    
-    .IsDependentOn("__RestorePackages")
-    .IsDependentOn("__Build")
-    .IsDependentOn("__Test")
-    .IsDependentOn("__Publish")
-    .IsDependentOn("__Package")
+    // .IsDependentOn("__Versioning")    
+    // .IsDependentOn("__RestorePackages")
+    // .IsDependentOn("__Build")
+    // .IsDependentOn("__Test")
+    // .IsDependentOn("__Publish")
+    // .IsDependentOn("__Package")
     ;
 
 Task("Default")

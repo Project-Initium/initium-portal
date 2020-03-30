@@ -10,6 +10,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using QRCoder;
@@ -22,6 +23,7 @@ using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.Profile
 {
+    [Authorize]
     public class AuthenticatorApp : PrgPageModel<AuthenticatorApp.Model>
     {
         [SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded",

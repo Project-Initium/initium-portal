@@ -8,11 +8,13 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.RoleAggregate;
+using Stance.Web.Infrastructure.Attributes;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.UserManagement.Roles
 {
+    [ResourceBasedAuthorize("role-create")]
     public class CreateRole : PrgPageModel<CreateRole.Model>
     {
         private readonly IMediator _mediator;

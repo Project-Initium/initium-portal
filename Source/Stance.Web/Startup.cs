@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,6 +24,7 @@ namespace Stance.Web
             builder.AddEnvironmentVariables();
 
             this.Configuration = builder.Build();
+
         }
 
         public IConfigurationRoot Configuration { get; }

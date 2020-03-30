@@ -1,12 +1,16 @@
 // Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Stance.Core.Settings;
+using Stance.Core.Validation;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Infrastructure.PageModels;
 
@@ -60,10 +64,18 @@ namespace Stance.Web.Pages.App.Profile
 
         public class Validator : AbstractValidator<Model>
         {
-            public Validator()
+            public Validator(IOptions<SecuritySettings> securitySettings)
             {
+                if (securitySettings == null)
+                {
+                    throw new ArgumentNullException(nameof(securitySettings));
+                }
+
                 this.RuleFor(x => x.OldPassword).NotEmpty();
-                this.RuleFor(x => x.NewPassword).NotEmpty();
+                this.RuleFor(x => x.NewPassword)
+                    .NotEmpty()
+                    .SetValidator(new PasswordValidator(securitySettings.Value));
+
                 this.RuleFor(x => x.ConfirmPassword).Equal(x => x.NewPassword);
             }
         }

@@ -12,11 +12,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Queries.Contracts.Static;
+using Stance.Web.Infrastructure.Attributes;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.UserManagement.Users
 {
+    [ResourceBasedAuthorize("user-create")]
     public class CreateUser : PrgPageModel<CreateUser.Model>
     {
         private readonly IMediator _mediator;

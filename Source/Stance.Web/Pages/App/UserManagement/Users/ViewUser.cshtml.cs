@@ -6,10 +6,12 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Queries.Contracts.Static;
 using Stance.Queries.Static.Models.User;
+using Stance.Web.Infrastructure.Attributes;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.UserManagement.Users
 {
+    [ResourceBasedAuthorize("user-view")]
     public class ViewUser : NotificationPageModel
     {
         private readonly IUserQueries _userQueries;
