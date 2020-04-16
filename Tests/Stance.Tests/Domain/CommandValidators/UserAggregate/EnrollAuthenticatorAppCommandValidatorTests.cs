@@ -13,7 +13,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
         {
-            var cmd = new EnrollAuthenticatorAppCommand(new string('*', 6), new string('*', 7));
+            var cmd = new EnrollAuthenticatorAppCommand("key", "code");
             var validator = new EnrollAuthenticatorAppCommandValidator();
             var result = validator.Validate(cmd);
             Assert.True(result.IsValid);
@@ -22,7 +22,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenCodeIsEmpty_ExpectValidationFailure()
         {
-            var cmd = new EnrollAuthenticatorAppCommand(new string('*', 7), string.Empty);
+            var cmd = new EnrollAuthenticatorAppCommand("key", string.Empty);
             var validator = new EnrollAuthenticatorAppCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -35,7 +35,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenCodeIsNull_ExpectValidationFailure()
         {
-            var cmd = new EnrollAuthenticatorAppCommand(new string('*', 7), null);
+            var cmd = new EnrollAuthenticatorAppCommand("key", null);
             var validator = new EnrollAuthenticatorAppCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -48,7 +48,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenKeyIsEmpty_ExpectValidationFailure()
         {
-            var cmd = new EnrollAuthenticatorAppCommand(string.Empty, new string('*', 7));
+            var cmd = new EnrollAuthenticatorAppCommand(string.Empty, "code");
             var validator = new EnrollAuthenticatorAppCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -61,7 +61,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenKeyIsNull_ExpectValidationFailure()
         {
-            var cmd = new EnrollAuthenticatorAppCommand(null, new string('*', 7));
+            var cmd = new EnrollAuthenticatorAppCommand(null, "code");
             var validator = new EnrollAuthenticatorAppCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);

@@ -36,7 +36,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
                 userRepository.Object, currentAuthenticatedUserProvider.Object);
 
-            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand(new string('*', 4));
+            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand("code");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -47,7 +47,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         public async Task Handle_GivenSavingFails_ExpectFailedResult()
         {
             var user = new Mock<IUser>();
-            user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>
             {
                 new AuthenticatorApp(Guid.NewGuid(), "key", DateTime.UtcNow),
@@ -60,16 +60,16 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe.From(user.Object));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
                 userRepository.Object, currentAuthenticatedUserProvider.Object);
 
             var totp = new Totp(Base32Encoding.ToBytes("key"));
 
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand(generated);
+            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand(code);
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -80,7 +80,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         public async Task Handle_GivenSavingSucceeds_ExpectSuccessfulResult()
         {
             var user = new Mock<IUser>();
-            user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>
             {
                 new AuthenticatorApp(Guid.NewGuid(), "key", DateTime.UtcNow),
@@ -93,16 +93,16 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe.From(user.Object));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
                 userRepository.Object, currentAuthenticatedUserProvider.Object);
 
             var totp = new Totp(Base32Encoding.ToBytes("key"));
 
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand(generated);
+            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand(code);
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
@@ -119,12 +119,12 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe<IUser>.Nothing);
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
                 userRepository.Object, currentAuthenticatedUserProvider.Object);
 
-            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand(new string('*', 4));
+            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand("code");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -137,7 +137,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             var userId = Guid.NewGuid();
             user.Setup(x => x.Id).Returns(userId);
-            user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>
             {
                 new AuthenticatorApp(Guid.NewGuid(), "nonkey", DateTime.UtcNow),
@@ -150,16 +150,16 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe.From(user.Object));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
                 userRepository.Object, currentAuthenticatedUserProvider.Object);
 
             var totp = new Totp(Base32Encoding.ToBytes("key"));
 
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand(generated);
+            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand(code);
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -167,12 +167,12 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         }
 
         [Fact]
-        public async Task Handle_GiveUserDoesExistButCodeIsValid_ExpectSuccessfulResultAndSuccessfulAttemptLogged()
+        public async Task Handle_GiveUserDoesExistAndCodeIsValid_ExpectSuccessfulResultAndSuccessfulAttemptLogged()
         {
             var user = new Mock<IUser>();
             var userId = Guid.NewGuid();
             user.Setup(x => x.Id).Returns(userId);
-            user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>
             {
                 new AuthenticatorApp(Guid.NewGuid(), "key", DateTime.UtcNow),
@@ -185,20 +185,51 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe.From(user.Object));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
                 userRepository.Object, currentAuthenticatedUserProvider.Object);
 
             var totp = new Totp(Base32Encoding.ToBytes("key"));
 
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand(generated);
+            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand(code);
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
             Assert.Equal(userId, result.Value.UserId);
+        }
+
+        [Fact]
+        public async Task Handle_GiveUserDoesExistButHasNoAuthApp_ExpectFailedResult()
+        {
+            var user = new Mock<IUser>();
+            var userId = Guid.NewGuid();
+            user.Setup(x => x.Id).Returns(userId);
+            user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>());
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+            var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
+
+            var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
+                userRepository.Object, currentAuthenticatedUserProvider.Object);
+
+            var totp = new Totp(Base32Encoding.ToBytes("key"));
+
+            var code = totp.ComputeTotp();
+
+            var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand(code);
+            var result = await handler.Handle(cmd, CancellationToken.None);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal(ErrorCodes.NoAuthenticatorAppEnrolled, result.Error.Code);
         }
     }
 }

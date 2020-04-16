@@ -11,12 +11,10 @@ namespace Stance.Tests.Domain.Commands.UserAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var token = new string('*', 5);
-            var newPassword = new string('*', 6);
-            var passwordResetCommand = new PasswordResetCommand(token, newPassword);
+            var passwordResetCommand = new PasswordResetCommand("token", "new-password");
 
-            Assert.Equal(token, passwordResetCommand.Token);
-            Assert.Equal(newPassword, passwordResetCommand.NewPassword);
+            Assert.Equal("token", passwordResetCommand.Token);
+            Assert.Equal("new-password", passwordResetCommand.NewPassword);
         }
     }
 }

@@ -57,11 +57,11 @@ namespace Stance.Web.Pages.App.UserManagement.Users
             if (result.IsSuccess)
             {
                 this.PrgState = PrgState.Success;
-                this.AddPageNotification("User Creation", "The user was created successfully", PageNotification.Success);
+                this.AddPageNotification("The user was created successfully", PageNotification.Success);
                 return this.RedirectToPage(PageLocations.UserView, new { id = result.Value.UserId });
             }
 
-            this.AddPageNotification("User Creation", "There was an issue creating the user.", PageNotification.Error);
+            this.AddPageNotification("There was an issue creating the user.", PageNotification.Error);
             this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }

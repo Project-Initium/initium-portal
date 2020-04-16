@@ -38,7 +38,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
 
             var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object);
-            var cmd = new CreateUserCommand(new string('*', 5), new string('*', 6), new string('*', 7), false, true, new List<Guid>());
+            var cmd = new CreateUserCommand("email-address", "first-name", "last-name", false, true, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -62,7 +62,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
             var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object);
-            var cmd = new CreateUserCommand(new string('*', 5), new string('*', 6), new string('*', 7), false, true, new List<Guid>());
+            var cmd = new CreateUserCommand("email-address", "first-name", "last-name", false, true, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
@@ -84,7 +84,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
 
             var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object);
-            var cmd = new CreateUserCommand(new string('*', 5), new string('*', 6), new string('*', 7), false, true, new List<Guid>());
+            var cmd = new CreateUserCommand("email-address", "first-name", "last-name", false, true, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -110,7 +110,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
             var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object);
-            var cmd = new CreateUserCommand(new string('*', 5), new string('*', 6), new string('*', 7), false, true, new List<Guid>());
+            var cmd = new CreateUserCommand("email-address", "first-name", "last-name", false, true, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             userRepository.Verify(x => x.Add(It.IsAny<IUser>()), Times.Once);

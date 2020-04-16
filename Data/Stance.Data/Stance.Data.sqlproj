@@ -106,11 +106,15 @@
     <Build Include="Portal\Stored Procedures\uspGetSystemProfileByUserId.sql" />
     <Build Include="Portal\Stored Procedures\uspCheckForPresenceOfAuthAppForCurrentUser.sql" />
     <Build Include="Portal\Stored Procedures\uspGetDeviceInfoForCurrentUser.sql" />
+    <Build Include="ReadAggregation\Views\vwUserRole.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Stance.Data.refactorlog" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Stance.Data.publish.xml" />
   </ItemGroup>
 </Project>

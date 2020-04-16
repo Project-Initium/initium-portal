@@ -12,8 +12,8 @@ namespace Stance.Tests.Domain.CommandResults.UserAggregate
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
             var initiateAuthenticatorAppEnrollmentCommandResult =
-                new InitiateAuthenticatorAppEnrollmentCommandResult(new string('*', 5));
-            Assert.Equal(new string('*', 5), initiateAuthenticatorAppEnrollmentCommandResult.SharedKey);
+                new InitiateAuthenticatorAppEnrollmentCommandResult("shared-key");
+            Assert.Equal("shared-key", initiateAuthenticatorAppEnrollmentCommandResult.SharedKey);
         }
     }
 }

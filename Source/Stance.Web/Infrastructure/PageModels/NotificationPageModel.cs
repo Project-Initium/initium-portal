@@ -45,9 +45,9 @@ namespace Stance.Web.Infrastructure.PageModels
             }
         }
 
-        protected void AddPageNotification(string title, string message, string pageNotificationType)
+        protected void AddPageNotification(string message, string pageNotificationType)
         {
-            this._pageNotifications.Add(new PageNotification(title, message, pageNotificationType));
+            this._pageNotifications.Add(new PageNotification(message, pageNotificationType));
         }
 
         public class PageNotification
@@ -60,14 +60,11 @@ namespace Stance.Web.Infrastructure.PageModels
             {
             }
 
-            public PageNotification(string title, string message, string pageNotificationType)
+            public PageNotification(string message, string pageNotificationType)
             {
-                this.Title = title;
                 this.Message = message;
                 this.PageNotificationType = pageNotificationType;
             }
-
-            public string Title { get; set; }
 
             public string Message { get; set; }
 

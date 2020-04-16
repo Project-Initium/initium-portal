@@ -58,7 +58,8 @@ namespace Stance.Web.Pages.Auth
             }
 
             this.PrgState = PrgState.Failed;
-            this.AddPageNotification("Login issue", "There was an issue signing you in. Please try again.",
+            this.AddPageNotification(
+                "There was an issue signing you in. Please try again.",
                 PageNotification.Error);
             return string.IsNullOrEmpty(this.ReturnUrl)
                     ? this.RedirectToPage()

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using MediatR;
 using Stance.Core.Domain;
 
-namespace Stance.Infrastructure
+namespace Stance.Infrastructure.Extensions
 {
     internal static class MediatorExtension
     {

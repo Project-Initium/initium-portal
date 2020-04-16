@@ -24,6 +24,14 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        public void OnGet()
+        {
+            if (this.PageModel == null)
+            {
+                this.PageModel = new Model();
+            }
+        }
+
         public async Task<IActionResult> OnPostAsync()
         {
             if (!this.ModelState.IsValid)
@@ -36,11 +44,11 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
             if (result.IsSuccess)
             {
                 this.PrgState = PrgState.Success;
-                this.AddPageNotification("Role Creation", "The role was created successfully", PageNotification.Success);
+                this.AddPageNotification("The role was created successfully", PageNotification.Success);
                 return this.RedirectToPage(PageLocations.RoleView, new { id = result.Value.RoleId });
             }
 
-            this.AddPageNotification("Role Creation", "There was an issue creating the role.", PageNotification.Error);
+            this.AddPageNotification("There was an issue creating the role.", PageNotification.Error);
             this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }

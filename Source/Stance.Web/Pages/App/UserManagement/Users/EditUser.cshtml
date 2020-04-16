@@ -6,8 +6,7 @@
 }
 
 <div class="row page-titles">
-    <div class="align-self-center">
-        <h3 class="text-themecolor m-b-0 m-t-0">Edit User</h3>
+    <div class="align-self-center col-md-7 col-12 pl-0">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
             <li class="breadcrumb-item">User Management</li>
@@ -15,69 +14,54 @@
             <li class="breadcrumb-item active">Editing User @Model.Name</li>
         </ol>
     </div>
+    <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0 pr-0">
+        <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@PageLocations.UserView" asp-route-id="@Model.PageModel.Id">Cancel</a>
+        <button class="btn btn-sm btn-info text-white" type="submit" form="edit-user">Save</button>        
+    </div>
 </div>
 
-<form method="post" asp-route-id="@Model.PageModel.Id" class="form-material">
-    <div class="row">
-        <div class="col-7">
-            <!-- Column -->
-            <div class="card card-outline-info">
-                <div class="card-header">
-                    <h5 class="mb-0 text-white">Details</h5>
-                </div>
-                <div class="card-body">
-                    <div class="form-group">
-                        <label asp-for="PageModel.EmailAddress"></label>
-                        <input class="form-control" asp-for="PageModel.EmailAddress" />
-                        <span class="text-danger" asp-validation-for="PageModel.EmailAddress"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="PageModel.FirstName"></label>
-                        <input class="form-control" asp-for="PageModel.FirstName" />
-                        <span class="text-danger" asp-validation-for="PageModel.FirstName"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="PageModel.LastName"></label>
-                        <input class="form-control" asp-for="PageModel.LastName" />
-                        <span class="text-danger" asp-validation-for="PageModel.LastName"></span>
-                    </div>
-                    <div class="form-check pl-0">
-                        <input asp-for="PageModel.IsLockable" class="form-check-input filled-in" type="checkbox" data-val="false">
-                        <label class="form-check-label" asp-for="PageModel.IsLockable"></label>
-                    </div>
-                    <input type="hidden" asp-for="PageModel.Id"/>
-                </div>
-            </div>
+<form method="post" asp-route-id="@Model.PageModel.Id" class="form-material row pl-0 pr-0" id="edit-user" >
+    <input type="hidden" asp-for="PageModel.Id"/>
+    <div class="col-md-7 pl-md-0 pr-md-2 pl-1 pr-1">
+        <div class="card card-outline-info">
+            <div class="card-body">
+                <h4 class="card-title">Details</h4>
 
-
-        </div>
-        <div class="col-5">
-            <div class="card card-outline-info">
-                <div class="card-header">
-                    <h5 class="mb-0 text-white">Roles</h5>
+                <div class="form-group">
+                    <label asp-for="PageModel.EmailAddress"></label>
+                    <input class="form-control" asp-for="PageModel.EmailAddress" />
+                    <span class="text-danger" asp-validation-for="PageModel.EmailAddress"></span>
                 </div>
-                <div class="card-body">
-                    <div class="form-check pl-0">
-                        <input asp-for="PageModel.IsAdmin" class="form-check-input filled-in" type="checkbox" data-val="false">
-                        <label class="form-check-label" asp-for="PageModel.IsAdmin"></label>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="PageModel.Roles"></label>
-                        <select multiple class="form-control" asp-for="PageModel.Roles" asp-items="Model.AvailableRoles"></select>
-                    </div>
+                <div class="form-group">
+                    <label asp-for="PageModel.FirstName"></label>
+                    <input class="form-control" asp-for="PageModel.FirstName" />
+                    <span class="text-danger" asp-validation-for="PageModel.FirstName"></span>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PageModel.LastName"></label>
+                    <input class="form-control" asp-for="PageModel.LastName" />
+                    <span class="text-danger" asp-validation-for="PageModel.LastName"></span>
+                </div>
+                <div class="form-check pl-0">
+                    <input asp-for="PageModel.IsLockable" class="form-check-input filled-in" type="checkbox" data-val="false">
+                    <label class="form-check-label" asp-for="PageModel.IsLockable"></label>
                 </div>
             </div>
         </div>
-
-
-
     </div>
-    <div class="row">
-        <div class="col-6">
-            <a class="btn btn-secondary cancel" asp-page="@PageLocations.AppDashboard">Go Back</a>
+    <div class="col-md-5 pl-md-2 pr-md-0 pl-1 pr-1">
+        <div class="card card-outline-info">
+            <div class="card-body">
+                <h4 class="card-title">Roles</h4>
+                <div class="form-check pl-0">
+                    <input asp-for="PageModel.IsAdmin" class="form-check-input filled-in" type="checkbox" data-val="false">
+                    <label class="form-check-label" asp-for="PageModel.IsAdmin"></label>
+                </div>
+                <div class="form-group">
+                    <label asp-for="PageModel.Roles"></label>
+                    <select multiple class="form-control" asp-for="PageModel.Roles" asp-items="Model.AvailableRoles"></select>
+                </div>
+            </div>
         </div>
-        <div class="col-6 text-right">
-            <button class="btn btn-info text-white mr-2" type="submit">Update</button>
-        </div>
-    </div>
+    </div>    
 </form>

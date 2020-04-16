@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Linq;
 using Stance.Core.Constants;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Xunit;
@@ -13,16 +14,33 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var id = Guid.NewGuid();
-            var whenHappened = DateTime.UtcNow;
             var authenticationHistory = new AuthenticationHistory(
-                id,
-                whenHappened,
+                TestVariables.AuthenticationHistoryId,
+                TestVariables.Now,
                 AuthenticationHistoryType.Success);
 
-            Assert.Equal(id, authenticationHistory.Id);
-            Assert.Equal(whenHappened, authenticationHistory.WhenHappened);
+            Assert.Equal(TestVariables.AuthenticationHistoryId, authenticationHistory.Id);
+            Assert.Equal(TestVariables.Now, authenticationHistory.WhenHappened);
             Assert.Equal(AuthenticationHistoryType.Success, authenticationHistory.AuthenticationHistoryType);
+
+            foreach (var prop in authenticationHistory.GetType().GetProperties().Where(x => x.PropertyType.Name == "IReadOnlyList`1"))
+            {
+                var val = prop.GetValue(authenticationHistory, null);
+                Assert.False(val == null, $"{prop.Name} is null");
+            }
+        }
+
+        [Fact]
+        public void Constructor_GivenPrivateIsCalled_ExpectObjectCreated()
+        {
+            var authenticationHistory = (AuthenticationHistory)Activator.CreateInstance(typeof(AuthenticationHistory), true);
+            Assert.NotNull(authenticationHistory);
+
+            foreach (var prop in authenticationHistory.GetType().GetProperties().Where(x => x.PropertyType.Name == "IReadOnlyList`1"))
+            {
+                var val = prop.GetValue(authenticationHistory, null);
+                Assert.False(val == null, $"{prop.Name} is null");
+            }
         }
     }
 }

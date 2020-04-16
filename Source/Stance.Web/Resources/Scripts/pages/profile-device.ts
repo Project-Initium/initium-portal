@@ -1,8 +1,17 @@
 ﻿import {ArrayHelpers} from '../helpers/array-helper'
+import Swal from 'sweetalert2';
+import TriggeredEvent = JQuery.TriggeredEvent;
+import {Validator} from "../services/validator";
+import 'bootstrap';
+import * as moment from 'moment';
 
 export class ProfileDevice {
     private name: HTMLInputElement;
     private form: HTMLFormElement;
+    private tokenType: string;
+    private validator: Validator;
+    private slideOut: JQuery;
+    private registeredDevices: HTMLFormElement;
     constructor() {
         if (document.readyState !== 'loading') {
             this.init();
@@ -13,65 +22,61 @@ export class ProfileDevice {
 
     private async submit(event: Event) {
         event.preventDefault();
-        let makeCredentialOptions;
-        try {
-            makeCredentialOptions = await this.startDeviceRegistration(this.name.value, (document.activeElement as HTMLButtonElement).dataset.type);
-        } catch (e) {
-            console.error(e);
-        }
+        if (!this.validator.validate()) {            
+            let makeCredentialOptions;
+            try {
+                makeCredentialOptions = await this.startDeviceRegistration(this.name.value);
+            } catch (e) {
+                ProfileDevice.showErrorAlert();
+                return;
+            }
 
-        console.log("Credential Options Object", makeCredentialOptions);
+            if (makeCredentialOptions.status !== "ok") {
+                ProfileDevice.showErrorAlert();
+                return;
+            }
 
-        if (makeCredentialOptions.status !== "ok") {
-            console.log("Error creating credential options");
-            console.log(makeCredentialOptions.errorMessage);
-            return;
-        }
+            makeCredentialOptions.challenge = ArrayHelpers.coerceToArrayBuffer(makeCredentialOptions.challenge);
+            makeCredentialOptions.user.id = ArrayHelpers.coerceToArrayBuffer(makeCredentialOptions.user.id);
 
-        // Turn the challenge back into the accepted format of padded base64
-        makeCredentialOptions.challenge = ArrayHelpers.coerceToArrayBuffer(makeCredentialOptions.challenge);
-        // Turn ID into a UInt8Array Buffer for some reason
-        makeCredentialOptions.user.id = ArrayHelpers.coerceToArrayBuffer(makeCredentialOptions.user.id);
-
-        makeCredentialOptions.excludeCredentials = makeCredentialOptions.excludeCredentials.map((c) => {
-            c.id = ArrayHelpers.coerceToArrayBuffer(c.id);
-            return c;
-        });
-
-        if (makeCredentialOptions.authenticatorSelection.authenticatorAttachment === null) {
-            makeCredentialOptions.authenticatorSelection.authenticatorAttachment = undefined;
-        }
-
-        console.log("Creating PublicKeyCredential...");
-
-        let newCredential;
-        try {
-            newCredential = await navigator.credentials.create({
-                publicKey: makeCredentialOptions
+            makeCredentialOptions.excludeCredentials = makeCredentialOptions.excludeCredentials.map((c) => {
+                c.id = ArrayHelpers.coerceToArrayBuffer(c.id);
+                return c;
             });
-        } catch (e) {
-            var msg = "Could not create credentials in browser. Probably because the username is already registered with your authenticator. Please change username or authenticator."
-            console.error(msg, e);
-        }
 
-        console.log("PublicKeyCredential Created", newCredential);
+            if (makeCredentialOptions.authenticatorSelection.authenticatorAttachment === null) {
+                makeCredentialOptions.authenticatorSelection.authenticatorAttachment = undefined;
+            }
 
-        try {
-            this.registerNewCredential(this.name.value, newCredential);
+            let newCredential;
+            try {
+                newCredential = await navigator.credentials.create({
+                    publicKey: makeCredentialOptions
+                });
+            } catch (e) {
+                ProfileDevice.showErrorAlert();
+                return
+            }
 
-        } catch (e) {
-            //showErrorAlert(err.message ? err.message : err);
+            try {
+                this.registerNewCredential(this.name.value, newCredential);
+            } catch (e) {
+                ProfileDevice.showErrorAlert();
+                return;
+            }
+            
+            
         }
     }
 
-    private async startDeviceRegistration(name: string, authenticatorAttachment: string): Promise<PublicKeyCredentialCreationOptions> {
-        const response = await fetch('/api/auth-device/initiate-registration', {
+    private async startDeviceRegistration(name: string): Promise<PublicKeyCredentialCreationOptions> {
+        const response = await fetch(this.form.dataset.initiateUrl, {
             method: 'POST',
             mode: 'same-origin',
             cache: 'no-cache',
             body: JSON.stringify({
                 name: name,
-                authenticatorAttachment: authenticatorAttachment
+                authenticatorAttachment: this.tokenType
             }),
             credentials: 'same-origin',
             headers: {
@@ -79,14 +84,10 @@ export class ProfileDevice {
                 'Content-Type': 'application/json'
             }
         });
-
-        const data = await response.json();
-        console.log(data);
-        return data;
+        return await response.json();
     }
 
-    async registerNewCredential(name: string, newCredential) {
-        // Move data into Arrays incase it is super long
+    private async registerNewCredential(name: string, newCredential) {
         let attestationObject = new Uint8Array(newCredential.response.attestationObject);
         let clientDataJSON = new Uint8Array(newCredential.response.clientDataJSON);
         let rawId = new Uint8Array(newCredential.rawId);
@@ -109,21 +110,36 @@ export class ProfileDevice {
         try {
             response = await this.registerCredentialWithServer(data);
         } catch (e) {
-            //showErrorAlert(e);
-        }
-    
-        console.log("Credential Object", response);
-    
-        // show error
-        if (response.status !== "ok") {
-            console.log("Error creating credential");
-            console.log(response.errorMessage);
+            ProfileDevice.showErrorAlert();
             return;
         }
+    
+        if (response.result.status !== "ok") {
+            ProfileDevice.showErrorAlert();
+            return;
+        }
+
+        Swal.fire({
+            icon: 'success',
+            text: 'The device has been registered.',
+            toast: true,
+            position: "top-end",
+            timer: 4500,
+            showConfirmButton: false
+        });
+
+        const d = document.createElement('div');
+        d.innerHTML = document.getElementById('device-template').innerText;
+        d.dataset.deviceId = response.deviceId;
+        (d.querySelector('[data-device-name]') as HTMLElement).innerText = `${response.name}`;
+        (d.querySelector('[data-device-remove]') as HTMLButtonElement).value =`${response.deviceId}`;
+        (d.querySelector('[data-when-enrolled]') as HTMLElement).innerText = moment().format('DD/MM/YYYY');
+        document.getElementById('registered-devices').appendChild(d);
+        this.slideOut.modal('hide');
     }
 
-    async registerCredentialWithServer(formData) {
-        let response = await fetch('/api/auth-device/complete-registration', {
+    private async registerCredentialWithServer(formData) {
+        let response = await fetch(this.form.dataset.completeUrl, {
             method: 'POST',
             mode: 'same-origin',
             cache: 'no-cache',
@@ -135,18 +151,87 @@ export class ProfileDevice {
             }
         });
     
-        let data = await response.json();
-    
-        return data;
+        return await response.json();
     }
 
+    private static showErrorAlert() {
+        Swal.fire({
+            icon: 'error',
+            text: 'Sorry, there was an issue processing the device.  It might be already registered.'
+        })
+    }
+    
+    private showPanel(event: Event) {
+        this.name.value = '';
+        this.tokenType  = (event.target as HTMLButtonElement).dataset.type;
+        this.slideOut.modal('show');
+    }
+    
+    private async revokeDevice(event) {
+        event.preventDefault();
+        var target = event.target as HTMLButtonElement;
+        
+        try {
+            const response =await fetch(this.registeredDevices.dataset.endpointUrl, {
+                method: 'POST',
+                mode: 'same-origin',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                body: JSON.stringify({
+                    deviceId: target.value,
+                }),
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            });  
+            const data: any = await response.json();
+            debugger;
+            if (data.isSuccess) {
+                this.registeredDevices.removeChild(this.registeredDevices.querySelector(`[data-device-id="${target.value}"]`))
+                Swal.fire({
+                    icon: 'success',
+                    text: 'The device has been revoked.',
+                    toast: true,
+                    position: "top-end",
+                    timer: 4500,
+                    showConfirmButton: false
+                });
+                return ;
+            }
+            
+        } catch(e) {
+            
+        }
+
+        Swal.fire({
+            icon: 'error',
+            text: 'Sorry, there was an issue revoking the device.  Please try again.'
+        })
+        
+    }
+    
     init() {
         this.form = document.querySelector('form[data-device-registration]') as HTMLFormElement;
+        this.validator = new Validator(this.form, false);
         this.name = document.querySelector('input[data-name]') as HTMLInputElement;
         const contextThis = this;
 
         this.form.addEventListener('submit', (event: Event) => contextThis.submit(event));
+        this.slideOut = $('#new-device-model').modal({
+            show: false,
+        });
+        
+        document.querySelectorAll('[data-type]').forEach(value => {
+            value.addEventListener('click', (event)=> contextThis.showPanel(event))
+        });
+
+        this.registeredDevices = document.getElementById('registered-devices') as HTMLFormElement;
+        this.registeredDevices.addEventListener('click', (event) => contextThis.revokeDevice(event));
+            
     }
+    
+    
 }
 
 new ProfileDevice();

@@ -14,6 +14,7 @@ using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandHandlers.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Domain.Events;
 using Xunit;
 
 namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
@@ -23,64 +24,13 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         [Fact]
         public async Task Handle_GivenSavingFails_ExpectFailedResult()
         {
+            var user = new Mock<IUser>();
+            user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
             var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => Maybe.From(new Mock<IUser>().Object));
-
-            var securitySettings = new Mock<IOptions<SecuritySettings>>();
-            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
-            {
-                PasswordTokenLifetime = 3,
-            });
-
-            var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
-            var cmd = new RequestPasswordResetCommand(new string('*', 5));
-            var result = await handler.Handle(cmd, CancellationToken.None);
-
-            Assert.True(result.IsFailure);
-            Assert.Equal(ErrorCodes.SavingChanges, result.Error.Code);
-        }
-
-        [Fact]
-        public async Task Handle_GivenSavingSucceeds_ExpectSuccessfulResult()
-        {
-            var clock = new Mock<IClock>();
-            var userRepository = new Mock<IUserRepository>();
-            var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
-            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => Maybe.From(new Mock<IUser>().Object));
-
-            var securitySettings = new Mock<IOptions<SecuritySettings>>();
-            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
-            {
-                PasswordTokenLifetime = 3,
-            });
-
-            var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
-            var cmd = new RequestPasswordResetCommand(new string('*', 5));
-            var result = await handler.Handle(cmd, CancellationToken.None);
-
-            Assert.True(result.IsSuccess);
-        }
-
-        [Fact]
-        public async Task Handle_GivenUserIsFound_ExpectCallToGenerateTokenAndSuccessfulResult()
-        {
-            var clock = new Mock<IClock>();
-            var userRepository = new Mock<IUserRepository>();
-            var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
-            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-
-            var user = new Mock<IUser>();
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
@@ -92,12 +42,69 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler =
                 new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
-            var cmd = new RequestPasswordResetCommand(new string('*', 5));
+            var cmd = new RequestPasswordResetCommand("email-address");
+            var result = await handler.Handle(cmd, CancellationToken.None);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal(ErrorCodes.SavingChanges, result.Error.Code);
+        }
+
+        [Fact]
+        public async Task Handle_GivenSavingSucceeds_ExpectSuccessfulResult()
+        {
+            var user = new Mock<IUser>();
+            user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
+            var clock = new Mock<IClock>();
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
+            {
+                PasswordTokenLifetime = 3,
+            });
+
+            var handler =
+                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var cmd = new RequestPasswordResetCommand("email-address");
+            var result = await handler.Handle(cmd, CancellationToken.None);
+
+            Assert.True(result.IsSuccess);
+        }
+
+        [Fact]
+        public async Task Handle_GivenUserIsFound_ExpectCallToGenerateTokenAndSuccessfulResultAndDomainEventRaised()
+        {
+            var user = new Mock<IUser>();
+            user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
+            var clock = new Mock<IClock>();
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+
+            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
+            {
+                PasswordTokenLifetime = 3,
+            });
+
+            var handler =
+                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
             user.Verify(x => x.GenerateNewPasswordResetToken(It.IsAny<DateTime>(), It.IsAny<TimeSpan>()), Times.Once);
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
+            user.Verify(x => x.AddDomainEvent(It.IsAny<PasswordResetTokenGeneratedEvent>()));
         }
 
         [Fact]
@@ -119,7 +126,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler =
                 new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
-            var cmd = new RequestPasswordResetCommand(new string('*', 5));
+            var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);

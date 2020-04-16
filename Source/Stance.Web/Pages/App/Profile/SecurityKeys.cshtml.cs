@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -31,21 +32,45 @@ namespace Stance.Web.Pages.App.Profile
         public async Task OnGet()
         {
             var devices = await this._userQueries.GetDeviceInfoForCurrentUser();
-            if (devices.HasValue)
-            {
-                this.DeviceInfos = devices.Value;
-            }
+            this.DeviceInfos = devices.HasValue ? devices.Value : new List<DeviceInfo>();
         }
 
-        public async Task<IActionResult> OnPostAsync()
-        {
-            await this._mediator.Send(new RevokeAuthenticatorDeviceCommand(this.PageModel.DeviceId));
-            return this.RedirectToPage();
-        }
+        // public async Task<IActionResult> OnPostAsync()
+        // {
+        //     if (!this.ModelState.IsValid)
+        //     {
+        //         return this.RedirectToPage();
+        //     }
+        //
+        //     var result = await this._mediator.Send(new RevokeAuthenticatorDeviceCommand(this.PageModel.DeviceId));
+        //
+        //     if (result.IsSuccess)
+        //     {
+        //         this.PrgState = PrgState.Success;
+        //         this.AddPageNotification("The device was successfully revoked.", PageNotification.Success);
+        //     }
+        //     else
+        //     {
+        //         this.PrgState = PrgState.Failed;
+        //         this.AddPageNotification("There was an issue revoking the device.", PageNotification.Error);
+        //     }
+        //
+        //     return this.RedirectToPage();
+        // }
 
         public class Model
         {
-            public Guid DeviceId { get; set; }
+            public string Name { get; set; }
+        }
+
+        public class Validator : AbstractValidator<Model>
+        {
+            public Validator()
+            {
+                this.RuleFor(x => x.Name)
+                    .NotEmpty()
+                    .WithMessage("Please enter a name.");
+            }
         }
     }
 }

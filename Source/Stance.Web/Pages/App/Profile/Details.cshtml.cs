@@ -8,6 +8,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Queries.Contracts.Static;
 using Stance.Web.Infrastructure.PageModels;
@@ -59,12 +60,12 @@ namespace Stance.Web.Pages.App.Profile
             if (result.IsSuccess)
             {
                 this.PrgState = PrgState.Success;
-                this.AddPageNotification("Profile Update", "Your details have been changed.", PageNotification.Success);
+                this.AddPageNotification("Your details have been changed.", PageNotification.Success);
             }
             else
             {
                 this.PrgState = PrgState.Failed;
-                this.AddPageNotification("Profile Update", "There has been an issue changing your details.", PageNotification.Error);
+                this.AddPageNotification("There has been an issue changing your details.", PageNotification.Error);
             }
 
             return this.RedirectToPage();
@@ -81,6 +82,13 @@ namespace Stance.Web.Pages.App.Profile
 
         public class Validator : AbstractValidator<Model>
         {
+            public Validator()
+            {
+                this.RuleFor(x => x.FirstName)
+                    .NotEmpty().WithMessage("Please enter your first name");
+                this.RuleFor(x => x.LastName)
+                    .NotEmpty().WithMessage("Please enter your last name");
+            }
         }
     }
 }

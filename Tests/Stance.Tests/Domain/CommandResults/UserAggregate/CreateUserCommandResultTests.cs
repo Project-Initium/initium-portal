@@ -12,9 +12,8 @@ namespace Stance.Tests.Domain.CommandResults.UserAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var id = Guid.NewGuid();
-            var commandResult = new CreateUserCommandResult(id);
-            Assert.Equal(id, commandResult.UserId);
+            var commandResult = new CreateUserCommandResult(TestVariables.UserId);
+            Assert.Equal(TestVariables.UserId, commandResult.UserId);
         }
     }
 }

@@ -43,7 +43,6 @@ class App {
                 var pageNotification = value as HTMLSpanElement;
                 Swal.fire({
                     icon: <any>pageNotification.dataset.type,
-                    titleText: pageNotification.dataset.title,
                     text: pageNotification.dataset.message,
                     toast: true,
                     position: "top-end",

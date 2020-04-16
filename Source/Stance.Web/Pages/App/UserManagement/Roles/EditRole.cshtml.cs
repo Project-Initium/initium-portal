@@ -70,11 +70,11 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
             if (result.IsSuccess)
             {
                 this.PrgState = PrgState.Success;
-                this.AddPageNotification("Role Editing", "The role was updated successfully", PageNotification.Success);
+                this.AddPageNotification("The role was updated successfully", PageNotification.Success);
                 return this.RedirectToPage(PageLocations.RoleView, new { id = this.PageModel.RoleId });
             }
 
-            this.AddPageNotification("Role Editing", "There was an issue updating the role.", PageNotification.Error);
+            this.AddPageNotification("There was an issue updating the role.", PageNotification.Error);
             this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }

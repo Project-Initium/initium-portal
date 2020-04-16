@@ -11,13 +11,10 @@ namespace Stance.Tests.Domain.Commands.UserAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var firstName = new string('*', 5);
-            var lastName = new string('*', 6);
+            var updateProfileCommand = new UpdateProfileCommand("first-name", "last-name");
 
-            var updateProfileCommand = new UpdateProfileCommand(firstName, lastName);
-
-            Assert.Equal(firstName, updateProfileCommand.FirstName);
-            Assert.Equal(lastName, updateProfileCommand.LastName);
+            Assert.Equal("first-name", updateProfileCommand.FirstName);
+            Assert.Equal("last-name", updateProfileCommand.LastName);
         }
     }
 }

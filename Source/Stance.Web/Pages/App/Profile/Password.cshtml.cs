@@ -39,12 +39,12 @@ namespace Stance.Web.Pages.App.Profile
             if (result.IsSuccess)
             {
                 this.PrgState = PrgState.Success;
-                this.AddPageNotification("Password Update", "Your password has been changed.", PageNotification.Success);
+                this.AddPageNotification("Your password has been changed.", PageNotification.Success);
             }
             else
             {
                 this.PrgState = PrgState.Failed;
-                this.AddPageNotification("Password Update", "There has been an issue changing your password.", PageNotification.Error);
+                this.AddPageNotification("There has been an issue changing your password.", PageNotification.Error);
             }
 
             return this.RedirectToPage();

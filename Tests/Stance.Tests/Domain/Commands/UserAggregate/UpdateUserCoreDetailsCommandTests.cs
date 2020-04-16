@@ -13,14 +13,14 @@ namespace Stance.Tests.Domain.Commands.UserAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var id = Guid.NewGuid();
-            var command = new UpdateUserCoreDetailsCommand(id, new string('*', 5), new string('*', 6),
-                new string('*', 7), false, true, new List<Guid>());
-            Assert.Equal(id, command.UserId);
-            Assert.Equal(new string('*', 5), command.EmailAddress);
-            Assert.Equal(new string('*', 6), command.FirstName);
-            Assert.Equal(new string('*', 7), command.LastName);
+            var command = new UpdateUserCoreDetailsCommand(TestVariables.UserId, "email-address", "first-name",
+                "last-name", false, true, new List<Guid> { TestVariables.RoleId });
+            Assert.Equal(TestVariables.UserId, command.UserId);
+            Assert.Equal("email-address", command.EmailAddress);
+            Assert.Equal("first-name", command.FirstName);
+            Assert.Equal("last-name", command.LastName);
             Assert.False(command.IsLockable);
+            Assert.Single(command.Roles);
         }
     }
 }

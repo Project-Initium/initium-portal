@@ -10,6 +10,7 @@ using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Domain.Events;
 
 namespace Stance.Domain.CommandHandlers.UserAggregate
 {
@@ -53,6 +54,8 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             var user = userMaybe.Value;
             user.ChangePassword(BCrypt.Net.BCrypt.HashPassword(request.NewPassword));
             user.CompleteTokenLifecycle(convertedToken, whenHappened);
+            user.AddDomainEvent(new PasswordChangedEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName));
+
             this._userRepository.Update(user);
             return ResultWithError.Ok<ErrorData>();
         }

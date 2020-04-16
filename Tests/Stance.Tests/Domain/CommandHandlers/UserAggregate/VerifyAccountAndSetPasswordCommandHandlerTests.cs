@@ -86,6 +86,30 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         }
 
         [Fact]
+        public async Task Handle_GivenUserExistsButIsVerified_ExpectFailedResult()
+        {
+            var user = new Mock<IUser>();
+            user.Setup(x => x.IsVerified).Returns(true);
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.FindByUserBySecurityToken(It.IsAny<Guid>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+
+            var clock = new Mock<IClock>();
+
+            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object);
+            var cmd = new VerifyAccountAndSetPasswordCommand(
+                Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                "new-password");
+
+            var result = await handler.Handle(cmd, CancellationToken.None);
+            Assert.True(result.IsFailure);
+            Assert.Equal(ErrorCodes.UserIsAlreadyVerified, result.Error.Code);
+        }
+
+        [Fact]
         public async Task Handle_GivenUserExists_ExpectAccountToBeVerifiedAndPasswordChangedAndTokenCompleted()
         {
             var user = new Mock<IUser>();

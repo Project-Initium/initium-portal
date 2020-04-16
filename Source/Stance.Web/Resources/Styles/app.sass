@@ -6,6 +6,11 @@ $themecolor-dark: #028ee1
 $topbar: #1e88e5
 $themecolor-alt: #26c6da
 
+html
+        background: #eef5f9
+body
+    font-size: 0.875rem
+
 .page-titles .breadcrumb .breadcrumb-item + .breadcrumb-item::before 
     content: "\f054" !important
     font-family: "fontawesome" !important
@@ -66,11 +71,70 @@ $themecolor-alt: #26c6da
 .clickable
     cursor: pointer
 
-.dataTables_length label,
-.dataTables_filter label
-    white-space: nowrap
+.dataTables_length select
+    border: 0
+    background-image: linear-gradient(#009efb, #009efb), linear-gradient(#d9d9d9, #d9d9d9)
+    background-size: 0 2px, 100% 1px
+    background-repeat: no-repeat
+    background-position: center bottom, center calc(100% - 1px)
+    background-color: transparent
+    transition: background 0s ease-out
+    padding-bottom: 5px
+    box-shadow: none
+
+.dataTables_filter input 
+    border: 0
+    background-image: linear-gradient(#009efb, #009efb), linear-gradient(#d9d9d9, #d9d9d9)
+    background-size: 0 2px, 100% 1px
+    background-repeat: no-repeat
+    background-position: center bottom, center calc(100% - 1px)
+    background-color: transparent
+    transition: background 0s ease-out
+    float: none
+    box-shadow: none
+    border-radius: 0
+    margin-left: 10px
 
 .error-box
     min-height: 100%
     height: auto
     position: unset
+
+.page-titles
+    margin-bottom: 15px
+
+.btn-group label.btn-outline-secondary:not(.active)
+    color: #727b84 !important
+.btn-group label.btn-outline-secondary:hover
+    color: #fff !important
+
+.right-sidebar  
+    position: initial
+.shw-rside
+    width: auto
+    
+.modal-dialog-slideout 
+    min-height: 100%
+    margin: 0 auto 0 0
+    background: #fff
+
+.modal.fade .modal-dialog.modal-dialog-slideout
+    -webkit-transform: translate(-100%,0)
+    transform: translate(-100%,0)
+
+.modal.fade.show .modal-dialog.modal-dialog-slideout
+    -webkit-transform: translate(0,0)
+    transform: translate(0,0)
+    flex-flow: column
+    
+.modal-dialog-slideout .modal-content
+    border: 0
+
+@media (max-width: 767px)
+    .mini-sidebar .page-wrapper
+        margin-left: 0
+        padding-top: 0
+        
+@media (max-width: 576px)
+ .modal-dialog.modal-dialog-slideout 
+    width: 80%

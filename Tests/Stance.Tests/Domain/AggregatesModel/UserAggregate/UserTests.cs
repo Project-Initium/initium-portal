@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Stance.Core.Constants;
 using Stance.Domain.AggregatesModel.UserAggregate;
-using Stance.Domain.Events;
 using Xunit;
 
 namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
@@ -16,46 +15,57 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var id = Guid.NewGuid();
-            var whenCreated = DateTime.UtcNow;
             var user = new User(
-                id,
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 true,
-                whenCreated,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid> { Guid.NewGuid() }.AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid> { TestVariables.RoleId },
                 true);
 
-            Assert.Equal(id, user.Id);
-            Assert.Equal(new string('*', 5), user.EmailAddress);
-            Assert.Equal(new string('*', 6), user.PasswordHash);
-            Assert.Equal(whenCreated, user.WhenCreated);
+            Assert.Equal(TestVariables.UserId, user.Id);
+            Assert.Equal("email-address", user.EmailAddress);
+            Assert.Equal("password-hash", user.PasswordHash);
+            Assert.Equal(TestVariables.Now, user.WhenCreated);
             Assert.Empty(user.AuthenticationHistories);
             Assert.Null(user.WhenLastAuthenticated);
             Assert.Null(user.WhenLocked);
             Assert.Equal(0, user.AttemptsSinceLastAuthentication);
             Assert.True(user.IsLockable);
             Assert.True(user.IsAdmin);
-            Assert.Equal(new string('*', 7), user.Profile.FirstName);
-            Assert.Equal(new string('*', 8), user.Profile.LastName);
+            Assert.Equal("first-name", user.Profile.FirstName);
+            Assert.Equal("last-name", user.Profile.LastName);
             Assert.Single(user.UserRoles);
+        }
+
+        [Fact]
+        public void Constructor_GivenPrivateIsCalled_ExpectObjectCreated()
+        {
+            var user = (User)Activator.CreateInstance(typeof(User), true);
+            Assert.NotNull(user);
+
+            foreach (var prop in user.GetType().GetProperties().Where(x => x.PropertyType.Name == "IReadOnlyList`1"))
+            {
+                var val = prop.GetValue(user, null);
+                Assert.False(val == null, $"{prop.Name} is null");
+            }
         }
 
         [Fact]
         public void ProcessSuccessfulAuthenticationAttempt_GiveValidArguments_ExpectNewEntryInHistoryAndWhenLastAuthenticatedSetAndAttemptsReset()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 true,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
             var whenAttempted = DateTime.UtcNow;
@@ -78,14 +88,14 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
         public void ProcessUnsuccessfulAuthenticationAttempt_GivenNoLockedIsApplied_ExpectNewEntryInHistoryAndUnsuccessfulCountIncreased()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 true,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
             var whenAttempted = DateTime.UtcNow;
@@ -103,14 +113,14 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
         public void ProcessUnsuccessfulAuthenticationAttempt_GivenLockedIsAppliedAndAccountIsLockable_ExpectNewEntryInHistoryAndUnsuccessfulCountIncreasedAndAccountLocked()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 true,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
             var whenAttempted = DateTime.UtcNow;
@@ -129,18 +139,17 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
         public void ProcessUnsuccessfulAuthenticationAttempt_GivenLockedIsAppliedAndAccountIsNotLockable_ExpectNewEntryInHistoryAndUnsuccessfulCountIncreased()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 false,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
-            var whenAttempted = DateTime.UtcNow;
-            user.ProcessUnsuccessfulAuthenticationAttempt(whenAttempted, true);
+            user.ProcessUnsuccessfulAuthenticationAttempt(TestVariables.Now.AddMinutes(30), true);
 
             Assert.Null(user.WhenLastAuthenticated);
             Assert.Equal(1, user.AttemptsSinceLastAuthentication);
@@ -148,168 +157,158 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
             Assert.Contains(
                 user.AuthenticationHistories,
                 history => history.AuthenticationHistoryType == AuthenticationHistoryType.Failure &&
-                           history.WhenHappened == whenAttempted);
+                           history.WhenHappened == TestVariables.Now.AddMinutes(30));
         }
 
         [Fact]
         public void ProcessPartialSuccessfulAuthenticationAttempt_GivenValidArguments_ExpectItemAddedToAuthenticationHistory()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 false,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
-            var whenAttempted = DateTime.UtcNow;
-
             user.ProcessPartialSuccessfulAuthenticationAttempt(
-                whenAttempted, AuthenticationHistoryType.EmailMfaRequested);
+                TestVariables.Now.AddMinutes(30), AuthenticationHistoryType.EmailMfaRequested);
 
             Assert.Null(user.WhenLastAuthenticated);
             Assert.Equal(0, user.AttemptsSinceLastAuthentication);
             Assert.Contains(
                 user.AuthenticationHistories,
                 history => history.AuthenticationHistoryType == AuthenticationHistoryType.EmailMfaRequested &&
-                           history.WhenHappened == whenAttempted);
+                           history.WhenHappened == TestVariables.Now.AddMinutes(30));
         }
 
         [Fact]
-        public void ChangePassword_GivenValidArguments_ExpectPasswordChanged()
+        public void ChangePassword_GivenValidArguments_ExpectPasswordChangedAndSecurityStampChanged()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 false,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
-            user.ChangePassword(new string('*', 7));
+            var securityStamp = user.SecurityStamp;
+            user.ChangePassword("new-password-hash");
 
-            Assert.Equal(new string('*', 7), user.PasswordHash);
+            Assert.Equal("new-password-hash", user.PasswordHash);
+            Assert.NotEqual(securityStamp, user.SecurityStamp);
         }
 
         [Fact]
         public void CompleteTokenLifecycle_GivenValidArguments_ExpectTokenToBeMarkedAsUsed()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 false,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
-            var whenRequested = DateTime.UtcNow;
-            user.GenerateNewPasswordResetToken(whenRequested, TimeSpan.FromHours(1));
-            var token = (user.DomainEvents.First() as PasswordResetTokenGeneratedEvent)?.Token;
+            var token = user.GenerateNewPasswordResetToken(TestVariables.Now.AddMinutes(30), TimeSpan.FromHours(1));
 
-            user.CompleteTokenLifecycle(new Guid(Convert.FromBase64String(token)), whenRequested);
+            user.CompleteTokenLifecycle(new Guid(Convert.FromBase64String(token)), TestVariables.Now.AddMinutes(30));
 
-            Assert.Contains(user.SecurityTokenMappings, x => x.WhenUsed == whenRequested);
+            Assert.Contains(user.SecurityTokenMappings, x => x.WhenUsed == TestVariables.Now.AddMinutes(30));
         }
 
         [Fact]
-        public void GenerateNewPasswordResetToken_GivenTokenDoesNotExist_ExpectNewTokenCreatedAndEventRaised()
+        public void GenerateNewPasswordResetToken_GivenTokenDoesNotExist_ExpectNewTokenCreated()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 false,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
-            var whenRequested = DateTime.UtcNow;
-            user.GenerateNewPasswordResetToken(whenRequested, TimeSpan.FromHours(1));
+            user.GenerateNewPasswordResetToken(TestVariables.Now.AddMinutes(30), TimeSpan.FromHours(1));
 
             Assert.Contains(
                 user.SecurityTokenMappings,
                 x => x.Purpose == SecurityTokenMapping.SecurityTokenPurpose.PasswordReset &&
-                     x.WhenCreated == whenRequested && x.WhenExpires == whenRequested.Add(TimeSpan.FromHours(1)));
-
-            Assert.Single(user.DomainEvents);
-            Assert.IsType<PasswordResetTokenGeneratedEvent>(user.DomainEvents.Last());
+                     x.WhenCreated == TestVariables.Now.AddMinutes(30) && x.WhenExpires == TestVariables.Now.AddMinutes(30).Add(TimeSpan.FromHours(1)));
         }
 
         [Fact]
-        public void GenerateNewPasswordResetToken_GivenTokenDoesExist_ExpectNoNewTokenCreatedAndEventRaised()
+        public void GenerateNewPasswordResetToken_GivenTokenDoesExist_ExpectNoNewTokenCreated()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 false,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
-            user.GenerateNewPasswordResetToken(DateTime.UtcNow, TimeSpan.FromHours(1));
+            user.GenerateNewPasswordResetToken(TestVariables.Now, TimeSpan.FromHours(1));
 
-            var whenRequested = DateTime.UtcNow;
-            user.GenerateNewPasswordResetToken(whenRequested, TimeSpan.FromHours(1));
+            user.GenerateNewPasswordResetToken(TestVariables.Now.AddMinutes(30), TimeSpan.FromHours(1));
 
             Assert.DoesNotContain(
                 user.SecurityTokenMappings,
                 x => x.Purpose == SecurityTokenMapping.SecurityTokenPurpose.PasswordReset &&
-                     x.WhenCreated == whenRequested);
-
-            Assert.Equal(2, user.DomainEvents.Count);
-            Assert.IsType<PasswordResetTokenGeneratedEvent>(user.DomainEvents.Last());
+                     x.WhenCreated == TestVariables.Now.AddMinutes(30));
         }
 
         [Fact]
         public void UpdateProfile_GivenValidArguments_ExpectProfileToBeUpdated()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 false,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                string.Empty,
+                string.Empty,
+                new List<Guid>(),
                 true);
 
-            user.UpdateProfile(new string('*', 9), new string('*', 10));
+            user.UpdateProfile("first-name", "last-name");
 
-            Assert.Equal(new string('*', 9), user.Profile.FirstName);
-            Assert.Equal(new string('*', 10), user.Profile.LastName);
+            Assert.Equal("first-name", user.Profile.FirstName);
+            Assert.Equal("last-name", user.Profile.LastName);
         }
 
         [Fact]
         public void UpdateSystemAccessDetails_GivenValidArguments_ExpectPropertiesToBeUpdated()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                string.Empty,
+                "password-hash",
                 false,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
-            user.UpdateSystemAccessDetails(new string('+', 5), true);
-            Assert.Equal(new string('+', 5), user.EmailAddress);
+            user.UpdateSystemAccessDetails("email-address", true);
+            Assert.Equal("email-address", user.EmailAddress);
             Assert.True(user.IsLockable);
         }
 
@@ -317,14 +316,14 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
         public void SetAdminStatus_GivenValidArgument_ExpectAdminStatusChange()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 false,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
             user.SetAdminStatus(false);
@@ -341,14 +340,17 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
             var dupeRole = permRole;
 
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 false,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid> { permRole, tempRole }.AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>
+                {
+                    TestVariables.RoleId,
+                },
                 true);
 
             user.SetRoles(new List<Guid>
@@ -367,17 +369,17 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
         public void EnrollAuthenticatorApp_GivenValidArguments_ExpectAuthenticatorAppAdded()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 false,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
-            var authenticatorApp = user.EnrollAuthenticatorApp(Guid.NewGuid(), new string('*', 5), DateTime.UtcNow);
+            var authenticatorApp = user.EnrollAuthenticatorApp(TestVariables.AuthenticatorAppId, "key", TestVariables.Now);
             Assert.Single(user.AuthenticatorApps);
             Assert.Contains(authenticatorApp, user.AuthenticatorApps);
         }
@@ -386,21 +388,151 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
         public void RevokeAuthenticatorApp_GivenThereIsAnAppEnrolled_ExpectAppToBeRevoked()
         {
             var user = new User(
-                Guid.NewGuid(),
-                new string('*', 5),
-                new string('*', 6),
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
                 false,
-                DateTime.UtcNow,
-                new string('*', 7),
-                new string('*', 8),
-                new List<Guid>().AsReadOnly(),
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
                 true);
 
-            user.EnrollAuthenticatorApp(Guid.NewGuid(), new string('*', 5), DateTime.UtcNow);
-            var whenRevoked = DateTime.UtcNow;
-            user.RevokeAuthenticatorApp(whenRevoked);
+            user.EnrollAuthenticatorApp(TestVariables.AuthenticatorAppId, "key", TestVariables.Now);
+            user.RevokeAuthenticatorApp(TestVariables.Now.AddMinutes(30));
             Assert.Single(user.AuthenticatorApps);
             Assert.DoesNotContain(user.AuthenticatorApps, x => !x.WhenRevoked.HasValue);
+        }
+
+        [Fact]
+        public void GenerateNewAccountConfirmationToken_GivenTokenDoesNotExist_ExpectNewTokenCreated()
+        {
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                false,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
+                true);
+
+            user.GenerateNewAccountConfirmationToken(TestVariables.Now.AddMinutes(30), TimeSpan.FromHours(1));
+
+            Assert.Contains(
+                user.SecurityTokenMappings,
+                x => x.Purpose == SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation &&
+                     x.WhenCreated == TestVariables.Now.AddMinutes(30) && x.WhenExpires == TestVariables.Now.AddMinutes(30).Add(TimeSpan.FromHours(1)));
+        }
+
+        [Fact]
+        public void GenerateNewAccountConfirmationToken_GivenTokenDoesExist_ExpectNoNewTokenCreated()
+        {
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                false,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
+                true);
+
+            user.GenerateNewAccountConfirmationToken(TestVariables.Now.AddMinutes(30), TimeSpan.FromHours(1));
+
+            user.GenerateNewAccountConfirmationToken(TestVariables.Now.AddMinutes(45), TimeSpan.FromHours(1));
+
+            Assert.DoesNotContain(
+                user.SecurityTokenMappings,
+                x => x.Purpose == SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation &&
+                     x.WhenCreated == TestVariables.Now.AddMinutes(45));
+        }
+
+        [Fact]
+        public void VerifyAccount_GivenValidArguments_ExpectAccountToBeVerified()
+        {
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                false,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
+                true);
+
+            Assert.Null(user.WhenVerified);
+            Assert.False(user.IsVerified);
+
+            user.VerifyAccount(TestVariables.Now.AddMinutes(30));
+
+            Assert.Equal(TestVariables.Now.AddMinutes(30), user.WhenVerified);
+            Assert.True(user.IsVerified);
+        }
+
+        [Fact]
+        public void EnrollAuthenticatorDevice_GivenValidArguments_ExpectDeviceToBeAdded()
+        {
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                false,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
+                true);
+
+            var device = user.EnrollAuthenticatorDevice(TestVariables.AuthenticatorDeviceId, TestVariables.Now, TestVariables.AuthenticatorDevicePublicKey, TestVariables.AuthenticatorDeviceCredentialId,
+                TestVariables.AuthenticatorDeviceAaguid, 1, "name", "cred-type");
+
+            Assert.Contains(device, user.AuthenticatorDevices);
+        }
+
+        [Fact]
+        public void RevokeAuthenticatorDevice_GivenValidArguments_ExpectDeviceToBeRevoked()
+        {
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                false,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
+                true);
+
+            var device = user.EnrollAuthenticatorDevice(TestVariables.AuthenticatorDeviceId, TestVariables.Now, TestVariables.AuthenticatorDevicePublicKey, TestVariables.AuthenticatorDeviceCredentialId,
+                TestVariables.AuthenticatorDeviceAaguid, 1, "name", "cred-type");
+
+            user.RevokeAuthenticatorDevice(device.Id, TestVariables.Now.AddMinutes(30));
+
+            Assert.Equal(TestVariables.Now.AddMinutes(30), device.WhenRevoked);
+        }
+
+        [Fact]
+        public void UnlockAccount_GivenValidArguments_ExpectAccountToBeUnlock()
+        {
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                true,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
+                true);
+
+            user.ProcessUnsuccessfulAuthenticationAttempt(TestVariables.Now, true);
+            user.UnlockAccount();
+
+            Assert.Null(user.WhenLocked);
         }
     }
 }

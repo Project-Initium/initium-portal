@@ -27,7 +27,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         {
             var securityStamp = Guid.NewGuid();
             var user = new Mock<IUser>();
-            user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
             user.Setup(x => x.SecurityStamp).Returns(securityStamp);
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -37,7 +37,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe.From<IUser>(user.Object));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var clock = new Mock<IClock>();
 
@@ -45,9 +45,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var totp = new Totp(securityStamp.ToByteArray());
 
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand(generated);
+            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand(code);
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -60,7 +60,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var securityStamp = Guid.NewGuid();
             var user = new Mock<IUser>();
             user.Setup(x => x.SecurityStamp).Returns(securityStamp);
-            user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -69,7 +69,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe.From<IUser>(user.Object));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var clock = new Mock<IClock>();
 
@@ -77,9 +77,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var totp = new Totp(securityStamp.ToByteArray());
 
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand(generated);
+            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand(code);
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
@@ -100,7 +100,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
 
-            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand(new string('*', 4));
+            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand("code");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -118,13 +118,13 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe<IUser>.Nothing);
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var clock = new Mock<IClock>();
 
             var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
 
-            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand(new string('*', 4));
+            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand("code");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -143,13 +143,13 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe.From<IUser>(user.Object));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var clock = new Mock<IClock>();
 
             var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
 
-            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand(new string('*', 4));
+            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand("code");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             user.Verify(x => x.ProcessPartialSuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), AuthenticationHistoryType.EmailMfaFailed));
@@ -167,7 +167,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.Id).Returns(userId);
             user.Setup(x => x.EmailAddress).Returns(new string('*', 5));
             user.Setup(x => x.SecurityStamp).Returns(securityStamp);
-            user.Setup(x => x.Profile).Returns(new Profile(Guid.Empty, new string('*', 7), new string('*', 8)));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -176,7 +176,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe.From<IUser>(user.Object));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var clock = new Mock<IClock>();
 
@@ -184,9 +184,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var totp = new Totp(securityStamp.ToByteArray());
 
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand(generated);
+            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand(code);
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             user.Verify(x => x.ProcessSuccessfulAuthenticationAttempt(It.IsAny<DateTime>()));

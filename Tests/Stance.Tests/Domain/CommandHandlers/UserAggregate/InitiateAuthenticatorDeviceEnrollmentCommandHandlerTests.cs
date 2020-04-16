@@ -51,7 +51,18 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         public async Task Handle_GivenUser_ExpectSuccessfulResultWithNewCredentialsRequested()
         {
             var user = new Mock<IUser>();
-            user.Setup(x => x.AuthenticatorDevices).Returns(new List<AuthenticatorDevice>());
+            user.Setup(x => x.AuthenticatorDevices).Returns(new List<AuthenticatorDevice>
+            {
+                new AuthenticatorDevice(
+                    TestVariables.AuthenticatorDeviceId,
+                    DateTime.Now,
+                    TestVariables.AuthenticatorDevicePublicKey,
+                    TestVariables.AuthenticatorDeviceCredentialId,
+                    TestVariables.AuthenticatorDeviceAaguid,
+                    1,
+                    "name",
+                    "cred-type"),
+            });
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);

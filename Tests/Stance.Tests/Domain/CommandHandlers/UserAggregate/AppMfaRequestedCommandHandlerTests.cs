@@ -66,8 +66,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(() =>
                 {
-                    ISystemUser user = new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None);
-                    return Maybe.From(user);
+                    ISystemUser systemUser = new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None);
+                    return Maybe.From(systemUser);
                 });
 
             var clock = new Mock<IClock>();
@@ -97,8 +97,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(() =>
                 {
-                    ISystemUser user = new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None);
-                    return Maybe.From(user);
+                    ISystemUser systemUser = new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None);
+                    return Maybe.From(systemUser);
                 });
 
             var clock = new Mock<IClock>();
@@ -127,8 +127,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(() =>
                 {
-                    ISystemUser user = new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None);
-                    return Maybe.From(user);
+                    ISystemUser systemUser = new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None);
+                    return Maybe.From(systemUser);
                 });
 
             var clock = new Mock<IClock>();
@@ -158,8 +158,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(() =>
                 {
-                    ISystemUser user = new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None);
-                    return Maybe.From(user);
+                    ISystemUser systemUser = new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None);
+                    return Maybe.From(systemUser);
                 });
 
             var clock = new Mock<IClock>();

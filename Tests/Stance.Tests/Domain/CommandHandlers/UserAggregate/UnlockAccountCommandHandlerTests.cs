@@ -13,6 +13,7 @@ using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandHandlers.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Domain.Events;
 using Xunit;
 
 namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
@@ -23,6 +24,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         public async Task Handle_GivenSavingFails_ExpectFailedResult()
         {
             var user = new Mock<IUser>();
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
@@ -34,7 +36,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var handler =
                 new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
 
-            var cmd = new UnlockAccountCommand(Guid.NewGuid());
+            var cmd = new UnlockAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsFailure);
         }
@@ -43,6 +45,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         public async Task Handle_GivenSavingSucceeds_ExpectSuccessfulResult()
         {
             var user = new Mock<IUser>();
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -54,7 +57,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var handler =
                 new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
 
-            var cmd = new UnlockAccountCommand(Guid.NewGuid());
+            var cmd = new UnlockAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsSuccess);
         }
@@ -73,15 +76,16 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var handler =
                 new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
 
-            var cmd = new UnlockAccountCommand(Guid.NewGuid());
+            var cmd = new UnlockAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsFailure);
         }
 
         [Fact]
-        public async Task Handle_GivenUserExists_ExpectAccountUnlockedAndPasswordResetTokenGenerated()
+        public async Task Handle_GivenUserExists_ExpectAccountUnlockedAndPasswordResetTokenGeneratedAndDomainEventRaised()
         {
             var user = new Mock<IUser>();
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -92,11 +96,12 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
             var handler = new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
 
-            var cmd = new UnlockAccountCommand(Guid.NewGuid());
+            var cmd = new UnlockAccountCommand(TestVariables.UserId);
             await handler.Handle(cmd, CancellationToken.None);
 
             user.Verify(x => x.UnlockAccount(), Times.Once);
             user.Verify(x => x.GenerateNewPasswordResetToken(It.IsAny<DateTime>(), It.IsAny<TimeSpan>()), Times.Once);
+            user.Verify(x => x.AddDomainEvent(It.IsAny<PasswordResetTokenGeneratedEvent>()));
         }
     }
 }

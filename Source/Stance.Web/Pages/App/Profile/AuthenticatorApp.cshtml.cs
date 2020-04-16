@@ -136,11 +136,11 @@ namespace Stance.Web.Pages.App.Profile
             if (result.IsSuccess)
             {
                 this.PrgState = PrgState.Success;
-                this.AddPageNotification("Authenticator App", "Your app has been setup.", PageNotification.Success);
+                this.AddPageNotification("Your app has been setup.", PageNotification.Success);
             }
             else
             {
-                this.AddPageNotification("Authenticator App", "There has been an issue setting up your app.", PageNotification.Error);
+                this.AddPageNotification("There has been an issue setting up your app.", PageNotification.Error);
                 this.PrgState = PrgState.Failed;
             }
 
@@ -153,11 +153,11 @@ namespace Stance.Web.Pages.App.Profile
             if (result.IsSuccess)
             {
                 this.PrgState = PrgState.Success;
-                this.AddPageNotification("Authenticator App", "Your app has been revoked.", PageNotification.Success);
+                this.AddPageNotification("Your app has been revoked.", PageNotification.Success);
             }
             else
             {
-                this.AddPageNotification("Authenticator App", "There has been an issue revoking up your app.", PageNotification.Error);
+                this.AddPageNotification("There has been an issue revoking up your app.", PageNotification.Error);
                 this.PrgState = PrgState.Failed;
             }
 

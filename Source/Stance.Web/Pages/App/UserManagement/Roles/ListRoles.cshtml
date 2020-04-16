@@ -6,27 +6,28 @@
 }
 
     <div class="row page-titles">
-        <div class="col-md-5 col-8 align-self-center">
-            <h3 class="text-themecolor m-b-0 m-t-0">Roles</h3>
+        <div class="align-self-center pl-0 col-md-7 col-12">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
                 <li class="breadcrumb-item">User Management</li>
                 <li class="breadcrumb-item active">Roles</li>
             </ol>
         </div>
+         <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
+            <a asp-page="@PageLocations.RoleCreate" class="btn btn-sm float-right btn-info text-white">Create new role</a>
+        </div>
     </div>
 
 
-<div class="row">
-    <div class="col-12">
-        <!-- Column -->
+<div class="row narrow">
+    <div class="col-12 pl-md-0 pr-md-0 pl-1 pr-1">
         <div class="card">
             <div class="card-body">
-                <a asp-page="@PageLocations.RoleCreate" class="btn btn-sm float-right btn-info text-white">Create new role</a>
-                <h3 class="card-title">Role Management</h3>
+                
+                <h3 class="card-title">Role Management <button type="button" class="btn-success btn btn-sm pull-right ml-2" data-filter-toggle><i class="fa fa-filter" aria-hidden="true"></i></button></h3>
                 <h6 class="card-subtitle" id="table-description">Create new, edit existing, or delete roles</h6>
-                <div class="table-responsive form-material">
-                    <table class="table table-hover clickable nowrap" id="roles" cellspacing="0" width="100%" aria-describedby="table-description" data-route="@ODataLocations.RoleListing" data-details="@Url.Page(PageLocations.RoleView, new {id = "__ID__"})">
+                <div class="table-responsive">
+                    <table class="table table-hover clickable" id="roles" cellspacing="0" width="100%" aria-describedby="table-description" data-route="@ODataLocations.RoleListing" data-details="@Url.Page(PageLocations.RoleView, new {id = "__ID__"})">
                         <thead>
                         <tr>
                             <th id="name">Name</th>

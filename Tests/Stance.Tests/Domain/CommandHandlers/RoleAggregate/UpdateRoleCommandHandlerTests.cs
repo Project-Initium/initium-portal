@@ -24,7 +24,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
         public async Task Handle_GivenRoleDoesExistAndNameHasChangedAndIsUnique_ExpectSuccessfulResultAndRoleUpdated()
         {
             var role = new Mock<IRole>();
-            role.Setup(x => x.Name).Returns(new string('*', 5));
+            role.Setup(x => x.Name).Returns(string.Empty);
             var roleQueries = new Mock<IRoleQueries>();
             roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
@@ -36,7 +36,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
                 .ReturnsAsync(() => Maybe.From(role.Object));
 
             var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new UpdateRoleCommand(Guid.Empty, new string('*', 6), new List<Guid>());
+            var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -48,7 +48,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
         public async Task Handle_GivenRoleDoesExistAndNameHasChangedButIsNotUnique_ExpectFailedResult()
         {
             var role = new Mock<IRole>();
-            role.Setup(x => x.Name).Returns(new string('*', 5));
+            role.Setup(x => x.Name).Returns(string.Empty);
             var roleQueries = new Mock<IRoleQueries>();
             roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(true));
@@ -60,7 +60,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
                 .ReturnsAsync(() => Maybe.From(role.Object));
 
             var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new UpdateRoleCommand(Guid.Empty, new string('*', 6), new List<Guid>());
+            var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -72,7 +72,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
         public async Task Handle_GivenRoleDoesExistAndNameHasNotChanged_ExpectSuccessfulResultAndRoleUpdated()
         {
             var role = new Mock<IRole>();
-            role.Setup(x => x.Name).Returns(new string('*', 5));
+            role.Setup(x => x.Name).Returns("name");
             var roleQueries = new Mock<IRoleQueries>();
             roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
@@ -84,7 +84,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
                 .ReturnsAsync(() => Maybe.From(role.Object));
 
             var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new UpdateRoleCommand(Guid.Empty, new string('*', 5), new List<Guid>());
+            var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -106,7 +106,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
                 .ReturnsAsync(() => Maybe<IRole>.Nothing);
 
             var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new UpdateRoleCommand(Guid.Empty, string.Empty, new List<Guid>());
+            var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -129,7 +129,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
                 .ReturnsAsync(() => Maybe.From(role.Object));
 
             var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new UpdateRoleCommand(Guid.Empty, string.Empty, new List<Guid>());
+            var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -152,7 +152,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
                 .ReturnsAsync(() => Maybe.From(role.Object));
 
             var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new UpdateRoleCommand(Guid.Empty, string.Empty, new List<Guid>());
+            var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 

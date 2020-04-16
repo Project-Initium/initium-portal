@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 
 namespace Stance.Queries.Dynamic.Entities
 {
@@ -22,5 +23,18 @@ namespace Stance.Queries.Dynamic.Entities
         public string LastName { get; set; }
 
         public DateTime WhenCreated { get; set; }
+
+        public bool IsVerified { get; set; }
+
+        public bool IsAdmin { get; set; }
+        
+        public List<UserRole> UserRoles { get; set; }
+        
+        public class UserRole
+        {
+            public Guid UserId { get; set; }
+            public Guid RoleId { get; set; }
+            public string RoleName { get; set; }
+        }
     }
 }

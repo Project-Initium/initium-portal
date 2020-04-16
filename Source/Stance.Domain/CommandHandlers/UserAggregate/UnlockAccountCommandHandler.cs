@@ -12,6 +12,7 @@ using Stance.Core.Domain;
 using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Domain.Events;
 
 namespace Stance.Domain.CommandHandlers.UserAggregate
 {
@@ -53,7 +54,10 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             var user = userMaybe.Value;
             user.UnlockAccount();
-            user.GenerateNewPasswordResetToken(whenHappened, TimeSpan.FromDays(this._securitySettings.PasswordTokenLifetime));
+            var token = user.GenerateNewPasswordResetToken(whenHappened, TimeSpan.FromDays(this._securitySettings.PasswordTokenLifetime));
+
+            user.AddDomainEvent(new PasswordResetTokenGeneratedEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token));
+
             this._userRepository.Update(user);
             return ResultWithError.Ok<ErrorData>();
         }

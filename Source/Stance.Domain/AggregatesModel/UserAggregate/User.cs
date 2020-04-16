@@ -105,7 +105,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             }
         }
 
-        public void GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration)
+        public string GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration)
         {
             var token =
                 this._securityTokenMappings.FirstOrDefault(m =>
@@ -118,10 +118,10 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
                 this._securityTokenMappings.Add(token);
             }
 
-            this.AddDomainEvent(new PasswordResetTokenGeneratedEvent(this.EmailAddress, token.Token));
+            return token.Token;
         }
 
-        public void GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration)
+        public string GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration)
         {
             var token =
                 this.SecurityTokenMappings.FirstOrDefault(m =>
@@ -134,12 +134,13 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
                 this._securityTokenMappings.Add(token);
             }
 
-            this.AddDomainEvent(new GenerateAccountConfirmationTokenGeneratedEvent(this.EmailAddress, token.Token));
+            return token.Token;
         }
 
         public void ChangePassword(string passwordHash)
         {
             this.PasswordHash = passwordHash;
+            this.SecurityStamp = Guid.NewGuid();
         }
 
         public void VerifyAccount(DateTime whenVerified)

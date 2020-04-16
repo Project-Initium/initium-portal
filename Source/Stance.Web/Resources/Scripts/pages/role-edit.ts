@@ -12,6 +12,7 @@ export class RoleEdit {
         } else {
             document.addEventListener('DOMContentLoaded', e => this.init());
         }
+        
     }
 
     init() {

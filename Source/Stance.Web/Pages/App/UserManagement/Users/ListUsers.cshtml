@@ -6,26 +6,27 @@
 }
 
     <div class="row page-titles">
-        <div class="align-self-center">
-            <h4 class="text-themecolor m-b-0 m-t-0">Users</h4>
+        <div class="align-self-center pl-0 col-md-7 col-12">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
                 <li class="breadcrumb-item">User Management</li>
                 <li class="breadcrumb-item active">Users</li>
             </ol>
         </div>
+        <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
+            <a asp-page="@PageLocations.UserCreate" class="btn btn-sm float-right btn-info text-white">Create new user</a>
+        </div>
     </div>
 
     
     <div class="row">
-        <div class="col-12">
-            <!-- Column -->
+        <div class="col-12 pl-md-0 pr-md-0 pl-1 pr-1">
             <div class="card">
                 <div class="card-body">
-                    <a asp-page="@PageLocations.UserCreate" class="btn btn-sm float-right btn-info text-white">Create new user</a>
-                    <h3 class="card-title">User Management</h3>
+                    
+                    <h3 class="card-title">User Management <button type="button" class="btn-success btn btn-sm pull-right ml-2"  data-toggle="modal" data-target="#search-facets"><i class="fa fa-filter" aria-hidden="true"></i></button></h3>
                     <h6 class="card-subtitle" id="table-description">Create new, edit existing, or delete users</h6>
-                    <div class="table-responsive form-material">
+                    <div class="table-responsive">
                         <table class="table table-hover clickable" id="users" aria-describedby="table-description" data-route="@ODataLocations.UserListing" data-details="@Url.PageLink(pageName: PageLocations.UserView, values: new {id = "__ID__"})">
                             <thead>
                                 <tr>
@@ -44,6 +45,51 @@
             </div>
         </div>
     </div>
+
+<form class="modal fade form-material modal-sm" id="search-facets" tabindex="-1" role="dialog"  aria-hidden="true"  data-no-auto-validation>
+  <div class="modal-dialog modal-dialog-slideout" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Search Option</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">×</span>
+        </button>
+      </div>
+        <div class="modal-body">
+            <h6>Locked status</h6>
+            <div class="btn-group btn-group-sm btn-group-toggle">
+                <label class="btn btn-outline-secondary" data-bind="css: { 'active': lockedStatus=='all' }"><input type="radio" name="locked-status" value="all" data-bind="checked: lockedStatus" >All</label>
+                <label class="btn btn-outline-secondary" data-bind="css: { 'active': lockedStatus=='locked' }"><input type="radio" name="locked-status" value="locked" data-bind="checked: lockedStatus">Locked</label>
+                <label class="btn btn-outline-secondary" data-bind="css: { 'active': lockedStatus=='unlocked' }"><input type="radio" name="locked-status" value="unlocked" data-bind="checked: lockedStatus">Unlocked</label>
+            </div>
+            <h6 class="mt-2">Verified status</h6>
+            <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-outline-secondary" data-bind="css: { 'active': verifiedStatus=='all' }"><input type="radio" name="verified-status" value="all" data-bind="checked: verifiedStatus" >All</label>
+                <label class="btn btn-outline-secondary" data-bind="css: { 'active': verifiedStatus=='verified' }"><input type="radio" name="verified-status" value="verified" data-bind="checked: verifiedStatus">Verified</label>
+                <label class="btn btn-outline-secondary" data-bind="css: { 'active': verifiedStatus=='unverified' }"><input type="radio" name="verified-status" value="unverified" data-bind="checked: verifiedStatus">Unverified</label>
+            </div>
+            <h6 class="mt-2">Admin status</h6>
+            <div class="btn-group btn-group-sm btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-outline-secondary" data-bind="css: { 'active': adminStatus=='all' }"><input type="radio" name="locked-status" value="all" data-bind="checked: adminStatus" >All</label>
+                <label class="btn btn-outline-secondary" data-bind="css: { 'active': adminStatus=='admin' }"><input type="radio" name="locked-status" value="admin" data-bind="checked: adminStatus">Admin</label>
+                <label class="btn btn-outline-secondary" data-bind="css: { 'active': adminStatus=='nonadmin' }"><input type="radio" name="locked-status" value="nonadmin" data-bind="checked: adminStatus">Non Admin</label>
+            </div>
+            <h6 class="mt-2">Login Dates</h6>
+            <div class="d-flex">
+                <input data-bind="datepicker: fromDate"  />
+                <span class="mr-1 ml-1">to</span>
+            <input data-bind="datepicker: toDate" />
+                </div>
+            
+     
+            
+        </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-sm btn-info w-100">Search</button>
+      </div>
+    </div>
+  </div>
+</form>
 
 @section scripts
 {

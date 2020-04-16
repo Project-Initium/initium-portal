@@ -48,7 +48,14 @@ namespace Stance.Web.Pages.Auth
             var result =
                 await this._mediator.Send(new PasswordResetCommand(this.PageModel.Token, this.PageModel.Password));
 
-            this.PrgState = result.IsFailure ? PrgState.Failed : PrgState.Success;
+            if (result.IsSuccess)
+            {
+                this.PrgState = PrgState.Success;
+                return this.RedirectToPage();
+            }
+
+            this.AddPageNotification("There was an changing your password. Please try again.", PageNotification.Error);
+            this.PrgState = PrgState.Failed;
 
             return this.RedirectToPage(new { this.PageModel.Token });
         }

@@ -6,8 +6,7 @@
 }
 
 <div class="row page-titles">
-    <div class="align-self-center">
-        <h4 class="text-themecolor m-b-0 m-t-0">View User</h4>
+    <div class="align-self-center col-md-7 col-12 pl-0">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
             <li class="breadcrumb-item">User Management</li>
@@ -15,60 +14,54 @@
             <li class="breadcrumb-item active">Viewing User @Model.DetailedUser.FirstName @Model.DetailedUser.LastName</li>
         </ol>
     </div>
+    <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
+        <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@PageLocations.UserListing">Back to Listing</a>
+        <form class="mr-2">
+            <button class="btn btn-sm btn-primary">Unlock</button>
+        </form>
+        <a class="btn btn-info btn-sm text-white mr-2" asp-page="@PageLocations.UserEdit" asp-route-id="@Model.DetailedUser.UserId">Edit</a>
+    </div>
 </div>
 
     <div class="row">
-        <div class="col-7">
+        <div class="col-md-7 pl-md-0 pr-md-2 pl-1 pr-1">
             <!-- Column -->
             <div class="card card-outline-info">
-                <div class="card-header">
-                    <h4 class="mb-0 text-white">Details</h4>
-                </div>
                 <div class="card-body">
-                    <div class="form-group">
-                        <label asp-for="DetailedUser.EmailAddress">Email Address</label>
-                        <input readonly class="form-control-plaintext"  asp-for="DetailedUser.EmailAddress" />
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="DetailedUser.FirstName">First Name</label>
-                        <input readonly class="form-control-plaintext"  asp-for="DetailedUser.FirstName" />
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="DetailedUser.LastName">Last Name</label>
-                        <input readonly class="form-control-plaintext"  asp-for="DetailedUser.LastName" />
-                    </div>
+                    <h4 class="card-title">Details</h4>
+                    
+                    <span class="text-muted">Email Address</span>
+                    <h6 class="mb-3">@Model.DetailedUser.EmailAddress</h6>
+                    
+                    <span class="text-muted">First Name</span>
+                    <h6 class="mb-3">@Model.DetailedUser.FirstName</h6>
+                    
+                    <span class="text-muted">Last Name</span>
+                    <h6>@Model.DetailedUser.LastName</h6>
                     
                 </div>
             </div>
 
 
         </div>
-        <div class="col-5">
+        <div class="col-md-5 pl-md-2 pr-md-0 pl-1 pr-1">
             <div class="card card-outline-info">
-                <div class="card-header">
-                    <h4 class="mb-0 text-white">User Activity</h4>
-                </div>
                 <div class="card-body">
-                    <dl>
-                        <dt>Date Created</dt>
-                        <dd>@Model.DetailedUser.WhenCreated</dd>
-                        <dt>Authentication Status</dt>
-                        <dd>@(Model.DetailedUser.WhenLastAuthenticated.HasValue ? Model.DetailedUser.WhenLastAuthenticated.ToString() : "Never Authenticated")</dd>
-                        <dt>Locked Status</dt>
-                        <dd>@(Model.DetailedUser.IsLockable ? Model.DetailedUser.WhenLocked.HasValue ? Model.DetailedUser.WhenLocked.ToString() : "Not Locked" : "User is not lockable")</dd>
-                    </dl>
+                    <h4 class="card-title">User Activity</h4>
+                    
+                    <span class="text-muted">Date Created</span>
+                    <h6 class="mb-3">@Model.DetailedUser.WhenCreated</h6>
+                    
+                    <span class="text-muted">Authentication Status</span>
+                    <h6 class="mb-3">@(Model.DetailedUser.WhenLastAuthenticated.HasValue ? Model.DetailedUser.WhenLastAuthenticated.ToString() : "Never Authenticated")</h6>
+                    
+                    <span class="text-muted">Locked Status</span>
+                    <h6>@(Model.DetailedUser.IsLockable ? Model.DetailedUser.WhenLocked.HasValue ? Model.DetailedUser.WhenLocked.ToString() : "Not Locked" : "User is not lockable")</h6>
+                    
                 </div>
             </div>
         </div>
 
 
 
-    </div>
-    <div class="row">
-        <div class="col-6">
-            <a class="btn btn-secondary cancel" asp-page="@PageLocations.UserListing">Go Back</a>
-        </div>
-        <div class="col-6 text-right">
-            <a class="btn btn-info text-white mr-2" asp-page="@PageLocations.UserEdit" asp-route-id="@Model.DetailedUser.UserId">Edit</a>
-        </div>
     </div>

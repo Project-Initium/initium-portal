@@ -39,7 +39,7 @@ namespace Stance.Web.Pages.Auth
             await this._mediator.Send(new RequestPasswordResetCommand(this.PageModel.EmailAddress));
 
             this.PrgState = PrgState.Success;
-            this.AddPageNotification("Password reset request", "You will shortly receive an email with a reset link.", PageNotification.Info);
+            this.AddPageNotification("You will shortly receive an email with a reset link.", PageNotification.Info);
             return this.RedirectToPage();
         }
 

@@ -74,7 +74,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             {
                 Task<bool> IsCredentialIdUniqueToUser(IsCredentialIdUniqueToUserParams param)
                 {
-                    return Task.FromResult(user.AuthenticatorDevices.All(x => x.CredentialId != param.CredentialId));
+                    return Task.FromResult(user.AuthenticatorDevices.All(x => x.CredentialId != param.CredentialId && !x.IsRevoked));
                 }
 
                 credentialMakeResult = await this._fido2.MakeNewCredentialAsync(
@@ -88,7 +88,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
                     new ErrorData(ErrorCodes.FidoVerifcationFailed));
             }
 
-            user.EnrollAuthenticatorDevice(
+            var device = user.EnrollAuthenticatorDevice(
                 Guid.NewGuid(),
                 whenHappened,
                 credentialMakeResult.Result.PublicKey,
@@ -98,7 +98,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
                 request.Name,
                 credentialMakeResult.Result.CredType);
 
-            return Result.Ok<EnrollAuthenticatorDeviceCommandResult, ErrorData>(new EnrollAuthenticatorDeviceCommandResult(credentialMakeResult));
+            return Result.Ok<EnrollAuthenticatorDeviceCommandResult, ErrorData>(new EnrollAuthenticatorDeviceCommandResult(credentialMakeResult, device.Id));
         }
     }
 }

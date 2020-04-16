@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
+using MediatR;
 using Moq;
 using Stance.Core;
 using Stance.Core.Contracts;
@@ -13,6 +14,7 @@ using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandHandlers.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Domain.Events;
 using Xunit;
 
 namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
@@ -49,6 +51,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         {
             var user = new Mock<IUser>();
             user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("current-password"));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
+
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
@@ -76,6 +80,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         {
             var user = new Mock<IUser>();
             user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("current-password"));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
+
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -150,10 +156,12 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         }
 
         [Fact]
-        public async Task Handle_GivenPasswordDoesVerify_ExpectPasswordChanged()
+        public async Task Handle_GivenPasswordDoesVerify_ExpectPasswordChangedAndDomainEventRaised()
         {
             var user = new Mock<IUser>();
             user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("current-password"));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
+
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -174,6 +182,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             await handler.Handle(cmd, CancellationToken.None);
             user.Verify(x => x.ChangePassword(It.IsAny<string>()), Times.Once);
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
+            user.Verify(x => x.AddDomainEvent(It.IsAny<PasswordChangedEvent>()), Times.Once);
         }
     }
 }

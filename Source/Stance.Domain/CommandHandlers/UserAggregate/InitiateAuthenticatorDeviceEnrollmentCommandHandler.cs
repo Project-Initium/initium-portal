@@ -61,7 +61,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             };
 
             var publicKeyCredentialDescriptors =
-                user.AuthenticatorDevices.Select(x => new PublicKeyCredentialDescriptor(x.CredentialId)).ToList();
+                user.AuthenticatorDevices.Where(x => !x.IsRevoked).Select(x => new PublicKeyCredentialDescriptor(x.CredentialId)).ToList();
 
             var authenticatorSelection = new AuthenticatorSelection
             {

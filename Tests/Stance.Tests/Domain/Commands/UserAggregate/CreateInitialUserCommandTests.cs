@@ -11,11 +11,11 @@ namespace Stance.Tests.Domain.Commands.UserAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var command = new CreateInitialUserCommand(new string('*', 5), new string('*', 6), new string('*', 7), new string('*', 8));
-            Assert.Equal(new string('*', 5), command.EmailAddress);
-            Assert.Equal(new string('*', 6), command.Password);
-            Assert.Equal(new string('*', 7), command.FirstName);
-            Assert.Equal(new string('*', 8), command.LastName);
+            var command = new CreateInitialUserCommand("email-address", "password", "first-name", "last-name");
+            Assert.Equal("email-address", command.EmailAddress);
+            Assert.Equal("password", command.Password);
+            Assert.Equal("first-name", command.FirstName);
+            Assert.Equal("last-name", command.LastName);
         }
     }
 }

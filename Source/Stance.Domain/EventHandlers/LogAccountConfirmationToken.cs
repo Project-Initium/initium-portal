@@ -9,7 +9,7 @@ using Stance.Domain.Events;
 
 namespace Stance.Domain.EventHandlers
 {
-    public class LogAccountConfirmationToken : INotificationHandler<GenerateAccountConfirmationTokenGeneratedEvent>
+    public class LogAccountConfirmationToken : INotificationHandler<AccountConfirmationTokenGeneratedEvent>
     {
         private readonly ILogger _logger;
 
@@ -18,7 +18,7 @@ namespace Stance.Domain.EventHandlers
             this._logger = logger;
         }
 
-        public Task Handle(GenerateAccountConfirmationTokenGeneratedEvent notification, CancellationToken cancellationToken)
+        public Task Handle(AccountConfirmationTokenGeneratedEvent notification, CancellationToken cancellationToken)
         {
             this._logger.LogInformation("Password Reset Token for email {EmailAddress} is {Token}", notification.EmailAddress,
                 notification.Token);

@@ -54,8 +54,8 @@ namespace Stance.Web.Controllers.Api.AuthDevice
                 options));
 
             return this.Json(result.IsFailure
-                ? new Fido2.CredentialMakeResult { Status = "error" }
-                : result.Value.CredentialMakeResult);
+                ? new CompleteAuthDeviceRegistrationResponse()
+                : new CompleteAuthDeviceRegistrationResponse(result.Value.CredentialMakeResult, result.Value.DeviceId, model.Name));
         }
 
         [HttpPost]
@@ -70,9 +70,8 @@ namespace Stance.Web.Controllers.Api.AuthDevice
             return this.Content(options, "application/json");
         }
 
-        [HttpPost]
+        [HttpPost("api/auth-device/make-assertion")]
         [Authorize(AuthenticationSchemes = "login-partial")]
-        [Route("api/auth-device/make-assertion")]
         public async Task<JsonResult> MakeAssertion([FromBody] AuthenticatorAssertionRawResponse clientResponse)
         {
             var jsonOptions = this.TempData["fido2.assertionOptions"] as string;
@@ -94,5 +93,50 @@ namespace Stance.Web.Controllers.Api.AuthDevice
                 assertionVerificationResult = result.Value.AssertionVerificationResult,
             });
         }
+
+        [HttpPost("api/auth-device/revoke-device")]
+        [Authorize]
+        public async Task<IActionResult> RevokeDevice([FromBody] RevokeDeviceRequest request)
+        {
+            var result = await this._mediator.Send(new RevokeAuthenticatorDeviceCommand(request.DeviceId));
+            return Json(new RevokeDeviceResponse(result.IsSuccess));
+        }
+    }
+
+    public class RevokeDeviceRequest
+    {
+    public Guid DeviceId { get; set; }
+    }
+
+    public class RevokeDeviceResponse
+    {
+        public RevokeDeviceResponse(bool isSuccess)
+        {
+            this.IsSuccess = isSuccess;
+        }
+
+        public bool IsSuccess { get; }
+    }
+
+    public class CompleteAuthDeviceRegistrationResponse
+    {
+        public CompleteAuthDeviceRegistrationResponse()
+        {
+            this.DeviceId = Guid.Empty;
+            this.Result = new Fido2.CredentialMakeResult { Status = "error" };
+        }
+        
+        public CompleteAuthDeviceRegistrationResponse(Fido2.CredentialMakeResult result, Guid deviceId, string name)
+        {
+            this.Result = result;
+            this.DeviceId = deviceId;
+            this.Name = name;
+        }
+        
+        public Fido2.CredentialMakeResult Result { get; }
+        
+        public Guid DeviceId { get; }
+        
+        public string Name { get; }
     }
 }

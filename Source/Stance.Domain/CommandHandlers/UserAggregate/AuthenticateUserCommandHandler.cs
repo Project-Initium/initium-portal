@@ -94,7 +94,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             var authenticationState = BaseAuthenticationProcessCommandResult.AuthenticationState.Unknown;
             var mfaProvider = MfaProvider.None;
 
-            Maybe<AssertionOptions> optionsMaybe = Maybe<AssertionOptions>.Nothing;
+            var optionsMaybe = Maybe<AssertionOptions>.Nothing;
             if (user.AuthenticatorDevices.Any(x => x.WhenRevoked == null))
             {
                 optionsMaybe = this._fido2.GenerateAssertionOptionsForUser(user);
@@ -129,12 +129,13 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
                     AuthenticationHistoryType.EmailMfaRequested);
                 var totp = new Totp(user.SecurityStamp.ToByteArray());
 
-                var generated = totp.ComputeTotp();
+                var token = totp.ComputeTotp();
 
                 user.AddDomainEvent(new EmailMfaTokenGeneratedEvent(
-                    user.Id,
                     user.EmailAddress,
-                    generated));
+                    user.Profile.FirstName,
+                    user.Profile.LastName,
+                    token));
                 authenticationState = BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaEmailCode;
             }
 

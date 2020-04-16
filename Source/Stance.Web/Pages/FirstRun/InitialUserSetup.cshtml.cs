@@ -77,9 +77,17 @@ namespace Stance.Web.Pages.FirstRun
         {
             public Validator()
             {
-                this.RuleFor(x => x.EmailAddress).NotEmpty().EmailAddress();
-                this.RuleFor(x => x.Password).NotEmpty();
-                this.RuleFor(x => x.PasswordConfirmation).Equal(x => x.Password);
+                this.RuleFor(x => x.EmailAddress)
+                    .NotEmpty().WithMessage("Please enter your email address")
+                    .EmailAddress().WithMessage("The email address doesn't look valid");
+                this.RuleFor(x => x.FirstName)
+                    .NotEmpty().WithMessage("Please enter your first name");
+                this.RuleFor(x => x.LastName)
+                    .NotEmpty().WithMessage("Please enter your last name");
+                this.RuleFor(x => x.Password)
+                    .NotEmpty().WithMessage("Please enter a password");
+                this.RuleFor(x => x.PasswordConfirmation)
+                    .Equal(x => x.Password).WithMessage("The passwords don't seem to match.");
             }
         }
     }

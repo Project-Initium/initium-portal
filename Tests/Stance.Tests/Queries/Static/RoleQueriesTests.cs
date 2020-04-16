@@ -234,7 +234,7 @@ namespace Stance.Tests.Queries.Static
         {
             var dto = new SimpleRoleDto
             {
-                Id = Guid.NewGuid(),
+                Id = TestVariables.RoleId,
                 Name = "Name",
             };
 

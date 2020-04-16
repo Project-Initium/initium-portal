@@ -14,6 +14,10 @@ namespace Stance.Domain.CommandValidators.UserAggregate
             this.RuleFor(x => x.EmailAddress)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired)
                 .EmailAddress().WithErrorCode(ValidationCodes.ValueMustBeAnEmailAddress);
+            this.RuleFor(x => x.FirstName)
+                .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
+            this.RuleFor(x => x.LastName)
+                .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }
 }

@@ -48,7 +48,14 @@ namespace Stance.Web.Pages.Auth
             var result =
                 await this._mediator.Send(new VerifyAccountAndSetPasswordCommand(this.PageModel.Token, this.PageModel.Password));
 
-            this.PrgState = result.IsFailure ? PrgState.Failed : PrgState.Success;
+            if (result.IsSuccess)
+            {
+                this.PrgState = PrgState.Success;
+                return this.RedirectToPage();
+            }
+
+            this.AddPageNotification("There was an verifying your account. Please try again.", PageNotification.Error);
+            this.PrgState = PrgState.Failed;
 
             return this.RedirectToPage(new { this.PageModel.Token });
         }

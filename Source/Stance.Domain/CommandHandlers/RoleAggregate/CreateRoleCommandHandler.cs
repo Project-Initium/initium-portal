@@ -22,8 +22,8 @@ namespace Stance.Domain.CommandHandlers.RoleAggregate
 
         public CreateRoleCommandHandler(IRoleRepository roleRepository, IRoleQueries roleQueries)
         {
-            this._roleRepository = roleRepository;
-            this._roleQueries = roleQueries;
+            this._roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
+            this._roleQueries = roleQueries ?? throw new ArgumentNullException(nameof(roleQueries));
         }
 
         public async Task<Result<CreateRoleCommandResult, ErrorData>> Handle(

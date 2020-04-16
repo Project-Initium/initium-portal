@@ -103,7 +103,6 @@ export class ValidateDeviceMfa {
     private showErrorAlert() {
         Swal.fire({
             icon: 'error',
-            titleText: 'Authentication Device Issue',
             text: 'Authentication failed, please try again.',
             toast: true,
             position: "top-end",

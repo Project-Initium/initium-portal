@@ -50,9 +50,9 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         void ProcessUnsuccessfulAuthenticationAttempt(DateTime whenAttempted, bool applyLock);
 
-        void GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration);
+        string GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration);
 
-        void GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration);
+        string GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration);
 
         void ChangePassword(string passwordHash);
 

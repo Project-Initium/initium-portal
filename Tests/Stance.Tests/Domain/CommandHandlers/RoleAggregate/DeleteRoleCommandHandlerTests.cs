@@ -32,7 +32,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe<IRole>.Nothing);
             var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new DeleteRoleCommand(Guid.Empty);
+            var cmd = new DeleteRoleCommand(TestVariables.RoleId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -54,7 +54,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(role.Object));
             var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new DeleteRoleCommand(Guid.Empty);
+            var cmd = new DeleteRoleCommand(TestVariables.RoleId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -76,7 +76,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(role.Object));
             var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new DeleteRoleCommand(Guid.Empty);
+            var cmd = new DeleteRoleCommand(TestVariables.RoleId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -98,7 +98,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(role.Object));
             var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new DeleteRoleCommand(Guid.Empty);
+            var cmd = new DeleteRoleCommand(TestVariables.RoleId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -120,7 +120,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(role.Object));
             var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new DeleteRoleCommand(Guid.Empty);
+            var cmd = new DeleteRoleCommand(TestVariables.RoleId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 

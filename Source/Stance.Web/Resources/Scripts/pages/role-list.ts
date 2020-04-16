@@ -1,7 +1,7 @@
 import 'datatables.net'
 import 'datatables.net-bs4'
 
-import {DataTablesODataProvider} from '../services/datatables-odata-provider'
+//import {DataTablesODataProvider} from '../services/datatables-odata-provider'
 
 export class RoleList {
     private tableApi: DataTables.Api;
@@ -19,7 +19,7 @@ export class RoleList {
         this.tableApi = $tableElement.DataTable({
             processing: true,
             serverSide: true,
-            ajax: DataTablesODataProvider.providerFunction($tableElement.data('route')),
+            //ajax: DataTablesODataProvider.providerFunction($tableElement.data('route')),
             columns: [
                 { data: 'Name' },
                 { data: 'ResourceCount' },

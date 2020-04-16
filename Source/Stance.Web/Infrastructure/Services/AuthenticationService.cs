@@ -48,6 +48,15 @@ namespace Stance.Web.Infrastructure.Services
                         maybe.Value.Resources.ToList()), Formatting.None)),
             };
 
+            if (maybe.Value.IsAdmin)
+            {
+                claims.Add(new Claim(ClaimTypes.System, "1"));
+            }
+            else
+            {
+                claims.AddRange(maybe.Value.Resources.Select(x => new Claim(ClaimTypes.Role, x)));
+            }
+
             var claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);
 

@@ -48,7 +48,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenEmailAddressIsNotAnEmailAddress_ExpectValidationFailure()
         {
-            var cmd = new RequestPasswordResetCommand(new string('*', 6));
+            var cmd = new RequestPasswordResetCommand("email-address");
             var validator = new RequestPasswordResetCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);

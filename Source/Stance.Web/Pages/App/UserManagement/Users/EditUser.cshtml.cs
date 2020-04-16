@@ -113,11 +113,11 @@ namespace Stance.Web.Pages.App.UserManagement.Users
             if (result.IsSuccess)
             {
                 this.PrgState = PrgState.Success;
-                this.AddPageNotification("User Editing", "The user was updated successfully", PageNotification.Success);
+                this.AddPageNotification("The user was updated successfully", PageNotification.Success);
                 return this.RedirectToPage(PageLocations.UserView, new { id = this.PageModel.Id });
             }
 
-            this.AddPageNotification("User Editing", "There was an issue updating the user.", PageNotification.Error);
+            this.AddPageNotification("There was an issue updating the user.", PageNotification.Error);
             this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }

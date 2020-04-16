@@ -65,12 +65,13 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             var totp = new Totp(user.SecurityStamp.ToByteArray());
 
-            var generated = totp.ComputeTotp();
+            var token = totp.ComputeTotp();
 
             user.AddDomainEvent(new EmailMfaTokenGeneratedEvent(
-                user.Id,
                 user.EmailAddress,
-                generated));
+                user.Profile.FirstName,
+                user.Profile.LastName,
+                token));
 
             user.ProcessPartialSuccessfulAuthenticationAttempt(
                 this._clock.GetCurrentInstant().ToDateTimeUtc(),

@@ -11,11 +11,6 @@ namespace Stance.Domain.CommandResults.UserAggregate
     {
         private readonly AssertionOptions _assertionOptions;
 
-        public AuthenticateUserCommandResult(Guid userId)
-            : base(userId, AuthenticationState.Completed)
-        {
-        }
-
         public AuthenticateUserCommandResult(Guid userId, AuthenticationState authenticationStatus, MfaProvider mfaProviders)
             : base(userId, authenticationStatus)
         {

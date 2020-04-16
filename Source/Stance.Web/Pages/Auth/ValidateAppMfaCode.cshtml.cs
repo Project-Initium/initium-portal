@@ -63,7 +63,7 @@ namespace Stance.Web.Pages.Auth
                 return this.LocalRedirect(returnUrl);
             }
 
-            this.AddPageNotification("Authentication App Issue", "Authentication failed, please try again.", PageNotification.Error);
+            this.AddPageNotification("Authentication failed, please try again.", PageNotification.Error);
             this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }

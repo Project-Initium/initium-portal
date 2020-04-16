@@ -31,7 +31,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
             var handler = new CreateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new CreateRoleCommand(string.Empty, new List<Guid>());
+            var cmd = new CreateRoleCommand("name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -54,7 +54,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             roleRepository.Setup(x => x.Add(It.IsAny<IRole>())).Callback((IRole role) => { roleId = role.Id; });
 
             var handler = new CreateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new CreateRoleCommand(string.Empty, new List<Guid>());
+            var cmd = new CreateRoleCommand("name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -75,7 +75,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
             var handler = new CreateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new CreateRoleCommand(string.Empty, new List<Guid>());
+            var cmd = new CreateRoleCommand("name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -95,7 +95,7 @@ namespace Stance.Tests.Domain.CommandHandlers.RoleAggregate
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
             var handler = new CreateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
-            var cmd = new CreateRoleCommand(string.Empty, new List<Guid>());
+            var cmd = new CreateRoleCommand("name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 

@@ -14,6 +14,7 @@ using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Domain.Events;
 using Stance.Queries.Contracts.Static;
 
 namespace Stance.Domain.CommandHandlers.UserAggregate
@@ -71,7 +72,8 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             var whenHappened = this._clock.GetCurrentInstant().ToDateTimeUtc();
             var user = new User(Guid.NewGuid(), request.EmailAddress, GenerateRandomPassword(), request.IsLockable,
                 whenHappened, request.FirstName, request.LastName, request.Roles, request.IsAdmin);
-            user.GenerateNewAccountConfirmationToken(whenHappened, TimeSpan.FromMinutes(this._securitySettings.AccountVerificationTokenLifetime));
+            var token = user.GenerateNewAccountConfirmationToken(whenHappened, TimeSpan.FromMinutes(this._securitySettings.AccountVerificationTokenLifetime));
+            user.AddDomainEvent(new AccountConfirmationTokenGeneratedEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token));
             this._userRepository.Add(user);
             return Result.Ok<CreateUserCommandResult, ErrorData>(new CreateUserCommandResult(user.Id));
         }

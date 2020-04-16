@@ -11,12 +11,13 @@ namespace Stance.Tests.Domain.Events
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var email = new string('*', 5);
-            var token = new string('*', 6);
-            var @event = new GenerateAccountConfirmationTokenGeneratedEvent(token, email);
+            var @event =
+                new AccountConfirmationTokenGeneratedEvent("email-address", "first-name", "last-name", "token");
 
-            Assert.Equal(email, @event.EmailAddress);
-            Assert.Equal(token, @event.Token);
+            Assert.Equal("email-address", @event.EmailAddress);
+            Assert.Equal("first-name", @event.FirstName);
+            Assert.Equal("last-name", @event.LastName);
+            Assert.Equal("token", @event.Token);
         }
     }
 }

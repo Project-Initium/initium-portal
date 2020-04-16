@@ -12,6 +12,7 @@ using Stance.Core.Domain;
 using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Domain.Events;
 
 namespace Stance.Domain.CommandHandlers.UserAggregate
 {
@@ -66,9 +67,10 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
                     ErrorCodes.UserIsAlreadyVerified));
             }
 
-            user.GenerateNewAccountConfirmationToken(
+            var token = user.GenerateNewAccountConfirmationToken(
                 this._clock.GetCurrentInstant().ToDateTimeUtc(),
                 TimeSpan.FromHours(this._securitySettings.AccountVerificationTokenLifetime));
+            user.AddDomainEvent(new AccountConfirmationTokenGeneratedEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token));
 
             this._userRepository.Update(user);
             return ResultWithError.Ok<ErrorData>();

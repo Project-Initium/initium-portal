@@ -11,9 +11,9 @@ namespace Stance.Tests.Domain.Commands.UserAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var command = new AuthenticateUserCommand(new string('*', 5), new string('*', 6));
-            Assert.Equal(new string('*', 5), command.EmailAddress);
-            Assert.Equal(new string('*', 6), command.Password);
+            var command = new AuthenticateUserCommand("email-address", "password");
+            Assert.Equal("email-address", command.EmailAddress);
+            Assert.Equal("password", command.Password);
         }
     }
 }

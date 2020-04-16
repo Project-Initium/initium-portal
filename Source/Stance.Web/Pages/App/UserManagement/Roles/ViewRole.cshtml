@@ -8,13 +8,10 @@
 
 <div class="row page-titles">
     <div class="align-self-center">
-        <h3 class="text-themecolor m-b-0 m-t-0">Create Role</h3>
         <ol class="breadcrumb">
-            <li class="breadcrumb-item">
-                <a asp-page="@PageLocations.AppDashboard">Home</a>
-            </li>
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
             <li class="breadcrumb-item">User Management</li>
-            <li class="breadcrumb-item"><a asp-page="@PageLocations.RoleListing"></a>Roles</li>
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.RoleListing">Roles</a></li>
             <li class="breadcrumb-item active">Viewing Role @Model.Role.Name</li>
         </ol>
     </div>
@@ -25,26 +22,22 @@
     <input type="hidden" name="pagemodel.resources" value="@resource" />
 }
 <div class="row">
-    <div class="col-7">
+    <div class="col-md-7 pl-md-0 pr-md-2 pl-1 pr-1">
         <div class="card card-outline-info">
-            <div class="card-header">
-                <h4 class="mb-0 text-white">Details</h4>
-            </div>
             <div class="card-body">
+                <h4 class="card-title">Details</h4>
                 <div class="form-group">
-                    <label class="control-label" asp-for="Role.Name"></label>
-                    <input readonly class="form-control-plaintext" asp-for="Role.Name" />
+                    <span class="text-muted">Name</span>
+                    <h6>@Model.Role.Name</h6>
                 </div>
             </div>
         </div>
     </div>
 
-    <div class="col-5">
+    <div class="col-md-5 pl-md-2 pr-md-0 pl-1 pr-1">
         <div class="card card-outline-info">
-            <div class="card-header">
-                <h4 class="mb-0 text-white">Resources</h4>
-            </div>
             <div class="card-body">
+                <h4 class="card-title">Resources</h4>
                 <div id="tree" data-route="@Url.Action("GetNestResources", "Resource")"></div>
             </div>
         </div>

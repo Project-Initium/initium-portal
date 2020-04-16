@@ -42,6 +42,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         public string CredType { get; private set; }
 
+        public bool IsRevoked => this.WhenRevoked != null;
+
         public void RevokeDevice(DateTime whenRevoked)
         {
             this.WhenRevoked = whenRevoked;

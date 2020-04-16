@@ -31,10 +31,16 @@ namespace Stance.Queries.Dynamic
             config.HasKey(x => x.Id);
         }
 
-        private void ConfigureUser(EntityTypeBuilder<User> config)
+        private void ConfigureUser(EntityTypeBuilder<User> users)
         {
-            config.ToTable("vwUser", "ReadAggregation");
-            config.HasKey(x => x.Id);
+            users.ToTable("vwUser", "ReadAggregation");
+            users.HasKey(x => x.Id);
+            users.OwnsMany(role => role.UserRoles, roleResources =>
+            {
+                roleResources.ToTable("vwUserRole", "ReadAggregation");
+                roleResources.HasKey(entity => new {entity.RoleId, entity.UserId});
+                
+            });
         }
     }
 }

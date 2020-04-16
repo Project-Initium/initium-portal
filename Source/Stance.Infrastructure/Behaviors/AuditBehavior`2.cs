@@ -12,7 +12,7 @@ using Stance.Core.Contracts;
 using Stance.Core.Domain;
 using Stance.Infrastructure.Extensions;
 
-namespace Stance.Infrastructure
+namespace Stance.Infrastructure.Behaviors
 {
     public class AuditBehavior<TRequest, TResponse>
         : IPipelineBehavior<TRequest, TResponse>

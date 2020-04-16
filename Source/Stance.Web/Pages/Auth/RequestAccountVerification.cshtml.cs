@@ -29,7 +29,7 @@ namespace Stance.Web.Pages.Auth
 
             await this._mediator.Send(new RequestAccountVerificationCommand(this.PageModel.EmailAddress));
 
-            this.AddPageNotification("Account verification request", "You will shortly receive an email with a verification link.", PageNotification.Info);
+            this.AddPageNotification("You will shortly receive an email with a verification link.", PageNotification.Info);
             return this.RedirectToPage();
         }
 

@@ -37,7 +37,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name") as ISystemUser));
+                .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);
@@ -45,7 +45,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
 
-            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, new string('*', 6));
+            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, "code");
             var result = await commandHandler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -70,7 +70,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name") as ISystemUser));
+                .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);
@@ -78,9 +78,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
             var totp = new Totp(key);
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, generated);
+            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, code);
             var result = await commandHandler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
@@ -112,9 +112,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
             var totp = new Totp(key);
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, generated);
+            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, code);
             var result = await commandHandler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -140,7 +140,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name") as ISystemUser));
+                .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);
@@ -148,9 +148,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
             var totp = new Totp(key);
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, generated);
+            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, code);
             var result = await commandHandler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -172,7 +172,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name") as ISystemUser));
+                .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);
@@ -180,9 +180,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
             var totp = new Totp(key);
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, generated);
+            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, code);
             var result = await commandHandler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
@@ -206,7 +206,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name") as ISystemUser));
+                .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);
@@ -214,9 +214,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
             var totp = new Totp(key);
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, generated);
+            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, code);
             var result = await commandHandler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -242,7 +242,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new AuthenticatedUser(Guid.NewGuid(), "email-address", "first-name", "last-name") as ISystemUser));
+                .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
                 currentAuthenticatedUserProvider.Object);
@@ -250,9 +250,9 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
             var totp = new Totp(key);
-            var generated = totp.ComputeTotp();
+            var code = totp.ComputeTotp();
 
-            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, generated);
+            var cmd = new EnrollAuthenticatorAppCommand(keyAsBase32String, code);
             var result = await commandHandler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);

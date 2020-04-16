@@ -6,8 +6,7 @@
 }
 
 <div class="row page-titles">
-    <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor m-b-0 m-t-0">Profile</h3>
+    <div class="align-self-center">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
             <li class="breadcrumb-item">Profile</li>
@@ -77,7 +76,7 @@
                                             </p>
                                             <div class="row">
                                                 <div class="col-md-6">
-                                                    <form method="post">
+                                                    <form method="post" class="form-material">
                                                         <input type="hidden" asp-for="PageModel.SharedKey" />
                                                         <div class="form-group">
                                                             <label asp-for="PageModel.Code" class="control-label">Verification Code</label>
