@@ -13,7 +13,7 @@ namespace Stance.Tests.Domain.CommandResults.UserAggregate
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
             var credentialMakeResult = new Fido2.CredentialMakeResult();
-            var result = new EnrollAuthenticatorDeviceCommandResult(credentialMakeResult);
+            var result = new EnrollAuthenticatorDeviceCommandResult(credentialMakeResult, TestVariables.AuthenticatorDeviceId);
 
             Assert.Equal(credentialMakeResult, result.CredentialMakeResult);
         }

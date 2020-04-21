@@ -35,13 +35,17 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Roles
         {
             var roleQueries = new Mock<IRoleQueries>();
             roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>()))
-                .ReturnsAsync(() => Maybe.From(new DetailedRoleModel(Guid.Empty, string.Empty, new List<Guid>())));
+                .ReturnsAsync(() => Maybe.From(new DetailedRoleModel(
+                    TestVariables.RoleId,
+                    "name",
+                    new List<Guid> { TestVariables.ResourceId })));
 
             var page = new ViewRole(roleQueries.Object);
 
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.NotNull(page.Role);
+            Assert.Equal("name", page.Name);
         }
     }
 }

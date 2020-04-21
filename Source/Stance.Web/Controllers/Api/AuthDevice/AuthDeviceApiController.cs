@@ -14,12 +14,12 @@ using Stance.Web.Infrastructure.Contracts;
 
 namespace Stance.Web.Controllers.Api.AuthDevice
 {
-    public class AuthDeviceController : Controller
+    public class AuthDeviceApiController : Controller
     {
         private readonly IAuthenticationService _authenticationService;
         private readonly IMediator _mediator;
 
-        public AuthDeviceController(IMediator mediator, IAuthenticationService authenticationService)
+        public AuthDeviceApiController(IMediator mediator, IAuthenticationService authenticationService)
         {
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             this._authenticationService = authenticationService;
@@ -30,14 +30,14 @@ namespace Stance.Web.Controllers.Api.AuthDevice
         public async Task<IActionResult> InitialAuthDeviceRegistration([FromBody]InitialAuthDeviceRegistrationRequest request)
         {
             var result = await this._mediator.Send(new InitiateAuthenticatorDeviceEnrollmentCommand(request.AuthenticatorAttachment));
-            if (result.IsSuccess)
+            if (!result.IsSuccess)
             {
-                this.TempData["CredentialData"] = result.Value.Options.ToJson();
-                return this.Json(result.Value.Options);
+                return this.Json(new CredentialCreateOptions
+                    { Status = "error", ErrorMessage = result.Error.Message });
             }
 
-            return this.Json(new CredentialCreateOptions
-                { Status = "error", ErrorMessage = result.Error.Message });
+            this.TempData["CredentialData"] = result.Value.Options.ToJson();
+            return this.Json(result.Value.Options);
         }
 
         [Authorize]
@@ -99,44 +99,7 @@ namespace Stance.Web.Controllers.Api.AuthDevice
         public async Task<IActionResult> RevokeDevice([FromBody] RevokeDeviceRequest request)
         {
             var result = await this._mediator.Send(new RevokeAuthenticatorDeviceCommand(request.DeviceId));
-            return Json(new RevokeDeviceResponse(result.IsSuccess));
+            return this.Json(new RevokeDeviceResponse(result.IsSuccess));
         }
-    }
-
-    public class RevokeDeviceRequest
-    {
-    public Guid DeviceId { get; set; }
-    }
-
-    public class RevokeDeviceResponse
-    {
-        public RevokeDeviceResponse(bool isSuccess)
-        {
-            this.IsSuccess = isSuccess;
-        }
-
-        public bool IsSuccess { get; }
-    }
-
-    public class CompleteAuthDeviceRegistrationResponse
-    {
-        public CompleteAuthDeviceRegistrationResponse()
-        {
-            this.DeviceId = Guid.Empty;
-            this.Result = new Fido2.CredentialMakeResult { Status = "error" };
-        }
-        
-        public CompleteAuthDeviceRegistrationResponse(Fido2.CredentialMakeResult result, Guid deviceId, string name)
-        {
-            this.Result = result;
-            this.DeviceId = deviceId;
-            this.Name = name;
-        }
-        
-        public Fido2.CredentialMakeResult Result { get; }
-        
-        public Guid DeviceId { get; }
-        
-        public string Name { get; }
     }
 }

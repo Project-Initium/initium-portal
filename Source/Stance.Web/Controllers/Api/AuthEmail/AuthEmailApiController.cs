@@ -10,11 +10,11 @@ using Stance.Domain.Commands.UserAggregate;
 
 namespace Stance.Web.Controllers.Api.AuthEmail
 {
-    public class AuthEmailController : Controller
+    public class AuthEmailApiController : Controller
     {
         private readonly IMediator _mediator;
 
-        public AuthEmailController(IMediator mediator)
+        public AuthEmailApiController(IMediator mediator)
         {
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
@@ -26,10 +26,7 @@ namespace Stance.Web.Controllers.Api.AuthEmail
             var result =
                 await this._mediator.Send(new EmailMfaRequestedCommand());
 
-            return this.Json(new
-            {
-                Success = result.IsSuccess,
-            });
+            return this.Json(new RequestMfaEmailResponse(result.IsSuccess));
         }
     }
 }

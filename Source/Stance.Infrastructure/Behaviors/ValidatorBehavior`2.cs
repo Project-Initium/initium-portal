@@ -1,25 +1,23 @@
-﻿using System.Linq;
+﻿// Copyright (c) DeviousCreation. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
-using Microsoft.Extensions.Logging;
 using Stance.Core.Exceptions;
-using Stance.Infrastructure.Extensions;
 
 namespace Stance.Infrastructure.Behaviors
 {
     public class ValidatorBehavior<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
     {
-        private readonly ILogger<ValidatorBehavior<TRequest, TResponse>> _logger;
         private readonly IValidator<TRequest>[] _validators;
 
         public ValidatorBehavior(
-            IValidator<TRequest>[] validators,
-            ILogger<ValidatorBehavior<TRequest, TResponse>> logger)
+            IValidator<TRequest>[] validators)
         {
             this._validators = validators;
-            this._logger = logger;
         }
 
         public async Task<TResponse> Handle(TRequest request, CancellationToken cancellationToken,

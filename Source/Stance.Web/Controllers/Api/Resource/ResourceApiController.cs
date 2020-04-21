@@ -11,11 +11,11 @@ using Stance.Queries.Static.Models.Role;
 namespace Stance.Web.Controllers.Api.Resource
 {
     [Authorize]
-    public class ResourceController : Controller
+    public class ResourceApiController : Controller
     {
         private readonly IRoleQueries _roleQueries;
 
-        public ResourceController(IRoleQueries roleQueries)
+        public ResourceApiController(IRoleQueries roleQueries)
         {
             this._roleQueries = roleQueries;
         }

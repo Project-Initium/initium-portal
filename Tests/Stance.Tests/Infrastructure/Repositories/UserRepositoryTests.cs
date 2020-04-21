@@ -100,8 +100,6 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            var userId = Guid.NewGuid();
-
             await using var context = new DataContext(options, mediator.Object);
             await context.Users.AddAsync(new User(
                 TestVariables.UserId,

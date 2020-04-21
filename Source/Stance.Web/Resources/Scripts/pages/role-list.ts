@@ -7,13 +7,20 @@ export class RoleList {
     private tableApi: DataTables.Api;
     private detailsUrl: string;
 
+    constructor() {
+        if (document.readyState !== 'loading') {
+            this.init();
+        } else {
+            document.addEventListener('DOMContentLoaded', e => this.init());
+        }
+    }
 
     private rowClicked(event: JQuery.ClickEvent): void {
         window.location.href = this.detailsUrl.replace('__ID__', (<any>this.tableApi.row(event.currentTarget).data()).Id);
     }
 
-    init() {
-        var contextThis = this;
+    private init() {
+        const contextThis = this;
         const $tableElement = $('#roles')
         this.detailsUrl = $tableElement.data('details')
         this.tableApi = $tableElement.DataTable({
@@ -35,5 +42,4 @@ export class RoleList {
     }
 
 }
-var roleList = new RoleList();
-$(document).ready(() => roleList.init());
+new RoleList();

@@ -24,11 +24,11 @@ namespace Stance.Tests.Web.Pages.Auth
         {
             var mediator = new Mock<IMediator>();
 
-            var page = new PasswordReset(mediator.Object) { Token = new string('*', 5) };
+            var page = new PasswordReset(mediator.Object) { Token = "token" };
             page.OnGet();
 
             Assert.NotNull(page.PageModel);
-            Assert.Equal(new string('*', 5), page.PageModel.Token);
+            Assert.Equal("token", page.PageModel.Token);
         }
 
         [Fact]
@@ -38,12 +38,12 @@ namespace Stance.Tests.Web.Pages.Auth
 
             var page = new PasswordReset(mediator.Object)
             {
-                Token = new string('*', 5),
-                PageModel = new PasswordReset.Model { Token = new string('*', 6) },
+                Token = "token",
+                PageModel = new PasswordReset.Model { Token = "model-token" },
             };
             page.OnGet();
 
-            Assert.Equal(new string('*', 6), page.PageModel.Token);
+            Assert.Equal("model-token", page.PageModel.Token);
         }
 
         [Fact]
@@ -110,9 +110,9 @@ namespace Stance.Tests.Web.Pages.Auth
                 });
                 var model = new PasswordReset.Model
                 {
-                    Token = new string('*', 5),
-                    Password = new string('*', 6),
-                    PasswordConfirmation = new string('*', 6),
+                    Token = "token",
+                    Password = "password",
+                    PasswordConfirmation = "password",
                 };
                 var validator = new PasswordReset.Validator(securitySettings.Object);
                 var result = validator.Validate(model);
@@ -129,9 +129,9 @@ namespace Stance.Tests.Web.Pages.Auth
                 });
                 var model = new PasswordReset.Model
                 {
-                    Token = new string('*', 5),
-                    Password = new string('*', 6),
-                    PasswordConfirmation = new string('*', 7),
+                    Token = "token",
+                    Password = "password",
+                    PasswordConfirmation = "new-password",
                 };
                 var validator = new PasswordReset.Validator(securitySettings.Object);
                 var result = validator.Validate(model);
@@ -149,7 +149,7 @@ namespace Stance.Tests.Web.Pages.Auth
                 });
                 var model = new PasswordReset.Model
                 {
-                    Token = new string('*', 5),
+                    Token = "token",
                     Password = string.Empty,
                     PasswordConfirmation = string.Empty,
                 };
@@ -169,7 +169,7 @@ namespace Stance.Tests.Web.Pages.Auth
                 });
                 var model = new PasswordReset.Model
                 {
-                    Token = new string('*', 5),
+                    Token = "token",
                     Password = null,
                     PasswordConfirmation = null,
                 };
@@ -190,8 +190,8 @@ namespace Stance.Tests.Web.Pages.Auth
                 var model = new PasswordReset.Model
                 {
                     Token = string.Empty,
-                    Password = new string('*', 6),
-                    PasswordConfirmation = new string('*', 6),
+                    Password = "password",
+                    PasswordConfirmation = "password",
                 };
                 var validator = new PasswordReset.Validator(securitySettings.Object);
                 var result = validator.Validate(model);
@@ -210,8 +210,8 @@ namespace Stance.Tests.Web.Pages.Auth
                 var model = new PasswordReset.Model
                 {
                     Token = null,
-                    Password = new string('*', 6),
-                    PasswordConfirmation = new string('*', 6),
+                    Password = "password",
+                    PasswordConfirmation = "password",
                 };
                 var validator = new PasswordReset.Validator(securitySettings.Object);
                 var result = validator.Validate(model);

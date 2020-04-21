@@ -12,7 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
 using NWebsec.AspNetCore.Mvc.Csp;
 using Stance.Queries.Dynamic.Entities;
-using Stance.Web.Controllers.OData;
+using Stance.Web.Infrastructure.Formatters;
 using Stance.Web.Pages.FirstRun;
 
 namespace Stance.Web.Infrastructure.ServiceConfiguration
@@ -23,9 +23,11 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
         {
             services.AddOData();
             services
-                .AddMvc(opts => {
-                opts.Filters.Add(typeof(CspAttribute));
-                        opts.Filters.Add(new CspDefaultSrcAttribute { Self = true });
+                .AddMvc(opts =>
+                {
+                    opts.Filters.Add(typeof(CspAttribute));
+                    opts.Filters.Add(new CspDefaultSrcAttribute { Self = true });
+                    opts.InputFormatters.Insert(0, new CspReportBodyFormatter());
                 }).AddFluentValidation(fv =>
                 {
                     fv.RegisterValidatorsFromAssemblyContaining<InitialUserSetup.Validator>();
@@ -76,15 +78,10 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
             return app;
         }
 
-        public static IEdmModel GetEdmModel()
+        private static IEdmModel GetEdmModel()
         {
-            ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
-            var user = builder.EntitySet<User>("User");
-            user.EntityType.Ignore(x=>x.UserRoles);
-            var userSearch = user.EntityType.Collection.Action("Search");
-            userSearch.Parameter<SearchModel>("Model");
-            userSearch.ReturnsCollectionFromEntitySet<User>("User");
-            
+            var builder = new ODataConventionModelBuilder();
+            builder.EntitySet<User>("User");
             builder.EntitySet<Role>("Role");
             return builder.GetEdmModel();
         }

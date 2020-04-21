@@ -39,7 +39,7 @@
                                
                                 <hr />
 
-                                <form class="list-group" method="post" id="registered-devices" data-endpoint-url="@Url.Action("RevokeDevice", "AuthDevice")">
+                                <form class="list-group" method="post" id="registered-devices" data-endpoint-url="@Url.Action("RevokeDevice", "AuthDeviceApi")">
                                     <!-- .col -->
                                     @foreach (var device in Model.DeviceInfos)
                                     {
@@ -66,7 +66,7 @@
         </div>
     </div>
 </div>
-<form class="modal fade form-material" id="new-device-model" tabindex="-1" role="dialog"  aria-hidden="true" data-device-registration data-initiate-url="@Url.Action("InitialAuthDeviceRegistration", "AuthDevice")" data-complete-url="@Url.Action("CompleteAuthDeviceRegistration", "AuthDevice")" data-no-auto-validation>
+<form class="modal fade form-material" id="new-device-model" tabindex="-1" role="dialog"  aria-hidden="true" data-device-registration data-initiate-url="@Url.Action("InitialAuthDeviceRegistration", "AuthDeviceApi")" data-complete-url="@Url.Action("CompleteAuthDeviceRegistration", "AuthDeviceApi")" data-no-auto-validation>
   <div class="modal-dialog modal-dialog-slideout" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -92,7 +92,7 @@
 </form>
 @section scripts
 {
-    <script type="text/javascript" src="~/profile-device.js"></script>
+    <script type="text/javascript" src="~/profile-device.js.gz" asp-append-version="true"></script>
     <script type="text/template-html" id="device-template">
         <div class="list-group-item list-group-item-action flex-column align-items-start">
             <div class="d-flex w-100 justify-content-between mb-1">

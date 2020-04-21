@@ -29,13 +29,10 @@ namespace Stance.Web.Pages.Auth
 
         public void OnGet()
         {
-            if (this.PageModel == null)
+            this.PageModel ??= new Model
             {
-                this.PageModel = new Model
-                {
-                    Token = this.Token,
-                };
-            }
+                Token = this.Token,
+            };
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -74,11 +71,6 @@ namespace Stance.Web.Pages.Auth
         {
             public Validator(IOptions<SecuritySettings> securitySettings)
             {
-                if (securitySettings == null)
-                {
-                    throw new ArgumentNullException(nameof(securitySettings));
-                }
-
                 this.RuleFor(x => x.Token).NotEmpty();
                 this.RuleFor(x => x.Password)
                     .NotEmpty().WithMessage("Please enter your new password.")

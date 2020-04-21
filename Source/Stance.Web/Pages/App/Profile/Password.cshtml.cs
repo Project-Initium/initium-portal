@@ -1,7 +1,6 @@
 // Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -66,17 +65,13 @@ namespace Stance.Web.Pages.App.Profile
         {
             public Validator(IOptions<SecuritySettings> securitySettings)
             {
-                if (securitySettings == null)
-                {
-                    throw new ArgumentNullException(nameof(securitySettings));
-                }
-
                 this.RuleFor(x => x.OldPassword).NotEmpty();
                 this.RuleFor(x => x.NewPassword)
                     .NotEmpty()
                     .SetValidator(new PasswordValidator(securitySettings.Value));
 
-                this.RuleFor(x => x.ConfirmPassword).Equal(x => x.NewPassword);
+                this.RuleFor(x => x.ConfirmPassword)
+                    .Equal(x => x.NewPassword);
             }
         }
     }

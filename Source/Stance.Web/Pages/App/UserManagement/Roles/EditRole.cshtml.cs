@@ -42,15 +42,12 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
             }
 
             var role = roleMaybe.Value;
-            if (this.PageModel == null)
+            this.PageModel ??= new Model
             {
-                this.PageModel = new Model
-                {
-                    RoleId = role.Id,
-                    Name = role.Name,
-                    Resources = role.Resources.ToList(),
-                };
-            }
+                RoleId = role.Id,
+                Name = role.Name,
+                Resources = role.Resources.ToList(),
+            };
 
             this.Name = role.Name;
 

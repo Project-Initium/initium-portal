@@ -5,7 +5,7 @@
 <section id="wrapper" class="login-register login-sidebar">
     <div class="login-box card">
         <div class="card-body">
-            <form class="form-horizontal form-material" method="post" id="start-verification" data-make-assertion-uri="@Url.Action("MakeAssertion", "AuthDevice")" data-assertion-options-uri="@Url.Action("AssertionOptionsPost", "AuthDevice")">
+            <form class="form-horizontal form-material" method="post" id="start-verification" data-make-assertion-uri="@Url.Action("MakeAssertion", "AuthDeviceApi")" data-assertion-options-uri="@Url.Action("AssertionOptionsPost", "AuthDeviceApi")">
                 <a href="#" class="text-center d-block"><img src="~/logo.png" alt="Home" /></a>
                 <h4 class="rounded-title mt-4 mb-0">Use Fido Device</h4>
                 <small>Insert your security key. When you are ready to authenticate, press the button below.</small>
@@ -46,5 +46,5 @@
 
 @section scripts
 {
-    <script type="text/javascript" src="~/validate-device-mfa.js"></script>
+    <script type="text/javascript" src="~/validate-device-mfa.js.gz" asp-append-version="true"></script>
 }

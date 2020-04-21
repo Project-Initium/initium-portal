@@ -21,26 +21,20 @@ namespace Stance.Queries.Dynamic
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<User>(this.ConfigureUser);
-            modelBuilder.Entity<Role>(this.ConfigureRole);
+            modelBuilder.Entity<User>(ConfigureUser);
+            modelBuilder.Entity<Role>(ConfigureRole);
         }
 
-        private void ConfigureRole(EntityTypeBuilder<Role> config)
+        private static void ConfigureRole(EntityTypeBuilder<Role> config)
         {
             config.ToTable("vwRole", "ReadAggregation");
             config.HasKey(x => x.Id);
         }
 
-        private void ConfigureUser(EntityTypeBuilder<User> users)
+        private static void ConfigureUser(EntityTypeBuilder<User> users)
         {
             users.ToTable("vwUser", "ReadAggregation");
             users.HasKey(x => x.Id);
-            users.OwnsMany(role => role.UserRoles, roleResources =>
-            {
-                roleResources.ToTable("vwUserRole", "ReadAggregation");
-                roleResources.HasKey(entity => new {entity.RoleId, entity.UserId});
-                
-            });
         }
     }
 }

@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Stance.Core.Constants;
 using Stance.Core.Domain;
-using Stance.Domain.Events;
 
 namespace Stance.Domain.AggregatesModel.UserAggregate
 {

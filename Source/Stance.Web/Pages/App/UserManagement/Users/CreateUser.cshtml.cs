@@ -26,13 +26,13 @@ namespace Stance.Web.Pages.App.UserManagement.Users
 
         public CreateUser(IMediator mediator, IRoleQueries roleQueries)
         {
-            this._mediator = mediator;
-            this._roleQueries = roleQueries;
+            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._roleQueries = roleQueries ?? throw new ArgumentNullException(nameof(roleQueries));
         }
 
         public List<SelectListItem> AvailableRoles { get; set; }
 
-        public async Task<IActionResult> OnGetAsync()
+        public async Task OnGetAsync()
         {
             this.AvailableRoles = new List<SelectListItem>();
             var roles = await this._roleQueries.GetSimpleRoles();
@@ -40,8 +40,6 @@ namespace Stance.Web.Pages.App.UserManagement.Users
             {
                 this.AvailableRoles.AddRange(roles.Value.Select(x => new SelectListItem(x.Name, x.Id.ToString())));
             }
-
-            return this.Page();
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -98,6 +96,10 @@ namespace Stance.Web.Pages.App.UserManagement.Users
                 this.RuleFor(x => x.EmailAddress)
                     .NotEmpty()
                     .EmailAddress();
+                this.RuleFor(x => x.FirstName)
+                    .NotEmpty();
+                this.RuleFor(x => x.LastName)
+                    .NotEmpty();
             }
         }
     }

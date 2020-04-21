@@ -15,7 +15,7 @@ using Stance.Web.Infrastructure.PageModels;
 namespace Stance.Web.Pages.Auth
 {
     [Authorize(AuthenticationSchemes = "login-partial")]
-    public class ValidateDeviceMfa : PrgPageModel<object>
+    public class ValidateDeviceMfa : NotificationPageModel
     {
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IMediator _mediator;
@@ -26,7 +26,7 @@ namespace Stance.Web.Pages.Auth
             this._mediator = mediator;
         }
 
-        public bool HasApp { get; set; }
+        public bool HasApp { get; private set; }
 
         public void OnGet()
         {
@@ -42,13 +42,7 @@ namespace Stance.Web.Pages.Auth
             var result =
                 await this._mediator.Send(new EmailMfaRequestedCommand());
 
-            if (result.IsSuccess)
-            {
-                return this.RedirectToPage(PageLocations.AuthEmailMfa);
-            }
-
-            this.PrgState = PrgState.InError;
-            return this.RedirectToPage();
+            return result.IsSuccess ? this.RedirectToPage(PageLocations.AuthEmailMfa) : this.RedirectToPage();
         }
 
         public async Task<IActionResult> OnPostAppMfaAsync()
@@ -56,13 +50,7 @@ namespace Stance.Web.Pages.Auth
             var result =
                 await this._mediator.Send(new AppMfaRequestedCommand());
 
-            if (result.IsSuccess)
-            {
-                return this.RedirectToPage(PageLocations.AuthAppMfa);
-            }
-
-            this.PrgState = PrgState.InError;
-            return this.RedirectToPage();
+            return result.IsSuccess ? this.RedirectToPage(PageLocations.AuthAppMfa) : this.RedirectToPage();
         }
     }
 }

@@ -8,7 +8,7 @@ using Stance.Core.Domain;
 
 namespace Stance.Infrastructure.Extensions
 {
-    internal static class MediatorExtension
+    internal static class MediatorExtensions
     {
         public static async Task DispatchDomainEventsAsync(this IMediator mediator, DataContext ctx)
         {

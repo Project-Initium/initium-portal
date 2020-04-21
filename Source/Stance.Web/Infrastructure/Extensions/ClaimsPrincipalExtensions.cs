@@ -9,12 +9,7 @@ namespace Stance.Web.Infrastructure.Extensions
     {
         public static bool HasPermissions(this ClaimsPrincipal user, string resource)
         {
-            if (user.HasClaim(x => x.Type == ClaimTypes.System))
-            {
-                return true;
-            }
-
-            return user.HasClaim(ClaimTypes.Role, resource);
+            return user.HasClaim(x => x.Type == ClaimTypes.System) || user.HasClaim(ClaimTypes.Role, resource);
         }
     }
 }

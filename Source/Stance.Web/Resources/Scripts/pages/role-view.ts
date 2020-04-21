@@ -32,7 +32,7 @@ export class RoleView {
     private treeOnDataBound(e: Event){
         const contextThis = this;
 
-        var resources = document.querySelectorAll('input[type="hidden"][name="pagemodel.resources"]');
+        const resources = document.querySelectorAll('input[type="hidden"][name="pagemodel.resources"]');
         Array.prototype.forEach.call(resources,
             (element: HTMLInputElement) => {
                 const node = contextThis.tree.getNodeById(element.value);

@@ -78,7 +78,7 @@ namespace Stance.Web.Pages.Auth
                 return this.RedirectToPage(PageLocations.AuthEmailMfa);
             }
 
-            this.PrgState = PrgState.InError;
+            this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }
 
@@ -90,10 +90,10 @@ namespace Stance.Web.Pages.Auth
             if (result.IsSuccess)
             {
                 this.TempData["fido2.assertionOptions"] = result.Value.AssertionOptions.ToJson();
-                return this.RedirectToPage(PageLocations.AuthEmailMfa);
+                return this.RedirectToPage(PageLocations.AuthDeviceMfa);
             }
 
-            this.PrgState = PrgState.InError;
+            this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }
 
@@ -106,7 +106,9 @@ namespace Stance.Web.Pages.Auth
         {
             public Validator()
             {
-                this.RuleFor(x => x.Code).NotEmpty().WithMessage("Please enter your verification code.");
+                this.RuleFor(x => x.Code)
+                    .NotEmpty()
+                    .WithMessage("Please enter your verification code.");
             }
         }
     }

@@ -5,7 +5,6 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
-using MediatR;
 using Moq;
 using Stance.Core;
 using Stance.Core.Contracts;

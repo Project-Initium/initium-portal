@@ -3,7 +3,8 @@ const
     webpack = require('webpack'),
     MiniCssExtractPlugin = require('mini-css-extract-plugin'),
     CopyWebpackPlugin = require('copy-webpack-plugin'),
-    {CleanWebpackPlugin} = require('clean-webpack-plugin');
+    {CleanWebpackPlugin} = require('clean-webpack-plugin'),
+    CompressionPlugin = require('compression-webpack-plugin');
 
 module.exports = {
     entry: {
@@ -19,7 +20,6 @@ module.exports = {
         'validate-device-mfa': './Resources/Scripts/pages/validate-device-mfa.ts',
         'validate-email-mfa': './Resources/Scripts/pages/validate-email-mfa.ts'
     },
-    devtool: 'inline-source-map',
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'wwwroot')
@@ -39,7 +39,7 @@ module.exports = {
             },
             {
                 test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-                 use: 'file-loader'
+                 use: 'file-loader'                
             },
             {
                 test: /theme\.s[ac]ss$/i,
@@ -52,8 +52,6 @@ module.exports = {
             {
                 test: /\.s[ac]ss$/i,
                 exclude: /theme\.s[ac]ss$/i,
-                //include: [/node_modules/],
-
                 use: [
                     MiniCssExtractPlugin.loader,
                     'css-loader', 
@@ -76,7 +74,6 @@ module.exports = {
     },
     optimization: {
          splitChunks: {
-            // include all types of chunks
             cacheGroups: {
              vendors: {
                  test: /[\\/]node_modules[\\/]/,
@@ -116,6 +113,7 @@ module.exports = {
             jQuery: "jquery",
             'window.jQuery': 'jquery',
             'window.$': 'jquery',
-        })
+        }),
+        new CompressionPlugin()
     ]
 }

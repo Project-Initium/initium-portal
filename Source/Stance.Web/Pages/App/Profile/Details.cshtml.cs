@@ -8,7 +8,6 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Queries.Contracts.Static;
 using Stance.Web.Infrastructure.PageModels;

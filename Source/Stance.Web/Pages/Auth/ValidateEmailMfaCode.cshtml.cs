@@ -32,18 +32,20 @@ namespace Stance.Web.Pages.Auth
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
         }
 
-        public bool HasApp { get; set; }
+        public bool HasApp { get; private set; }
 
-        public bool HasDevice { get; set; }
+        public bool HasDevice { get; private set; }
 
         public void OnGet()
         {
             var maybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
-            if (maybe.HasValue && maybe.Value is UnauthenticatedUser user)
+            if (!maybe.HasValue || !(maybe.Value is UnauthenticatedUser user))
             {
-                this.HasApp = user.SetupMfaProviders.HasFlag(MfaProvider.App);
-                this.HasDevice = user.SetupMfaProviders.HasFlag(MfaProvider.Device);
+                return;
             }
+
+            this.HasApp = user.SetupMfaProviders.HasFlag(MfaProvider.App);
+            this.HasDevice = user.SetupMfaProviders.HasFlag(MfaProvider.Device);
         }
 
         public async Task<IActionResult> OnPost()
@@ -67,7 +69,7 @@ namespace Stance.Web.Pages.Auth
                 return this.LocalRedirect(returnUrl);
             }
 
-            this.PrgState = PrgState.InError;
+            this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }
 
@@ -81,7 +83,7 @@ namespace Stance.Web.Pages.Auth
                 return this.RedirectToPage(PageLocations.AuthAppMfa);
             }
 
-            this.PrgState = PrgState.InError;
+            this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }
 
@@ -96,7 +98,7 @@ namespace Stance.Web.Pages.Auth
                 return this.RedirectToPage(PageLocations.AuthDeviceMfa);
             }
 
-            this.PrgState = PrgState.InError;
+            this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }
 

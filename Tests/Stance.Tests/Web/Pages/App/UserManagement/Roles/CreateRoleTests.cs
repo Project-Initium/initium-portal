@@ -37,7 +37,8 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Roles
         public async Task OnPostAsync_GivenValidModelStateAndFailedResult_ExpectRedirectToPageResultToSelfAndPrgSet()
         {
             var mediator = new Mock<IMediator>();
-            mediator.Setup(x => x.Send(It.IsAny<CreateRoleCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Result.Fail<CreateRoleCommandResult, ErrorData>(new ErrorData(ErrorCodes.SavingChanges)));
+            mediator.Setup(x => x.Send(It.IsAny<CreateRoleCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(() =>
+                Result.Fail<CreateRoleCommandResult, ErrorData>(new ErrorData(ErrorCodes.SavingChanges)));
             var page = new CreateRole(mediator.Object) { PageModel = new CreateRole.Model() };
 
             var result = await page.OnPostAsync();
@@ -52,7 +53,8 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Roles
         {
             var roleId = Guid.NewGuid();
             var mediator = new Mock<IMediator>();
-            mediator.Setup(x => x.Send(It.IsAny<CreateRoleCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Result.Ok<CreateRoleCommandResult, ErrorData>(new CreateRoleCommandResult(roleId)));
+            mediator.Setup(x => x.Send(It.IsAny<CreateRoleCommand>(), It.IsAny<CancellationToken>())).ReturnsAsync(() =>
+                Result.Ok<CreateRoleCommandResult, ErrorData>(new CreateRoleCommandResult(roleId)));
             var page = new CreateRole(mediator.Object) { PageModel = new CreateRole.Model() };
 
             var result = await page.OnPostAsync();
@@ -61,33 +63,36 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Roles
             Assert.Equal(roleId, actualResult.RouteValues["id"]);
         }
 
-        [Fact]
-        public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
+        public class ValidatorTests
         {
-            var model = new CreateRole.Model { Name = new string('*', 5) };
-            var validator = new CreateRole.Validator();
-            var result = validator.Validate(model);
-            Assert.True(result.IsValid);
-        }
+            [Fact]
+            public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
+            {
+                var model = new CreateRole.Model { Name = "name" };
+                var validator = new CreateRole.Validator();
+                var result = validator.Validate(model);
+                Assert.True(result.IsValid);
+            }
 
-        [Fact]
-        public void Validate_GivenNameIsEmpty_ExpectValidationFailure()
-        {
-            var model = new CreateRole.Model { Name = string.Empty };
-            var validator = new CreateRole.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "Name");
-        }
+            [Fact]
+            public void Validate_GivenNameIsEmpty_ExpectValidationFailure()
+            {
+                var model = new CreateRole.Model { Name = string.Empty };
+                var validator = new CreateRole.Validator();
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "Name");
+            }
 
-        [Fact]
-        public void Validate_GivenNameIsNull_ExpectValidationFailure()
-        {
-            var model = new CreateRole.Model { Name = null };
-            var validator = new CreateRole.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "Name");
+            [Fact]
+            public void Validate_GivenNameIsNull_ExpectValidationFailure()
+            {
+                var model = new CreateRole.Model { Name = null };
+                var validator = new CreateRole.Validator();
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "Name");
+            }
         }
     }
 }

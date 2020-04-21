@@ -24,14 +24,6 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        public void OnGet()
-        {
-            if (this.PageModel == null)
-            {
-                this.PageModel = new Model();
-            }
-        }
-
         public async Task<IActionResult> OnPostAsync()
         {
             if (!this.ModelState.IsValid)

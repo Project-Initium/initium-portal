@@ -35,7 +35,6 @@ namespace Stance.Tests.Web.Pages.FirstRun
             Assert.IsType<PageResult>(result);
         }
 
-
         [Fact]
         public async Task OnGet_GivenUserInSystem_ExpectNotFoundResult()
         {

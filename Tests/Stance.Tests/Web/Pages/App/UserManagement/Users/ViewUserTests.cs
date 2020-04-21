@@ -34,13 +34,13 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var userQueries = new Mock<IUserQueries>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
-                .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
+                .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
+                    "last-name", true, TestVariables.Now, null, TestVariables.Now, true, new List<Guid>())));
 
             var page = new ViewUser(userQueries.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
-            Assert.Equal(new string('*', 4), page.DetailedUser.EmailAddress);
+            Assert.Equal("email-address", page.DetailedUser.EmailAddress);
         }
     }
 }

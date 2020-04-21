@@ -14,7 +14,7 @@ namespace Stance.Tests.Domain.Commands.UserAggregate
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
             var command = new CreateUserCommand("email-address", "first-name", "last-name", false, true,
-                new List<Guid> {TestVariables.RoleId});
+                new List<Guid> { TestVariables.RoleId });
             Assert.Equal("email-address", command.EmailAddress);
             Assert.Equal("first-name", command.FirstName);
             Assert.Equal("last-name", command.LastName);

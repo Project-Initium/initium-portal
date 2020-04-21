@@ -29,7 +29,7 @@ namespace Stance.Web.Pages.Auth
         [BindProperty(SupportsGet = true)]
         public string ReturnUrl { get; set; }
 
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!this.ModelState.IsValid)
             {

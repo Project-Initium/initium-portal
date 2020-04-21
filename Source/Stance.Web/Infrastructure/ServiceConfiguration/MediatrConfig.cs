@@ -6,7 +6,6 @@ using MediatR;
 using MediatR.Extensions.FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
 using Stance.Domain.CommandHandlers.UserAggregate;
-using Stance.Infrastructure;
 using Stance.Infrastructure.Extensions;
 
 namespace Stance.Web.Infrastructure.ServiceConfiguration

@@ -10,6 +10,7 @@ using ResultMonad;
 using Serilog;
 using Stance.Core.Contracts;
 using Stance.Core.Domain;
+using Stance.Core.Exceptions;
 using Stance.Infrastructure.Extensions;
 
 namespace Stance.Infrastructure.Behaviors
@@ -32,36 +33,47 @@ namespace Stance.Infrastructure.Behaviors
             var response = await next();
             var currentUser = this._authenticatedUserProvider.CurrentAuthenticatedUser;
             Type resultType;
-            if (response.GetType().UnderlyingSystemType.Name == "Result`2")
+            switch (response.GetType().UnderlyingSystemType.Name)
             {
-                resultType = typeof(Result<,>).MakeGenericType(
-                    response.GetType().GetGenericArguments().First(), typeof(ErrorData));
-            }
-            else
-            {
-                resultType = typeof(ResultWithError<>).MakeGenericType(typeof(ErrorData));
+                case "Result`2":
+                    resultType = typeof(Result<,>).MakeGenericType(
+                        response.GetType().GetGenericArguments().First(), typeof(ErrorData));
+                    break;
+                case "ResultWithError`1":
+                    resultType = typeof(ResultWithError<>).MakeGenericType(typeof(ErrorData));
+                    break;
+                default:
+                    throw new StanceException("Non result type used as command result");
             }
 
             var propToCheck = resultType.GetProperty("IsSuccess");
+            if (propToCheck == null)
+            {
+                return response;
+            }
+
             var propValue = propToCheck.GetValue(response);
 
-            if (propValue != null)
+            if (propValue == null)
             {
-                var commandSuccess = (bool)propValue;
-                if (commandSuccess)
-                {
-                    this._auditLogger.Information(
-                        "The action {CommandName} was executed successfully. It's data was {@CommandData}. The user was {User}",
-                        request.GetGenericTypeName(), request,
-                        currentUser.HasValue ? currentUser.Value.UserId.ToString() : "Unknown");
-                }
-                else
-                {
-                    this._auditLogger.Error(
-                        "The action {CommandName} failed to execute. It's data was {@CommandData}. The user was {User}",
-                        request.GetGenericTypeName(), request,
-                        currentUser.HasValue ? currentUser.Value.UserId.ToString() : "Unknown");
-                }
+                return response;
+            }
+
+            var commandSuccess = (bool)propValue;
+            if (commandSuccess)
+            {
+                this._auditLogger.Information(
+                    "The action {CommandName} was executed successfully. It's data was {@CommandData}. The user was {User}",
+                    request.GetGenericTypeName(),
+                    request,
+                    currentUser.HasValue ? currentUser.Value.UserId.ToString() : "Unknown");
+            }
+            else
+            {
+                this._auditLogger.Error(
+                    "The action {CommandName} failed to execute. It's data was {@CommandData}. The user was {User}",
+                    request.GetGenericTypeName(), request,
+                    currentUser.HasValue ? currentUser.Value.UserId.ToString() : "Unknown");
             }
 
             return response;

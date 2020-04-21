@@ -63,7 +63,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenFirstNameIsEmpty_ExpectValidationFailure()
         {
-            var cmd = new CreateUserCommand("a@b.com",string.Empty, "last-name", true, true, new List<Guid>());
+            var cmd = new CreateUserCommand("a@b.com", string.Empty, "last-name", true, true, new List<Guid>());
             var validator = new CreateUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);

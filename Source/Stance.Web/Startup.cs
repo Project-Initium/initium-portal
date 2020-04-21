@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Collections.Generic;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -24,7 +23,6 @@ namespace Stance.Web
             builder.AddEnvironmentVariables();
 
             this.Configuration = builder.Build();
-
         }
 
         public IConfigurationRoot Configuration { get; }
@@ -47,22 +45,8 @@ namespace Stance.Web
                 .AddCustomizedErrorResponse(env)
                 .UseXContentTypeOptions()
                 .UseReferrerPolicy(opts => opts.NoReferrer())
-                .UseCsp(options => options
-                    .DefaultSources(s => s.Self())
-                    .ImageSources(s =>
-                    {
-                        s.Self();
-                        s.CustomSources = new List<string>
-                        {
-                            "https://www.gravatar.com",
-                        };
-                    })
-                    .ScriptSources(s => s.Self())
-                    .ReportUris(r => r.Uris("/report")))
-                .UseCspReportOnly(options => options
-                    .DefaultSources(s => s.Self())
-                    .ImageSources(s => s.None()))
-                .UseStaticFiles()
+                .UseCustomizedCsp()
+                .UseCustomizedStaticFiles()
                 .UseRouting()
                 .UseXfo(xfo => xfo.Deny())
                 .UseRedirectValidation()
