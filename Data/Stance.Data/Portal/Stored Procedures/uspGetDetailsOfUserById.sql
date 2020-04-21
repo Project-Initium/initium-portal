@@ -13,7 +13,7 @@ BEGIN
 		,	u.WhenLocked
 		,	u.IsAdmin
 	FROM [Identity].[User] u
-	JOIN [identity].[Profile] p
+	JOIN [Identity].[Profile] p
 		ON u.Id = p.UserId
 	WHERE u.Id = @userId;
 

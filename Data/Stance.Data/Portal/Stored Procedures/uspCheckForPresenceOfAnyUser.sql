@@ -2,5 +2,5 @@
 AS
 BEGIN
 	SELECT TOP 1 Id
-	FROM [identity].[user]
+	FROM [Identity].[User]
 END

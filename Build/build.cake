@@ -1,6 +1,8 @@
 #addin "nuget:?package=Cake.Npm&version=0.17.0"
 #addin "nuget:?package=Cake.Coverlet&version=2.4.2"
 #tool "nuget:?package=GitVersion.CommandLine&version=5.1.3"
+#addin "nuget:?package=SharpZipLib&version=1.2.0"
+#addin "nuget:?package=Cake.Compression&version=0.2.4"
 
 var target = Argument<string>("target", "Default");
 var buildPath = Directory("./build-artifacts");
@@ -100,18 +102,18 @@ Task("__Publish")
             });
 Task("__Package")
     .Does(() => {
-        Zip(publishPath, releasePath + File("DeviousCreation.CqrsStarterTemplate.Web.zip"));        
-        Zip("../Data/Stance.Data/bin/Debug/Stance.Data.dacpac", releasePath + File("Stance.Data.zip"));        
+        ZipCompress(publishPath, releasePath + File("DeviousCreation.CqrsStarterTemplate.Web.zip"));        
+        ZipCompress("../Data/Stance.Data/bin/Debug/Stance.Data.dacpac", releasePath + File("Stance.Data.zip"));        
     });
 
 Task("Build")
     .IsDependentOn("__Clean")
-    // .IsDependentOn("__Versioning")    
-    // .IsDependentOn("__RestorePackages")
-    // .IsDependentOn("__Build")
-    // .IsDependentOn("__Test")
-    // .IsDependentOn("__Publish")
-    // .IsDependentOn("__Package")
+    .IsDependentOn("__Versioning")    
+    .IsDependentOn("__RestorePackages")
+    .IsDependentOn("__Build")
+    .IsDependentOn("__Test")
+    .IsDependentOn("__Publish")
+    .IsDependentOn("__Package")
     ;
 
 Task("Default")

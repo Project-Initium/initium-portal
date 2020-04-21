@@ -6,7 +6,7 @@ BEGIN
 			r.Id
 		,	r.Name
 	FROM [AccessProtection].[Role] r
-	WHERE r.id = @roleId;
+	WHERE r.Id = @roleId;
 
     SELECT ResourceId
 	FROM [AccessProtection].[RoleResource]
