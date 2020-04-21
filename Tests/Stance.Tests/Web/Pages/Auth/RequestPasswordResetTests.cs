@@ -43,43 +43,46 @@ namespace Stance.Tests.Web.Pages.Auth
                 Times.Once);
         }
 
-        [Fact]
-        public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
+        public class ValidatorTests
         {
-            var model = new RequestPasswordReset.Model { EmailAddress = "a@b.com" };
-            var validator = new RequestPasswordReset.Validator();
-            var result = validator.Validate(model);
-            Assert.True(result.IsValid);
-        }
+            [Fact]
+            public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
+            {
+                var model = new RequestPasswordReset.Model { EmailAddress = "a@b.com" };
+                var validator = new RequestPasswordReset.Validator();
+                var result = validator.Validate(model);
+                Assert.True(result.IsValid);
+            }
 
-        [Fact]
-        public void Validate_GivenEmailAddressIsEmpty_ExpectValidationFailure()
-        {
-            var model = new RequestPasswordReset.Model { EmailAddress = string.Empty };
-            var validator = new RequestPasswordReset.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
-        }
+            [Fact]
+            public void Validate_GivenEmailAddressIsEmpty_ExpectValidationFailure()
+            {
+                var model = new RequestPasswordReset.Model { EmailAddress = string.Empty };
+                var validator = new RequestPasswordReset.Validator();
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
+            }
 
-        [Fact]
-        public void Validate_GivenEmailAddressIsNotValidEmailAddress_ExpectValidationFailure()
-        {
-            var model = new RequestPasswordReset.Model { EmailAddress = new string('*', 5) };
-            var validator = new RequestPasswordReset.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
-        }
+            [Fact]
+            public void Validate_GivenEmailAddressIsNotValidEmailAddress_ExpectValidationFailure()
+            {
+                var model = new RequestPasswordReset.Model { EmailAddress = "email-address" };
+                var validator = new RequestPasswordReset.Validator();
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
+            }
 
-        [Fact]
-        public void Validate_GivenEmailAddressIsNull_ExpectValidationFailure()
-        {
-            var model = new RequestPasswordReset.Model { EmailAddress = null };
-            var validator = new RequestPasswordReset.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
+            [Fact]
+            public void Validate_GivenEmailAddressIsNull_ExpectValidationFailure()
+            {
+                var model = new RequestPasswordReset.Model { EmailAddress = null };
+                var validator = new RequestPasswordReset.Validator();
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
+            }
         }
     }
 }

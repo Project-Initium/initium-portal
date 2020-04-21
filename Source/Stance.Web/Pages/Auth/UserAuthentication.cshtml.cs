@@ -29,7 +29,7 @@ namespace Stance.Web.Pages.Auth
         [BindProperty(SupportsGet = true)]
         public string ReturnUrl { get; set; }
 
-        public async Task<IActionResult> OnPost()
+        public async Task<IActionResult> OnPostAsync()
         {
             if (!this.ModelState.IsValid)
             {
@@ -45,18 +45,22 @@ namespace Stance.Web.Pages.Auth
             if (result.IsSuccess)
             {
                 await this._authenticationService.SignInUserPartiallyAsync(result.Value.UserId, result.Value.SetupMfaProviders, this.ReturnUrl);
-                if (result.Value.AuthenticationStatus ==
-                    BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaAppCode)
+                switch (result.Value.AuthenticationStatus)
                 {
-                    return this.RedirectToPage(PageLocations.AuthAppMfa);
-                }
-                else
-                {
-                    return this.RedirectToPage(PageLocations.AuthEmailMfa);
+                    case BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaDeviceCode:
+                        this.TempData["fido2.assertionOptions"] = result.Value.AssertionOptions.ToJson();
+                        return this.RedirectToPage(PageLocations.AuthDeviceMfa);
+                    case BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaAppCode:
+                        return this.RedirectToPage(PageLocations.AuthAppMfa);
+                    default:
+                        return this.RedirectToPage(PageLocations.AuthEmailMfa);
                 }
             }
 
-            this.PrgState = PrgState.InError;
+            this.PrgState = PrgState.Failed;
+            this.AddPageNotification(
+                "There was an issue signing you in. Please try again.",
+                PageNotification.Error);
             return string.IsNullOrEmpty(this.ReturnUrl)
                     ? this.RedirectToPage()
                     : this.RedirectToPage(new { this.ReturnUrl });
@@ -74,8 +78,11 @@ namespace Stance.Web.Pages.Auth
         {
             public Validator()
             {
-                this.RuleFor(x => x.EmailAddress).NotEmpty().EmailAddress();
-                this.RuleFor(x => x.Password).NotEmpty();
+                this.RuleFor(x => x.EmailAddress)
+                    .NotEmpty().WithMessage("Please enter your email address.")
+                    .EmailAddress().WithMessage("The email address is not valid");
+                this.RuleFor(x => x.Password)
+                    .NotEmpty().WithMessage("Please enter your password");
             }
         }
     }

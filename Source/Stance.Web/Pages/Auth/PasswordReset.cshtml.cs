@@ -2,10 +2,14 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Stance.Core.Settings;
+using Stance.Core.Validation;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Infrastructure.PageModels;
 
@@ -25,28 +29,32 @@ namespace Stance.Web.Pages.Auth
 
         public void OnGet()
         {
-            if (this.PageModel == null)
+            this.PageModel ??= new Model
             {
-                this.PageModel = new Model
-                {
-                    Token = this.Token,
-                };
-            }
+                Token = this.Token,
+            };
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (!this.ModelState.IsValid)
             {
-                return this.RedirectToPage();
+                return this.RedirectToPage(new { this.PageModel.Token });
             }
 
             var result =
                 await this._mediator.Send(new PasswordResetCommand(this.PageModel.Token, this.PageModel.Password));
 
-            this.PrgState = result.IsFailure ? PrgState.Failed : PrgState.Success;
+            if (result.IsSuccess)
+            {
+                this.PrgState = PrgState.Success;
+                return this.RedirectToPage();
+            }
 
-            return this.RedirectToPage();
+            this.AddPageNotification("There was an changing your password. Please try again.", PageNotification.Error);
+            this.PrgState = PrgState.Failed;
+
+            return this.RedirectToPage(new { this.PageModel.Token });
         }
 
         public class Model
@@ -55,16 +63,19 @@ namespace Stance.Web.Pages.Auth
 
             public string Password { get; set; }
 
+            [Display(Name = "Password Confirmation")]
             public string PasswordConfirmation { get; set; }
         }
 
         public class Validator : AbstractValidator<Model>
         {
-            public Validator()
+            public Validator(IOptions<SecuritySettings> securitySettings)
             {
                 this.RuleFor(x => x.Token).NotEmpty();
-                this.RuleFor(x => x.Password).NotEmpty();
-                this.RuleFor(x => x.PasswordConfirmation).Equal(x => x.Password);
+                this.RuleFor(x => x.Password)
+                    .NotEmpty().WithMessage("Please enter your new password.")
+                    .SetValidator(new PasswordValidator(securitySettings.Value));
+                this.RuleFor(x => x.PasswordConfirmation).Equal(x => x.Password).WithMessage("Please confirm your new password.");
             }
         }
     }

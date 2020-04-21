@@ -43,9 +43,9 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             using var context = new DataContext(options, mediator.Object);
             var roleRepository = new RoleRepository(context);
-            var role = new Role(Guid.NewGuid(), string.Empty, new List<Guid>());
+            var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             roleRepository.Add(role);
-            var roleInContext = context.ChangeTracker.Entries<Role>().FirstOrDefault(x => x.Entity.Id == role.Id);
+            var roleInContext = context.ChangeTracker.Entries<Role>().FirstOrDefault(x => x.Entity.Id == TestVariables.RoleId);
             Assert.NotNull(roleInContext);
             Assert.Equal(EntityState.Added, roleInContext.State);
         }
@@ -76,9 +76,9 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             using var context = new DataContext(options, mediator.Object);
             var roleRepository = new RoleRepository(context);
-            var role = new Role(Guid.NewGuid(), string.Empty, new List<Guid>());
+            var role = new Role(TestVariables.RoleId, "nane", new List<Guid>());
             roleRepository.Delete(role);
-            var roleInContext = context.ChangeTracker.Entries<Role>().FirstOrDefault(x => x.Entity.Id == role.Id);
+            var roleInContext = context.ChangeTracker.Entries<Role>().FirstOrDefault(x => x.Entity.Id == TestVariables.RoleId);
             Assert.NotNull(roleInContext);
             Assert.Equal(EntityState.Deleted, roleInContext.State);
         }
@@ -93,11 +93,11 @@ namespace Stance.Tests.Infrastructure.Repositories
             var mediator = new Mock<IMediator>();
 
             await using var context = new DataContext(options, mediator.Object);
-            var role = new Role(Guid.NewGuid(), string.Empty, new List<Guid>());
+            var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             await context.Roles.AddAsync(role);
             await context.SaveEntitiesAsync();
             var roleRepository = new RoleRepository(context);
-            var maybe = await roleRepository.Find(role.Id);
+            var maybe = await roleRepository.Find(TestVariables.RoleId);
             Assert.True(maybe.HasValue);
         }
 
@@ -112,7 +112,7 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             await using var context = new DataContext(options, mediator.Object);
             var roleRepository = new RoleRepository(context);
-            var maybe = await roleRepository.Find(Guid.NewGuid());
+            var maybe = await roleRepository.Find(TestVariables.RoleId);
             Assert.True(maybe.HasNoValue);
         }
 
@@ -142,9 +142,9 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             using var context = new DataContext(options, mediator.Object);
             var roleRepository = new RoleRepository(context);
-            var role = new Role(Guid.NewGuid(), string.Empty, new List<Guid>());
+            var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             roleRepository.Update(role);
-            var roleInContext = context.ChangeTracker.Entries<Role>().FirstOrDefault(x => x.Entity.Id == role.Id);
+            var roleInContext = context.ChangeTracker.Entries<Role>().FirstOrDefault(x => x.Entity.Id == TestVariables.RoleId);
             Assert.NotNull(roleInContext);
             Assert.Equal(EntityState.Modified, roleInContext.State);
         }

@@ -4,23 +4,42 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Queries.Contracts.Static;
+using Stance.Web.Infrastructure.Attributes;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.UserManagement.Users
 {
+    [ResourceBasedAuthorize("user-create")]
     public class CreateUser : PrgPageModel<CreateUser.Model>
     {
         private readonly IMediator _mediator;
+        private readonly IRoleQueries _roleQueries;
 
-        public CreateUser(IMediator mediator)
+        public CreateUser(IMediator mediator, IRoleQueries roleQueries)
         {
-            this._mediator = mediator;
+            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._roleQueries = roleQueries ?? throw new ArgumentNullException(nameof(roleQueries));
+        }
+
+        public List<SelectListItem> AvailableRoles { get; set; }
+
+        public async Task OnGetAsync()
+        {
+            this.AvailableRoles = new List<SelectListItem>();
+            var roles = await this._roleQueries.GetSimpleRoles();
+            if (roles.HasValue)
+            {
+                this.AvailableRoles.AddRange(roles.Value.Select(x => new SelectListItem(x.Name, x.Id.ToString())));
+            }
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -35,15 +54,23 @@ namespace Stance.Web.Pages.App.UserManagement.Users
 
             if (result.IsSuccess)
             {
-                return this.RedirectToPage(PageLocations.UserListing);
+                this.PrgState = PrgState.Success;
+                this.AddPageNotification("The user was created successfully", PageNotification.Success);
+                return this.RedirectToPage(PageLocations.UserView, new { id = result.Value.UserId });
             }
 
+            this.AddPageNotification("There was an issue creating the user.", PageNotification.Error);
             this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }
 
         public class Model
         {
+            public Model()
+            {
+                this.Roles = new List<Guid>();
+            }
+
             [Display(Name = "Email Address")]
             public string EmailAddress { get; set; }
 
@@ -56,6 +83,7 @@ namespace Stance.Web.Pages.App.UserManagement.Users
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
 
+            [Display(Name = "Is Admin")]
             public bool IsAdmin { get; set; }
 
             public List<Guid> Roles { get; set; }
@@ -68,6 +96,10 @@ namespace Stance.Web.Pages.App.UserManagement.Users
                 this.RuleFor(x => x.EmailAddress)
                     .NotEmpty()
                     .EmailAddress();
+                this.RuleFor(x => x.FirstName)
+                    .NotEmpty();
+                this.RuleFor(x => x.LastName)
+                    .NotEmpty();
             }
         }
     }

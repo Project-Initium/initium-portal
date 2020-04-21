@@ -3,14 +3,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Moq;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models.Role;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models.Role;
 using Stance.Web.Pages.App.UserManagement.Roles;
 using Xunit;
 
@@ -22,7 +21,7 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Roles
         public async Task OnGetAsync_GivenRoleIsNotInSystem_ExpectNotFoundResultReturned()
         {
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => Maybe<DetailedRoleModel>.Nothing);
 
             var page = new ViewRole(roleQueries.Object);
@@ -35,14 +34,18 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Roles
         public async Task OnGetAsync_GivenRoleIsInSystem_ExpectDataToBeSetAndPageResultReturned()
         {
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => Maybe.From(new DetailedRoleModel(Guid.Empty, string.Empty, new List<Guid>())));
+            roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>()))
+                .ReturnsAsync(() => Maybe.From(new DetailedRoleModel(
+                    TestVariables.RoleId,
+                    "name",
+                    new List<Guid> { TestVariables.ResourceId })));
 
             var page = new ViewRole(roleQueries.Object);
 
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.NotNull(page.Role);
+            Assert.Equal("name", page.Name);
         }
     }
 }

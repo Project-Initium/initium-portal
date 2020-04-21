@@ -74,6 +74,8 @@
     <Folder Include="ReadAggregation\Views" />
     <Folder Include="AccessProtection" />
     <Folder Include="AccessProtection\Tables" />
+    <Folder Include="Portal" />
+    <Folder Include="Portal\Stored Procedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Security\Schemas\Identity.sql" />
@@ -90,11 +92,29 @@
     <Build Include="ReadAggregation\Views\vwRole.sql" />
     <Build Include="Identity\Tables\UserRole.sql" />
     <Build Include="Identity\Tables\AuthenticatorApp.sql" />
+    <Build Include="Identity\Tables\AuthenticatorDevice.sql" />
+    <Build Include="Security\Schemas\Portal.sql" />
+    <Build Include="Portal\Stored Procedures\uspCheckForPresenceOfRoleByName.sql" />
+    <Build Include="Portal\Stored Procedures\uspCheckForRoleUsageById.sql" />
+    <Build Include="Portal\Stored Procedures\uspGetDetailsOfRoleById.sql" />
+    <Build Include="Portal\Stored Procedures\uspGetNestedSimpleResources.sql" />
+    <Build Include="Portal\Stored Procedures\uspGetSimpleRoles.sql" />
+    <Build Include="Portal\Stored Procedures\uspCheckForPresenceOfAnyUser.sql" />
+    <Build Include="Portal\Stored Procedures\uspGetProfileForCurrentUser.sql" />
+    <Build Include="Portal\Stored Procedures\uspCheckForPresenceOfUserByEmailAddress.sql" />
+    <Build Include="Portal\Stored Procedures\uspGetDetailsOfUserById.sql" />
+    <Build Include="Portal\Stored Procedures\uspGetSystemProfileByUserId.sql" />
+    <Build Include="Portal\Stored Procedures\uspCheckForPresenceOfAuthAppForCurrentUser.sql" />
+    <Build Include="Portal\Stored Procedures\uspGetDeviceInfoForCurrentUser.sql" />
+    <Build Include="ReadAggregation\Views\vwUserRole.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Stance.Data.refactorlog" />
   </ItemGroup>
   <ItemGroup>
     <PostDeploy Include="Script.PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Stance.Data.publish.xml" />
   </ItemGroup>
 </Project>

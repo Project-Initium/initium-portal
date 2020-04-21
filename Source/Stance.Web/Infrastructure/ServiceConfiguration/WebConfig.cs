@@ -10,7 +10,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
-using Stance.Queries.OData.Entities;
+using NWebsec.AspNetCore.Mvc.Csp;
+using Stance.Queries.Dynamic.Entities;
+using Stance.Web.Infrastructure.Formatters;
 using Stance.Web.Pages.FirstRun;
 
 namespace Stance.Web.Infrastructure.ServiceConfiguration
@@ -21,7 +23,12 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
         {
             services.AddOData();
             services
-                .AddMvc().AddFluentValidation(fv =>
+                .AddMvc(opts =>
+                {
+                    opts.Filters.Add(typeof(CspAttribute));
+                    opts.Filters.Add(new CspDefaultSrcAttribute { Self = true });
+                    opts.InputFormatters.Insert(0, new CspReportBodyFormatter());
+                }).AddFluentValidation(fv =>
                 {
                     fv.RegisterValidatorsFromAssemblyContaining<InitialUserSetup.Validator>();
                     fv.ImplicitlyValidateChildProperties = true;
@@ -31,7 +38,9 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
                     options.ViewLocationFormats.Add("/{0}.cshtml");
                     options.PageViewLocationFormats.Add("/{0}.cshtml");
                 })
-                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
+                .SetCompatibilityVersion(CompatibilityVersion.Version_3_0)
+                .AddNewtonsoftJson();
+
             services.AddRazorPages().AddRazorRuntimeCompilation();
             services.AddControllers(mvc => { mvc.EnableEndpointRouting = false; });
             return services;
@@ -69,9 +78,9 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
             return app;
         }
 
-        public static IEdmModel GetEdmModel()
+        private static IEdmModel GetEdmModel()
         {
-            ODataConventionModelBuilder builder = new ODataConventionModelBuilder();
+            var builder = new ODataConventionModelBuilder();
             builder.EntitySet<User>("User");
             builder.EntitySet<Role>("Role");
             return builder.GetEdmModel();

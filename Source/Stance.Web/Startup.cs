@@ -43,8 +43,13 @@ namespace Stance.Web
         {
             app
                 .AddCustomizedErrorResponse(env)
-                .UseStaticFiles()
+                .UseXContentTypeOptions()
+                .UseReferrerPolicy(opts => opts.NoReferrer())
+                .UseCustomizedCsp()
+                .UseCustomizedStaticFiles()
                 .UseRouting()
+                .UseXfo(xfo => xfo.Deny())
+                .UseRedirectValidation()
                 .UseAuthentication()
                 .UseAuthorization()
                 .UseStackify(env)

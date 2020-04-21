@@ -6,13 +6,16 @@ using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
+using Microsoft.Extensions.Options;
 using NodaTime;
 using ResultMonad;
 using Stance.Core.Domain;
+using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
+using Stance.Domain.Events;
+using Stance.Queries.Contracts.Static;
 
 namespace Stance.Domain.CommandHandlers.UserAggregate
 {
@@ -21,18 +24,20 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
         private readonly IClock _clock;
         private readonly IUserQueries _userQueries;
         private readonly IUserRepository _userRepository;
+        private readonly SecuritySettings _securitySettings;
 
-        public CreateUserCommandHandler(IUserRepository userRepository, IClock clock, IUserQueries userQueries)
+        public CreateUserCommandHandler(IUserRepository userRepository, IClock clock, IUserQueries userQueries, IOptions<SecuritySettings> securitySettings)
         {
             this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
             this._userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
+            this._securitySettings = securitySettings.Value;
         }
 
         public async Task<Result<CreateUserCommandResult, ErrorData>> Handle(
             CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var result = await this.Process(request, cancellationToken);
+            var result = await this.Process(request);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
             if (!dbResult)
@@ -55,17 +60,20 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
         }
 
         private async Task<Result<CreateUserCommandResult, ErrorData>> Process(
-            CreateUserCommand request, CancellationToken cancellationToken)
+            CreateUserCommand request)
         {
             var statusCheck =
-                await this._userQueries.CheckForPresenceOfUserByEmailAddress(request.EmailAddress, cancellationToken);
+                await this._userQueries.CheckForPresenceOfUserByEmailAddress(request.EmailAddress);
             if (statusCheck.IsPresent)
             {
                 return Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.UserAlreadyExists));
             }
 
+            var whenHappened = this._clock.GetCurrentInstant().ToDateTimeUtc();
             var user = new User(Guid.NewGuid(), request.EmailAddress, GenerateRandomPassword(), request.IsLockable,
-                this._clock.GetCurrentInstant().ToDateTimeUtc(), request.FirstName, request.LastName, request.Roles, request.IsAdmin);
+                whenHappened, request.FirstName, request.LastName, request.Roles, request.IsAdmin);
+            var token = user.GenerateNewAccountConfirmationToken(whenHappened, TimeSpan.FromMinutes(this._securitySettings.AccountVerificationTokenLifetime));
+            user.AddDomainEvent(new AccountConfirmationTokenGeneratedEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token));
             this._userRepository.Add(user);
             return Result.Ok<CreateUserCommandResult, ErrorData>(new CreateUserCommandResult(user.Id));
         }

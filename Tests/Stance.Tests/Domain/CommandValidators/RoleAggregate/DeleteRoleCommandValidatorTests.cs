@@ -14,7 +14,7 @@ namespace Stance.Tests.Domain.CommandValidators.RoleAggregate
         [Fact]
         public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
         {
-            var cmd = new DeleteRoleCommand(Guid.NewGuid());
+            var cmd = new DeleteRoleCommand(TestVariables.RoleId);
             var validator = new DeleteRoleCommandValidator();
             var result = validator.Validate(cmd);
             Assert.True(result.IsValid);

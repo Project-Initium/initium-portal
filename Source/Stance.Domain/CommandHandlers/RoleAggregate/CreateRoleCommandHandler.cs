@@ -10,7 +10,7 @@ using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.RoleAggregate;
 using Stance.Domain.CommandResults.RoleAggregate;
 using Stance.Domain.Commands.RoleAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 
 namespace Stance.Domain.CommandHandlers.RoleAggregate
 {
@@ -22,14 +22,14 @@ namespace Stance.Domain.CommandHandlers.RoleAggregate
 
         public CreateRoleCommandHandler(IRoleRepository roleRepository, IRoleQueries roleQueries)
         {
-            this._roleRepository = roleRepository;
-            this._roleQueries = roleQueries;
+            this._roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
+            this._roleQueries = roleQueries ?? throw new ArgumentNullException(nameof(roleQueries));
         }
 
         public async Task<Result<CreateRoleCommandResult, ErrorData>> Handle(
             CreateRoleCommand request, CancellationToken cancellationToken)
         {
-            var result = await this.Process(request, cancellationToken);
+            var result = await this.Process(request);
             var dbResult = await this._roleRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
             if (!dbResult)
@@ -42,9 +42,9 @@ namespace Stance.Domain.CommandHandlers.RoleAggregate
         }
 
         private async Task<Result<CreateRoleCommandResult, ErrorData>> Process(
-            CreateRoleCommand request, CancellationToken cancellationToken)
+            CreateRoleCommand request)
         {
-            var presenceResult = await this._roleQueries.CheckForPresenceOfRoleByName(request.Name, cancellationToken);
+            var presenceResult = await this._roleQueries.CheckForPresenceOfRoleByName(request.Name);
             if (presenceResult.IsPresent)
             {
                 return Result.Fail<CreateRoleCommandResult, ErrorData>(new ErrorData(ErrorCodes.RoleAlreadyExists));

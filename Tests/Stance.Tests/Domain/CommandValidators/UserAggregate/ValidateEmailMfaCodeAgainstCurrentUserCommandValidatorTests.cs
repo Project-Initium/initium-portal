@@ -13,7 +13,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
         {
-            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand(new string('*', 6));
+            var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand("code");
             var validator = new ValidateEmailMfaCodeAgainstCurrentUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.True(result.IsValid);

@@ -8,11 +8,13 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.RoleAggregate;
+using Stance.Web.Infrastructure.Attributes;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.UserManagement.Roles
 {
+    [ResourceBasedAuthorize("role-create")]
     public class CreateRole : PrgPageModel<CreateRole.Model>
     {
         private readonly IMediator _mediator;
@@ -33,9 +35,12 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
 
             if (result.IsSuccess)
             {
+                this.PrgState = PrgState.Success;
+                this.AddPageNotification("The role was created successfully", PageNotification.Success);
                 return this.RedirectToPage(PageLocations.RoleView, new { id = result.Value.RoleId });
             }
 
+            this.AddPageNotification("There was an issue creating the role.", PageNotification.Error);
             this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }

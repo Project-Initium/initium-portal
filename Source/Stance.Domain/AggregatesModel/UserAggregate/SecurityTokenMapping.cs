@@ -23,6 +23,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         public enum SecurityTokenPurpose
         {
             PasswordReset,
+            AccountConfirmation,
         }
 
         public string Token => Convert.ToBase64String(this.Id.ToByteArray());

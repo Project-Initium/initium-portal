@@ -43,8 +43,19 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             using var context = new DataContext(options, mediator.Object);
             var userRepository = new UserRepository(context);
-            var user = new User(Guid.NewGuid(), new string('*', 5), new string('*', 6), true, DateTime.UtcNow,
-                new string('*', 7), new string('*', 8), new List<Guid>().AsReadOnly(), true);
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                false,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>
+                {
+                    TestVariables.RoleId,
+                },
+                true);
             var returnedUser = userRepository.Add(user);
             Assert.NotNull(returnedUser);
             Assert.Equal(user, returnedUser);
@@ -61,10 +72,21 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             using var context = new DataContext(options, mediator.Object);
             var userRepository = new UserRepository(context);
-            var user = new User(Guid.NewGuid(), new string('*', 5), new string('*', 6), true, DateTime.UtcNow,
-                new string('*', 7), new string('*', 8), new List<Guid>().AsReadOnly(), true);
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                false,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>
+                {
+                    TestVariables.RoleId,
+                },
+                true);
             userRepository.Add(user);
-            var userInContext = context.ChangeTracker.Entries<User>().FirstOrDefault(x => x.Entity.Id == user.Id);
+            var userInContext = context.ChangeTracker.Entries<User>().FirstOrDefault(x => x.Entity.Id == TestVariables.UserId);
             Assert.NotNull(userInContext);
             Assert.Equal(EntityState.Added, userInContext.State);
         }
@@ -78,14 +100,23 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            var userId = Guid.NewGuid();
-
             await using var context = new DataContext(options, mediator.Object);
-            await context.Users.AddAsync(new User(userId, new string('*', 5), new string('*', 6), true,
-                DateTime.UtcNow, new string('*', 7), new string('*', 8), new List<Guid>().AsReadOnly(), true));
+            await context.Users.AddAsync(new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                false,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>
+                {
+                    TestVariables.RoleId,
+                },
+                true));
             await context.SaveChangesAsync();
             var userRepository = new UserRepository(context);
-            var maybe = await userRepository.Find(userId);
+            var maybe = await userRepository.Find(TestVariables.UserId);
 
             Assert.True(maybe.HasValue);
         }
@@ -131,11 +162,22 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             using var context = new DataContext(options, mediator.Object);
             var userRepository = new UserRepository(context);
-            var user = new User(Guid.NewGuid(), new string('*', 5), new string('*', 6), true, DateTime.UtcNow,
-                new string('*', 7), new string('*', 8), new List<Guid>().AsReadOnly(), true);
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                false,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>
+                {
+                    TestVariables.RoleId,
+                },
+                true);
             userRepository.Add(user);
             userRepository.Update(user);
-            var userInContext = context.ChangeTracker.Entries<User>().FirstOrDefault(x => x.Entity.Id == user.Id);
+            var userInContext = context.ChangeTracker.Entries<User>().FirstOrDefault(x => x.Entity.Id == TestVariables.UserId);
             Assert.NotNull(userInContext);
             Assert.Equal(EntityState.Modified, userInContext.State);
         }
@@ -149,18 +191,27 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            var userId = Guid.NewGuid();
-
-            var user = new User(userId, new string('*', 5), new string('*', 6), true,
-                DateTime.UtcNow, new string('*', 7), new string('*', 8), new List<Guid>().AsReadOnly(), true);
-            user.GenerateNewPasswordResetToken(DateTime.UtcNow, TimeSpan.FromHours(2));
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                false,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>
+                {
+                    TestVariables.RoleId,
+                },
+                true);
+            user.GenerateNewPasswordResetToken(TestVariables.Now, TimeSpan.FromHours(2));
             var tokenId = user.SecurityTokenMappings.First().Id;
 
             await using var context = new DataContext(options, mediator.Object);
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
             var userRepository = new UserRepository(context);
-            var maybe = await userRepository.FindByUserBySecurityToken(tokenId, DateTime.UtcNow);
+            var maybe = await userRepository.FindByUserBySecurityToken(tokenId, TestVariables.Now);
 
             Assert.True(maybe.HasValue);
         }
@@ -189,16 +240,25 @@ namespace Stance.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            var userId = Guid.NewGuid();
-
-            var user = new User(userId, new string('*', 5), new string('*', 6), true,
-                DateTime.UtcNow, new string('*', 7), new string('*', 8), new List<Guid>().AsReadOnly(), true);
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                false,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>
+                {
+                    TestVariables.RoleId,
+                },
+                true);
 
             await using var context = new DataContext(options, mediator.Object);
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
             var userRepository = new UserRepository(context);
-            var maybe = await userRepository.FindByEmailAddress(new string('*', 5));
+            var maybe = await userRepository.FindByEmailAddress(new string("email-address"));
 
             Assert.True(maybe.HasValue);
         }

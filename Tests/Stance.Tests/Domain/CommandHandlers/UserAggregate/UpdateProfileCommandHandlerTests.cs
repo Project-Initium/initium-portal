@@ -33,10 +33,10 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
-            var result = await handler.Handle(new UpdateProfileCommand(string.Empty, string.Empty), CancellationToken.None);
+            var result = await handler.Handle(new UpdateProfileCommand("first-name", "last-name"), CancellationToken.None);
 
             Assert.True(result.IsFailure);
             Assert.Equal(ErrorCodes.SavingChanges, result.Error.Code);
@@ -55,10 +55,10 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
-            var result = await handler.Handle(new UpdateProfileCommand(string.Empty, string.Empty), CancellationToken.None);
+            var result = await handler.Handle(new UpdateProfileCommand("first-name", "last-name"), CancellationToken.None);
 
             Assert.True(result.IsSuccess);
         }
@@ -75,10 +75,10 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
-            var result = await handler.Handle(new UpdateProfileCommand(string.Empty, string.Empty), CancellationToken.None);
+            var result = await handler.Handle(new UpdateProfileCommand("first-name", "last-name"), CancellationToken.None);
 
             Assert.True(result.IsFailure);
             Assert.Equal(ErrorCodes.UserNotFound, result.Error.Code);
@@ -97,7 +97,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                 .Returns(Maybe<ISystemUser>.Nothing);
 
             var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
-            var result = await handler.Handle(new UpdateProfileCommand(string.Empty, string.Empty), CancellationToken.None);
+            var result = await handler.Handle(new UpdateProfileCommand("first-name", "last-name"), CancellationToken.None);
 
             Assert.True(result.IsFailure);
             Assert.Equal(ErrorCodes.UserNotFound, result.Error.Code);
@@ -116,10 +116,10 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
-            var result = await handler.Handle(new UpdateProfileCommand(string.Empty, string.Empty), CancellationToken.None);
+            var result = await handler.Handle(new UpdateProfileCommand("first-name", "last-name"), CancellationToken.None);
 
             Assert.True(result.IsSuccess);
             user.Verify(x => x.UpdateProfile(It.IsAny<string>(), It.IsAny<string>()));

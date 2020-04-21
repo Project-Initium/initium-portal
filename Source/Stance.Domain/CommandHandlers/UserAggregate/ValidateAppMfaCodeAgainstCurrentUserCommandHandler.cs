@@ -68,7 +68,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             if (authApp == null)
             {
-                return Result.Fail<ValidateAppMfaCodeAgainstCurrentUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.AuthenticatorAppAlreadyEnrolled));
+                return Result.Fail<ValidateAppMfaCodeAgainstCurrentUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.NoAuthenticatorAppEnrolled));
             }
 
             var secretBytes = Base32Encoding.ToBytes(authApp.Key);

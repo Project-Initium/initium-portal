@@ -1,4 +1,17 @@
-﻿@page "/sign-out"
+﻿@page "/auth/signed-out"
+@using Stance.Web.Infrastructure.Constants
 @model Stance.Web.Pages.Auth.SignOut
 @{
 }
+<section id="wrapper" class="login-register login-sidebar">
+    <div class="login-box card">
+        <div class="card-body">
+            
+                <a href="#" class="text-center d-block"><img src="~/logo.png" alt="Home" /></a>
+                <h3 class="p-2 rounded-title mt-4 mb-0">Signed Out</h3>
+                <small>You have now been signed out of the system.  Please click <a href="@Url.Page(PageLocations.AuthSignIn)">here to sign back in</a>.</small>
+                
+            
+        </div>
+    </div>
+</section>

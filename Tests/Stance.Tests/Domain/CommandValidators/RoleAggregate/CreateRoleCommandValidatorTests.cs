@@ -15,7 +15,7 @@ namespace Stance.Tests.Domain.CommandValidators.RoleAggregate
         [Fact]
         public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
         {
-            var cmd = new CreateRoleCommand(new string('*', 5), new List<Guid>());
+            var cmd = new CreateRoleCommand("name", new List<Guid>());
             var validator = new CreateRoleCommandValidator();
             var result = validator.Validate(cmd);
             Assert.True(result.IsValid);

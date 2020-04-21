@@ -20,6 +20,7 @@ namespace Stance.Domain.CommandResults.UserAggregate
             Completed,
             AwaitingMfaEmailCode,
             AwaitingMfaAppCode,
+            AwaitingMfaDeviceCode,
         }
 
         public Guid UserId { get; }

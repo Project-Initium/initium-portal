@@ -4,47 +4,42 @@
 @model Stance.Web.Pages.App.Profile.Details
 
 <div class="row page-titles">
-    <div class="col-md-5 col-8 align-self-center">
-        <h3 class="text-themecolor m-b-0 m-t-0">Profile</h3>
+    <div class="align-self-center pl-0 col-md-7 col-12">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
             <li class="breadcrumb-item">Profile</li>
             <li class="breadcrumb-item active">My Details</li>
         </ol>
     </div>
+    <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0 pr-0">
+        <button class="btn btn-sm btn-info text-white" type="submit" form="details">Save</button>        
+    </div>
 </div>
-<div class="container-fluid">
-
     <div class="row">
         @await Component.InvokeAsync("ProfilePanel")
-        <div class="col-lg-8 col-xlg-9 col-md-7">
+        <div class="col-lg-8 col-xlg-9 col-md-7  pl-md-2 pr-md-0 pl-1 pr-1">
             <div class="card">
                 <div class="card">
                     <ul class="nav nav-tabs profile-tab" role="tablist" id="profileTabs">
                         <li class="nav-item"> <a class="nav-link active" role="tab" asp-page="@PageLocations.AppProfileDetails">My Details</a> </li>
+                        <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.ChangePassword">Password</a> </li>
                         <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.EnrollAuthenticatorApp">Authenticator App</a> </li>
+                        <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.SecurityKeys">Security Keys</a> </li>
                     </ul>
                     <!-- Tab panes -->
                     <div class="tab-content">
-                        <div class="tab-pane active" id="profile" role="tabpanel">
+                        <div class="tab-pane active" role="tabpanel">
                             <div class="card-body">
-                                <form class="form-horizontal form-material" method="post" asp-antiforgery="true">
+                                <form class="form-horizontal form-material" method="post" id="details">
                                     <div class="form-group">
-                                        <label class="col-md-12" asp-for="PageModel.FirstName"></label>
-                                        <div class="col-md-12">
-                                            <input class="form-control form-control-line" asp-for="PageModel.FirstName">
-                                        </div>
+                                        <label asp-for="PageModel.FirstName"></label>
+                                        <input class="form-control form-control-line" asp-for="PageModel.FirstName">
+                                        <span class="text-danger small" asp-validation-for="PageModel.FirstName"></span>
                                     </div>
                                     <div class="form-group">
-                                        <label class="col-md-12" asp-for="PageModel.LastName"></label>
-                                        <div class="col-md-12">
-                                            <input class="form-control form-control-line" asp-for="PageModel.LastName">
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="col-sm-12">
-                                            <button class="btn btn-info text-white">Update Profile</button>
-                                        </div>
+                                        <label asp-for="PageModel.LastName"></label>
+                                        <input class="form-control form-control-line" asp-for="PageModel.LastName">
+                                        <span class="text-danger small" asp-validation-for="PageModel.FirstName"></span>
                                     </div>
                                 </form>
                             </div>
@@ -54,4 +49,3 @@
             </div>
         </div>
     </div>
-</div>

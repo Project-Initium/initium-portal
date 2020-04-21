@@ -15,6 +15,7 @@ using Stance.Core.Domain;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandHandlers.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Domain.Events;
 using Xunit;
 
 namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
@@ -55,6 +56,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         public async Task Handle_GivenSavingFails_ExpectFailedResult()
         {
             var user = new Mock<IUser>();
+            user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
@@ -64,7 +66,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var clock = new Mock<IClock>();
 
@@ -82,6 +84,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         public async Task Handle_GivenSavingSucceeds_ExpectSuccessfulResult()
         {
             var user = new Mock<IUser>();
+            user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -91,7 +94,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.Email) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.Email) as ISystemUser));
 
             var clock = new Mock<IClock>();
 
@@ -105,9 +108,10 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         }
 
         [Fact]
-        public async Task Handle_GivenUserDoesExist_ExpectSuccessfulResultAndAttemptLogged()
+        public async Task Handle_GivenUserDoesExist_ExpectSuccessfulResultAndAttemptLoggedAndDomainEventRaised()
         {
             var user = new Mock<IUser>();
+            user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -117,7 +121,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.Email) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.Email) as ISystemUser));
 
             var clock = new Mock<IClock>();
 
@@ -129,6 +133,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             user.Verify(
                 x => x.ProcessPartialSuccessfulAuthenticationAttempt(
                     It.IsAny<DateTime>(), It.IsAny<AuthenticationHistoryType>()), Times.Once);
+            user.Verify(x => x.AddDomainEvent(It.IsAny<EmailMfaTokenGeneratedEvent>()));
         }
 
         [Fact]
@@ -144,7 +149,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.Email) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.Email) as ISystemUser));
 
             var clock = new Mock<IClock>();
 

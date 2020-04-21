@@ -11,10 +11,9 @@ namespace Stance.Tests.Domain.Commands.UserAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var emailAddress = new string('*', 5);
-            var requestPasswordResetCommand = new RequestPasswordResetCommand(emailAddress);
+            var requestPasswordResetCommand = new RequestPasswordResetCommand("email-address");
 
-            Assert.Equal(emailAddress, requestPasswordResetCommand.EmailAddress);
+            Assert.Equal("email-address", requestPasswordResetCommand.EmailAddress);
         }
     }
 }

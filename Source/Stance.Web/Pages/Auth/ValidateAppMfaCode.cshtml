@@ -1,39 +1,50 @@
-﻿@page
+﻿@page "/auth/multi-factor-app"
 @using Stance.Web.Infrastructure.Constants
 @model Stance.Web.Pages.Auth.ValidateAppMfaCode
 @{
 }
-    <section id="wrapper" class="login-register login-sidebar" style="background-image:url(https://picsum.photos/1920/1080);">
+    <section id="wrapper" class="login-register login-sidebar">
         <div class="login-box card">
             <div class="card-body">
                 <form class="form-horizontal form-material" asp-antiforgery="true" method="post">
-                    <a href="#" class="text-center d-block"><img src="~/myci-logo-100.png" alt="Home" /></a>
+                    <a href="#" class="text-center d-block"><img src="~/logo.png" alt="Home" /></a>
+                    <h4 class="rounded-title mt-4 mb-0">Use Authenticator App</h4>
+                    <small>Open your authentication app and enter the code.</small>
                     <div class="form-group mt-4">
                         <div class="col-xs-12">
-                            <input class="form-control" type="text" asp-for="PageModel.Code" placeholder="Code">
-                            <span asp-validation-for="PageModel.Code"></span>
+                            <label asp-for="PageModel.Code" class="sr-only"></label>
+                            <input class="form-control" type="text" asp-for="PageModel.Code" placeholder="@Html.DisplayNameFor(x=>x.PageModel.Code)" autocomplete="off">
+                            <span class="text-danger small" asp-validation-for="PageModel.Code"></span>
                         </div>
                     </div>
                     <div class="form-group text-center mt-3">
                         <div class="col-xs-12">
-                            <button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Log In</button>
+                            <button class="btn btn-info btn-lg btn-block text-uppercase waves-effect waves-light" type="submit">Authenticate</button>
                         </div>
                     </div>
                 </form>
-                <div class="message-box contact-box">
+                <hr />
+                <p>Or select a different method</p>
+                <form class="feeds m-0 p-0 mt-3 pt-2" method="post">
+                    
+                    @if (Model.HasDevice)
+                    {
 
-                    <form class="message-widget contact-widget" method="post">
-                        <!-- Message -->
-                        <button asp-page-handler="EmailMfa">
-                            <div class="user-img">
-                                <span class="round"><i class="icon-mail"></i></span>
-                            </div>
-                            <div class="mail-contnet">
-                                <h5>Email</h5> <span class="mail-desc">&nbsp;</span>
+                        <button asp-page-handler="DeviceMfa" class="feed-item d-flex py-2 align-items-center w-100 b-0 bg-white">
+                            <span class="btn btn-info btn-circle font-18 text-white d-flex align-items-center justify-content-center"><i class="fab fa-usb"></i></span>
+                            <div class="ml-3">
+                                <span class="">Fido Device</span>
                             </div>
                         </button>
-                    </form>
-                </div>
+                        <hr class="m-t-5 m-b-5" />
+                    }
+                    <button asp-page-handler="EmailMfa" class="feed-item d-flex py-2 align-items-center w-100 b-0 bg-white">
+                        <span class="btn btn-info btn-circle font-18 text-white d-flex align-items-center justify-content-center"><i class="far fa-envelope"></i></span>
+                        <div class="ml-3">
+                            <span class="">Email</span>
+                        </div>
+                    </button>
+                </form>
             </div>
         </div>
     </section>

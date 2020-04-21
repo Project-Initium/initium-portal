@@ -11,10 +11,9 @@ namespace Stance.Tests.Domain.Commands.UserAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var code = new string('*', 5);
-            var validateEmailMfaCodeAgainstCurrentUserCommand = new ValidateEmailMfaCodeAgainstCurrentUserCommand(code);
+            var validateEmailMfaCodeAgainstCurrentUserCommand = new ValidateEmailMfaCodeAgainstCurrentUserCommand("code");
 
-            Assert.Equal(code, validateEmailMfaCodeAgainstCurrentUserCommand.Code);
+            Assert.Equal("code", validateEmailMfaCodeAgainstCurrentUserCommand.Code);
         }
     }
 }

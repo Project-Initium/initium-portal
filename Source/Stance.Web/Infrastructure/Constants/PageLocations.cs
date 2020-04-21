@@ -11,7 +11,8 @@ namespace Stance.Web.Infrastructure.Constants
         public const string AuthEmailMfa = "/Auth/ValidateEmailMfaCode";
         public const string AuthAppMfa = "/Auth/ValidateAppMfaCode";
 
-        public const string AuthRequestPassword = "/Auth/RequestPassword";
+        public const string AuthRequestPassword = "/Auth/RequestPasswordReset";
+        public const string AuthRequestAccountVerification = "/Auth/RequestAccountVerification";
         public const string AuthSignOut = "/Auth/SignOut";
         public const string AppProfileDetails = "/App/Profile/Details";
 
@@ -26,5 +27,13 @@ namespace Stance.Web.Infrastructure.Constants
         public const string RoleView = "/App/UserManagement/Roles/ViewRole";
 
         public const string EnrollAuthenticatorApp = "/App/Profile/AuthenticatorApp";
+
+        public const string SecurityKeys = "/App/Profile/SecurityKeys";
+
+        public const string AuthDeviceMfa = "/Auth/ValidateDeviceMfa";
+
+        public const string ChangePassword = "/App/Profile/Password";
+
+        public const string AuthSignIn = "/Auth/UserAuthentication";
     }
 }

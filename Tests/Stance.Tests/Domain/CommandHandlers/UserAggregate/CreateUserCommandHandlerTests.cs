@@ -5,15 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Options;
 using Moq;
 using NodaTime;
 using Stance.Core.Contracts.Domain;
 using Stance.Core.Domain;
+using Stance.Core.Settings;
 using Stance.Domain.AggregatesModel.UserAggregate;
 using Stance.Domain.CommandHandlers.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models;
 using Xunit;
 
 namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
@@ -30,11 +32,13 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(true));
 
-            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);
-            var cmd = new CreateUserCommand(new string('*', 5), new string('*', 6), new string('*', 7), false, true, new List<Guid>());
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+
+            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object);
+            var cmd = new CreateUserCommand("email-address", "first-name", "last-name", false, true, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -51,11 +55,14 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
 
-            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);
-            var cmd = new CreateUserCommand(new string('*', 5), new string('*', 6), new string('*', 7), false, true, new List<Guid>());
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
+
+            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object);
+            var cmd = new CreateUserCommand("email-address", "first-name", "last-name", false, true, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
@@ -71,11 +78,13 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(true));
 
-            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);
-            var cmd = new CreateUserCommand(new string('*', 5), new string('*', 6), new string('*', 7), false, true, new List<Guid>());
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+
+            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object);
+            var cmd = new CreateUserCommand("email-address", "first-name", "last-name", false, true, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -94,11 +103,14 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.Add(It.IsAny<IUser>())).Callback((IUser user) => { userId = user.Id; });
 
-            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
 
-            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object);
-            var cmd = new CreateUserCommand(new string('*', 5), new string('*', 6), new string('*', 7), false, true, new List<Guid>());
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
+
+            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object);
+            var cmd = new CreateUserCommand("email-address", "first-name", "last-name", false, true, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             userRepository.Verify(x => x.Add(It.IsAny<IUser>()), Times.Once);

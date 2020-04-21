@@ -27,7 +27,7 @@ namespace Stance.Tests.Web.Infrastructure.PageModels
             page.AddNotification();
 
             Assert.Single(page.PageNotifications);
-            Assert.Contains(page.PageNotifications, x => x.Title == "some-title" && x.Message == "some-message");
+            Assert.Contains(page.PageNotifications, x => x.Message == "some-message");
         }
 
         [Fact]
@@ -95,7 +95,6 @@ namespace Stance.Tests.Web.Infrastructure.PageModels
             tempDataDictionary.Setup(x => x[It.IsAny<string>()])
                 .Returns(() => JsonConvert.SerializeObject(new NotificationPageModel.PageNotification
                 {
-                    Title = "some-title",
                     Message = "some-message",
                 }));
 
@@ -159,7 +158,6 @@ namespace Stance.Tests.Web.Infrastructure.PageModels
                 {
                     new NotificationPageModel.PageNotification
                     {
-                        Title = "some-title",
                         Message = "some-message",
                     },
                 }));
@@ -195,7 +193,6 @@ namespace Stance.Tests.Web.Infrastructure.PageModels
                 {
                     new NotificationPageModel.PageNotification
                     {
-                        Title = "some-title",
                         Message = "some-message",
                     },
                 }));
@@ -222,7 +219,7 @@ namespace Stance.Tests.Web.Infrastructure.PageModels
         {
             public void AddNotification()
             {
-                this.AddPageNotification("some-title", "some-message");
+                this.AddPageNotification("some-message", PageNotification.Success);
             }
         }
     }

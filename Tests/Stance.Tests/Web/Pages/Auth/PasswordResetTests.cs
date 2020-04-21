@@ -5,9 +5,11 @@ using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
 using Moq;
 using ResultMonad;
 using Stance.Core.Domain;
+using Stance.Core.Settings;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Infrastructure.PageModels;
 using Stance.Web.Pages.Auth;
@@ -22,11 +24,11 @@ namespace Stance.Tests.Web.Pages.Auth
         {
             var mediator = new Mock<IMediator>();
 
-            var page = new PasswordReset(mediator.Object) { Token = new string('*', 5) };
+            var page = new PasswordReset(mediator.Object) { Token = "token" };
             page.OnGet();
 
             Assert.NotNull(page.PageModel);
-            Assert.Equal(new string('*', 5), page.PageModel.Token);
+            Assert.Equal("token", page.PageModel.Token);
         }
 
         [Fact]
@@ -36,12 +38,12 @@ namespace Stance.Tests.Web.Pages.Auth
 
             var page = new PasswordReset(mediator.Object)
             {
-                Token = new string('*', 5),
-                PageModel = new PasswordReset.Model { Token = new string('*', 6) },
+                Token = "token",
+                PageModel = new PasswordReset.Model { Token = "model-token" },
             };
             page.OnGet();
 
-            Assert.Equal(new string('*', 6), page.PageModel.Token);
+            Assert.Equal("model-token", page.PageModel.Token);
         }
 
         [Fact]
@@ -49,7 +51,13 @@ namespace Stance.Tests.Web.Pages.Auth
         {
             var mediator = new Mock<IMediator>();
 
-            var page = new PasswordReset(mediator.Object);
+            var page = new PasswordReset(mediator.Object)
+            {
+                PageModel = new PasswordReset.Model
+                {
+                    Token = "token",
+                },
+            };
             page.ModelState.AddModelError("Error", "Error");
 
             var result = await page.OnPostAsync();
@@ -90,93 +98,126 @@ namespace Stance.Tests.Web.Pages.Auth
             Assert.Equal(PrgState.Failed, page.PrgState);
         }
 
-        [Fact]
-        public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
+        public class ValidatorTests
         {
-            var model = new PasswordReset.Model
+            [Fact]
+            public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
             {
-                Token = new string('*', 5),
-                Password = new string('*', 6),
-                PasswordConfirmation = new string('*', 6),
-            };
-            var validator = new PasswordReset.Validator();
-            var result = validator.Validate(model);
-            Assert.True(result.IsValid);
-        }
+                var securitySettings = new Mock<IOptions<SecuritySettings>>();
+                securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
+                {
+                    PasswordRequirements = new SecuritySettings.PasswordRequirement(),
+                });
+                var model = new PasswordReset.Model
+                {
+                    Token = "token",
+                    Password = "password",
+                    PasswordConfirmation = "password",
+                };
+                var validator = new PasswordReset.Validator(securitySettings.Object);
+                var result = validator.Validate(model);
+                Assert.True(result.IsValid);
+            }
 
-        [Fact]
-        public void Validate_GivenPasswordDoesNotMatchPasswordConfirmation_ExpectValidationFailure()
-        {
-            var model = new PasswordReset.Model
+            [Fact]
+            public void Validate_GivenPasswordDoesNotMatchPasswordConfirmation_ExpectValidationFailure()
             {
-                Token = new string('*', 5),
-                Password = new string('*', 6),
-                PasswordConfirmation = new string('*', 7),
-            };
-            var validator = new PasswordReset.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "PasswordConfirmation");
-        }
+                var securitySettings = new Mock<IOptions<SecuritySettings>>();
+                securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
+                {
+                    PasswordRequirements = new SecuritySettings.PasswordRequirement(),
+                });
+                var model = new PasswordReset.Model
+                {
+                    Token = "token",
+                    Password = "password",
+                    PasswordConfirmation = "new-password",
+                };
+                var validator = new PasswordReset.Validator(securitySettings.Object);
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "PasswordConfirmation");
+            }
 
-        [Fact]
-        public void Validate_GivenPasswordIsEmpty_ExpectValidationFailure()
-        {
-            var model = new PasswordReset.Model
+            [Fact]
+            public void Validate_GivenPasswordIsEmpty_ExpectValidationFailure()
             {
-                Token = new string('*', 5),
-                Password = string.Empty,
-                PasswordConfirmation = string.Empty,
-            };
-            var validator = new PasswordReset.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "Password");
-        }
+                var securitySettings = new Mock<IOptions<SecuritySettings>>();
+                securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
+                {
+                    PasswordRequirements = new SecuritySettings.PasswordRequirement(),
+                });
+                var model = new PasswordReset.Model
+                {
+                    Token = "token",
+                    Password = string.Empty,
+                    PasswordConfirmation = string.Empty,
+                };
+                var validator = new PasswordReset.Validator(securitySettings.Object);
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "Password");
+            }
 
-        [Fact]
-        public void Validate_GivenPasswordIsNull_ExpectValidationFailure()
-        {
-            var model = new PasswordReset.Model
+            [Fact]
+            public void Validate_GivenPasswordIsNull_ExpectValidationFailure()
             {
-                Token = new string('*', 5),
-                Password = null,
-                PasswordConfirmation = null,
-            };
-            var validator = new PasswordReset.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "Password");
-        }
+                var securitySettings = new Mock<IOptions<SecuritySettings>>();
+                securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
+                {
+                    PasswordRequirements = new SecuritySettings.PasswordRequirement(),
+                });
+                var model = new PasswordReset.Model
+                {
+                    Token = "token",
+                    Password = null,
+                    PasswordConfirmation = null,
+                };
+                var validator = new PasswordReset.Validator(securitySettings.Object);
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "Password");
+            }
 
-        [Fact]
-        public void Validate_GivenTokenIsEmpty_ExpectValidationFailure()
-        {
-            var model = new PasswordReset.Model
+            [Fact]
+            public void Validate_GivenTokenIsEmpty_ExpectValidationFailure()
             {
-                Token = string.Empty,
-                Password = new string('*', 6),
-                PasswordConfirmation = new string('*', 6),
-            };
-            var validator = new PasswordReset.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "Token");
-        }
+                var securitySettings = new Mock<IOptions<SecuritySettings>>();
+                securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
+                {
+                    PasswordRequirements = new SecuritySettings.PasswordRequirement(),
+                });
+                var model = new PasswordReset.Model
+                {
+                    Token = string.Empty,
+                    Password = "password",
+                    PasswordConfirmation = "password",
+                };
+                var validator = new PasswordReset.Validator(securitySettings.Object);
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "Token");
+            }
 
-        [Fact]
-        public void Validate_GivenTokenIsNull_ExpectValidationFailure()
-        {
-            var model = new PasswordReset.Model
+            [Fact]
+            public void Validate_GivenTokenIsNull_ExpectValidationFailure()
             {
-                Token = null,
-                Password = new string('*', 6),
-                PasswordConfirmation = new string('*', 6),
-            };
-            var validator = new PasswordReset.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "Token");
+                var securitySettings = new Mock<IOptions<SecuritySettings>>();
+                securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
+                {
+                    PasswordRequirements = new SecuritySettings.PasswordRequirement(),
+                });
+                var model = new PasswordReset.Model
+                {
+                    Token = null,
+                    Password = "password",
+                    PasswordConfirmation = "password",
+                };
+                var validator = new PasswordReset.Validator(securitySettings.Object);
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "Token");
+            }
         }
     }
 }

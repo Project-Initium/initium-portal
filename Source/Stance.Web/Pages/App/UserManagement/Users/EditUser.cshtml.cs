@@ -11,12 +11,14 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
+using Stance.Web.Infrastructure.Attributes;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.UserManagement.Users
 {
+    [ResourceBasedAuthorize("user-edit")]
     public class EditUser : PrgPageModel<EditUser.Model>
     {
         private readonly IMediator _mediator;
@@ -27,7 +29,7 @@ namespace Stance.Web.Pages.App.UserManagement.Users
         {
             this._userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._roleQueries = roleQueries;
+            this._roleQueries = roleQueries ?? throw new ArgumentNullException(nameof(roleQueries));
         }
 
         [BindProperty(SupportsGet = true)]
@@ -52,19 +54,16 @@ namespace Stance.Web.Pages.App.UserManagement.Users
             }
 
             var user = userMaybe.Value;
-            if (this.PageModel == null)
+            this.PageModel ??= new Model
             {
-                this.PageModel = new Model
-                {
-                    EmailAddress = user.EmailAddress,
-                    IsLockable = user.IsLockable,
-                    FirstName = user.FirstName,
-                    LastName = user.LastName,
-                    Id = user.UserId,
-                    IsAdmin = user.IsAdmin,
-                    Roles = user.Roles.ToList(),
-                };
-            }
+                EmailAddress = user.EmailAddress,
+                IsLockable = user.IsLockable,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                UserId = user.UserId,
+                IsAdmin = user.IsAdmin,
+                Roles = user.Roles.ToList(),
+            };
 
             this.Name = $"{user.FirstName} {user.LastName}";
             this.WhenCreated = user.WhenCreated;
@@ -73,9 +72,14 @@ namespace Stance.Web.Pages.App.UserManagement.Users
                 ? user.WhenLastAuthenticated.ToString()
                 : "Never Authenticated";
 
-            this.LockedStatus = user.IsLockable
-                ? user.WhenLocked.HasValue ? user.WhenLocked.ToString() : "Not Locked"
-                : "User is not lockable";
+            if (user.IsLockable)
+            {
+                this.LockedStatus = user.WhenLocked.HasValue ? user.WhenLocked.ToString() : "Not Locked";
+            }
+            else
+            {
+                this.LockedStatus = "User is not lockable";
+            }
 
             this.AvailableRoles = new List<SelectListItem>();
             var roles = await this._roleQueries.GetSimpleRoles();
@@ -95,7 +99,7 @@ namespace Stance.Web.Pages.App.UserManagement.Users
             }
 
             var result = await this._mediator.Send(new UpdateUserCoreDetailsCommand(
-                this.PageModel.Id,
+                this.PageModel.UserId,
                 this.PageModel.EmailAddress,
                 this.PageModel.FirstName,
                 this.PageModel.LastName,
@@ -105,15 +109,23 @@ namespace Stance.Web.Pages.App.UserManagement.Users
 
             if (result.IsSuccess)
             {
-                return this.RedirectToPage(PageLocations.UserView, new { id = this.PageModel.Id });
+                this.PrgState = PrgState.Success;
+                this.AddPageNotification("The user was updated successfully", PageNotification.Success);
+                return this.RedirectToPage(PageLocations.UserView, new { id = this.PageModel.UserId });
             }
 
+            this.AddPageNotification("There was an issue updating the user.", PageNotification.Error);
             this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }
 
         public class Model
         {
+            public Model()
+            {
+                this.Roles = new List<Guid>();
+            }
+
             [Display(Name = "Email Address")]
             public string EmailAddress { get; set; }
 
@@ -126,8 +138,9 @@ namespace Stance.Web.Pages.App.UserManagement.Users
             [Display(Name = "Last Name")]
             public string LastName { get; set; }
 
-            public Guid Id { get; set; }
+            public Guid UserId { get; set; }
 
+            [Display(Name = "Is Admin")]
             public bool IsAdmin { get; set; }
 
             public List<Guid> Roles { get; set; }
@@ -140,6 +153,12 @@ namespace Stance.Web.Pages.App.UserManagement.Users
                 this.RuleFor(x => x.EmailAddress)
                     .NotEmpty()
                     .EmailAddress();
+                this.RuleFor(x => x.FirstName)
+                    .NotEmpty();
+                this.RuleFor(x => x.LastName)
+                    .NotEmpty();
+                this.RuleFor(x => x.UserId)
+                    .NotEqual(Guid.Empty);
             }
         }
     }

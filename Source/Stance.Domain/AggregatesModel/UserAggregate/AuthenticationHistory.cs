@@ -16,6 +16,10 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this.AuthenticationHistoryType = authenticationHistoryType;
         }
 
+        private AuthenticationHistory()
+        {
+        }
+
         public DateTime WhenHappened { get; private set; }
 
         public AuthenticationHistoryType AuthenticationHistoryType { get; private set; }

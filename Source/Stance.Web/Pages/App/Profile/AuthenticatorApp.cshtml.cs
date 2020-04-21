@@ -10,6 +10,7 @@ using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using QRCoder;
@@ -17,11 +18,12 @@ using Stance.Core;
 using Stance.Core.Contracts;
 using Stance.Core.Settings;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.Profile
 {
+    [Authorize]
     public class AuthenticatorApp : PrgPageModel<AuthenticatorApp.Model>
     {
         [SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded",
@@ -134,9 +136,11 @@ namespace Stance.Web.Pages.App.Profile
             if (result.IsSuccess)
             {
                 this.PrgState = PrgState.Success;
+                this.AddPageNotification("Your app has been setup.", PageNotification.Success);
             }
             else
             {
+                this.AddPageNotification("There has been an issue setting up your app.", PageNotification.Error);
                 this.PrgState = PrgState.Failed;
             }
 
@@ -149,9 +153,11 @@ namespace Stance.Web.Pages.App.Profile
             if (result.IsSuccess)
             {
                 this.PrgState = PrgState.Success;
+                this.AddPageNotification("Your app has been revoked.", PageNotification.Success);
             }
             else
             {
+                this.AddPageNotification("There has been an issue revoking up your app.", PageNotification.Error);
                 this.PrgState = PrgState.Failed;
             }
 
@@ -190,7 +196,7 @@ namespace Stance.Web.Pages.App.Profile
                 this.RuleFor(x => x.SharedKey)
                     .NotEmpty();
                 this.RuleFor(x => x.Code)
-                    .NotEmpty();
+                    .NotEmpty().WithMessage("Please enter the code from your authenticator app.");
             }
         }
     }

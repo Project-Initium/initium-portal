@@ -13,7 +13,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
         {
-            var cmd = new PasswordResetCommand(new string('*', 5), new string('*', 6));
+            var cmd = new PasswordResetCommand("token", "new-password");
             var validator = new PasswordResetCommandValidator();
             var result = validator.Validate(cmd);
             Assert.True(result.IsValid);
@@ -22,7 +22,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenNewPasswordIsEmpty_ExpectValidationFailure()
         {
-            var cmd = new PasswordResetCommand(new string('*', 6), string.Empty);
+            var cmd = new PasswordResetCommand("token", string.Empty);
             var validator = new PasswordResetCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -35,7 +35,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenNewPasswordIsNull_ExpectValidationFailure()
         {
-            var cmd = new PasswordResetCommand(new string('*', 6), null);
+            var cmd = new PasswordResetCommand("token", null);
             var validator = new PasswordResetCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -48,7 +48,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenTokenIsEmpty_ExpectValidationFailure()
         {
-            var cmd = new PasswordResetCommand(string.Empty, new string('*', 6));
+            var cmd = new PasswordResetCommand(string.Empty, "new-password");
             var validator = new PasswordResetCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -61,7 +61,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenTokenIsNull_ExpectValidationFailure()
         {
-            var cmd = new PasswordResetCommand(null, new string('*', 6));
+            var cmd = new PasswordResetCommand(null, "new-password");
             var validator = new PasswordResetCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);

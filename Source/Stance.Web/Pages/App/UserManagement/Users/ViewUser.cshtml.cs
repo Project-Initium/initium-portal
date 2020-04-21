@@ -4,13 +4,15 @@
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models.User;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models.User;
+using Stance.Web.Infrastructure.Attributes;
+using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.UserManagement.Users
 {
-    public class ViewUser : PageModel
+    [ResourceBasedAuthorize("user-view")]
+    public class ViewUser : NotificationPageModel
     {
         private readonly IUserQueries _userQueries;
 

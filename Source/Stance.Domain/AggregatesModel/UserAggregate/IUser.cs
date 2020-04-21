@@ -22,6 +22,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         DateTime? WhenLocked { get; }
 
+        DateTime? WhenVerified { get; }
+
         int AttemptsSinceLastAuthentication { get; }
 
         bool IsAdmin { get; }
@@ -34,9 +36,13 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         IReadOnlyCollection<AuthenticatorApp> AuthenticatorApps { get; }
 
+        IReadOnlyCollection<AuthenticatorDevice> AuthenticatorDevices { get; }
+
         Guid SecurityStamp { get; }
 
         Profile Profile { get; }
+
+        bool IsVerified { get; }
 
         void ProcessSuccessfulAuthenticationAttempt(DateTime whenAttempted);
 
@@ -44,9 +50,13 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         void ProcessUnsuccessfulAuthenticationAttempt(DateTime whenAttempted, bool applyLock);
 
-        void GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration);
+        string GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration);
+
+        string GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration);
 
         void ChangePassword(string passwordHash);
+
+        void VerifyAccount(DateTime whenVerified);
 
         void CompleteTokenLifecycle(Guid token, DateTime whenHappened);
 
@@ -61,5 +71,11 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         AuthenticatorApp EnrollAuthenticatorApp(Guid id, string key, DateTime whenEnrolled);
 
         void RevokeAuthenticatorApp(DateTime whenRevoked);
+
+        AuthenticatorDevice EnrollAuthenticatorDevice(Guid id, DateTime whenEnrolled, byte[] publicKey, byte[] credentialId, Guid aaguid, int counter, string name, string credType);
+
+        void RevokeAuthenticatorDevice(Guid id, DateTime whenRevoked);
+
+        void UnlockAccount();
     }
 }

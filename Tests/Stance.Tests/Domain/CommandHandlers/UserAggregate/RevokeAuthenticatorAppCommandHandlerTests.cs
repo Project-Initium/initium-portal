@@ -28,7 +28,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>
             {
-                new AuthenticatorApp(Guid.NewGuid(), string.Empty, DateTime.UtcNow),
+                new AuthenticatorApp(TestVariables.AuthenticatorAppId, "key", TestVariables.Now),
             });
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -59,7 +59,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>
             {
-                new AuthenticatorApp(Guid.NewGuid(), string.Empty, DateTime.UtcNow),
+                new AuthenticatorApp(TestVariables.AuthenticatorAppId, "key", TestVariables.Now),
             });
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -71,7 +71,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var clock = new Mock<IClock>();
 
@@ -91,7 +91,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>
             {
-                new AuthenticatorApp(Guid.NewGuid(), string.Empty, DateTime.UtcNow),
+                new AuthenticatorApp(TestVariables.AuthenticatorAppId, "key", TestVariables.Now),
             });
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -102,7 +102,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var clock = new Mock<IClock>();
 
@@ -121,7 +121,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>
             {
-                new AuthenticatorApp(Guid.NewGuid(), string.Empty, DateTime.UtcNow),
+                new AuthenticatorApp(TestVariables.AuthenticatorAppId, "key", TestVariables.Now),
             });
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -132,7 +132,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var clock = new Mock<IClock>();
 
@@ -152,7 +152,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>
             {
-                new AuthenticatorApp(Guid.NewGuid(), string.Empty, DateTime.UtcNow),
+                new AuthenticatorApp(TestVariables.AuthenticatorAppId, "key", TestVariables.Now),
             });
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -163,7 +163,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var clock = new Mock<IClock>();
 
@@ -190,7 +190,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
-                .Returns(Maybe.From(new UnauthenticatedUser(Guid.NewGuid(), MfaProvider.None) as ISystemUser));
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
             var clock = new Mock<IClock>();
 

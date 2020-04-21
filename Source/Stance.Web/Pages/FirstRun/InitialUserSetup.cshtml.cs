@@ -3,13 +3,12 @@
 
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Threading;
 using System.Threading.Tasks;
 using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 
@@ -28,7 +27,7 @@ namespace Stance.Web.Pages.FirstRun
 
         public async Task<IActionResult> OnGet()
         {
-            var check = await this._userQueries.CheckForPresenceOfAnyUser(CancellationToken.None);
+            var check = await this._userQueries.CheckForPresenceOfAnyUser();
             if (check.IsPresent)
             {
                 return this.NotFound();
@@ -78,9 +77,17 @@ namespace Stance.Web.Pages.FirstRun
         {
             public Validator()
             {
-                this.RuleFor(x => x.EmailAddress).NotEmpty().EmailAddress();
-                this.RuleFor(x => x.Password).NotEmpty();
-                this.RuleFor(x => x.PasswordConfirmation).Equal(x => x.Password);
+                this.RuleFor(x => x.EmailAddress)
+                    .NotEmpty().WithMessage("Please enter your email address")
+                    .EmailAddress().WithMessage("The email address doesn't look valid");
+                this.RuleFor(x => x.FirstName)
+                    .NotEmpty().WithMessage("Please enter your first name");
+                this.RuleFor(x => x.LastName)
+                    .NotEmpty().WithMessage("Please enter your last name");
+                this.RuleFor(x => x.Password)
+                    .NotEmpty().WithMessage("Please enter a password");
+                this.RuleFor(x => x.PasswordConfirmation)
+                    .Equal(x => x.Password).WithMessage("The passwords don't seem to match.");
             }
         }
     }

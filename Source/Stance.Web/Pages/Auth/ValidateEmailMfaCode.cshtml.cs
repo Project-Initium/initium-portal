@@ -32,15 +32,20 @@ namespace Stance.Web.Pages.Auth
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
         }
 
-        public bool HasApp { get; set; }
+        public bool HasApp { get; private set; }
+
+        public bool HasDevice { get; private set; }
 
         public void OnGet()
         {
             var maybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
-            if (maybe.HasValue && maybe.Value is UnauthenticatedUser user)
+            if (!maybe.HasValue || !(maybe.Value is UnauthenticatedUser user))
             {
-                this.HasApp = user.SetupMfaProviders.HasFlag(MfaProvider.App);
+                return;
             }
+
+            this.HasApp = user.SetupMfaProviders.HasFlag(MfaProvider.App);
+            this.HasDevice = user.SetupMfaProviders.HasFlag(MfaProvider.Device);
         }
 
         public async Task<IActionResult> OnPost()
@@ -64,7 +69,36 @@ namespace Stance.Web.Pages.Auth
                 return this.LocalRedirect(returnUrl);
             }
 
-            this.PrgState = PrgState.InError;
+            this.PrgState = PrgState.Failed;
+            return this.RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostAppMfaAsync()
+        {
+            var result =
+                await this._mediator.Send(new AppMfaRequestedCommand());
+
+            if (result.IsSuccess)
+            {
+                return this.RedirectToPage(PageLocations.AuthAppMfa);
+            }
+
+            this.PrgState = PrgState.Failed;
+            return this.RedirectToPage();
+        }
+
+        public async Task<IActionResult> OnPostDeviceMfaAsync()
+        {
+            var result =
+                await this._mediator.Send(new DeviceMfaRequestCommand());
+
+            if (result.IsSuccess)
+            {
+                this.TempData["fido2.assertionOptions"] = result.Value.AssertionOptions.ToJson();
+                return this.RedirectToPage(PageLocations.AuthDeviceMfa);
+            }
+
+            this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }
 

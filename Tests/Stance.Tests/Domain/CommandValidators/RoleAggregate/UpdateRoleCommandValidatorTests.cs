@@ -15,7 +15,7 @@ namespace Stance.Tests.Domain.CommandValidators.RoleAggregate
         [Fact]
         public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
         {
-            var cmd = new UpdateRoleCommand(Guid.NewGuid(), new string('*', 5), new List<Guid>());
+            var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
             var validator = new UpdateRoleCommandValidator();
             var result = validator.Validate(cmd);
             Assert.True(result.IsValid);
@@ -24,7 +24,7 @@ namespace Stance.Tests.Domain.CommandValidators.RoleAggregate
         [Fact]
         public void Validate_GivenRoleIdIsEmpty_ExpectValidationFailure()
         {
-            var cmd = new UpdateRoleCommand(Guid.Empty, new string('*', 5), new List<Guid>());
+            var cmd = new UpdateRoleCommand(Guid.Empty, "name", new List<Guid>());
             var validator = new UpdateRoleCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -37,7 +37,7 @@ namespace Stance.Tests.Domain.CommandValidators.RoleAggregate
         [Fact]
         public void Validate_GivenNameIsEmpty_ExpectValidationFailure()
         {
-            var cmd = new UpdateRoleCommand(Guid.NewGuid(), string.Empty, new List<Guid>());
+            var cmd = new UpdateRoleCommand(TestVariables.RoleId, string.Empty, new List<Guid>());
             var validator = new UpdateRoleCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -50,7 +50,7 @@ namespace Stance.Tests.Domain.CommandValidators.RoleAggregate
         [Fact]
         public void Validate_GivenNameIsNull_ExpectValidationFailure()
         {
-            var cmd = new UpdateRoleCommand(Guid.NewGuid(), null, new List<Guid>());
+            var cmd = new UpdateRoleCommand(TestVariables.RoleId, null, new List<Guid>());
             var validator = new UpdateRoleCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);

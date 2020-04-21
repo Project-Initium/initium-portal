@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using MediatR;
@@ -10,6 +11,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Stance.Core.Contracts.Domain;
 using Stance.Domain.AggregatesModel.RoleAggregate;
 using Stance.Domain.AggregatesModel.UserAggregate;
+using Stance.Infrastructure.Extensions;
+
+[assembly: InternalsVisibleTo("Stance.Tests")]
 
 namespace Stance.Infrastructure
 {
@@ -124,6 +128,15 @@ namespace Stance.Infrastructure
                 authenticatorApps.Property(authenticatorApp => authenticatorApp.Id)
                     .ValueGeneratedNever();
                 authenticatorApps.Ignore(authenticatorApp => authenticatorApp.DomainEvents);
+            });
+
+            users.OwnsMany(user => user.AuthenticatorDevices, authenticatorDevices =>
+            {
+                authenticatorDevices.ToTable("authenticatorDevice", "identity");
+                authenticatorDevices.HasKey(authenticatorDevice => authenticatorDevice.Id);
+                authenticatorDevices.Property(authenticatorDevice => authenticatorDevice.Id)
+                    .ValueGeneratedNever();
+                authenticatorDevices.Ignore(authenticatorDevice => authenticatorDevice.DomainEvents);
             });
         }
     }

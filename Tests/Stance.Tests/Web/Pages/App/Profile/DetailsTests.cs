@@ -11,8 +11,8 @@ using Moq;
 using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models.User;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models.User;
 using Stance.Web.Infrastructure.PageModels;
 using Stance.Web.Pages.App.Profile;
 using Xunit;
@@ -26,7 +26,7 @@ namespace Stance.Tests.Web.Pages.App.Profile
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetProfileForCurrentUser(It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetProfileForCurrentUser())
                 .ReturnsAsync(() => Maybe<ProfileModel>.Nothing);
 
             var page = new Details(mediator.Object, userQueries.Object);
@@ -39,14 +39,14 @@ namespace Stance.Tests.Web.Pages.App.Profile
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetProfileForCurrentUser(It.IsAny<CancellationToken>())).ReturnsAsync(() =>
-                Maybe.From(new ProfileModel(new string('*', 5), new string('*', 6))));
+            userQueries.Setup(x => x.GetProfileForCurrentUser()).ReturnsAsync(() =>
+                Maybe.From(new ProfileModel("first-name", "last-name")));
 
             var page = new Details(mediator.Object, userQueries.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
-            Assert.Equal(new string('*', 5), page.PageModel.FirstName);
-            Assert.Equal(new string('*', 6), page.PageModel.LastName);
+            Assert.Equal("first-name", page.PageModel.FirstName);
+            Assert.Equal("last-name", page.PageModel.LastName);
         }
 
         [Fact]
@@ -59,7 +59,7 @@ namespace Stance.Tests.Web.Pages.App.Profile
 
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
-            userQueries.Verify(x => x.GetProfileForCurrentUser(It.IsAny<CancellationToken>()), Times.Never);
+            userQueries.Verify(x => x.GetProfileForCurrentUser(), Times.Never);
         }
 
         [Fact]
@@ -103,6 +103,66 @@ namespace Stance.Tests.Web.Pages.App.Profile
             var result = await page.OnPostAsync();
             Assert.IsType<RedirectToPageResult>(result);
             Assert.Equal(PrgState.Success, page.PrgState);
+        }
+
+        public class ValidatorTests
+        {
+            [Fact]
+            public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
+            {
+                var cmd = new Details.Model { FirstName = "first-name", LastName = "last-name" };
+                var validator = new Details.Validator();
+                var result = validator.Validate(cmd);
+                Assert.True(result.IsValid);
+            }
+
+            [Fact]
+            public void Validate_GivenLastNameIsEmpty_ExpectValidationFailure()
+            {
+                var cmd = new Details.Model { FirstName = "first-name", LastName = string.Empty };
+                var validator = new Details.Validator();
+                var result = validator.Validate(cmd);
+                Assert.False(result.IsValid);
+                Assert.Contains(
+                    result.Errors,
+                    failure => failure.PropertyName == "LastName");
+            }
+
+            [Fact]
+            public void Validate_GivenLastNameIsNull_ExpectValidationFailure()
+            {
+                var cmd = new Details.Model { FirstName = "first-name", LastName = null };
+                var validator = new Details.Validator();
+                var result = validator.Validate(cmd);
+                Assert.False(result.IsValid);
+                Assert.Contains(
+                    result.Errors,
+                    failure => failure.PropertyName == "LastName");
+            }
+
+            [Fact]
+            public void Validate_GivenFirstNameIsEmpty_ExpectValidationFailure()
+            {
+                var cmd = new Details.Model { FirstName = string.Empty, LastName = "last-name" };
+                var validator = new Details.Validator();
+                var result = validator.Validate(cmd);
+                Assert.False(result.IsValid);
+                Assert.Contains(
+                    result.Errors,
+                    failure => failure.PropertyName == "FirstName");
+            }
+
+            [Fact]
+            public void Validate_GivenFirstNameIsNull_ExpectValidationFailure()
+            {
+                var cmd = new Details.Model { FirstName = null, LastName = "last-name" };
+                var validator = new Details.Validator();
+                var result = validator.Validate(cmd);
+                Assert.False(result.IsValid);
+                Assert.Contains(
+                    result.Errors,
+                    failure => failure.PropertyName == "FirstName");
+            }
         }
     }
 }

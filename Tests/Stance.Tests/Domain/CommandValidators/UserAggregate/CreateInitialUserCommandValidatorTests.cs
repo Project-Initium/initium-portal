@@ -13,7 +13,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
         {
-            var cmd = new CreateInitialUserCommand("a@b.com", new string('*', 6), string.Empty, string.Empty);
+            var cmd = new CreateInitialUserCommand("a@b.com", "password", "first-name", "last-name");
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.True(result.IsValid);
@@ -22,7 +22,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenEmailAddressIsEmpty_ExpectValidationFailure()
         {
-            var cmd = new CreateInitialUserCommand(string.Empty, new string('*', 6), string.Empty, string.Empty);
+            var cmd = new CreateInitialUserCommand(string.Empty, "password", "first-name", "last-name");
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -35,7 +35,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenEmailAddressIsNotValidEmailAddress_ExpectValidationFailure()
         {
-            var cmd = new CreateInitialUserCommand(new string('*', 5), new string('*', 6), string.Empty, string.Empty);
+            var cmd = new CreateInitialUserCommand("email-address", "password", "first-name", "last-name");
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -48,7 +48,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenEmailAddressIsNull_ExpectValidationFailure()
         {
-            var cmd = new CreateInitialUserCommand(null, new string('*', 6), string.Empty, string.Empty);
+            var cmd = new CreateInitialUserCommand(null, "password", "first-name", "last-name");
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -61,7 +61,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenPasswordIsEmpty_ExpectValidationFailure()
         {
-            var cmd = new CreateInitialUserCommand("a@b.com", string.Empty, string.Empty, string.Empty);
+            var cmd = new CreateInitialUserCommand("a@b.com", string.Empty, "first-name", "last-name");
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -74,7 +74,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenPasswordIsNull_ExpectValidationFailure()
         {
-            var cmd = new CreateInitialUserCommand("a@b.com", null, string.Empty, string.Empty);
+            var cmd = new CreateInitialUserCommand("a@b.com", null, "first-name", "last-name");
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -82,6 +82,58 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
                            failure.PropertyName == "Password");
+        }
+
+        [Fact]
+        public void Validate_GivenFirstNameIsEmpty_ExpectValidationFailure()
+        {
+            var cmd = new CreateInitialUserCommand("a@b.com", "password", string.Empty, "last-name");
+            var validator = new CreateInitialUserCommandValidator();
+            var result = validator.Validate(cmd);
+            Assert.False(result.IsValid);
+            Assert.Contains(
+                result.Errors,
+                failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
+                           failure.PropertyName == "FirstName");
+        }
+
+        [Fact]
+        public void Validate_GivenFirstNameIsNull_ExpectValidationFailure()
+        {
+            var cmd = new CreateInitialUserCommand("a@b.com", "password", null, "last-name");
+            var validator = new CreateInitialUserCommandValidator();
+            var result = validator.Validate(cmd);
+            Assert.False(result.IsValid);
+            Assert.Contains(
+                result.Errors,
+                failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
+                           failure.PropertyName == "FirstName");
+        }
+
+        [Fact]
+        public void Validate_GivenLastNameIsEmpty_ExpectValidationFailure()
+        {
+            var cmd = new CreateInitialUserCommand("a@b.com", "password", "first-name", string.Empty);
+            var validator = new CreateInitialUserCommandValidator();
+            var result = validator.Validate(cmd);
+            Assert.False(result.IsValid);
+            Assert.Contains(
+                result.Errors,
+                failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
+                           failure.PropertyName == "LastName");
+        }
+
+        [Fact]
+        public void Validate_GivenLastNameIsNull_ExpectValidationFailure()
+        {
+            var cmd = new CreateInitialUserCommand("a@b.com", "password", "first-name", null);
+            var validator = new CreateInitialUserCommandValidator();
+            var result = validator.Validate(cmd);
+            Assert.False(result.IsValid);
+            Assert.Contains(
+                result.Errors,
+                failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
+                           failure.PropertyName == "LastName");
         }
     }
 }

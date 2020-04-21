@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Linq;
 using Stance.Core.Constants;
 using Stance.Core.Domain;
-using Stance.Domain.Events;
 
 namespace Stance.Domain.AggregatesModel.UserAggregate
 {
@@ -16,6 +15,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         private readonly List<SecurityTokenMapping> _securityTokenMappings;
         private readonly List<UserRole> _userRoles;
         private readonly List<AuthenticatorApp> _authenticatorApps;
+        private readonly List<AuthenticatorDevice> _authenticatorDevices;
 
         public User(Guid id, string emailAddress, string passwordHash, bool isLockable, DateTime whenCreated, string firstName, string lastName, IReadOnlyList<Guid> roles, bool isAdmin)
         {
@@ -33,6 +33,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this._securityTokenMappings = new List<SecurityTokenMapping>();
             this._userRoles = roles.Select(x => new UserRole(x)).ToList();
             this._authenticatorApps = new List<AuthenticatorApp>();
+            this._authenticatorDevices = new List<AuthenticatorDevice>();
         }
 
         private User()
@@ -41,6 +42,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this._securityTokenMappings = new List<SecurityTokenMapping>();
             this._userRoles = new List<UserRole>();
             this._authenticatorApps = new List<AuthenticatorApp>();
+            this._authenticatorDevices = new List<AuthenticatorDevice>();
         }
 
         public string EmailAddress { get; private set; }
@@ -50,6 +52,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         public DateTime WhenCreated { get; private set; }
 
         public DateTime? WhenLastAuthenticated { get; private set; }
+
+        public DateTime? WhenVerified { get; private set; }
 
         public bool IsLockable { get; private set; }
 
@@ -63,6 +67,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         public bool IsAdmin { get; private set; }
 
+        public bool IsVerified => this.WhenVerified.HasValue;
+
         public IReadOnlyList<AuthenticationHistory> AuthenticationHistories =>
             this._authenticationHistories.AsReadOnly();
 
@@ -72,6 +78,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         public IReadOnlyCollection<UserRole> UserRoles => this._userRoles.AsReadOnly();
 
         public IReadOnlyCollection<AuthenticatorApp> AuthenticatorApps => this._authenticatorApps.AsReadOnly();
+
+        public IReadOnlyCollection<AuthenticatorDevice> AuthenticatorDevices => this._authenticatorDevices.AsReadOnly();
 
         public void ProcessSuccessfulAuthenticationAttempt(DateTime whenAttempted)
         {
@@ -96,7 +104,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             }
         }
 
-        public void GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration)
+        public string GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration)
         {
             var token =
                 this._securityTokenMappings.FirstOrDefault(m =>
@@ -109,12 +117,34 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
                 this._securityTokenMappings.Add(token);
             }
 
-            this.AddDomainEvent(new PasswordResetTokenGeneratedEvent(this.Id, this.EmailAddress, token.Token));
+            return token.Token;
+        }
+
+        public string GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration)
+        {
+            var token =
+                this.SecurityTokenMappings.FirstOrDefault(m =>
+                    m.WhenUsed == null && m.WhenExpires >= whenRequested &&
+                    m.Purpose == SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation);
+            if (token == null)
+            {
+                token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation, whenRequested,
+                    whenRequested.Add(duration));
+                this._securityTokenMappings.Add(token);
+            }
+
+            return token.Token;
         }
 
         public void ChangePassword(string passwordHash)
         {
             this.PasswordHash = passwordHash;
+            this.SecurityStamp = Guid.NewGuid();
+        }
+
+        public void VerifyAccount(DateTime whenVerified)
+        {
+            this.WhenVerified = whenVerified;
         }
 
         public void CompleteTokenLifecycle(Guid token, DateTime whenHappened)
@@ -164,6 +194,25 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         public void RevokeAuthenticatorApp(DateTime whenRevoked)
         {
             this._authenticatorApps.Single(x => x.WhenRevoked == null).RevokeApp(whenRevoked);
+        }
+
+        public AuthenticatorDevice EnrollAuthenticatorDevice(Guid id, DateTime whenEnrolled, byte[] publicKey,
+            byte[] credentialId, Guid aaguid, int counter, string name, string credType)
+        {
+            var authenticatorDevice = new AuthenticatorDevice(id, whenEnrolled, publicKey, credentialId, aaguid,
+                counter, name, credType);
+            this._authenticatorDevices.Add(authenticatorDevice);
+            return authenticatorDevice;
+        }
+
+        public void RevokeAuthenticatorDevice(Guid id, DateTime whenRevoked)
+        {
+            this._authenticatorDevices.Single(x => x.Id == id).RevokeDevice(whenRevoked);
+        }
+
+        public void UnlockAccount()
+        {
+            this.WhenLocked = null;
         }
     }
 }

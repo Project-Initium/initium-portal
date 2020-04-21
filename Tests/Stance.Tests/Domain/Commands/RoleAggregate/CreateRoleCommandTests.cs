@@ -13,8 +13,8 @@ namespace Stance.Tests.Domain.Commands.RoleAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var command = new CreateRoleCommand(new string('*', 5), new List<Guid> { Guid.NewGuid() });
-            Assert.Equal(new string('*', 5), command.Name);
+            var command = new CreateRoleCommand("name", new List<Guid> { TestVariables.ResourceId });
+            Assert.Equal("name", command.Name);
             Assert.Single(command.Resources);
         }
     }

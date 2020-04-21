@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Stance.Infrastructure;
-using Stance.Queries.OData;
+using Stance.Queries.Dynamic;
 
 namespace Stance.Web.Infrastructure.ServiceConfiguration
 {

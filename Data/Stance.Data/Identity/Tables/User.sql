@@ -10,4 +10,5 @@
     ,   [AttemptsSinceLastAuthentication] INT NOT NULL DEFAULT 0
     ,   [SecurityStamp] UNIQUEIDENTIFIER NOT NULL DEFAULT NEWID()
     ,   [IsAdmin] BIT NOT NULL DEFAULT 0
+    ,   [WhenVerified] DATETIME2 NULL
 )

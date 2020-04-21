@@ -1,0 +1,50 @@
+﻿@page "/auth/multi-factor-device"
+@model Stance.Web.Pages.Auth.ValidateDeviceMfa
+@{
+}
+<section id="wrapper" class="login-register login-sidebar">
+    <div class="login-box card">
+        <div class="card-body">
+            <form class="form-horizontal form-material" method="post" id="start-verification" data-make-assertion-uri="@Url.Action("MakeAssertion", "AuthDeviceApi")" data-assertion-options-uri="@Url.Action("AssertionOptionsPost", "AuthDeviceApi")">
+                <a href="#" class="text-center d-block"><img src="~/logo.png" alt="Home" /></a>
+                <h4 class="rounded-title mt-4 mb-0">Use Fido Device</h4>
+                <small>Insert your security key. When you are ready to authenticate, press the button below.</small>
+                <div class="form-group text-center mt-3">
+                    <div class="col-xs-12">
+                        <button class="btn btn-info btn-md btn-block text-uppercase waves-effect waves-light">Use security key</button>
+                    </div>
+                </div>
+            </form>
+            <hr />
+            <p>Or select a different method</p>
+
+            <form class="feeds m-0 p-0 mt-3 pt-2" method="post">
+
+                @if (Model.HasApp)
+                {
+
+                    <button asp-page-handler="AppMfa" class="feed-item d-flex py-2 align-items-center w-100 b-0 bg-white">
+                        <span class="btn btn-info btn-circle font-18 text-white d-flex align-items-center justify-content-center"><i class="fas fa-mobile-alt"></i></span>
+                        <div class="ml-3">
+                            <span class="">Authenticator App</span>
+                        </div>
+                    </button>
+                    <hr class="m-t-5 m-b-5" />
+                }
+                <button asp-page-handler="EmailMfa" class="feed-item d-flex py-2 align-items-center w-100 b-0 bg-white">
+                    <span class="btn btn-info btn-circle font-18 text-white d-flex align-items-center justify-content-center"><i class="far fa-envelope"></i></span>
+                    <div class="ml-3">
+                        <span class="">Email</span>
+                    </div>
+                </button>
+            </form>
+
+
+        </div>
+    </div>
+</section>
+
+@section scripts
+{
+    <script type="text/javascript" src="~/validate-device-mfa.js.gz" asp-append-version="true"></script>
+}

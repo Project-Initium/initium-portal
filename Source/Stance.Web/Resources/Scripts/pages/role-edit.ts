@@ -1,15 +1,18 @@
 import 'gijgo'
+import { Validator } from '../services/validator';
 
 
 export class RoleEdit {
     private tree: Types.Tree;
     private form: HTMLFormElement;
+    private validator: Validator;
     constructor() {
         if (document.readyState !== 'loading') {
             this.init();
         } else {
             document.addEventListener('DOMContentLoaded', e => this.init());
         }
+        
     }
 
     init() {
@@ -27,12 +30,14 @@ export class RoleEdit {
 
         
          this.form = document.querySelector('form#role-create') as HTMLFormElement;
+         this.validator = new Validator(this.form, false)
                  
          this.form.addEventListener('submit', (e) => { contextThis.formSubmit(e); });        
     }
 
      private formSubmit(event: Event): void {
          
+        if (!this.validator.validate()) {
             this.tree.find('input[type=checkbox]:checked').each((index, value) => {
                 var checkbox = $(value)
                 checkbox.attr('name', 'pagemodel.resources')
@@ -41,7 +46,9 @@ export class RoleEdit {
                 checkbox.val(parentLi.data('id'))
     
             })
-            console.log(this.tree.getCheckedNodes());
+        } else {
+            event.preventDefault();
+         }
      }
 
     private treeOnDataBound(e: Event){

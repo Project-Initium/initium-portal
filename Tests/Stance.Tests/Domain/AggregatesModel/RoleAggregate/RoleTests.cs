@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Stance.Domain.AggregatesModel.RoleAggregate;
 using Xunit;
 
@@ -13,18 +14,34 @@ namespace Stance.Tests.Domain.AggregatesModel.RoleAggregate
         [Fact]
         public void Constructor_GiveValidArguments_ExpectPropertiesAreSet()
         {
-            var id = Guid.NewGuid();
-            var name = new string('*', 5);
-            var resourceId = Guid.NewGuid();
-
-            var role = new Role(id, name, new List<Guid>
+            var role = new Role(TestVariables.RoleId, "name", new List<Guid>
             {
-                resourceId,
+                TestVariables.ResourceId,
             });
 
-            Assert.Equal(id, role.Id);
-            Assert.Equal(name, role.Name);
-            Assert.Contains(role.RoleResources, resource => resource.Id == resourceId);
+            Assert.Equal(TestVariables.RoleId, role.Id);
+            Assert.Equal("name", role.Name);
+            var roleResource = Assert.Single(role.RoleResources);
+            Assert.NotNull(roleResource);
+
+            foreach (var prop in role.GetType().GetProperties().Where(x => x.PropertyType.Name == "IReadOnlyList`1"))
+            {
+                var val = prop.GetValue(role, null);
+                Assert.False(val == null, $"{prop.Name} is null");
+            }
+        }
+
+        [Fact]
+        public void Constructor_GivenPrivateIsCalled_ExpectObjectCreated()
+        {
+            var role = (Role)Activator.CreateInstance(typeof(Role), true);
+            Assert.NotNull(role);
+
+            foreach (var prop in role.GetType().GetProperties().Where(x => x.PropertyType.Name == "IReadOnlyList`1"))
+            {
+                var val = prop.GetValue(role, null);
+                Assert.False(val == null, $"{prop.Name} is null");
+            }
         }
 
         [Fact]
@@ -56,13 +73,10 @@ namespace Stance.Tests.Domain.AggregatesModel.RoleAggregate
         [Fact]
         public void UpdateName_GiveValidArguments_ExpectNameIsUpdated()
         {
-            var id = Guid.NewGuid();
-            var newName = new string('*', 5);
+            var role = new Role(TestVariables.RoleId, string.Empty, new List<Guid>());
+            role.UpdateName("new-name");
 
-            var role = new Role(id, string.Empty, new List<Guid>());
-            role.UpdateName(newName);
-
-            Assert.Equal(newName, role.Name);
+            Assert.Equal("new-name", role.Name);
         }
     }
 }

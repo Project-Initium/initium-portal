@@ -11,7 +11,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Stance.Core.Constants;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
 using IAuthenticationService = Stance.Web.Infrastructure.Contracts.IAuthenticationService;
 
 namespace Stance.Web.Infrastructure.Services
@@ -47,6 +47,15 @@ namespace Stance.Web.Infrastructure.Services
                         maybe.Value.IsAdmin,
                         maybe.Value.Resources.ToList()), Formatting.None)),
             };
+
+            if (maybe.Value.IsAdmin)
+            {
+                claims.Add(new Claim(ClaimTypes.System, "1"));
+            }
+            else
+            {
+                claims.AddRange(maybe.Value.Resources.Select(x => new Claim(ClaimTypes.Role, x)));
+            }
 
             var claimsIdentity = new ClaimsIdentity(
                 claims, CookieAuthenticationDefaults.AuthenticationScheme);

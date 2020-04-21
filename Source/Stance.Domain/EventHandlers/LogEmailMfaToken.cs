@@ -20,8 +20,8 @@ namespace Stance.Domain.EventHandlers
 
         public Task Handle(EmailMfaTokenGeneratedEvent notification, CancellationToken cancellationToken)
         {
-            this._logger.LogInformation("MFA Token for email {EmailAddress} is {Token}", notification.UserEmailAddress,
-                notification.Generated);
+            this._logger.LogInformation("MFA Token for email {EmailAddress} is {Token}", notification.EmailAddress,
+                notification.Token);
 
             return Task.FromResult(0);
         }

@@ -9,12 +9,14 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.RoleAggregate;
-using Stance.Queries.Contracts;
+using Stance.Queries.Contracts.Static;
+using Stance.Web.Infrastructure.Attributes;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 
 namespace Stance.Web.Pages.App.UserManagement.Roles
 {
+    [ResourceBasedAuthorize("role-edit")]
     public class EditRole : PrgPageModel<EditRole.Model>
     {
         private readonly IMediator _mediator;
@@ -40,15 +42,12 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
             }
 
             var role = roleMaybe.Value;
-            if (this.PageModel == null)
+            this.PageModel ??= new Model
             {
-                this.PageModel = new Model
-                {
-                    RoleId = role.Id,
-                    Name = role.Name,
-                    Resources = role.Resources.ToList(),
-                };
-            }
+                RoleId = role.Id,
+                Name = role.Name,
+                Resources = role.Resources.ToList(),
+            };
 
             this.Name = role.Name;
 
@@ -67,9 +66,12 @@ namespace Stance.Web.Pages.App.UserManagement.Roles
 
             if (result.IsSuccess)
             {
+                this.PrgState = PrgState.Success;
+                this.AddPageNotification("The role was updated successfully", PageNotification.Success);
                 return this.RedirectToPage(PageLocations.RoleView, new { id = this.PageModel.RoleId });
             }
 
+            this.AddPageNotification("There was an issue updating the role.", PageNotification.Error);
             this.PrgState = PrgState.Failed;
             return this.RedirectToPage();
         }

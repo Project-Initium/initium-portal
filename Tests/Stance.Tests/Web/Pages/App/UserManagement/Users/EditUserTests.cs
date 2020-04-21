@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
@@ -13,9 +14,9 @@ using Moq;
 using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.Commands.UserAggregate;
-using Stance.Queries.Contracts;
-using Stance.Queries.Models.Role;
-using Stance.Queries.Models.User;
+using Stance.Queries.Contracts.Static;
+using Stance.Queries.Static.Models.Role;
+using Stance.Queries.Static.Models.User;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.PageModels;
 using Stance.Web.Pages.App.UserManagement.Users;
@@ -30,14 +31,15 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
+                .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
+                    "last-name", true, TestVariables.Now, null, null, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
-            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object) { PageModel = new EditUser.Model() };
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object)
+                { PageModel = new EditUser.Model() };
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Null(page.PageModel.EmailAddress);
@@ -48,17 +50,23 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
+                .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
+                    "last-name", true, TestVariables.Now, null, null, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
+            roleQueries.Setup(s => s.GetSimpleRoles())
+                .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>
+                {
+                    new SimpleRoleModel(TestVariables.RoleId, "name"),
+                }));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
-            Assert.Equal(new string('*', 4), page.PageModel.EmailAddress);
+            Assert.Equal("email-address", page.PageModel.EmailAddress);
+            Assert.Equal("first-name last-name", page.Name);
+            Assert.Equal(TestVariables.Now, page.WhenCreated);
+            Assert.Single(page.AvailableRoles);
         }
 
         [Fact]
@@ -66,18 +74,17 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            var whenLocked = DateTime.UtcNow;
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, null, whenLocked, true, new List<Guid>())));
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
+                .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
+                    "last-name", true, TestVariables.Now, null, TestVariables.Now, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
-            Assert.Equal(whenLocked.ToString(), page.LockedStatus);
+            Assert.Equal(TestVariables.Now.ToString(CultureInfo.CurrentCulture), page.LockedStatus);
         }
 
         [Fact]
@@ -85,11 +92,11 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
+                .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
+                    "last-name", true, TestVariables.Now, null, null, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
@@ -103,7 +110,7 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe<DetailedUserModel>.Nothing);
             var roleQueries = new Mock<IRoleQueries>();
 
@@ -118,11 +125,11 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
 
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), false, DateTime.UtcNow, null, null, true, new List<Guid>())));
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
+                .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
+                    "last-name", false, TestVariables.Now, null, null, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
@@ -137,18 +144,18 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            var whenLastAuthenticated = DateTime.UtcNow;
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, whenLastAuthenticated, null, true, new List<Guid>())));
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
+                .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
+                    "last-name", false, TestVariables.Now, TestVariables.Now.AddMinutes(30), null, true,
+                    new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
-            Assert.Equal(whenLastAuthenticated.ToString(), page.AuthenticationStatus);
+            Assert.Equal(TestVariables.Now.AddMinutes(30).ToString(CultureInfo.CurrentCulture), page.AuthenticationStatus);
         }
 
         [Fact]
@@ -156,11 +163,11 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
         {
             var mediator = new Mock<IMediator>();
             var userQueries = new Mock<IUserQueries>();
-            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From(new DetailedUserModel(Guid.NewGuid(), new string('*', 4), new string('*', 5),
-                    new string('*', 6), true, DateTime.UtcNow, null, null, true, new List<Guid>())));
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
+                .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
+                    "last-name", true, TestVariables.Now, null, null, true, new List<Guid>())));
             var roleQueries = new Mock<IRoleQueries>();
-            roleQueries.Setup(s => s.GetSimpleRoles(It.IsAny<CancellationToken>()))
+            roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object);
@@ -193,7 +200,8 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var userQueries = new Mock<IUserQueries>();
             var roleQueries = new Mock<IRoleQueries>();
 
-            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object) { PageModel = new EditUser.Model() };
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object)
+                { PageModel = new EditUser.Model() };
 
             var result = await page.OnPostAsync();
             var pageResult = Assert.IsType<RedirectToPageResult>(result);
@@ -210,50 +218,146 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var userQueries = new Mock<IUserQueries>();
             var roleQueries = new Mock<IRoleQueries>();
 
-            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object) { PageModel = new EditUser.Model() };
+            var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object)
+                { PageModel = new EditUser.Model() };
 
             var result = await page.OnPostAsync();
             Assert.IsType<RedirectToPageResult>(result);
             Assert.Equal(PrgState.Failed, page.PrgState);
         }
 
-        [Fact]
-        public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
+        public class ValidatorTests
         {
-            var model = new EditUser.Model { EmailAddress = "a@b.com" };
-            var validator = new EditUser.Validator();
-            var result = validator.Validate(model);
-            Assert.True(result.IsValid);
-        }
+            [Fact]
+            public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
+            {
+                var model = new EditUser.Model
+                {
+                    FirstName = "first-name", LastName = "last-name", EmailAddress = "a@b.com",
+                    UserId = TestVariables.UserId,
+                };
+                var validator = new EditUser.Validator();
+                var result = validator.Validate(model);
+                Assert.True(result.IsValid);
+            }
 
-        [Fact]
-        public void Validate_GivenEmailAddressIsEmpty_ExpectValidationFailure()
-        {
-            var model = new EditUser.Model { EmailAddress = string.Empty };
-            var validator = new EditUser.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
-        }
+            [Fact]
+            public void Validate_GivenEmailAddressIsEmpty_ExpectValidationFailure()
+            {
+                var model = new EditUser.Model
+                {
+                    FirstName = "first-name", LastName = "last-name", EmailAddress = string.Empty,
+                    UserId = TestVariables.UserId,
+                };
+                var validator = new EditUser.Validator();
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
+            }
 
-        [Fact]
-        public void Validate_GivenEmailAddressIsNotValidEmailAddress_ExpectValidationFailure()
-        {
-            var model = new EditUser.Model { EmailAddress = new string('*', 5) };
-            var validator = new EditUser.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
-        }
+            [Fact]
+            public void Validate_GivenEmailAddressIsNotValidEmailAddress_ExpectValidationFailure()
+            {
+                var model = new EditUser.Model
+                {
+                    FirstName = "first-name", LastName = "last-name", EmailAddress = "email-address",
+                    UserId = TestVariables.UserId,
+                };
+                var validator = new EditUser.Validator();
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
+            }
 
-        [Fact]
-        public void Validate_GivenEmailAddressIsNull_ExpectValidationFailure()
-        {
-            var model = new EditUser.Model { EmailAddress = null };
-            var validator = new EditUser.Validator();
-            var result = validator.Validate(model);
-            Assert.False(result.IsValid);
-            Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
+            [Fact]
+            public void Validate_GivenEmailAddressIsNull_ExpectValidationFailure()
+            {
+                var model = new EditUser.Model
+                {
+                    FirstName = "first-name", LastName = "last-name", EmailAddress = null,
+                    UserId = TestVariables.UserId,
+                };
+                var validator = new EditUser.Validator();
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(result.Errors, x => x.PropertyName == "EmailAddress");
+            }
+
+            [Fact]
+            public void Validate_GivenFirstNameIsEmpty_ExpectValidationFailure()
+            {
+                var cmd = new EditUser.Model
+                {
+                    FirstName = string.Empty, LastName = "last-name", EmailAddress = "a@b.com",
+                    UserId = TestVariables.UserId,
+                };
+                var validator = new EditUser.Validator();
+                var result = validator.Validate(cmd);
+                Assert.False(result.IsValid);
+                Assert.Contains(
+                    result.Errors,
+                    failure => failure.PropertyName == "FirstName");
+            }
+
+            [Fact]
+            public void Validate_GivenFirstNameIsNull_ExpectValidationFailure()
+            {
+                var cmd = new EditUser.Model
+                {
+                    FirstName = null, LastName = "last-name", EmailAddress = "a@b.com",
+                    UserId = TestVariables.UserId,
+                };
+                var validator = new EditUser.Validator();
+                var result = validator.Validate(cmd);
+                Assert.False(result.IsValid);
+                Assert.Contains(
+                    result.Errors,
+                    failure => failure.PropertyName == "FirstName");
+            }
+
+            [Fact]
+            public void Validate_GivenLastNameIsEmpty_ExpectValidationFailure()
+            {
+                var cmd = new EditUser.Model
+                {
+                    FirstName = "first-name", LastName = string.Empty, EmailAddress = "a@b.com",
+                    UserId = TestVariables.UserId,
+                };
+                var validator = new EditUser.Validator();
+                var result = validator.Validate(cmd);
+                Assert.False(result.IsValid);
+                Assert.Contains(
+                    result.Errors,
+                    failure => failure.PropertyName == "LastName");
+            }
+
+            [Fact]
+            public void Validate_GivenLastNameIsNull_ExpectValidationFailure()
+            {
+                var cmd = new EditUser.Model
+                {
+                    FirstName = "first-name", LastName = null, EmailAddress = "a@b.com", UserId = TestVariables.UserId,
+                };
+                var validator = new EditUser.Validator();
+                var result = validator.Validate(cmd);
+                Assert.False(result.IsValid);
+                Assert.Contains(
+                    result.Errors,
+                    failure => failure.PropertyName == "LastName");
+            }
+
+            [Fact]
+            public void Validate_GivenUserIdIsEmpty_ExpectValidationFailure()
+            {
+                var model = new EditUser.Model
+                    { FirstName = "first-name", LastName = "last-name", EmailAddress = "a@b.com", UserId = Guid.Empty };
+                var validator = new EditUser.Validator();
+                var result = validator.Validate(model);
+                Assert.False(result.IsValid);
+                Assert.Contains(
+                    result.Errors,
+                    failure => failure.PropertyName == "UserId");
+            }
         }
     }
 }
