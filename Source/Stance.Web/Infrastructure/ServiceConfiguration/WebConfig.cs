@@ -12,6 +12,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
 using NWebsec.AspNetCore.Mvc.Csp;
 using Stance.Queries.Dynamic.Entities;
+using Stance.Web.Controllers.OData.User;
 using Stance.Web.Infrastructure.Formatters;
 using Stance.Web.Pages.FirstRun;
 
@@ -72,7 +73,7 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
             app.UseMvc(routeBuilder =>
             {
                 routeBuilder.MapODataServiceRoute("odata", "odata", GetEdmModel());
-                routeBuilder.Select().Expand().Filter().OrderBy().MaxTop(1000).Count();
+                routeBuilder.Select().Expand().Filter().OrderBy().Count();
             });
 
             return app;
@@ -81,7 +82,12 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
         private static IEdmModel GetEdmModel()
         {
             var builder = new ODataConventionModelBuilder();
-            builder.EntitySet<User>("User");
+            var user = builder.EntitySet<User>("User");
+            var function = user.EntityType.Collection.Function("Export");
+            function.Returns<FileResult>();
+            var action = user.EntityType.Collection.Action("Filtered");
+            action.Parameter<UserFilter>("Filter");
+            action.ReturnsCollectionFromEntitySet<User>("User");
             builder.EntitySet<Role>("Role");
             return builder.GetEdmModel();
         }

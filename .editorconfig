@@ -1,0 +1,4 @@
+﻿[*.cs]
+
+# S3875: "operator==" should not be overloaded on reference types
+dotnet_diagnostic.S3875.severity = none
