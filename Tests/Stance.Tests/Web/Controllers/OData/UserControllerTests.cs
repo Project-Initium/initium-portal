@@ -6,6 +6,7 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Stance.Queries.Dynamic;
 using Stance.Queries.Dynamic.Entities;
+using Stance.Web.Controllers.OData;
 using Stance.Web.Controllers.OData.User;
 using Xunit;
 

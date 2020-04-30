@@ -22,34 +22,35 @@ namespace Stance.Web.Controllers.OData.User
             this._context = context;
         }
 
-        [EnableQuery(AllowedQueryOptions = AllowedQueryOptions.All)]
+        [EnableQuery(AllowedQueryOptions = AllowedQueryOptions.All, MaxTop = 1000)]
         [ODataRoute("")]
         public override IQueryable<Queries.Dynamic.Entities.User> Get()
         {
             return this._context.Users;
         }
 
-        [ODataRoute("Filtered")]
-        public override IQueryable<Queries.Dynamic.Entities.User> Filtered([FromBody] UserFilter filter)
+        [EnableQuery(AllowedQueryOptions = AllowedQueryOptions.All, MaxTop = 1000)]
+        [ODataRoute("User.Filtered")]
+        public override IActionResult Filtered([FromBody] UserFilter filter)
         {
-            if (filter == null)
-            {
-                return this._context.Users;
-            }
+             if (filter == null)
+             {
+                  return this.Ok(this._context.Users);
+             }
 
-            var predicate = this.GeneratePredicate(filter);
-            return this._context.Users.Where(predicate);
+             var predicate = this.GeneratePredicate(filter);
+             return this.Ok(this._context.Users.Where(predicate));
         }
 
-        [ODataRoute("Export")]
+        [ODataRoute("User.Export")]
         public override IActionResult Export(ODataQueryOptions<Queries.Dynamic.Entities.User> options)
         {
-            IQueryable query = this._context.Users;
-            return this.File(this.GenerateCsvStream(query, options), "application/csv");
+             IQueryable query = this._context.Users;
+             return this.File(this.GenerateCsvStream(query, options), "application/csv");
         }
 
-        [ODataRoute("Filtered-Export")]
-        public override IActionResult FilteredExport(ODataQueryOptions<Queries.Dynamic.Entities.User> options, UserFilter filter)
+        [ODataRoute("User.FilteredExport")]
+        public override IActionResult FilteredExport(ODataQueryOptions<Queries.Dynamic.Entities.User> options, [FromBody]UserFilter filter)
         {
             IQueryable query;
             if (filter == null)

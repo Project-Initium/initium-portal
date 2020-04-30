@@ -23,7 +23,7 @@ namespace Stance.Web.Infrastructure.Controllers
 
         public abstract IActionResult Export(ODataQueryOptions<TReadEntity> options);
 
-        public abstract IQueryable<TReadEntity> Filtered(TFilterModel filter);
+        public abstract IActionResult Filtered(TFilterModel filter);
 
         public abstract IActionResult FilteredExport(ODataQueryOptions<TReadEntity> options, TFilterModel filter);
 
@@ -51,8 +51,18 @@ namespace Stance.Web.Infrastructure.Controllers
             var selectedProperties = options.SelectExpand.RawSelect.Split(',');
             var memoryStream = new MemoryStream();
             var streamWriter = new StreamWriter(memoryStream);
-            streamWriter.WriteLine(options.SelectExpand.RawSelect);
+
             var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
+            if (options.SelectExpand == null || string.IsNullOrEmpty(options.SelectExpand.RawSelect))
+            {
+                csvWriter.WriteHeader<TReadEntity>();
+                csvWriter.NextRecord();
+            }
+            else
+            {
+                streamWriter.WriteLine(options.SelectExpand.RawSelect);
+            }
+
             foreach (var user in resultList)
             {
                 foreach (var selectedProperty in selectedProperties)

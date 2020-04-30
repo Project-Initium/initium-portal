@@ -12,10 +12,7 @@ export interface IStateData {
     start: number;
     length: number;
     order: any[][];
-    search: {
-        search: string;
-        smart: boolean;
-    }
+    search: string
 }
 export interface ISimpleStateData {
     s: number;
@@ -25,24 +22,22 @@ export interface ISimpleStateData {
     p?: string
 }
 export interface ICustomQuery {
-    actionUrl: string;
     requestData: any
-    method?: string;
+    searchParam: string;
 }
 
 export interface ISettings  {
     route: string;
-    externalFilter?: (filterQuery: IODataRequest) => ICustomQuery;
-    externalState?: (stateData: IStateData, simpleStateData: ISimpleStateData) => {stateData: IStateData, simpleStateData: ISimpleStateData};
-    externalHydration?: (params: URLSearchParams) => void;
-    externalStateManager?: (state:IStateData) => void;
+    externalFilter: (filterQuery: IODataRequest) => ICustomQuery;
+    externalState: (stateData: IStateData, simpleStateData: ISimpleStateData) => {stateData: IStateData, simpleStateData: ISimpleStateData};
+    externalHydration: (params: URLSearchParams) => void;
+    externalStateManager: (state:IStateData) => void;
 }
 
 export class CustomizedDataTable {
     public readonly tableApi: DataTables.Api;
     private popped: boolean = false;
-    private searchField: JQuery<HTMLElement>;
-
+    
     constructor(tableElement: JQuery<HTMLElement>, private settings: ISettings, opts: DataTables.Settings) {
         const contextThis = this;
         opts.ajax = this.providerFunction(this.settings.route, this.settings.externalFilter);
@@ -53,7 +48,6 @@ export class CustomizedDataTable {
         opts.serverSide = true;
         this.tableApi = tableElement.DataTable(opts);
         window.addEventListener('popstate', (event) => contextThis.listenForHistoryChange(event));
-        this.searchField = tableElement.find('.dataTables_filter input[type=search]')
     }
 
     private generateSelection(settings: DataTables.SettingsLegacy, excludeNonVisible: boolean = false) :string {
@@ -122,9 +116,9 @@ export class CustomizedDataTable {
         const request: IODataRequest = {};
         let settings:DataTables.SettingsLegacy = (this.tableApi.columns().data() as any).context[0]
         request.$select = this.generateSelection(settings, true);
-        
-        debugger;
-        let searchValue = this.tableApi.search()
+
+        const customQuery = externalFilter(request);
+        let searchValue = customQuery.searchParam
         if (searchValue) {
             const filter =  this.generateFilters(settings, searchValue);
             if(filter) {
@@ -150,19 +144,12 @@ export class CustomizedDataTable {
             },
             redirect: 'follow',
             referrerPolicy: 'no-referrer',
-            method: 'GET',
-        }
+            method: 'POST',
+        }           
+        
         let getUrl = new URL(exportUrl, document.location.origin);
-        if (externalFilter) {
-            const customQuery = externalFilter(request);
-            if (customQuery.method) {
-                fetchRequest.method = customQuery.method;
-            }
-            getUrl = new URL(customQuery.actionUrl, document.location.origin);
-            fetchRequest.body = JSON.stringify(customQuery.requestData);
-        }
-
-
+        fetchRequest.body = JSON.stringify(customQuery.requestData);
+        
         Object.keys(request).forEach(key => getUrl.searchParams.append(key, request[key]))
         fetch(getUrl.toString(), fetchRequest)
             .then((response) => {
@@ -185,6 +172,8 @@ export class CustomizedDataTable {
                 $count: false
             };
 
+            const customQuery = externalFilter(request);
+             
             request.$select = this.generateSelection(settings);
 
             request.$skip = settings._iDisplayStart;
@@ -193,7 +182,7 @@ export class CustomizedDataTable {
             }
             request.$count = true;
 
-            if (data.search.value) {
+            if (customQuery.searchParam) {
                 const filter = this.generateFilters(settings, data.search.value);
                 if(filter) {
                     request.$filter = filter;
@@ -218,17 +207,11 @@ export class CustomizedDataTable {
                 },
                 redirect: 'follow',
                 referrerPolicy: 'no-referrer',
-                method: 'GET',
+                method: 'Post',
             }
             let getUrl = new URL(url, document.location.origin);
-            if (externalFilter) {
-                const customQuery = externalFilter(request);
-                if (customQuery.method) {
-                    fetchRequest.method = customQuery.method;
-                }
-                getUrl = new URL(customQuery.actionUrl, document.location.origin);
                 fetchRequest.body = JSON.stringify(customQuery.requestData);
-            } 
+            
             
             
             Object.keys(request).forEach(key => getUrl.searchParams.append(key, request[key]))
@@ -277,14 +260,17 @@ export class CustomizedDataTable {
                 d: data.order[0][1],                
                 s: data.start
             }
-            if (data.search.search && data.search.search !== 'null') {
-                dataToSave.p = data.search.search;
-            }
+            
             if (externalState) {
                 const returned = externalState(data, dataToSave);
                 data = returned.stateData;
                 dataToSave = returned.simpleStateData;
             }
+            
+            if (data.search) {
+                dataToSave.p = data.search;
+            }
+            
             const queryString = Object.keys(dataToSave).map((key) => {
                 return encodeURIComponent(key) + '=' + encodeURIComponent(dataToSave[key])
             }).join('&');
@@ -294,7 +280,7 @@ export class CustomizedDataTable {
     }
 
     private stateLoadCallback(externalHydration?: (params: URLSearchParams) => void): (settings: DataTables.SettingsLegacy) => IStateData {
-        return (): IStateData => {
+        return (): any => {
 
             const params = new URLSearchParams(document.location.search)
             
@@ -316,10 +302,6 @@ export class CustomizedDataTable {
                 time: new Date().getTime(),
                 start: data.s,
                 length: data.l,
-                search: {
-                    search: data.p,
-                    smart: true
-                },
                 order: [
                     [data.c, data.d]
                 ]
@@ -335,12 +317,10 @@ export class CustomizedDataTable {
         }
 
         this.popped = true;
-        this.searchField.val(state.search.search)
 
         this.tableApi.page.len(state.length)
             .page(state.length / state.start)
             .order(state.order)
-            .search(state.search.search)
             .draw()
 
     }

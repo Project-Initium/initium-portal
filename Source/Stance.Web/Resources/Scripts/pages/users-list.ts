@@ -4,7 +4,6 @@ import * as moment from 'moment';
 import {
     CustomizedDataTable,
     ICustomQuery,
-    IODataRequest,
     ISimpleStateData,
     IStateData
 } from '../services/customized-data-table'
@@ -68,25 +67,17 @@ class FilterViewModel {
             count ++
         }
         return count;
-    })
+    });
+    
+    private customQuery: ICustomQuery;
     
     public getFilter(): ICustomQuery {
-        const request: IRequest = {
-            verified: this.verified(),
-            unverified: this.unverified(),
-            locked: this.locked(),
-            unlocked: this.unlocked(),
-            admin: this.admin(),
-            nonAdmin: this.nonAdmin()
+        if (!this.customQuery) {
+            this.createInternalRequest()
         }
-        
-        return {
-            requestData: request,
-            method: 'POST',
-            actionUrl: this.searchUrl
-        }
+        return this.customQuery;
     }
-    constructor(private searchUrl: string) {
+    constructor() {
     }
     
     public hydrateFromParams(params: URLSearchParams) {
@@ -125,6 +116,7 @@ class FilterViewModel {
         if (userStateData.nonAdmin) {            
             userSimpleStateData.fna = '1';
         }
+        userStateData.search = this.searchTerm();
         return {stateData: userStateData, simpleStateData: userSimpleStateData}
     }
     
@@ -135,10 +127,10 @@ class FilterViewModel {
         this.unlocked(userStateData.unlocked);
         this.admin(userStateData.admin);
         this.nonAdmin(userStateData.nonAdmin);
-        this.searchTerm(userStateData.search.search);
+        this.searchTerm(userStateData.search);
     }
 
-    reset() {
+    public reset() {
         this.verified(false);
         this.unverified(false);
         this.locked(false);
@@ -146,13 +138,28 @@ class FilterViewModel {
         this.admin(false);
         this.nonAdmin(false);
     }
+    
+    public createInternalRequest() {
+        const request: IRequest = {
+            verified: this.verified(),
+            unverified: this.unverified(),
+            locked: this.locked(),
+            unlocked: this.unlocked(),
+            admin: this.admin(),
+            nonAdmin: this.nonAdmin()
+        }
+
+        this.customQuery = {
+            requestData: request,
+            searchParam: this.searchTerm()
+        }
+    }
 
     
 }
 
 
 export class UsersList {
-    private tableApi: DataTables.Api;
     private detailsUrl: string;
     private searchFacets: HTMLDivElement;
     private customizedDataTable: CustomizedDataTable;
@@ -221,7 +228,7 @@ export class UsersList {
     }
 
     private rowClicked(event: JQuery.ClickEvent): void {
-        window.location.href = this.detailsUrl.replace('__ID__', (<any>this.tableApi.row(event.currentTarget).data()).Id);
+        window.location.href = this.detailsUrl.replace('__ID__', (<any>this.customizedDataTable.tableApi.row(event.currentTarget).data()).Id);
     }
     
          
@@ -232,10 +239,10 @@ export class UsersList {
                 
         this.detailsUrl = $tableElement.data('details');
 
-        this.filterVM = new FilterViewModel($tableElement.data('routeFiltered'))
+        this.filterVM = new FilterViewModel();
         
         this.customizedDataTable = new CustomizedDataTable($tableElement, {
-            route: $tableElement.data('route'),
+            route: $tableElement.data('routeFiltered'),
             externalHydration: (params: URLSearchParams) => contextThis.filterVM.hydrateFromParams(params),
             externalState: (userStateData: IUserStateData, userSimpleStateData: IUserSimpleStateData) => contextThis.filterVM.generateStateData(userStateData, userSimpleStateData),
             externalStateManager: (userStateData: IUserStateData) => contextThis.filterVM.hydrateFromState(userStateData),
@@ -248,9 +255,7 @@ export class UsersList {
         const toggle = filterForm.querySelector('.filter-toggle');
         toggle.addEventListener('click', (event) => contextThis.toggleFilters(event))
         this.filterToggleIcon = toggle.querySelector('i');
-        this.searchFacets = filterForm.querySelector('#filter-options');
-
-        
+        this.searchFacets = filterForm.querySelector('#filter-options');       
         
         
         ko.bindingProvider.instance = new KnockoutSecureBinding({
@@ -277,12 +282,13 @@ export class UsersList {
 
     search(event: Event): any {
         event.preventDefault();
-        this.tableApi.search(this.filterVM.searchTerm())
+        this.filterVM.createInternalRequest()
+        this.customizedDataTable.tableApi.draw();
     }
     
     requestExport(event: MouseEvent): void {
         event.preventDefault();
-        this.customizedDataTable.generateExport(this.exportUrl);
+        this.customizedDataTable.generateExport(this.exportUrl, () => this.filterVM.getFilter());
     }
 }
 new UsersList();
