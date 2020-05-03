@@ -2,13 +2,13 @@ import 'datatables.net'
 import 'datatables.net-bs4'
 import * as moment from 'moment';
 import {
-    CustomizedDataTable,
     ICustomQuery,
     ISimpleStateData,
     IStateData
 } from '../services/customized-data-table'
 import * as ko from 'knockout'
-import * as KnockoutSecureBinding from 'knockout-secure-binding'
+import {BaseFilterViewModel, BaseList} from './base-list'
+
 import 'gijgo'
 
 interface IRequest {
@@ -38,7 +38,7 @@ interface IUserStateData extends IStateData {
     nonAdmin: boolean
 }
 
-class FilterViewModel {
+class FilterViewModel extends BaseFilterViewModel {
     public verified = ko.observable<boolean>(true);
     public unverified = ko.observable<boolean>(true);
     public locked = ko.observable<boolean>(true);
@@ -78,6 +78,7 @@ class FilterViewModel {
         return this.customQuery;
     }
     constructor() {
+        super()
     }
     
     public hydrateFromParams(params: URLSearchParams) {
@@ -159,13 +160,8 @@ class FilterViewModel {
 }
 
 
-export class UsersList {
-    private detailsUrl: string;
-    private searchFacets: HTMLDivElement;
-    private customizedDataTable: CustomizedDataTable;
-    private exportUrl: string;
-    private filterVM: FilterViewModel;
-    private readonly tableOptions: DataTables.Settings = {
+export class UsersList extends BaseList<FilterViewModel>{
+    protected readonly tableOptions: DataTables.Settings = {
         columns: [
             {
                 data: 'EmailAddress',
@@ -218,77 +214,18 @@ export class UsersList {
         ],
         dom: 'rt<"table-information"lpi>'
     };
-    private filterToggleIcon: HTMLSpanElement;
+   
     constructor() {
-        if (document.readyState !== 'loading') {
+        super();
+       if (document.readyState !== 'loading') {
             this.init();
         } else {
             document.addEventListener('DOMContentLoaded', e => this.init());
         }
     }
-
-    private rowClicked(event: JQuery.ClickEvent): void {
-        window.location.href = this.detailsUrl.replace('__ID__', (<any>this.customizedDataTable.tableApi.row(event.currentTarget).data()).Id);
-    }
     
-         
     private init() {
-   
-        const contextThis = this;
-        const $tableElement = $('#users');
-                
-        this.detailsUrl = $tableElement.data('details');
-
-        this.filterVM = new FilterViewModel();
-        
-        this.customizedDataTable = new CustomizedDataTable($tableElement, {
-            route: $tableElement.data('routeFiltered'),
-            externalHydration: (params: URLSearchParams) => contextThis.filterVM.hydrateFromParams(params),
-            externalState: (userStateData: IUserStateData, userSimpleStateData: IUserSimpleStateData) => contextThis.filterVM.generateStateData(userStateData, userSimpleStateData),
-            externalStateManager: (userStateData: IUserStateData) => contextThis.filterVM.hydrateFromState(userStateData),
-            externalFilter: () => contextThis.filterVM.getFilter()
-            
-        }, this.tableOptions);
-        const filterForm = document.getElementById('filters') as HTMLFormElement;
-        filterForm.addEventListener('reset', (event) => contextThis.filterVM.reset())
-        filterForm.addEventListener('submit', (event) => contextThis.search(event));
-        const toggle = filterForm.querySelector('.filter-toggle');
-        toggle.addEventListener('click', (event) => contextThis.toggleFilters(event))
-        this.filterToggleIcon = toggle.querySelector('i');
-        this.searchFacets = filterForm.querySelector('#filter-options');       
-        
-        
-        ko.bindingProvider.instance = new KnockoutSecureBinding({
-            attribute: 'data-bind',
-            globals: window,
-            bindings: ko.bindingHandlers,
-            noVirtualElements: false
-        })
-        ko.applyBindings(this.filterVM);
-
-        let exportBtn: HTMLButtonElement = document.querySelector('[data-export]');
-        this.exportUrl = exportBtn.dataset.export;
-        exportBtn.addEventListener('click', (event) => contextThis.requestExport(event))
-        
-        $tableElement.on('click', 'tbody tr', (event) => contextThis.rowClicked(event));
-    }
-
-    toggleFilters(event: Event): void {
-        event.preventDefault();
-        this.filterToggleIcon.classList.toggle('fa-caret-down');
-        this.filterToggleIcon.classList.toggle('fa-caret-up');
-        this.searchFacets.classList.toggle('d-none');
-    }
-
-    search(event: Event): any {
-        event.preventDefault();
-        this.filterVM.createInternalRequest()
-        this.customizedDataTable.tableApi.draw();
-    }
-    
-    requestExport(event: MouseEvent): void {
-        event.preventDefault();
-        this.customizedDataTable.generateExport(this.exportUrl, () => this.filterVM.getFilter());
+        this.baseInit('#users', new FilterViewModel());
     }
 }
 new UsersList();

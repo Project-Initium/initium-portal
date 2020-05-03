@@ -3,7 +3,6 @@ import Swal  from 'sweetalert2';
 import 'bootstrap';
 import 'metismenu';
 
-
 class App {
     private header: HTMLElement;
     private pageWrapper: HTMLElement;
