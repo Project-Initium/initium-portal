@@ -11,7 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
 using NWebsec.AspNetCore.Mvc.Csp;
-using Stance.Queries.Dynamic.Entities;
+using Stance.Web.Infrastructure.Extensions;
 using Stance.Web.Infrastructure.Formatters;
 using Stance.Web.Pages.FirstRun;
 
@@ -72,7 +72,7 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
             app.UseMvc(routeBuilder =>
             {
                 routeBuilder.MapODataServiceRoute("odata", "odata", GetEdmModel());
-                routeBuilder.Select().Expand().Filter().OrderBy().MaxTop(1000).Count();
+                routeBuilder.Select().Expand().Filter().OrderBy().Count().MaxTop(int.MaxValue);
             });
 
             return app;
@@ -80,10 +80,10 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
 
         private static IEdmModel GetEdmModel()
         {
-            var builder = new ODataConventionModelBuilder();
-            builder.EntitySet<User>("User");
-            builder.EntitySet<Role>("Role");
-            return builder.GetEdmModel();
+            return new ODataConventionModelBuilder()
+                .SetupUserEntity()
+                .SetupRoleEntity()
+                .GetEdmModel();
         }
     }
 }

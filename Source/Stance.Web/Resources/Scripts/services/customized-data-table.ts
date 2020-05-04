@@ -2,7 +2,7 @@ export interface IODataRequest {
     $select?: string;
     $skip?: number;
     $top?: number;
-    $count: boolean;
+    $count?: boolean;
     $filter?: string;
     $orderby?: string;
 }
@@ -12,32 +12,32 @@ export interface IStateData {
     start: number;
     length: number;
     order: any[][];
-    search: {
-        search: string;
-        smart: boolean;
-    }
+    search: string
 }
 export interface ISimpleStateData {
     s: number;
     l: number;
     c: number;
     d: string;
-    p: string
+    p?: string
+}
+export interface ICustomQuery {
+    requestData: any
+    searchParam: string;
 }
 
 export interface ISettings  {
     route: string;
-    externalFilter?: (filterQuery: IODataRequest) => Promise<any>;
-    externalState?: (stateData: IStateData, simpleStateData: ISimpleStateData) => {data: IStateData, simpleStateData: ISimpleStateData};
-    externalHydration?: (params: URLSearchParams) => void;
-    externalStateManager?: (state:IStateData) => void;
+    externalFilter: (filterQuery: IODataRequest) => ICustomQuery;
+    externalState: (stateData: IStateData, simpleStateData: ISimpleStateData) => {stateData: IStateData, simpleStateData: ISimpleStateData};
+    externalHydration: (params: URLSearchParams) => void;
+    externalStateManager: (state:IStateData) => void;
 }
 
 export class CustomizedDataTable {
     public readonly tableApi: DataTables.Api;
     private popped: boolean = false;
-    private searchField: JQuery<HTMLElement>;
-
+    
     constructor(tableElement: JQuery<HTMLElement>, private settings: ISettings, opts: DataTables.Settings) {
         const contextThis = this;
         opts.ajax = this.providerFunction(this.settings.route, this.settings.externalFilter);
@@ -48,26 +48,133 @@ export class CustomizedDataTable {
         opts.serverSide = true;
         this.tableApi = tableElement.DataTable(opts);
         window.addEventListener('popstate', (event) => contextThis.listenForHistoryChange(event));
-        this.searchField = tableElement.find('.dataTables_filter input[type=search]')
     }
 
-    private providerFunction(url: string, externalFilter?: ((filterQuery: IODataRequest) => Promise<any>)): (data: object, callback: ((data: any) => void), settings: DataTables.SettingsLegacy) => void {
+    private generateSelection(settings: DataTables.SettingsLegacy, excludeNonVisible: boolean = false) :string {
+        let select = '';
+        settings.aoColumns.forEach(value => {
+            if (excludeNonVisible && !value.bVisible) {
+                return;
+            }
+            const fieldName = CustomizedDataTable.getColumnFieldName(value);
+            if (!fieldName) {
+                return;
+            }
+            if (!select) {
+                select = fieldName;
+            } else {
+                select += ',' + fieldName;
+            }
+        });
+        
+        return select;
+    }
+    
+    private generateFilters(settings: DataTables.SettingsLegacy, searchValue: string): string {
+        let filters: string[] = [];
+        let globalFilter : string = undefined;
+        let isGlobalFilterNumber: boolean = false;
+        let globalFilterNumber: number = undefined;
+        
+        globalFilter = searchValue.trim();
+        globalFilterNumber = Number(globalFilter);
+        isGlobalFilterNumber = !isNaN(globalFilterNumber)
+        
+
+        settings.aoColumns.forEach((value) => {
+            const fieldName:string = CustomizedDataTable.getColumnFieldName(value);
+            const columnType:string = value.sType || (<any>value).type || 'unknown';
+
+            if ((!globalFilter) || !value.bSearchable || !fieldName) {
+                return;
+            }
+
+            switch (columnType) {
+                case 'string':
+                    if (globalFilter) {
+                        filters.push(`indexof(tolower(${fieldName}), '${globalFilter.toLowerCase()}') gt -1`);
+                    }
+                    break;
+                case "number":
+                    if (isGlobalFilterNumber) {
+                        filters.push(`(${fieldName} eq ${globalFilterNumber})`);
+                    }
+                    break;
+                default:
+            }
+        });
+
+        if (filters.length > 0) {
+            return filters.join(' or ');
+        }
+        
+        return undefined;
+    }
+
+     
+    public generateExport(exportUrl: string, externalFilter?: (filterQuery: IODataRequest) => ICustomQuery)  {
+        const request: IODataRequest = {};
+        let settings:DataTables.SettingsLegacy = (this.tableApi.columns().data() as any).context[0]
+        request.$select = this.generateSelection(settings, true);
+
+        const customQuery = externalFilter(request);
+        let searchValue = customQuery.searchParam
+        if (searchValue) {
+            const filter =  this.generateFilters(settings, searchValue);
+            if(filter) {
+                request.$filter = filter;
+            }
+        }
+
+        let orderBy: string[] = [];
+        this.tableApi.order().forEach((value) =>{
+            orderBy.push(`${CustomizedDataTable.getColumnFieldName(settings.aoColumns[value[0]])} ${value[1]}`);
+        })
+
+        if (orderBy.length > 0) {
+            request.$orderby = orderBy.join();
+        }
+
+        let fetchRequest: RequestInit = {
+            mode: 'same-origin',
+            cache: 'no-cache',
+            credentials: 'same-origin',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            redirect: 'follow',
+            referrerPolicy: 'no-referrer',
+            method: 'POST',
+        }           
+        
+        let getUrl = new URL(exportUrl, document.location.origin);
+        fetchRequest.body = JSON.stringify(customQuery.requestData);
+        
+        Object.keys(request).forEach(key => getUrl.searchParams.append(key, request[key]))
+        fetch(getUrl.toString(), fetchRequest)
+            .then((response) => {
+                return response.blob()
+            })
+            .then((value: Blob) => {
+                const url = window.URL.createObjectURL(value);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download =  "report.csv";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            })
+    }
+    
+    private providerFunction(url: string, externalFilter?: ((filterQuery: IODataRequest) => ICustomQuery)): (data: object, callback: ((data: any) => void), settings: DataTables.SettingsLegacy) => void {
         return (data: any, callback: ((data: any) => void), settings: DataTables.SettingsLegacy) => {
-            const request: IODataRequest = {
+             const request: IODataRequest = {
                 $count: false
             };
 
-            settings.aoColumns.forEach(value => {
-                var fieldName = CustomizedDataTable.getColumnFieldName(value);
-                if (!fieldName) {
-                    return;
-                }
-                if (!request.$select) {
-                    request.$select = fieldName;
-                } else {
-                    request.$select += ',' + fieldName;
-                }
-            });
+            const customQuery = externalFilter(request);
+             
+            request.$select = this.generateSelection(settings);
 
             request.$skip = settings._iDisplayStart;
             if (settings._iDisplayLength > -1) {
@@ -75,148 +182,49 @@ export class CustomizedDataTable {
             }
             request.$count = true;
 
-            var filters = [];
-            var columnFilters = [];
-            var globalFilter = data.search.value;
-
-            settings.aoColumns.forEach((value, i) => {
-                var fieldName = CustomizedDataTable.getColumnFieldName(value);
-                var columnFilter = data.columns[i].search.value;
-                var columnType = (value as any).type || 'string';
-
-                if ((!globalFilter && !columnFilter) || !value.bSearchable || !fieldName) {
-                    return;
-                }
-
-                switch (columnType) {
-                    case "string":
-                    case "html":
-                        if (globalFilter && globalFilter.trim()) {
-                            filters.push("indexof(tolower(" + fieldName + "), '" + globalFilter.toLowerCase() + "') gt -1");
-                        }
-
-                        if (columnFilter && columnFilter.trim()) {
-                            columnFilters.push("indexof(tolower(" + fieldName + "), '" + columnFilter.toLowerCase() + "') gt -1");
-                        }
-                        break;
-
-                    case "date":
-                    case "num":
-                    case "numeric":
-                    case "number":
-                        var parseValue: any = function (val) {
-                            var f = Number.parseFloat(val);
-                            if (isNaN(f)) return null;
-                            return f;
-                        }
-                        if (columnType === "date") {
-                            parseValue = function (val) {
-                                var d:Date = new Date(val);
-                                if (!d) return null;
-                                return d.toISOString();
-                            }
-                        }
-
-                        var processRange = function (val) {
-                            var result = "";
-                            var separator = "";
-                            var range = val.split("~");
-                            var formattedValue;
-
-                            if (range.length > 1) {
-                                formattedValue = parseValue(range[0]);
-                                if (formattedValue) {
-                                    result = fieldName + " ge " + formattedValue;
-                                    separator = " and ";
-                                }
-                                formattedValue = parseValue(range[1]);
-                                if (formattedValue) {
-                                    result += separator + fieldName + " le " + formattedValue;
-                                }
-                            } else {
-                                formattedValue = parseValue(val);
-                                if (formattedValue) {
-                                    result = fieldName + " eq " + formattedValue;
-                                }
-                            }
-
-                            if (result) {
-                                result = "(" + result + ")";
-                            }
-
-                            return result;
-                        }
-
-                        // Numeric and date filters are supported also in form lower~upper
-                        if (columnFilter && columnFilter !== "~") {
-                            var colFilter = processRange(columnFilter);
-                            if (colFilter) { columnFilters.push(colFilter); }
-                        }
-
-                        if (globalFilter && globalFilter !== "~") {
-                            var globFilter = processRange(globalFilter);
-                            if (globFilter) { filters.push(globFilter); }
-                        }
-
-                        break;
-                    default:
-                }
-            });
-
-            if (filters.length > 0) {
-                request.$filter = filters.join(' or ');
-            }
-
-            if (columnFilters.length > 0) {
-                if (request.$filter) {
-                    request.$filter = ' ( ' + request.$filter + ' ) and ( ' + columnFilters.join(' and ') + ' ) ';
-                } else {
-                    request.$filter = columnFilters.join(' and ');
+            if (customQuery.searchParam) {
+                const filter = this.generateFilters(settings, data.search.value);
+                if(filter) {
+                    request.$filter = filter;
                 }
             }
 
-            var orderBy = [];
-            $.each(data.order, function (i, value) {
-                orderBy.push(CustomizedDataTable.getColumnFieldName(settings.aoColumns[value.column]) + ' ' + value.dir);
-            });
+            let orderBy: string[] = [];
+            data.order.forEach((value) =>{
+                orderBy.push(`${CustomizedDataTable.getColumnFieldName(settings.aoColumns[value.column])} ${value.dir}`);
+            })            
 
             if (orderBy.length > 0) {
                 request.$orderby = orderBy.join();
             }
 
-            if (settings.oInit.oDataAbort) {
-                if (settings.jqXHR && settings.jqXHR.readystate != 4) {
-                    settings.jqXHR.abort();
-                }
+            let fetchRequest: RequestInit = {
+                mode: 'same-origin',
+                cache: 'no-cache',
+                credentials: 'same-origin',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                redirect: 'follow',
+                referrerPolicy: 'no-referrer',
+                method: 'Post',
             }
-
-            let p: Promise<any>;
-            if (externalFilter) {
-                p = externalFilter(request);
-            } else {
-                var getUrl = new URL(url, document.location.origin);
-                Object.keys(request).forEach(key => getUrl.searchParams.append(key, request[key]))
-                p = fetch(getUrl.toString(), {
-                    method: 'GET',
-                    mode: 'same-origin',
-                    cache: 'no-cache',
-                    credentials: 'same-origin',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    redirect: 'follow',
-                    referrerPolicy: 'no-referrer',
-                }).then((response) => {
+            let getUrl = new URL(url, document.location.origin);
+                fetchRequest.body = JSON.stringify(customQuery.requestData);
+            
+            
+            
+            Object.keys(request).forEach(key => getUrl.searchParams.append(key, request[key]))
+            fetch(getUrl.toString(), fetchRequest)
+                .then((response) => {
                     return response.json()
-                });
-            }
-            p.then((data: any) => {
-                var dataSource: any = {
+                }).then((data: any) => {
+                const dataSource: any = {
                     draw: parseInt(data.draw) // Cast for security reason
                 };
 
                 dataSource.data = data.value;
-                var recordCount = data['@odata.count'];
+                const recordCount = data['@odata.count'];
 
                 if (recordCount != null) {
                     dataSource.recordsFiltered = recordCount;
@@ -238,7 +246,7 @@ export class CustomizedDataTable {
         return column.name || column.data;
     }
 
-    private stateSaveCallback(externalState?: (stateData: IStateData, simpleStateData: ISimpleStateData) => {data: IStateData, simpleStateData: ISimpleStateData}): (settings: DataTables.SettingsLegacy, data: IStateData) => void {
+    private stateSaveCallback(externalState?: (stateData: IStateData, simpleStateData: ISimpleStateData) => {stateData: IStateData, simpleStateData: ISimpleStateData}): (settings: DataTables.SettingsLegacy, data: IStateData) => void {
         const contextThis = this;
         return (settings: DataTables.SettingsLegacy, data: IStateData) => {
             if (contextThis.popped) {
@@ -246,19 +254,24 @@ export class CustomizedDataTable {
                 return;
             }
 
-            var dataToSave: ISimpleStateData = {
+            let dataToSave: ISimpleStateData = {
                 l: data.length,
                 c: data.order[0][0],
-                d: data.order[0][1],
-                p: data.search.search,
+                d: data.order[0][1],                
                 s: data.start
             }
+            
             if (externalState) {
                 const returned = externalState(data, dataToSave);
-                data = returned.data;
+                data = returned.stateData;
                 dataToSave = returned.simpleStateData;
             }
-            var queryString = Object.keys(dataToSave).map((key) => {
+            
+            if (data.search) {
+                dataToSave.p = data.search;
+            }
+            
+            const queryString = Object.keys(dataToSave).map((key) => {
                 return encodeURIComponent(key) + '=' + encodeURIComponent(dataToSave[key])
             }).join('&');
             history.pushState(data, document.title, `?${queryString}`)
@@ -267,7 +280,7 @@ export class CustomizedDataTable {
     }
 
     private stateLoadCallback(externalHydration?: (params: URLSearchParams) => void): (settings: DataTables.SettingsLegacy) => IStateData {
-        return (settings: DataTables.SettingsLegacy): IStateData => {
+        return (): any => {
 
             const params = new URLSearchParams(document.location.search)
             
@@ -285,38 +298,29 @@ export class CustomizedDataTable {
             if (externalHydration) {
                 externalHydration(params);
             }
-
-            let dataToUse: IStateData = {
+            return {
                 time: new Date().getTime(),
                 start: data.s,
                 length: data.l,
-                search: {
-                    search: data.p,
-                    smart: true
-                },
                 order: [
                     [data.c, data.d]
                 ]
-            }
-
-            return dataToUse;
+            };
         };
     }
 
     private listenForHistoryChange(event: PopStateEvent) {
-        var state:IStateData = event.state;
+        const state:IStateData = event.state;
 
         if(this.settings.externalStateManager) {
             this.settings.externalStateManager(state);
-        };
+        }
 
         this.popped = true;
-        this.searchField.val(state.search.search)
 
         this.tableApi.page.len(state.length)
             .page(state.length / state.start)
             .order(state.order)
-            .search(state.search.search)
             .draw()
 
     }

@@ -2,10 +2,11 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using Stance.Core.Infrastructure;
 
 namespace Stance.Queries.Dynamic.Entities
 {
-    public class User
+    public class User : ReadEntity
     {
         public Guid Id { get; set; }
 
