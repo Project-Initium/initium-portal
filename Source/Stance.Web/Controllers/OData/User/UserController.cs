@@ -23,13 +23,6 @@ namespace Stance.Web.Controllers.OData.User
         }
 
         [EnableQuery(AllowedQueryOptions = AllowedQueryOptions.All, MaxTop = 1000)]
-        [ODataRoute("")]
-        public override IQueryable<Queries.Dynamic.Entities.User> Get()
-        {
-            return this._context.Users;
-        }
-
-        [EnableQuery(AllowedQueryOptions = AllowedQueryOptions.All, MaxTop = 1000)]
         [ODataRoute("User.Filtered")]
         public override IActionResult Filtered([FromBody] UserFilter filter)
         {
@@ -40,13 +33,6 @@ namespace Stance.Web.Controllers.OData.User
 
              var predicate = this.GeneratePredicate(filter);
              return this.Ok(this._context.Users.Where(predicate));
-        }
-
-        [ODataRoute("User.Export")]
-        public override IActionResult Export(ODataQueryOptions<Queries.Dynamic.Entities.User> options)
-        {
-             IQueryable query = this._context.Users;
-             return this.File(this.GenerateCsvStream(query, options), "application/csv");
         }
 
         [ODataRoute("User.FilteredExport")]
@@ -66,35 +52,32 @@ namespace Stance.Web.Controllers.OData.User
             return this.File(this.GenerateCsvStream(query, options), "application/csv");
         }
 
-        protected override ExpressionStarter<Queries.Dynamic.Entities.User> GeneratePredicate(UserFilter filter)
+        protected override ExpressionStarter<Queries.Dynamic.Entities.User> GeneratePredicate([FromBody]UserFilter filter)
         {
             var predicate = PredicateBuilder.New<Queries.Dynamic.Entities.User>(true);
-            if (filter.Verified)
+            if (filter.Verified && !filter.Unverified)
             {
                 predicate.And(x => x.IsVerified);
             }
-
-            if (filter.Unverified)
+            else if (filter.Unverified && !filter.Verified)
             {
                 predicate.And(x => !x.IsVerified);
             }
 
-            if (filter.Locked)
+            if (filter.Locked && !filter.Unlocked)
             {
                 predicate.And(x => x.IsLocked);
             }
-
-            if (filter.Unlocked)
+            else if (filter.Unlocked && !filter.Locked)
             {
                 predicate.And(x => !x.IsLocked);
             }
 
-            if (filter.Admin)
+            if (filter.Admin && !filter.NonAdmin)
             {
                 predicate.And(x => x.IsAdmin);
             }
-
-            if (filter.NonAdmin)
+            else if (filter.NonAdmin && !filter.Admin)
             {
                 predicate.And(x => !x.IsAdmin);
             }

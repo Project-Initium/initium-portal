@@ -5,10 +5,9 @@ namespace Stance.Web.Infrastructure.Constants
 {
     public static class ODataLocations
     {
-        public const string UserListing = "/odata/user";
         public const string UserFilteredListing = "/odata/user/user.filtered";
-        public const string UserExport = "/odata/user/user,.export";
         public const string UserFilteredExport = "/odata/user/user.filteredexport";
-        public const string RoleListing = "/odata/role";
+        public const string RoleFilteredExport = "/odata/role/role.filteredexport";
+        public const string RoleFilteredListing = "/odata/role/role.filtered";
     }
 }

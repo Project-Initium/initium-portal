@@ -19,10 +19,6 @@ namespace Stance.Web.Infrastructure.Controllers
         where TReadEntity : ReadEntity, new()
         where TFilterModel : class
     {
-        public abstract IQueryable<TReadEntity> Get();
-
-        public abstract IActionResult Export(ODataQueryOptions<TReadEntity> options);
-
         public abstract IActionResult Filtered(TFilterModel filter);
 
         public abstract IActionResult FilteredExport(ODataQueryOptions<TReadEntity> options, TFilterModel filter);

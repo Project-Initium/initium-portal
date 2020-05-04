@@ -87,32 +87,10 @@
                         <hr />
                         </div>
                     </form>
-                    @* <form class="search-pane form-material mb-3"> *@
-                    @*     <div class="input-group search-group mb-2"> *@
-                    @*         <input placeholder="Search" class="form-control"/>    *@
-                    @*         <div class="input-group-append"> *@
-                    @*         <button class="btn" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>     *@
-                    @*         </div> *@
-                    @*          *@
-                    @*     </div> *@
-                    @*      *@
-                    @*     <div class="d-flex justify-content-between"> *@
-                    @*         <div class="page-counts"> *@
-                    @*             Show *@
-                    @*             <select class="form-control d-inline-block"> *@
-                    @*                 <option>10</option> *@
-                    @*                 <option>25</option> *@
-                    @*                 <option>50</option> *@
-                    @*                 <option>100</option> *@
-                    @*             </select> *@
-                    @*             entries *@
-                    @*         </div> *@
-                    @*         <a href>Filters</a> *@
-                    @*     </div> *@
-                    @* </form> *@
+                    
                     
                     <div class="table-responsive">
-                        <table class="table table-hover clickable" id="users" aria-describedby="table-description" data-route="@ODataLocations.UserListing" data-route-filtered="@ODataLocations.UserFilteredListing" data-details="@Url.PageLink(pageName: PageLocations.UserView, values: new {id = "__ID__"})">
+                        <table class="table table-hover clickable" id="users" aria-describedby="table-description" data-route-filtered="@ODataLocations.UserFilteredListing" data-details="@Url.PageLink(pageName: PageLocations.UserView, values: new {id = "__ID__"})">
                             
                         </table>
                     </div>

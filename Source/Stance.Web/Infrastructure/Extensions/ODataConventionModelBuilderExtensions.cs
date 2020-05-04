@@ -12,11 +12,7 @@ namespace Stance.Web.Infrastructure.Extensions
         internal static ODataConventionModelBuilder SetupUserEntity(this ODataConventionModelBuilder builder)
         {
             var user = builder.EntitySet<User>("User");
-            var function = user.EntityType.Collection.Function("Export");
-            function.Returns<FileResult>();
-            function.Namespace = "User";
-
-            function = user.EntityType.Collection.Function("Filtered");
+            var function = user.EntityType.Collection.Function("Filtered");
             function.ReturnsCollectionFromEntitySet<User>("User");
             function.Namespace = "User";
 
@@ -28,7 +24,14 @@ namespace Stance.Web.Infrastructure.Extensions
 
         internal static ODataConventionModelBuilder SetupRoleEntity(this ODataConventionModelBuilder builder)
         {
-            builder.EntitySet<Role>("Role");
+            var role = builder.EntitySet<Role>("Role");
+            var function = role.EntityType.Collection.Function("Filtered");
+            function.ReturnsCollectionFromEntitySet<Role>("Role");
+            function.Namespace = "Role";
+
+            function = role.EntityType.Collection.Function("FilteredExport");
+            function.Returns<FileResult>();
+            function.Namespace = "Role";
             return builder;
         }
     }
