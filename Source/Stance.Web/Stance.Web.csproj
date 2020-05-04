@@ -55,4 +55,15 @@
     <TypeScriptCompile Include="Resources\Scripts\types\knockout-secure-binding.ts" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Update="Pages\External\Error.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Pages\External\NotFound.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

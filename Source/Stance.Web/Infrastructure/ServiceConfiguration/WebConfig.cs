@@ -13,6 +13,7 @@ using Microsoft.OData.Edm;
 using NWebsec.AspNetCore.Mvc.Csp;
 using Stance.Web.Infrastructure.Extensions;
 using Stance.Web.Infrastructure.Formatters;
+using Stance.Web.Infrastructure.Middleware;
 using Stance.Web.Pages.FirstRun;
 
 namespace Stance.Web.Infrastructure.ServiceConfiguration
@@ -55,7 +56,8 @@ namespace Stance.Web.Infrastructure.ServiceConfiguration
             }
             else
             {
-                app.UseExceptionHandler("/Home/Error");
+                app.UseExceptionHandler("/error");
+                app.UseMiddleware<NotFoundMiddleware>();
             }
 
             return app;
