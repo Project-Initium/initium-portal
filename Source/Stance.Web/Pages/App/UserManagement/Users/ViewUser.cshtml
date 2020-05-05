@@ -3,6 +3,7 @@
 @model Stance.Web.Pages.App.UserManagement.Users.ViewUser
 @{
     Layout = "Shared/_AppLayout";
+    ViewData["Title"] = $"Users | Viewing {Model.DetailedUser.FirstName} {Model.DetailedUser.LastName}";
 }
 
 <div class="row page-titles">

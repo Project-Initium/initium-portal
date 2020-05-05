@@ -1,6 +1,9 @@
 ﻿@page "/app/profile/my-details"
 @using Stance.Web.Infrastructure.Constants
-@{ this.Layout = "Shared/_AppLayout"; }
+@{
+    this.Layout = "Shared/_AppLayout";
+    ViewData["Title"] = "Profile | Details";
+}
 @model Stance.Web.Pages.App.Profile.Details
 
 <div class="row page-titles">
