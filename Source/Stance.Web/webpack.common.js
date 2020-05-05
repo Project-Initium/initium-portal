@@ -12,6 +12,7 @@ module.exports = {
         'vendors-styles': './Resources/Styles/vendors.sass',
         app: ['./Resources/Scripts/app.ts', './Resources/Styles/app.sass'],
         'users-list': './Resources/Scripts/pages/users-list.ts',
+        'user-view': './Resources/Scripts/pages/user-view.ts',
         'role-create': './Resources/Scripts/pages/role-create.ts',
         'role-edit': './Resources/Scripts/pages/role-edit.ts',
         'role-listing': './Resources/Scripts/pages/role-list.ts',

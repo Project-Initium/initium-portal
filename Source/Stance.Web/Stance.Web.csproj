@@ -52,6 +52,7 @@
     <TypeScriptCompile Include="Resources\Scripts\helpers\array-helper.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\base-list.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\profile-device.ts" />
+    <TypeScriptCompile Include="Resources\Scripts\pages\user-view.ts" />
     <TypeScriptCompile Include="Resources\Scripts\types\knockout-secure-binding.ts" />
   </ItemGroup>
 
