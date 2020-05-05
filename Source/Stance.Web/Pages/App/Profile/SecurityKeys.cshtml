@@ -2,7 +2,10 @@
 @using Fido2NetLib.Objects
 @using Stance.Web.Infrastructure.Constants
 @model Stance.Web.Pages.App.Profile.SecurityKeys
-@{ this.Layout = "Shared/_AppLayout"; }
+@{
+    this.Layout = "Shared/_AppLayout";
+    ViewData["Title"] = "Profile | Security Keys";
+}
 
 <div class="row page-titles">
     <div class="align-self-center pl-0 col-md-7 col-12">
