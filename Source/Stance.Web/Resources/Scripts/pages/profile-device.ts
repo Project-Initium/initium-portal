@@ -157,7 +157,11 @@ export class ProfileDevice {
     private static showErrorAlert() {
         Swal.fire({
             icon: 'error',
-            text: 'Sorry, there was an issue processing the device.  It might be already registered.'
+            text: 'Sorry, there was an issue processing the device.  It might be already registered.',
+            toast: true,
+            position: "top-end",
+            timer: 4500,
+            showConfirmButton: false
         })
     }
     
