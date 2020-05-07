@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{8C2A9944-2A43-46
 		LICENSE = LICENSE
 		README.md = README.md
 		docker-compose.yml = docker-compose.yml
+		CODE_OF_CONDUCT.md = CODE_OF_CONDUCT.md
+		CONTRIBUTING.md = CONTRIBUTING.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6EF45D1E-5322-4EF3-849F-ADF6C1246F2B}"
