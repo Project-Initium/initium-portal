@@ -45,7 +45,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new RevokeAuthenticatorAppCommandHandler(
                 userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
-            var cmd = new RevokeAuthenticatorAppCommand();
+            var cmd = new RevokeAuthenticatorAppCommand("password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -61,6 +61,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             {
                 new AuthenticatorApp(TestVariables.AuthenticatorAppId, "key", TestVariables.Now),
             });
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("password"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
 
@@ -77,7 +78,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new RevokeAuthenticatorAppCommandHandler(
                 userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
-            var cmd = new RevokeAuthenticatorAppCommand();
+            var cmd = new RevokeAuthenticatorAppCommand("password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -93,6 +94,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             {
                 new AuthenticatorApp(TestVariables.AuthenticatorAppId, "key", TestVariables.Now),
             });
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("password"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -108,7 +110,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new RevokeAuthenticatorAppCommandHandler(
                 userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
-            var cmd = new RevokeAuthenticatorAppCommand();
+            var cmd = new RevokeAuthenticatorAppCommand("password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -123,6 +125,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             {
                 new AuthenticatorApp(TestVariables.AuthenticatorAppId, "key", TestVariables.Now),
             });
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("password"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -138,7 +141,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new RevokeAuthenticatorAppCommandHandler(
                 userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
-            var cmd = new RevokeAuthenticatorAppCommand();
+            var cmd = new RevokeAuthenticatorAppCommand("password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -154,6 +157,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             {
                 new AuthenticatorApp(TestVariables.AuthenticatorAppId, "key", TestVariables.Now),
             });
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("password"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -169,7 +173,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new RevokeAuthenticatorAppCommandHandler(
                 userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
-            var cmd = new RevokeAuthenticatorAppCommand();
+            var cmd = new RevokeAuthenticatorAppCommand("password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsSuccess);
@@ -181,6 +185,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         {
             var user = new Mock<IUser>();
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>());
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("password"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -196,12 +201,41 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new RevokeAuthenticatorAppCommandHandler(
                 userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
-            var cmd = new RevokeAuthenticatorAppCommand();
+            var cmd = new RevokeAuthenticatorAppCommand("password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
             Assert.Equal(ErrorCodes.NoAuthenticatorAppEnrolled, result.Error.Code);
+            user.Verify(x => x.RevokeAuthenticatorApp(It.IsAny<DateTime>()), Times.Never);
+        }
+
+        [Fact]
+        public async Task Handle_GivenPasswordIsNotCorrect_ExpectFailedResultAndNoRevokeAttempted()
+        {
+            var user = new Mock<IUser>();
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("password"));
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+
+            var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
+
+            var clock = new Mock<IClock>();
+
+            var handler = new RevokeAuthenticatorAppCommandHandler(
+                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
+            var cmd = new RevokeAuthenticatorAppCommand("wrong-password");
+
+            var result = await handler.Handle(cmd, CancellationToken.None);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal(ErrorCodes.PasswordNotCorrect, result.Error.Code);
             user.Verify(x => x.RevokeAuthenticatorApp(It.IsAny<DateTime>()), Times.Never);
         }
     }

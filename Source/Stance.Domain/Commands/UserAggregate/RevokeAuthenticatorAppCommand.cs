@@ -9,5 +9,11 @@ namespace Stance.Domain.Commands.UserAggregate
 {
     public sealed class RevokeAuthenticatorAppCommand : IRequest<ResultWithError<ErrorData>>
     {
+        public RevokeAuthenticatorAppCommand(string password)
+        {
+            this.Password = password;
+        }
+
+        public string Password { get; }
     }
 }

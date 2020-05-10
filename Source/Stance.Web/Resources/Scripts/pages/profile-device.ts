@@ -1,6 +1,5 @@
 ﻿import {ArrayHelpers} from '../helpers/array-helper'
 import Swal from 'sweetalert2';
-import TriggeredEvent = JQuery.TriggeredEvent;
 import {Validator} from "../services/validator";
 import 'bootstrap';
 import * as moment from 'moment';

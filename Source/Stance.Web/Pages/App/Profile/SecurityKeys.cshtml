@@ -26,7 +26,7 @@
         @await Component.InvokeAsync("ProfilePanel")
         <div class="col-lg-8 col-xlg-9 col-md-7">
             <div class="card">
-                <div class="card">
+                
                     <ul class="nav nav-tabs profile-tab" role="tablist" id="profileTabs">
                         <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.AppProfileDetails">My Details</a> </li>
                         <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.ChangePassword">Password</a> </li>
@@ -64,7 +64,7 @@
                         </div>
 
                     </div>
-                </div>
+               
             </div>
         </div>
     </div>
@@ -72,24 +72,28 @@
 <form class="modal fade form-material" id="new-device-model" tabindex="-1" role="dialog"  aria-hidden="true" data-device-registration data-initiate-url="@Url.Action("InitialAuthDeviceRegistration", "AuthDeviceApi")" data-complete-url="@Url.Action("CompleteAuthDeviceRegistration", "AuthDeviceApi")" data-no-auto-validation>
   <div class="modal-dialog modal-dialog-slideout" role="document">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Add Token</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">×</span>
-        </button>
-      </div>
+      
         <div class="modal-body">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Add Token</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            
             <p>When you are ready, give the device a friendly name do you can recognize it again, click the "Add" button and follow the on screen instructions</p>
             <div class="form-group m-b-5">
                 <label asp-for="PageModel.Name"></label>
                 <input type="text" class="form-control" data-name asp-for="PageModel.Name"/>
                 <span class="text-danger small" asp-validation-for="PageModel.Name"></span>
             </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-sm btn-info">Add</button>
+              </div>
         </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
-        <button type="submit" class="btn btn-sm btn-info">Add</button>
-      </div>
+      
     </div>
   </div>
 </form>

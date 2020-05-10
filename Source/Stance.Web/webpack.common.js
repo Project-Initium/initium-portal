@@ -18,6 +18,7 @@ module.exports = {
         'role-listing': './Resources/Scripts/pages/role-list.ts',
         'role-view': './Resources/Scripts/pages/role-view.ts',
         'profile-device': './Resources/Scripts/pages/profile-device.ts',
+        'profile-app': './Resources/Scripts/pages/profile-app.ts',
         'validate-device-mfa': './Resources/Scripts/pages/validate-device-mfa.ts',
         'validate-email-mfa': './Resources/Scripts/pages/validate-email-mfa.ts'
     },

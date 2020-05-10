@@ -33,7 +33,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
         public async Task<ResultWithError<ErrorData>> Handle(
             RevokeAuthenticatorAppCommand request, CancellationToken cancellationToken)
         {
-            var result = await this.Process(cancellationToken);
+            var result = await this.Process(request, cancellationToken);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
             if (!dbResult)
@@ -45,7 +45,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             return result;
         }
 
-        private async Task<ResultWithError<ErrorData>> Process(CancellationToken cancellationToken)
+        private async Task<ResultWithError<ErrorData>> Process(RevokeAuthenticatorAppCommand request, CancellationToken cancellationToken)
         {
             var currentUser = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
             if (currentUser.HasNoValue)
@@ -60,6 +60,11 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             }
 
             var user = userMaybe.Value;
+
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.PasswordNotCorrect));
+            }
 
             if (user.AuthenticatorApps.All(x => x.WhenRevoked != null))
             {

@@ -7,12 +7,16 @@
 }
 
 <div class="row page-titles">
-    <div class="align-self-center">
+    <div class="align-self-center pl-0 col-md-7 col-12">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
             <li class="breadcrumb-item">Profile</li>
             <li class="breadcrumb-item active">Authenticator App</li>
         </ol>
+    </div>
+    <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0 pr-0">
+        <button class="btn btn-sm btn-danger text-white @(Model.IsSetup ? "" : "d-none")" type="button" id="remove-app">Revoke App</button>
+        <button class="btn btn-sm btn-info text-white @(Model.IsSetup ? "d-none" : "")" type="button" id="setup-app">Enroll App</button>
     </div>
 </div>
 <div class="container-fluid">
@@ -21,78 +25,28 @@
         @await Component.InvokeAsync("ProfilePanel")
         <div class="col-lg-8 col-xlg-9 col-md-7">
             <div class="card">
-                <div class="card">
-                    <ul class="nav nav-tabs profile-tab" role="tablist" id="profileTabs">
-                        <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.AppProfileDetails">My Details</a> </li>
-                        <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.ChangePassword">Password</a> </li>
-                        <li class="nav-item"> <a class="nav-link active" role="tab" asp-page="@PageLocations.EnrollAuthenticatorApp">Authenticator App</a> </li>
-                        <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.SecurityKeys">Security Keys</a> </li>
-                    </ul>
-                    <!-- Tab panes -->
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="profile" role="tabpanel">
-                            <div class="card-body">
-
-                                @if (Model.IsSetup)
-                                {
-                                    <div class="alert alert-warning" role="alert">
-                                        <p>
-                                            <span class="glyphicon glyphicon-warning-sign"></span>
-                                            <strong>If you reset your authenticator key your authenticator app will not work until you reconfigure it.</strong>
-                                        </p>
-                                        <p>
-                                            This process disables 2FA until you verify your authenticator app and will also reset your 2FA recovery codes.
-                                            If you do not complete your authenticator app configuration you may lose access to your account.
-                                        </p>
-                                    </div>
-                                    <div>
-                                        <form method="post" class="form-group text-right" asp-page-handler="revoke">
-                                            <button class="btn btn-danger" type="submit">Reset authenticator key</button>
-                                        </form>
-                                    </div>
-                                }
-                                else
-                                {
-                                    <p>To use an authenticator app go through the following steps:</p>
-                                    <ol class="list">
-                                        <li>
-                                            <p>
-                                                Download a two-factor authenticator app like Microsoft Authenticator for
-                                                <a href="https://go.microsoft.com/fwlink/?Linkid=825072">Android</a> and
-                                                <a href="https://go.microsoft.com/fwlink/?Linkid=825073">iOS</a> or
-                                                Google Authenticator for
-                                                <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2&amp;hl=en">Android</a> and
-                                                <a href="https://itunes.apple.com/us/app/google-authenticator/id388497605?mt=8">iOS</a>.
-                                            </p>
-                                        </li>
-                                        <li>
-                                            <p>Scan the QR Code or enter this key <kbd>@Model.SharedKey</kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
-                                            <div class="alert alert-info">To enable QR code generation please read our <a href="https://go.microsoft.com/fwlink/?Linkid=852423">documentation</a>.</div>
-                                            <img src="@($"data:image/png;base64,{Model.Code}")" style="width: 250px" />
-                                        </li>
-                                        <li>
-                                            <p>
-                                                Once you have scanned the QR code or input the key above, your two factor authentication app will provide you
-                                                with a unique code. Enter the code in the confirmation box below.
-                                            </p>
-                                            <div class="row">
-                                                <div class="col-md-6">
-                                                    <form method="post" class="form-material">
-                                                        <input type="hidden" asp-for="PageModel.SharedKey" />
-                                                        <div class="form-group">
-                                                            <label asp-for="PageModel.Code" class="control-label">Verification Code</label>
-                                                            <input asp-for="PageModel.Code" class="form-control" autocomplete="off" />
-                                                            <span asp-validation-for="PageModel.Code" class="text-danger"></span>
-                                                        </div>
-                                                        <button type="submit" class="btn btn-info">Verify</button>
-                                                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                                                    </form>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    </ol>
-                                }
-                            </div>
+                <ul class="nav nav-tabs profile-tab" role="tablist" id="profileTabs">
+                    <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.AppProfileDetails">My Details</a> </li>
+                    <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.ChangePassword">Password</a> </li>
+                    <li class="nav-item"> <a class="nav-link active" role="tab" asp-page="@PageLocations.EnrollAuthenticatorApp">Authenticator App</a> </li>
+                    <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.SecurityKeys">Security Keys</a> </li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="profile" role="tabpanel">
+                        <div class="card-body">
+                            <h2>What is an Authenticator App?</h2>
+                            <p>An authenticator app is usually installed on a smartphone and generates a 6-8 digit passcode every 30 seconds. The passcode can be used for login as a secondary form of authentication</p>
+                                
+                            <h3>How does an authenticator app work?</h3>
+                            <p>The passcodes are generated from a secret code that is shared between the service you are using and your device, as well as the current time.</p>
+                            <p>The secret code is all that is needed for backup.</p>
+                            <p>It's important to note that authenticator apps are not tied in any way to your SIM card or phone number in any way.</p>
+                                
+                            <h3>Where can I get an authenticator app?</h3>
+                            <p>There are a variety of authenticator apps that you can download for your smartphone.</p>
+                            <p>A popular example is Microsoft Authenticator, which can be found in Google Play and the iOS App Store.</p>
+                            <p>Open source alternatives include FreeOTP Authenticator and andOTP.</p>
                         </div>
                     </div>
                 </div>
@@ -100,3 +54,73 @@
         </div>
     </div>
 </div>
+
+<form class="modal fade form-material" id="enroll-app-modal" tabindex="-1" role="dialog" aria-hidden="true" data-initiate-url="@Url.Action("InitiateAuthAppEnrollment", "AuthAppApi")" data-complete-url="@Url.Action("EnrollAuthApp", "AuthAppApi")" data-no-auto-validation>
+    <div class="modal-dialog modal-dialog-slideout" role="document">
+        <div class="modal-content">
+      
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h5 class="modal-title">Enroll Application</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+            
+                <p>Scan the QR Code or enter this key <kbd></kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
+                <img class="app-mfa-code" data-mfa-image="@Url.Action("MfaQrCode", "AuthAppApi", new {authenticatorUri="__url__", nocache= "__nocache__"})" />
+                <p>
+                    Once you have scanned the QR code or input the key above, your two factor authentication app will provide you
+                    with a unique code. Enter the code in the confirmation box below.
+                </p>
+                <div class="form-group">
+                    <label asp-for="PageModel.Code" class="control-label">Verification Code</label>
+                    <input asp-for="PageModel.Code" class="form-control" autocomplete="off" data-app-code />
+                    <span asp-validation-for="PageModel.Code" class="text-danger small"></span>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-info">Verify</button>
+                </div>
+            </div>
+      
+        </div>
+    </div>
+</form>
+
+<form class="modal fade form-material" id="revoke-app-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-complete-url="@Url.Action("RevokeAuthApp", "AuthAppApi")" data-no-auto-validation>
+    <div class="modal-dialog modal-dialog-slideout" role="document">
+        <div class="modal-content">
+      
+            <div class="modal-body">
+                <div class="modal-header">
+                    <h5 class="modal-title">Revoke Application</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+            
+                <p class="text-info">If you revoke authenticator app you will need to remove the site from your device.</p>
+                
+                <p>To confirm that you want to revoke the app please enter your password.</p>
+                
+                <div class="form-group">
+                    <label asp-for="PageModel.Password" class="control-label">Password</label>
+                    <input asp-for="PageModel.Password" class="form-control" autocomplete="off" type="password" data-app-password />
+                    <span asp-validation-for="PageModel.Password" class="text-danger small"></span>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-sm btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-sm btn-info">Revoke</button>
+                </div>
+            </div>
+      
+        </div>
+    </div>
+</form>
+@section scripts
+{
+    <script src="~/profile-app.js.gz" asp-append-version="true"></script>
+}
