@@ -9,6 +9,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Web.Controllers.Api.AuthDevice.Models;
 using Stance.Web.Infrastructure.Constants;
 using Stance.Web.Infrastructure.Contracts;
 
@@ -98,7 +99,7 @@ namespace Stance.Web.Controllers.Api.AuthDevice
         [Authorize]
         public async Task<IActionResult> RevokeDevice([FromBody] RevokeDeviceRequest request)
         {
-            var result = await this._mediator.Send(new RevokeAuthenticatorDeviceCommand(request.DeviceId));
+            var result = await this._mediator.Send(new RevokeAuthenticatorDeviceCommand(request.DeviceId, request.Password));
             return this.Json(new RevokeDeviceResponse(result.IsSuccess));
         }
     }

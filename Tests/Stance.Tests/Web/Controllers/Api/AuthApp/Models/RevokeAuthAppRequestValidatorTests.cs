@@ -1,10 +1,10 @@
 ﻿// Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using Stance.Web.Controllers.Api.AuthApp;
+using Stance.Web.Controllers.Api.AuthApp.Models;
 using Xunit;
 
-namespace Stance.Tests.Web.Controllers.Api.AuthApp
+namespace Stance.Tests.Web.Controllers.Api.AuthApp.Models
 {
     public class RevokeAuthAppRequestValidatorTests
     {
@@ -15,7 +15,7 @@ namespace Stance.Tests.Web.Controllers.Api.AuthApp
             {
                 Password = "password",
             };
-            var validator = new RevokeAuthAppRequestValidator();
+            var validator = new RevokeAuthAppRequest.RevokeAuthAppRequestValidator();
             var result = validator.Validate(request);
             Assert.True(result.IsValid);
         }
@@ -27,7 +27,7 @@ namespace Stance.Tests.Web.Controllers.Api.AuthApp
             {
                 Password = string.Empty,
             };
-            var validator = new RevokeAuthAppRequestValidator();
+            var validator = new RevokeAuthAppRequest.RevokeAuthAppRequestValidator();
             var result = validator.Validate(request);
             Assert.False(result.IsValid);
             Assert.Contains(
@@ -42,7 +42,7 @@ namespace Stance.Tests.Web.Controllers.Api.AuthApp
             {
                 Password = null,
             };
-            var validator = new RevokeAuthAppRequestValidator();
+            var validator = new RevokeAuthAppRequest.RevokeAuthAppRequestValidator();
             var result = validator.Validate(request);
             Assert.False(result.IsValid);
             Assert.Contains(

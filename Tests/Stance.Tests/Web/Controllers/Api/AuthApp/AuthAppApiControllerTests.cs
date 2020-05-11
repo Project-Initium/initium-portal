@@ -17,6 +17,7 @@ using Stance.Core.Settings;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Controllers.Api.AuthApp;
+using Stance.Web.Controllers.Api.AuthApp.Models;
 using Xunit;
 
 namespace Stance.Tests.Web.Controllers.Api.AuthApp

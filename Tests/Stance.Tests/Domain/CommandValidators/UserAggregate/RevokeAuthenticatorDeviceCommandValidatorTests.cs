@@ -14,7 +14,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
         {
-            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId);
+            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
             var validator = new RevokeAuthenticatorDeviceCommandValidator();
             var result = validator.Validate(cmd);
             Assert.True(result.IsValid);
@@ -23,7 +23,7 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenDeviceIdIsEmpty_ExpectValidationFailure()
         {
-            var cmd = new RevokeAuthenticatorDeviceCommand(Guid.Empty);
+            var cmd = new RevokeAuthenticatorDeviceCommand(Guid.Empty, "password");
             var validator = new RevokeAuthenticatorDeviceCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
@@ -31,6 +31,32 @@ namespace Stance.Tests.Domain.CommandValidators.UserAggregate
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
                            failure.PropertyName == "DeviceId");
+        }
+
+        [Fact]
+        public void Validate_GivenPasswordIsEmpty_ExpectValidationFailure()
+        {
+            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, string.Empty);
+            var validator = new RevokeAuthenticatorDeviceCommandValidator();
+            var result = validator.Validate(cmd);
+            Assert.False(result.IsValid);
+            Assert.Contains(
+                result.Errors,
+                failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
+                           failure.PropertyName == "Password");
+        }
+
+        [Fact]
+        public void Validate_GivenPasswordIsNull_ExpectValidationFailure()
+        {
+            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, null);
+            var validator = new RevokeAuthenticatorDeviceCommandValidator();
+            var result = validator.Validate(cmd);
+            Assert.False(result.IsValid);
+            Assert.Contains(
+                result.Errors,
+                failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
+                           failure.PropertyName == "Password");
         }
     }
 }

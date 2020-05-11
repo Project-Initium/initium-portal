@@ -74,7 +74,10 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             {
                 Task<bool> IsCredentialIdUniqueToUser(IsCredentialIdUniqueToUserParams param)
                 {
-                    return Task.FromResult(user.AuthenticatorDevices.All(x => x.CredentialId != param.CredentialId && !x.IsRevoked));
+                    var count = user.AuthenticatorDevices.Count(x =>
+                        x.CredentialId == param.CredentialId && !x.IsRevoked);
+
+                    return Task.FromResult(count == 0);
                 }
 
                 credentialMakeResult = await this._fido2.MakeNewCredentialAsync(

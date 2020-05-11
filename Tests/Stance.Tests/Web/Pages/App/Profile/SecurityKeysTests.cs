@@ -51,16 +51,16 @@ namespace Stance.Tests.Web.Pages.App.Profile
             [Fact]
             public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
             {
-                var cmd = new SecurityKeys.Model { Name = "name" };
+                var cmd = new SecurityKeys.Model { Name = "name", Password = "password" };
                 var validator = new SecurityKeys.Validator();
                 var result = validator.Validate(cmd);
                 Assert.True(result.IsValid);
             }
 
             [Fact]
-            public void Validate_GivenLastNameIsEmpty_ExpectValidationFailure()
+            public void Validate_GivenNameIsEmpty_ExpectValidationFailure()
             {
-                var cmd = new SecurityKeys.Model { Name = string.Empty };
+                var cmd = new SecurityKeys.Model { Name = string.Empty, Password = "password" };
                 var validator = new SecurityKeys.Validator();
                 var result = validator.Validate(cmd);
                 Assert.False(result.IsValid);
@@ -72,13 +72,37 @@ namespace Stance.Tests.Web.Pages.App.Profile
             [Fact]
             public void Validate_GivenNameIsNull_ExpectValidationFailure()
             {
-                var cmd = new SecurityKeys.Model { Name = null };
+                var cmd = new SecurityKeys.Model { Name = null, Password = "password" };
                 var validator = new SecurityKeys.Validator();
                 var result = validator.Validate(cmd);
                 Assert.False(result.IsValid);
                 Assert.Contains(
                     result.Errors,
                     failure => failure.PropertyName == "Name");
+            }
+
+            [Fact]
+            public void Validate_GivenPasswordIsEmpty_ExpectValidationFailure()
+            {
+                var cmd = new SecurityKeys.Model { Name = "name", Password = string.Empty };
+                var validator = new SecurityKeys.Validator();
+                var result = validator.Validate(cmd);
+                Assert.False(result.IsValid);
+                Assert.Contains(
+                    result.Errors,
+                    failure => failure.PropertyName == "Password");
+            }
+
+            [Fact]
+            public void Validate_GivenPasswordIsNull_ExpectValidationFailure()
+            {
+                var cmd = new SecurityKeys.Model { Name = "name", Password = null };
+                var validator = new SecurityKeys.Validator();
+                var result = validator.Validate(cmd);
+                Assert.False(result.IsValid);
+                Assert.Contains(
+                    result.Errors,
+                    failure => failure.PropertyName == "Password");
             }
         }
     }

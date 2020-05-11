@@ -20,7 +20,7 @@
 </div>
     <div class="row">
         @await Component.InvokeAsync("ProfilePanel")
-        <div class="col-lg-8 col-xlg-9 col-md-7  pl-md-2 pr-md-0 pl-1 pr-1">
+        <div class="col-md-9 col-12 pl-md-2 pr-md-0 pl-1 pr-1">
             <div class="card">
                 
                     <ul class="nav nav-tabs profile-tab" role="tablist" id="profileTabs">
@@ -32,8 +32,9 @@
                     <!-- Tab panes -->
                     <div class="tab-content">
                         <div class="tab-pane active" role="tabpanel">
-                            <div class="card-body">
-                                <form class="form-horizontal form-material" method="post" id="details">
+                            <div class="card-body row">
+                                
+                                <form class="form-horizontal form-material col-md-7 col-12" method="post" id="details">
                                     <div class="form-group">
                                         <label asp-for="PageModel.FirstName"></label>
                                         <input class="form-control form-control-line" asp-for="PageModel.FirstName">
@@ -45,6 +46,13 @@
                                         <span class="text-danger small" asp-validation-for="PageModel.FirstName"></span>
                                     </div>
                                 </form>
+                                <div class="col-md-5 col-12">
+                                    <div class="helpful-info">
+                                        <h3>Helpful Information</h3>
+                                        <h4>Email Address</h4>
+                                        <p>You're email address is your unique ID in the system and therefore you cannont change it. If you want to change please contact our support team at <a href="mailto:support@example.com">support@example.com</a> </p>
+                                    </div> 
+                                </div>
                             </div>
                         </div>
                     </div>

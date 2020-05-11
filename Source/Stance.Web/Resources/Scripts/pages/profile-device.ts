@@ -5,12 +5,18 @@ import 'bootstrap';
 import * as moment from 'moment';
 
 export class ProfileDevice {
-    private name: HTMLInputElement;
-    private form: HTMLFormElement;
+    private enrollmentForm: HTMLFormElement
+    private enrollmentFormSlideOut: JQuery<any>;
+    private enrollmentValidator: Validator;
     private tokenType: string;
-    private validator: Validator;
-    private slideOut: JQuery;
+    
+    private revokeForm: HTMLFormElement
+    private revokeFormSlideOut: JQuery<any>;
+    private revokeValidator: Validator;
+    private deviceToRevoke: string;
+    
     private registeredDevices: HTMLFormElement;
+    
     constructor() {
         if (document.readyState !== 'loading') {
             this.init();
@@ -19,19 +25,50 @@ export class ProfileDevice {
         }
     }
 
-    private async submit(event: Event) {
+    init() {
+        const contextThis = this;
+        
+        this.enrollmentForm = document.querySelector<HTMLFormElement>('#new-device-modal');
+        this.enrollmentFormSlideOut = $(this.enrollmentForm).modal({
+            show: false,
+            backdrop: 'static'
+        });
+        this.enrollmentValidator = new Validator(this.enrollmentForm, false);
+        this.enrollmentForm.addEventListener('submit', (event: Event) => contextThis.completeEnrollment(event));
+        document.querySelectorAll('[data-type]').forEach(value => {
+            value.addEventListener('click', (event)=> contextThis.displayEnrollment(event))
+        });
+
+        this.revokeForm = document.querySelector<HTMLFormElement>('#revoke-device-modal');
+        this.revokeFormSlideOut = $(this.revokeForm).modal({
+            show: false,
+            backdrop: 'static'
+        });
+        this.revokeValidator = new Validator(this.revokeForm, false);
+        this.revokeForm.addEventListener('submit', (event: Event) => contextThis.revokeDevice(event));
+
+        this.registeredDevices = document.getElementById('registered-devices') as HTMLFormElement;
+        this.registeredDevices.addEventListener('click', (event) => contextThis.displayRevoke(event));
+
+    }
+    
+    
+    
+
+    private async completeEnrollment(event: Event) {
         event.preventDefault();
-        if (!this.validator.validate()) {            
+        if (this.enrollmentValidator.validate().isValid) {            
             let makeCredentialOptions;
+            const name = this.enrollmentForm.querySelector<HTMLInputElement>('[data-device-name]').value;
             try {
-                makeCredentialOptions = await this.startDeviceRegistration(this.name.value);
+                makeCredentialOptions = await this.startDeviceRegistration();
             } catch (e) {
-                ProfileDevice.showErrorAlert();
+                ProfileDevice.showFailureToast('There was an issue setting up your device. Please try again');
                 return;
             }
 
             if (makeCredentialOptions.status !== "ok") {
-                ProfileDevice.showErrorAlert();
+                ProfileDevice.showFailureToast('There was an issue setting up your device. Please try again');
                 return;
             }
 
@@ -53,28 +90,25 @@ export class ProfileDevice {
                     publicKey: makeCredentialOptions
                 });
             } catch (e) {
-                ProfileDevice.showErrorAlert();
+                ProfileDevice.showFailureToast('There was an issue setting up your device. Please try again');
                 return
             }
 
             try {
-                this.registerNewCredential(this.name.value, newCredential);
+                await this.registerNewCredential(name, newCredential);
             } catch (e) {
-                ProfileDevice.showErrorAlert();
+                ProfileDevice.showFailureToast('There was an issue setting up your device. Please try again');
                 return;
             }
-            
-            
         }
     }
 
-    private async startDeviceRegistration(name: string): Promise<PublicKeyCredentialCreationOptions> {
-        const response = await fetch(this.form.dataset.initiateUrl, {
+    private async startDeviceRegistration(): Promise<PublicKeyCredentialCreationOptions> {
+        const response = await fetch(this.enrollmentForm.dataset.initiateUrl, {
             method: 'POST',
             mode: 'same-origin',
             cache: 'no-cache',
             body: JSON.stringify({
-                name: name,
                 authenticatorAttachment: this.tokenType
             }),
             credentials: 'same-origin',
@@ -109,24 +143,17 @@ export class ProfileDevice {
         try {
             response = await this.registerCredentialWithServer(data);
         } catch (e) {
-            ProfileDevice.showErrorAlert();
+            ProfileDevice.showFailureToast('There was an issue setting up your device. Please try again');
             return;
         }
     
         if (response.result.status !== "ok") {
-            ProfileDevice.showErrorAlert();
+            ProfileDevice.showFailureToast('There was an issue setting up your device. Please try again');
             return;
         }
-
-        Swal.fire({
-            icon: 'success',
-            text: 'The device has been registered.',
-            toast: true,
-            position: "top-end",
-            timer: 4500,
-            showConfirmButton: false
-        });
-
+        
+        ProfileDevice.showSuccessToast('The device has been registered.')
+        
         const d = document.createElement('div');
         d.innerHTML = document.getElementById('device-template').innerText;
         d.dataset.deviceId = response.deviceId;
@@ -134,11 +161,11 @@ export class ProfileDevice {
         (d.querySelector('[data-device-remove]') as HTMLButtonElement).value =`${response.deviceId}`;
         (d.querySelector('[data-when-enrolled]') as HTMLElement).innerText = moment().format('DD/MM/YYYY');
         document.getElementById('registered-devices').appendChild(d);
-        this.slideOut.modal('hide');
+        this.enrollmentFormSlideOut.modal('hide');
     }
 
     private async registerCredentialWithServer(formData) {
-        let response = await fetch(this.form.dataset.completeUrl, {
+        let response = await fetch(this.enrollmentForm.dataset.completeUrl, {
             method: 'POST',
             mode: 'same-origin',
             cache: 'no-cache',
@@ -153,88 +180,77 @@ export class ProfileDevice {
         return await response.json();
     }
 
-    private static showErrorAlert() {
-        Swal.fire({
-            icon: 'error',
-            text: 'Sorry, there was an issue processing the device.  It might be already registered.',
-            toast: true,
-            position: "top-end",
-            timer: 4500,
-            showConfirmButton: false
-        })
-    }
-    
-    private showPanel(event: Event) {
-        this.name.value = '';
+    private displayEnrollment(event: Event) {
+        event.preventDefault();
+        this.enrollmentForm.reset();
+        this.enrollmentValidator.reset();
         this.tokenType  = (event.target as HTMLButtonElement).dataset.type;
-        this.slideOut.modal('show');
+        this.enrollmentFormSlideOut.modal('show');
+    }
+
+    private displayRevoke(event: Event) {
+        event.preventDefault();
+        this.revokeForm.reset();
+        this.revokeValidator.reset();
+        this.deviceToRevoke  = (event.target as HTMLButtonElement).value;
+        this.revokeFormSlideOut.modal('show');
     }
     
     private async revokeDevice(event) {
         event.preventDefault();
-        var target = event.target as HTMLButtonElement;
-        
-        try {
-            const response =await fetch(this.registeredDevices.dataset.endpointUrl, {
-                method: 'POST',
-                mode: 'same-origin',
-                cache: 'no-cache',
-                credentials: 'same-origin',
-                body: JSON.stringify({
-                    deviceId: target.value,
-                }),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            });  
-            const data: any = await response.json();
-            debugger;
-            if (data.isSuccess) {
-                this.registeredDevices.removeChild(this.registeredDevices.querySelector(`[data-device-id="${target.value}"]`))
-                Swal.fire({
-                    icon: 'success',
-                    text: 'The device has been revoked.',
-                    toast: true,
-                    position: "top-end",
-                    timer: 4500,
-                    showConfirmButton: false
+        if (this.revokeValidator.validate().isValid) {
+            try {
+                const response = await fetch(this.registeredDevices.dataset.endpointUrl, {
+                    method: 'POST',
+                    mode: 'same-origin',
+                    cache: 'no-cache',
+                    credentials: 'same-origin',
+                    body: JSON.stringify({
+                        deviceId: this.deviceToRevoke,
+                        password: this.revokeForm.querySelector<HTMLInputElement>('[data-device-password]').value
+                    }),
+                    headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
                 });
-                return ;
-            }
-            
-        } catch(e) {
-            
-        }
+                const data: any = await response.json();
+                if (data.isSuccess) {
+                    this.registeredDevices.removeChild(this.registeredDevices.querySelector(`[data-device-id="${this.deviceToRevoke}"]`))
+                    ProfileDevice.showSuccessToast('The device has been revoked.');
+                    this.revokeFormSlideOut.modal('hide');
+                    return;
+                }
 
+            } catch (e) {
+
+            }
+
+            ProfileDevice.showFailureToast('Sorry, there was an issue revoking the device.  Please try again.');
+        }
+    }
+
+    private static showSuccessToast(message: string) {
+        Swal.fire({
+            icon: 'success',
+            text: message,
+            toast: true,
+            position: "top-end",
+            timer: 4500,
+            showConfirmButton: false
+        });
+    }
+
+    private static showFailureToast(message: string) {
         Swal.fire({
             icon: 'error',
-            text: 'Sorry, there was an issue revoking the device.  Please try again.'
-        })
-        
-    }
-    
-    init() {
-        this.form = document.querySelector('form[data-device-registration]') as HTMLFormElement;
-        this.validator = new Validator(this.form, false);
-        this.name = document.querySelector('input[data-name]') as HTMLInputElement;
-        const contextThis = this;
-
-        this.form.addEventListener('submit', (event: Event) => contextThis.submit(event));
-        this.slideOut = $('#new-device-model').modal({
-            show: false,
+            text: message,
+            toast: true,
+            position: "top-end",
+            timer: 4500,
+            showConfirmButton: false
         });
-        
-        document.querySelectorAll('[data-type]').forEach(value => {
-            value.addEventListener('click', (event)=> contextThis.showPanel(event))
-        });
-
-        this.registeredDevices = document.getElementById('registered-devices') as HTMLFormElement;
-        this.registeredDevices.addEventListener('click', (event) => contextThis.revokeDevice(event));
-            
-    }
-    
-    
+    }    
 }
 
 new ProfileDevice();

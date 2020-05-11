@@ -49,7 +49,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var handler =
                 new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
 
-            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId);
+            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsFailure);
@@ -66,7 +66,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                     TestVariables.AuthenticatorDevicePublicKey, TestVariables.AuthenticatorDeviceCredentialId,
                     TestVariables.AuthenticatorDeviceAaguid, 1, "name", "cred-type"),
             });
-            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("current-password"));
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("password"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -84,7 +84,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var handler =
                 new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
 
-            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId);
+            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsSuccess);
@@ -111,7 +111,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var handler =
                 new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
 
-            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId);
+            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsFailure);
@@ -124,7 +124,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         {
             var user = new Mock<IUser>();
             user.Setup(x => x.AuthenticatorDevices).Returns(new List<AuthenticatorDevice>());
-            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("current-password"));
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("password"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -142,7 +142,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var handler =
                 new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
 
-            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId);
+            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsFailure);
@@ -166,7 +166,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var handler =
                 new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
 
-            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId);
+            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
             Assert.True(result.IsFailure);
@@ -183,7 +183,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
                     TestVariables.AuthenticatorDevicePublicKey, TestVariables.AuthenticatorDeviceCredentialId,
                     TestVariables.AuthenticatorDeviceAaguid, 1, "name", "cred-type"),
             });
-            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("current-password"));
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("password"));
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -201,7 +201,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             var handler =
                 new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
 
-            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId);
+            var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
 
             await handler.Handle(cmd, CancellationToken.None);
 

@@ -32,6 +32,8 @@ namespace Stance.Web.Pages.App.Profile
         public class Model
         {
             public string Name { get; set; }
+
+            public string Password { get; set; }
         }
 
         public class Validator : AbstractValidator<Model>
@@ -41,6 +43,10 @@ namespace Stance.Web.Pages.App.Profile
                 this.RuleFor(x => x.Name)
                     .NotEmpty()
                     .WithMessage("Please enter a name.");
+
+                this.RuleFor(x => x.Password)
+                    .NotEmpty()
+                    .WithMessage("Please enter your password.");
             }
         }
     }

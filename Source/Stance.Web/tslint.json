@@ -1,0 +1,17 @@
+﻿{
+  "defaultSeverity": "error",
+  "extends": [
+    "tslint:recommended"
+  ],
+  "jsRules": {},
+  "rules": {
+    "no-unused-expression-chai": true,
+    "quotemark": {
+      "options": "single"
+    },
+    "prefer-for-of": false
+  },
+  "rulesDirectory": [
+    "tslint-no-unused-expression-chai"
+  ]
+}

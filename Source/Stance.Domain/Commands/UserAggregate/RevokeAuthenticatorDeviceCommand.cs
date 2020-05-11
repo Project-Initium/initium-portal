@@ -10,11 +10,14 @@ namespace Stance.Domain.Commands.UserAggregate
 {
     public class RevokeAuthenticatorDeviceCommand : IRequest<ResultWithError<ErrorData>>
     {
-        public RevokeAuthenticatorDeviceCommand(Guid deviceId)
+        public RevokeAuthenticatorDeviceCommand(Guid deviceId, string password)
         {
             this.DeviceId = deviceId;
+            this.Password = password;
         }
 
         public Guid DeviceId { get; }
+
+        public string Password { get; }
     }
 }

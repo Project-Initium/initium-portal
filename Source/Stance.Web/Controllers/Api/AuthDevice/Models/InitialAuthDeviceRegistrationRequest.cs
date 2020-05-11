@@ -3,12 +3,10 @@
 
 using Fido2NetLib.Objects;
 
-namespace Stance.Web.Controllers.Api.AuthDevice
+namespace Stance.Web.Controllers.Api.AuthDevice.Models
 {
     public class InitialAuthDeviceRegistrationRequest
     {
-        public string Name { get; set; }
-
         public AuthenticatorAttachment AuthenticatorAttachment { get; set; }
     }
 }

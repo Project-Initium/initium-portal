@@ -11,8 +11,9 @@ namespace Stance.Tests.Domain.Commands.UserAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var command = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId);
+            var command = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
             Assert.Equal(TestVariables.AuthenticatorDeviceId, command.DeviceId);
+            Assert.Equal("password", command.Password);
         }
     }
 }

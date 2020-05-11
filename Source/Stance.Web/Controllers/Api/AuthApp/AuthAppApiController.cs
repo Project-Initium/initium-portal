@@ -17,6 +17,7 @@ using Stance.Core;
 using Stance.Core.Contracts;
 using Stance.Core.Settings;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Web.Controllers.Api.AuthApp.Models;
 
 namespace Stance.Web.Controllers.Api.AuthApp
 {

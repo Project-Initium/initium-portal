@@ -23,8 +23,9 @@ namespace Stance.Tests.Web.Pages.App.Profile
         public async Task OnPostAsync_GivenInvalidModelState_ExpectRedirectToPageResult()
         {
             var mediator = new Mock<IMediator>();
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
 
-            var page = new Password(mediator.Object);
+            var page = new Password(mediator.Object, securitySettings.Object);
             page.ModelState.AddModelError("Error", "Error");
 
             var result = await page.OnPostAsync();
@@ -38,7 +39,9 @@ namespace Stance.Tests.Web.Pages.App.Profile
             mediator.Setup(x => x.Send(It.IsAny<ChangePasswordCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Ok<ErrorData>);
 
-            var page = new Password(mediator.Object) { PageModel = new Password.Model() };
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+
+            var page = new Password(mediator.Object, securitySettings.Object) { PageModel = new Password.Model() };
 
             var result = await page.OnPostAsync();
             Assert.IsType<RedirectToPageResult>(result);
@@ -52,7 +55,9 @@ namespace Stance.Tests.Web.Pages.App.Profile
             mediator.Setup(x => x.Send(It.IsAny<ChangePasswordCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Fail(new ErrorData(ErrorCodes.SavingChanges)));
 
-            var page = new Password(mediator.Object) { PageModel = new Password.Model() };
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+
+            var page = new Password(mediator.Object, securitySettings.Object) { PageModel = new Password.Model() };
 
             var result = await page.OnPostAsync();
             Assert.IsType<RedirectToPageResult>(result);

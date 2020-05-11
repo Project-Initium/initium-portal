@@ -16,7 +16,7 @@ export class ValidateDeviceMfa {
         e.preventDefault();
         let makeAssertionOptions;
         try {
-            var res = await fetch(this.assertionOptionsUri, {
+            const res = await fetch(this.assertionOptionsUri, {
                 method: 'POST',            
                 headers: {
                     'Accept': 'application/json'
@@ -38,7 +38,7 @@ export class ValidateDeviceMfa {
         makeAssertionOptions.challenge = Uint8Array.from(atob(challenge), c => c.charCodeAt(0));
 
         makeAssertionOptions.allowCredentials.forEach(function (listItem) {
-            var fixedId = listItem.id.replace(/\_/g, "/").replace(/\-/g, "+");
+            const fixedId = listItem.id.replace(/\_/g, "/").replace(/\-/g, "+");
              listItem.id = Uint8Array.from(atob(fixedId), c => c.charCodeAt(0));
         });
         
@@ -73,7 +73,7 @@ export class ValidateDeviceMfa {
                 authenticatorData: ArrayHelpers.coerceToBase64Url(authData),
                 clientDataJson: ArrayHelpers.coerceToBase64Url(clientDataJSON),
                 signature: ArrayHelpers.coerceToBase64Url(sig)
-            }
+            }            
         };
     
         let response;
