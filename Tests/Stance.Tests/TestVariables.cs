@@ -30,5 +30,7 @@ namespace Stance.Tests
         public static readonly Guid UserId = Guid.Parse("AFD3A44B-C043-494F-9B95-760FBEB26E4D");
 
         public static readonly Guid SecurityTokenMappingId = Guid.Parse("6F3645C5-AF9A-41B7-96E1-B81514208FA8");
+
+        public static readonly Guid PasswordHistoryId = Guid.Parse("91354C95-F1F3-42C1-961F-0339D25A8855");
     }
 }

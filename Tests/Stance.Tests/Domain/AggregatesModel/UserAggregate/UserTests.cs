@@ -200,10 +200,13 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
                 true);
 
             var securityStamp = user.SecurityStamp;
-            user.ChangePassword("new-password-hash");
+            user.ChangePassword("new-password-hash", TestVariables.Now);
 
             Assert.Equal("new-password-hash", user.PasswordHash);
             Assert.NotEqual(securityStamp, user.SecurityStamp);
+            Assert.Contains(
+                user.PasswordHistories,
+                history => history.Hash == "new-password-hash" && history.WhenUsed == TestVariables.Now);
         }
 
         [Fact]

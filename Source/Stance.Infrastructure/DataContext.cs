@@ -101,21 +101,21 @@ namespace Stance.Infrastructure
             {
                 profile.ToTable("profile", "identity");
                 profile.WithOwner().HasForeignKey(x => x.Id);
-                profile.HasKey(e => e.Id);
-                profile.Property(x => x.Id).HasColumnName("userId");
-                profile.Ignore(b => b.DomainEvents);
+                profile.HasKey(item => item.Id);
+                profile.Property(item => item.Id).HasColumnName("userId");
+                profile.Ignore(item => item.DomainEvents);
             });
 
             navigation = users.Metadata.FindNavigation(nameof(User.UserRoles));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
-            users.OwnsMany(user => user.UserRoles, userRole =>
+            users.OwnsMany(user => user.UserRoles, userRoles =>
             {
-                userRole.ToTable("userRole", "identity");
-                userRole.HasKey(entity => entity.Id);
-                userRole.Property(e => e.Id).ValueGeneratedNever();
-                userRole.Property(x => x.Id).HasColumnName("roleId");
-                userRole.Ignore(b => b.DomainEvents);
+                userRoles.ToTable("userRole", "identity");
+                userRoles.HasKey(userRole => userRole.Id);
+                userRoles.Property(userRole => userRole.Id).ValueGeneratedNever();
+                userRoles.Property(userRole => userRole.Id).HasColumnName("roleId");
+                userRoles.Ignore(userRole => userRole.DomainEvents);
             });
 
             navigation = users.Metadata.FindNavigation(nameof(User.AuthenticatorApps));
@@ -130,6 +130,9 @@ namespace Stance.Infrastructure
                 authenticatorApps.Ignore(authenticatorApp => authenticatorApp.DomainEvents);
             });
 
+            navigation = users.Metadata.FindNavigation(nameof(User.AuthenticatorDevices));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
             users.OwnsMany(user => user.AuthenticatorDevices, authenticatorDevices =>
             {
                 authenticatorDevices.ToTable("authenticatorDevice", "identity");
@@ -137,6 +140,18 @@ namespace Stance.Infrastructure
                 authenticatorDevices.Property(authenticatorDevice => authenticatorDevice.Id)
                     .ValueGeneratedNever();
                 authenticatorDevices.Ignore(authenticatorDevice => authenticatorDevice.DomainEvents);
+            });
+
+            navigation = users.Metadata.FindNavigation(nameof(User.PasswordHistories));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            users.OwnsMany(user => user.PasswordHistories, passwordHistories =>
+            {
+                passwordHistories.ToTable("passwordHistory", "identity");
+                passwordHistories.HasKey(passwordHistory => passwordHistory.Id);
+                passwordHistories.Property(passwordHistory => passwordHistory.Id)
+                    .ValueGeneratedNever();
+                passwordHistories.Ignore(passwordHistory => passwordHistory.DomainEvents);
             });
         }
     }

@@ -16,6 +16,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         private readonly List<UserRole> _userRoles;
         private readonly List<AuthenticatorApp> _authenticatorApps;
         private readonly List<AuthenticatorDevice> _authenticatorDevices;
+        private readonly List<PasswordHistory> _passwordHistories;
 
         public User(Guid id, string emailAddress, string passwordHash, bool isLockable, DateTime whenCreated, string firstName, string lastName, IReadOnlyList<Guid> roles, bool isAdmin)
         {
@@ -34,6 +35,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this._userRoles = roles.Select(x => new UserRole(x)).ToList();
             this._authenticatorApps = new List<AuthenticatorApp>();
             this._authenticatorDevices = new List<AuthenticatorDevice>();
+            this._passwordHistories = new List<PasswordHistory>();
         }
 
         private User()
@@ -43,6 +45,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             this._userRoles = new List<UserRole>();
             this._authenticatorApps = new List<AuthenticatorApp>();
             this._authenticatorDevices = new List<AuthenticatorDevice>();
+            this._passwordHistories = new List<PasswordHistory>();
         }
 
         public string EmailAddress { get; private set; }
@@ -80,6 +83,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         public IReadOnlyCollection<AuthenticatorApp> AuthenticatorApps => this._authenticatorApps.AsReadOnly();
 
         public IReadOnlyCollection<AuthenticatorDevice> AuthenticatorDevices => this._authenticatorDevices.AsReadOnly();
+
+        public IReadOnlyCollection<PasswordHistory> PasswordHistories => this._passwordHistories.AsReadOnly();
 
         public void ProcessSuccessfulAuthenticationAttempt(DateTime whenAttempted)
         {
@@ -136,10 +141,11 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
             return token.Token;
         }
 
-        public void ChangePassword(string passwordHash)
+        public void ChangePassword(string passwordHash, DateTime whenChanged)
         {
             this.PasswordHash = passwordHash;
             this.SecurityStamp = Guid.NewGuid();
+            this._passwordHistories.Add(new PasswordHistory(Guid.NewGuid(), this.PasswordHash, whenChanged));
         }
 
         public void VerifyAccount(DateTime whenVerified)

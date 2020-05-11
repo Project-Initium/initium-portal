@@ -88,7 +88,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             catch (Fido2VerificationException)
             {
                 return Result.Fail<EnrollAuthenticatorDeviceCommandResult, ErrorData>(
-                    new ErrorData(ErrorCodes.FidoVerifcationFailed));
+                    new ErrorData(ErrorCodes.FidoVerificationFailed));
             }
 
             var device = user.EnrollAuthenticatorDevice(

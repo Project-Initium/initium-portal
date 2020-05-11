@@ -107,6 +107,7 @@
     <Build Include="Portal\Stored Procedures\uspCheckForPresenceOfAuthAppForCurrentUser.sql" />
     <Build Include="Portal\Stored Procedures\uspGetDeviceInfoForCurrentUser.sql" />
     <Build Include="ReadAggregation\Views\vwUserRole.sql" />
+    <Build Include="Identity\Tables\PasswordHistory.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Stance.Data.refactorlog" />

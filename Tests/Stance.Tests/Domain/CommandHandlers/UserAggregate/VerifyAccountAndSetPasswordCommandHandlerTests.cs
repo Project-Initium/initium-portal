@@ -129,7 +129,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             await handler.Handle(cmd, CancellationToken.None);
             user.Verify(x => x.VerifyAccount(It.IsAny<DateTime>()), Times.Once);
-            user.Verify(x => x.ChangePassword(It.IsAny<string>()), Times.Once);
+            user.Verify(x => x.ChangePassword(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Once);
             user.Verify(x => x.CompleteTokenLifecycle(It.IsAny<Guid>(), It.IsAny<DateTime>()), Times.Once);
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
         }
