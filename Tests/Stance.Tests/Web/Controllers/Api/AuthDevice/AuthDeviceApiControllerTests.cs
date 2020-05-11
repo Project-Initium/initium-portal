@@ -13,6 +13,7 @@ using Stance.Core.Domain;
 using Stance.Domain.CommandResults.UserAggregate;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Controllers.Api.AuthDevice;
+using Stance.Web.Controllers.Api.AuthDevice.Models;
 using Stance.Web.Infrastructure.Contracts;
 using Xunit;
 

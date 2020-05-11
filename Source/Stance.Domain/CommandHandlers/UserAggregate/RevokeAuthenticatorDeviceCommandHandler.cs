@@ -63,6 +63,11 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             var user = userMaybe.Value;
 
+            if (!BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
+            {
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.PasswordNotCorrect));
+            }
+
             if (user.AuthenticatorDevices.All(x => x.Id != request.DeviceId))
             {
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.DeviceNotFound));

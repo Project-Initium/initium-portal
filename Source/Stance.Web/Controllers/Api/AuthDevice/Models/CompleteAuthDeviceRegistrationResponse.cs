@@ -4,7 +4,7 @@
 using System;
 using Fido2NetLib;
 
-namespace Stance.Web.Controllers.Api.AuthDevice
+namespace Stance.Web.Controllers.Api.AuthDevice.Models
 {
     public class CompleteAuthDeviceRegistrationResponse
     {

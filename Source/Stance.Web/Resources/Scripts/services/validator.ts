@@ -1,12 +1,16 @@
 import * as validate from 'validate.js';
 
-export class Validator {
-    private form: HTMLFormElement;
-    private formSubmitted:boolean
-    private elements: Element[];
-    private constraints: any;
-    private hasValidated: boolean = false;
+interface IValidationResult {
+    isValid: boolean;
+}
 
+export class Validator {
+    private readonly form: HTMLFormElement;
+    private formSubmitted:boolean
+    private readonly elements: Element[];
+    private readonly constraints: any;
+    private hasValidated: boolean = false;
+    
     constructor(formQuery: string | HTMLFormElement | JQuery, validateOnSubmit: boolean = true) {
         const contextThis = this;
         if (formQuery.isPrototypeOf(String)) {
@@ -24,11 +28,11 @@ export class Validator {
 
         this.constraints = {};
         this.elements = [];
-        var els = this.form.querySelectorAll('input:not([type="hidden"]):not([data-val="false"]), textarea:not([data-val="false"])');
+        const els = this.form.querySelectorAll('input:not([type="hidden"]):not([data-val="false"]), textarea:not([data-val="false"])');
         Array.prototype.forEach.call(els,
             (element: HTMLInputElement) => {
                 let needsValidation: boolean = false;
-                var elementId = element.id;
+                let elementId = element.id;
                 if (elementId) {
                     elementId = elementId.replace('.', '_');
                     contextThis.constraints[elementId] = {};
@@ -93,15 +97,27 @@ export class Validator {
         this.formSubmitted = false;
     }
 
+    public validate(): IValidationResult {
+        this.hasValidated = true;
+        return {
+            isValid: !this.performValidation()
+        };
+    }
+    
+    public reset(): void {
+        this.elements.forEach((element: HTMLInputElement) => {
+            const group = element.closest('.form-group');
+            group.classList.remove('has-success');
+            group.classList.remove('has-error');
+            const helpBlock = group.querySelector(`span[data-valmsg-for]`);
+            helpBlock.innerHTML = '';
+        });
+    }
+    
     private elementChange(event: Event): void {
         if (this.hasValidated) {
             this.performValidation();
         }
-    }
-
-    public validate(): boolean {
-        this.hasValidated = true;
-        return this.performValidation();
     }
 
     private formSubmit(event: Event): void {
@@ -124,10 +140,9 @@ export class Validator {
         const formValues = JSON.parse(JSON.stringify(validate.collectFormValues(this.form)).replace(/\\\\\\\\\./g, '_'));
         const validationResult = validate(formValues, this.constraints);
         const contextThis = this;
-        Array.prototype.forEach.call(this.elements,
-            (element: HTMLInputElement) => {
-                contextThis.decorateElement(element, validationResult);
-            });
+        this.elements.forEach((element: HTMLInputElement) => {
+            contextThis.decorateElement(element, validationResult);
+        });
         return validationResult;
     }
 

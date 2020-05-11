@@ -59,7 +59,7 @@ class App {
             document.querySelector('.nav-toggler').addEventListener('click', () => {
                 document.body.classList.toggle('mini-sidebar');                
             });
-
+            $('.dropdown-toggle').dropdown();
             this.windowResizeListener();
         }
     }

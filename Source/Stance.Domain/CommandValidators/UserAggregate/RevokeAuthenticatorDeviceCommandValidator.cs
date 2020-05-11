@@ -14,6 +14,8 @@ namespace Stance.Domain.CommandValidators.UserAggregate
         {
             this.RuleFor(x => x.DeviceId)
                 .NotEqual(Guid.Empty).WithErrorCode(ValidationCodes.FieldIsRequired);
+            this.RuleFor(x => x.Password)
+                .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }
 }

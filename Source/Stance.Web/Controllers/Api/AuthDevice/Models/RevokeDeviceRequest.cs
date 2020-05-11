@@ -3,10 +3,12 @@
 
 using System;
 
-namespace Stance.Web.Controllers.Api.AuthDevice
+namespace Stance.Web.Controllers.Api.AuthDevice.Models
 {
     public class RevokeDeviceRequest
     {
         public Guid DeviceId { get; set; }
+
+        public string Password { get; set; }
     }
 }

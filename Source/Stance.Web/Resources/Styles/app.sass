@@ -130,8 +130,18 @@ body
     transform: translate(0,0)
     flex-flow: column
     
-.modal-dialog-slideout .modal-content
-    border: 0
+.modal-dialog-slideout
+    .modal-content
+        border: 0
+        min-height: 100vh
+        .modal-body
+            .modal-header
+                padding: 0 1rem 1rem 1rem
+                margin: 0 -1rem 1rem -1rem
+            .modal-footer
+                padding: 1rem 1rem 0 1rem
+                margin: 1rem -1rem 0 -1rem
+                
 
 @media (max-width: 767px)
     .mini-sidebar .page-wrapper
@@ -148,6 +158,9 @@ body
         justify-content: space-between
         .dataTables_filter
             float: none
+            
+.app-mfa-code
+    width: 250px
     
 #filters
     h6
@@ -168,6 +181,9 @@ body
     .dataTables_paginate
         float: none
             
+.helpful-info
+    padding: 0.5rem
+    border: 1px solid #dee2e6
                 
                 
         

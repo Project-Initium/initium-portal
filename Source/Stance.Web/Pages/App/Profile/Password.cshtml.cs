@@ -1,6 +1,7 @@
 // Copyright (c) DeviousCreation. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -19,10 +20,39 @@ namespace Stance.Web.Pages.App.Profile
     public class Password : PrgPageModel<Password.Model>
     {
         private readonly IMediator _mediator;
+        private readonly SecuritySettings _securitySettings;
 
-        public Password(IMediator mediator)
+        public Password(IMediator mediator, IOptions<SecuritySettings> securitySettings)
         {
-            this._mediator = mediator;
+            if (securitySettings == null)
+            {
+                throw new ArgumentNullException(nameof(securitySettings));
+            }
+
+            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._securitySettings = securitySettings.Value;
+        }
+
+        public int RequiredLength { get; private set; }
+
+        public int RequiredUniqueChars { get; private set; }
+
+        public bool RequireDigit { get; private set; }
+
+        public bool RequireLowercase { get; private set; }
+
+        public bool RequireUppercase { get; private set; }
+
+        public bool RequireNonAlphanumeric { get; private set; }
+
+        public void OnGet()
+        {
+            this.RequiredLength = this._securitySettings.PasswordRequirements.RequiredLength;
+            this.RequiredUniqueChars = this._securitySettings.PasswordRequirements.RequiredUniqueChars;
+            this.RequireDigit = this._securitySettings.PasswordRequirements.RequireDigit;
+            this.RequireLowercase = this._securitySettings.PasswordRequirements.RequireLowercase;
+            this.RequireUppercase = this._securitySettings.PasswordRequirements.RequireUppercase;
+            this.RequireNonAlphanumeric = this._securitySettings.PasswordRequirements.RequireNonAlphanumeric;
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -51,7 +81,7 @@ namespace Stance.Web.Pages.App.Profile
 
         public class Model
         {
-            [Display(Name="Old Password")]
+            [Display(Name = "Old Password")]
             public string OldPassword { get; set; }
 
             [Display(Name = "New Password")]
