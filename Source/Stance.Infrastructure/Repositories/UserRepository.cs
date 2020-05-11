@@ -40,6 +40,7 @@ namespace Stance.Infrastructure.Repositories
                 .Include(x => x.SecurityTokenMappings)
                 .Include(x => x.AuthenticatorApps)
                 .Include(x => x.AuthenticatorDevices)
+                .Include(x => x.PasswordHistories)
                 .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
             await this.Refresh(user);
             return Maybe.From<IUser>(user);
@@ -62,6 +63,7 @@ namespace Stance.Infrastructure.Repositories
                 .Include(x => x.SecurityTokenMappings)
                 .Include(x => x.AuthenticatorApps)
                 .Include(x => x.AuthenticatorDevices)
+                .Include(x => x.PasswordHistories)
                 .SingleOrDefaultAsync(x => x.EmailAddress == emailAddress, cancellationToken);
             await this.Refresh(user);
             return Maybe.From<IUser>(user);
@@ -73,6 +75,7 @@ namespace Stance.Infrastructure.Repositories
                 .Include(x => x.SecurityTokenMappings)
                 .Include(x => x.AuthenticatorApps)
                 .Include(x => x.AuthenticatorDevices)
+                .Include(x => x.PasswordHistories)
                 .SingleOrDefaultAsync(x => x.SecurityTokenMappings.Any(y => y.Id == tokenId && y.WhenExpires > expiryDate), cancellationToken);
             await this.Refresh(user);
             return Maybe.From<IUser>(user);

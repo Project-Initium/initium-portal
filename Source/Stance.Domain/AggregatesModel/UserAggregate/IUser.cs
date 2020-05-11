@@ -38,6 +38,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         IReadOnlyCollection<AuthenticatorDevice> AuthenticatorDevices { get; }
 
+        IReadOnlyCollection<PasswordHistory> PasswordHistories { get; }
+
         Guid SecurityStamp { get; }
 
         Profile Profile { get; }
@@ -54,7 +56,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         string GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration);
 
-        void ChangePassword(string passwordHash);
+        void ChangePassword(string passwordHash, DateTime whenChanged);
 
         void VerifyAccount(DateTime whenVerified);
 

@@ -21,6 +21,8 @@ namespace Stance.Core.Settings
 
         public PasswordRequirement PasswordRequirements { get; set; }
 
+        public int HistoricalLimit { get; set; }
+
         public class PasswordRequirement
         {
             public int RequiredLength { get; set; }

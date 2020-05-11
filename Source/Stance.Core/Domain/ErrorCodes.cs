@@ -17,10 +17,11 @@ namespace Stance.Core.Domain
         AuthenticatorAppAlreadyEnrolled,
         FailedVerifyingAuthenticatorCode,
         NoAuthenticatorAppEnrolled,
-        FidoVerifcationFailed,
+        FidoVerificationFailed,
         DeviceNotFound,
         PasswordNotCorrect,
         UserIsAlreadyVerified,
         AccountNotVerified,
+        PasswordInHistory,
     }
 }

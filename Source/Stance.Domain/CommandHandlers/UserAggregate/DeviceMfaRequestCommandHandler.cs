@@ -74,7 +74,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             if (!optionsMaybe.HasValue)
             {
                 return Result.Fail<DeviceMfaRequestCommandResult, ErrorData>(
-                    new ErrorData(ErrorCodes.FidoVerifcationFailed));
+                    new ErrorData(ErrorCodes.FidoVerificationFailed));
             }
 
             user.ProcessPartialSuccessfulAuthenticationAttempt(

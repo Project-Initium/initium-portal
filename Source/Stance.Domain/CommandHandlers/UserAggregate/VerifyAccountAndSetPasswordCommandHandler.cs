@@ -62,7 +62,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             user.VerifyAccount(whenHappened);
 
-            user.ChangePassword(BCrypt.Net.BCrypt.HashPassword(request.NewPassword));
+            user.ChangePassword(BCrypt.Net.BCrypt.HashPassword(request.NewPassword), whenHappened);
 
             user.CompleteTokenLifecycle(convertedToken, whenHappened);
             this._userRepository.Update(user);
