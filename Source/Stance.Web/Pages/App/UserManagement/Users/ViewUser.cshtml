@@ -1,5 +1,6 @@
 ﻿@page "/app/user-management/users/view/{id}"
 @using Stance.Web.Infrastructure.Constants
+@using Stance.Web.Infrastructure.Extensions
 @model Stance.Web.Pages.App.UserManagement.Users.ViewUser
 @{
     Layout = "Shared/_AppLayout";
@@ -17,13 +18,24 @@
     </div>
     <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
         <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@PageLocations.UserListing">Back to Listing</a>
-        @if (Model.DetailedUser.WhenLocked.HasValue)
+        @if (!this.Model.ViewingSelf && User.HasPermissions("user-unlock") && Model.DetailedUser.WhenLocked.HasValue)
         {
             <form class="mr-2" id="unlock-form" method="post" data-user-id="@Model.Id" data-endpoint="@Url.Action("UnlockAccount", "UserApi")">
                 <button type="submit" class="btn btn-sm btn-primary">Unlock</button>
             </form>
         }
-        <a class="btn btn-info btn-sm text-white mr-2" asp-page="@PageLocations.UserEdit" asp-route-id="@Model.DetailedUser.UserId">Edit</a>
+        @if (!this.Model.ViewingSelf && User.HasPermissions("user-disable"))
+        {
+            <button type="button" class="btn btn-sm btn-warning text-white mr-2 @(this.Model.DetailedUser.WhenDisable.HasValue ? "d-none" : "")" data-enable-toggle data-message="The user has been disabled" data-user-id="@Model.Id" data-endpoint="@Url.Action("DisableAccount", "UserApi")">Disable</button>
+        }
+        @if (!this.Model.ViewingSelf && User.HasPermissions("user-enable"))
+        {
+            <button type="button" class="btn btn-sm btn-warning text-white mr-2 @(this.Model.DetailedUser.WhenDisable.HasValue ? "" : "d-none")" data-enable-toggle data-message="The user has been enabled" data-user-id="@Model.Id" data-endpoint="@Url.Action("EnableAccount", "UserApi")">Enable</button>
+        }
+        @if (!this.Model.ViewingSelf)
+        {
+            <a class="btn btn-info btn-sm text-white mr-2" asp-page="@PageLocations.UserEdit" asp-route-id="@Model.DetailedUser.UserId">Edit</a>
+        }
     </div>
 </div>
 

@@ -34,6 +34,7 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
             user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>());
             user.Setup(x => x.AuthenticatorDevices).Returns(new List<AuthenticatorDevice>());
+            user.Setup(x => x.IsVerified).Returns(true);
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -58,6 +59,37 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         }
 
         [Fact]
+        public async Task Handle_GivenSavingSucceeds_ExpectSuccessfulResult()
+        {
+            var user = new Mock<IUser>();
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("password"));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
+            user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>());
+            user.Setup(x => x.AuthenticatorDevices).Returns(new List<AuthenticatorDevice>());
+            user.Setup(x => x.IsVerified).Returns(true);
+
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+
+            var clock = new Mock<IClock>();
+
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
+
+            var fido = new Mock<IFido2>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var cmd = new AuthenticateUserCommand("email-address", "password");
+            var result = await handler.Handle(cmd, CancellationToken.None);
+
+            Assert.True(result.IsSuccess);
+        }
+
+        [Fact]
         public async Task Handle_GivenUserDoesNotExist_ExpectFailedResult()
         {
             var userRepository = new Mock<IUserRepository>();
@@ -78,6 +110,66 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             Assert.True(result.IsFailure);
             Assert.Equal(ErrorCodes.UserNotFound, result.Error.Code);
+        }
+
+        [Fact]
+        public async Task Handle_GivenUserIsDisabled_ExpectFailedResult()
+        {
+            var user = new Mock<IUser>();
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("password"));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
+            user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>());
+            user.Setup(x => x.AuthenticatorDevices).Returns(new List<AuthenticatorDevice>());
+            user.Setup(x => x.IsDisabled).Returns(true);
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+
+            var clock = new Mock<IClock>();
+
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            var fido = new Mock<IFido2>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var cmd = new AuthenticateUserCommand("email-address", "password");
+            var result = await handler.Handle(cmd, CancellationToken.None);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal(ErrorCodes.AccountIsDisabled, result.Error.Code);
+        }
+
+        [Fact]
+        public async Task Handle_GivenUserIsNotVerified_ExpectFailedResult()
+        {
+            var user = new Mock<IUser>();
+            user.Setup(x => x.PasswordHash).Returns(BCrypt.Net.BCrypt.HashPassword("password"));
+            user.Setup(x => x.Profile).Returns(new Profile(TestVariables.UserId, "first-name", "last-name"));
+            user.Setup(x => x.AuthenticatorApps).Returns(new List<AuthenticatorApp>());
+            user.Setup(x => x.AuthenticatorDevices).Returns(new List<AuthenticatorDevice>());
+            user.Setup(x => x.IsDisabled).Returns(false);
+            user.Setup(x => x.IsVerified).Returns(false);
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+
+            var clock = new Mock<IClock>();
+
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
+            var fido = new Mock<IFido2>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var cmd = new AuthenticateUserCommand("email-address", "password");
+            var result = await handler.Handle(cmd, CancellationToken.None);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal(ErrorCodes.AccountNotVerified, result.Error.Code);
         }
 
         [Fact]

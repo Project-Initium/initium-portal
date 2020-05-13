@@ -10,6 +10,7 @@ using ResultMonad;
 using Stance.Core.Domain;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Web.Controllers.Api.AuthEmail;
+using Stance.Web.Controllers.Api.AuthEmail.Models;
 using Xunit;
 
 namespace Stance.Tests.Web.Controllers.Api.AuthEmail

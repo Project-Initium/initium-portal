@@ -23,5 +23,8 @@ namespace Stance.Core.Domain
         UserIsAlreadyVerified,
         AccountNotVerified,
         PasswordInHistory,
+        AccountIsDisabled,
+        UserAlreadyDisabled,
+        UserNotDisabled,
     }
 }

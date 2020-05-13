@@ -7,6 +7,7 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Stance.Web.Infrastructure.Extensions;
 
 namespace Stance.Web.Infrastructure.Attributes
 {
@@ -30,12 +31,7 @@ namespace Stance.Web.Infrastructure.Attributes
                 return;
             }
 
-            if (user.HasClaim(x => x.Type == ClaimTypes.System))
-            {
-                return;
-            }
-
-            if (user.HasClaim(ClaimTypes.Role, this._resource))
+            if (user.HasPermissions(this._resource))
             {
                 return;
             }

@@ -7,6 +7,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Stance.Domain.Commands.UserAggregate;
+using Stance.Web.Controllers.Api.AuthEmail.Models;
 
 namespace Stance.Web.Controllers.Api.AuthEmail
 {

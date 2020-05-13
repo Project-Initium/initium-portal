@@ -41,7 +41,7 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._fido2 = fido2;
+            this._fido2 = fido2 ?? throw new ArgumentNullException(nameof(fido2));
             this._securitySettings = securitySettings.Value;
         }
 
@@ -70,6 +70,15 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
             }
 
             var user = maybe.Value;
+
+            if (user.IsDisabled)
+            {
+                user.ProcessUnsuccessfulAuthenticationAttempt(
+                    this._clock.GetCurrentInstant().ToDateTimeUtc(),
+                    false);
+                return Result.Fail<AuthenticateUserCommandResult, ErrorData>(
+                    new ErrorData(ErrorCodes.AccountIsDisabled));
+            }
 
             if (!user.IsVerified)
             {

@@ -16,7 +16,7 @@ namespace Stance.Tests.Web.Controllers.Api.AuthApp.Models
                 Code = "code",
                 SharedKey = "shared-key",
             };
-            var validator = new EnrollAuthAppRequest.EnrollAuthAppRequestValidator();
+            var validator = new EnrollAuthAppRequest.Validator();
             var result = validator.Validate(request);
             Assert.True(result.IsValid);
         }
@@ -29,7 +29,7 @@ namespace Stance.Tests.Web.Controllers.Api.AuthApp.Models
                 Code = string.Empty,
                 SharedKey = "shared-key",
             };
-            var validator = new EnrollAuthAppRequest.EnrollAuthAppRequestValidator();
+            var validator = new EnrollAuthAppRequest.Validator();
             var result = validator.Validate(request);
             Assert.False(result.IsValid);
             Assert.Contains(
@@ -45,7 +45,7 @@ namespace Stance.Tests.Web.Controllers.Api.AuthApp.Models
                 Code = null,
                 SharedKey = "shared-key",
             };
-            var validator = new EnrollAuthAppRequest.EnrollAuthAppRequestValidator();
+            var validator = new EnrollAuthAppRequest.Validator();
             var result = validator.Validate(request);
             Assert.False(result.IsValid);
             Assert.Contains(
@@ -61,7 +61,7 @@ namespace Stance.Tests.Web.Controllers.Api.AuthApp.Models
                 Code = "code",
                 SharedKey = string.Empty,
             };
-            var validator = new EnrollAuthAppRequest.EnrollAuthAppRequestValidator();
+            var validator = new EnrollAuthAppRequest.Validator();
             var result = validator.Validate(request);
             Assert.False(result.IsValid);
             Assert.Contains(
@@ -77,7 +77,7 @@ namespace Stance.Tests.Web.Controllers.Api.AuthApp.Models
                 Code = "code",
                 SharedKey = null,
             };
-            var validator = new EnrollAuthAppRequest.EnrollAuthAppRequestValidator();
+            var validator = new EnrollAuthAppRequest.Validator();
             var result = validator.Validate(request);
             Assert.False(result.IsValid);
             Assert.Contains(

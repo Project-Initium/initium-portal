@@ -8,6 +8,8 @@ using MaybeMonad;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Moq;
+using Stance.Core;
+using Stance.Core.Contracts;
 using Stance.Queries.Contracts.Static;
 using Stance.Queries.Static.Models.User;
 using Stance.Web.Pages.App.UserManagement.Users;
@@ -23,10 +25,53 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var userQueries = new Mock<IUserQueries>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe<DetailedUserModel>.Nothing);
+            var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
+            var authenticatedUser = new Mock<ISystemUser>();
+            authenticatedUser.Setup(x => x.UserId).Returns(TestVariables.AuthenticatedUserId);
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(authenticatedUser.Object));
 
-            var page = new ViewUser(userQueries.Object);
+            var page = new ViewUser(userQueries.Object, currentAuthenticatedUserProvider.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task OnGetAsync_GivenNoAuthenticateUser_ExpectNotFoundResultReturn()
+        {
+            var userQueries = new Mock<IUserQueries>();
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
+                .ReturnsAsync(Maybe<DetailedUserModel>.Nothing);
+            var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe<ISystemUser>.Nothing);
+
+            var page = new ViewUser(userQueries.Object, currentAuthenticatedUserProvider.Object);
+            var result = await page.OnGetAsync();
+            Assert.IsType<NotFoundResult>(result);
+        }
+
+        [Fact]
+        public async Task OnGetAsync_GivenAuthenticateUserIsTheSameAsTheOneSelected_ExpectDataToBeSetAndPageResultReturnAndViewingSelfToBeSet()
+        {
+            var userQueries = new Mock<IUserQueries>();
+            userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
+                .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
+                    "last-name", true, TestVariables.Now, null, TestVariables.Now, true, new List<Guid>(), null)));
+            var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
+            var authenticatedUser = new Mock<ISystemUser>();
+            authenticatedUser.Setup(x => x.UserId).Returns(TestVariables.AuthenticatedUserId);
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(authenticatedUser.Object));
+
+            var page = new ViewUser(userQueries.Object, currentAuthenticatedUserProvider.Object)
+            {
+                Id = TestVariables.AuthenticatedUserId,
+            };
+            var result = await page.OnGetAsync();
+            Assert.IsType<PageResult>(result);
+            Assert.Equal("email-address", page.DetailedUser.EmailAddress);
+            Assert.True(page.ViewingSelf);
         }
 
         [Fact]
@@ -35,12 +80,18 @@ namespace Stance.Tests.Web.Pages.App.UserManagement.Users
             var userQueries = new Mock<IUserQueries>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
-                    "last-name", true, TestVariables.Now, null, TestVariables.Now, true, new List<Guid>())));
+                    "last-name", true, TestVariables.Now, null, TestVariables.Now, true, new List<Guid>(), null)));
+            var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
+            var authenticatedUser = new Mock<ISystemUser>();
+            authenticatedUser.Setup(x => x.UserId).Returns(TestVariables.AuthenticatedUserId);
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(authenticatedUser.Object));
 
-            var page = new ViewUser(userQueries.Object);
+            var page = new ViewUser(userQueries.Object, currentAuthenticatedUserProvider.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal("email-address", page.DetailedUser.EmailAddress);
+            Assert.False(page.ViewingSelf);
         }
     }
 }

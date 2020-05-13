@@ -10,6 +10,7 @@ using FluentValidation;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Stance.Core.Contracts;
 using Stance.Domain.Commands.UserAggregate;
 using Stance.Queries.Contracts.Static;
 using Stance.Web.Infrastructure.Attributes;
@@ -24,12 +25,14 @@ namespace Stance.Web.Pages.App.UserManagement.Users
         private readonly IMediator _mediator;
         private readonly IUserQueries _userQueries;
         private readonly IRoleQueries _roleQueries;
+        private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
-        public EditUser(IUserQueries userQueries, IMediator mediator, IRoleQueries roleQueries)
+        public EditUser(IUserQueries userQueries, IMediator mediator, IRoleQueries roleQueries, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
             this._userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             this._roleQueries = roleQueries ?? throw new ArgumentNullException(nameof(roleQueries));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -47,6 +50,17 @@ namespace Stance.Web.Pages.App.UserManagement.Users
 
         public async Task<IActionResult> OnGetAsync()
         {
+            var maybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
+            if (maybe.HasNoValue)
+            {
+                return this.NotFound();
+            }
+
+            if (maybe.Value.UserId == this.Id)
+            {
+                return this.NotFound();
+            }
+
             var userMaybe = await this._userQueries.GetDetailsOfUserById(this.Id);
             if (userMaybe.HasNoValue)
             {
