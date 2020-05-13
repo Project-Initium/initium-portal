@@ -8,9 +8,9 @@ steps:
     - task: SonarCloudPrepare@1
       inputs:
         SonarCloud: Analyze "stance"
-        organization: deviouscreation
+        organization: Project Initium
         scannerMode: MSBuild
-        projectKey: DeviousCreation_stance
+        projectKey: Project Initium_stance
         extraProperties: |
           sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
           sonar.exclusions=**\Resources\Themes\**

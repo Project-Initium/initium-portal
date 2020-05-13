@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;</Configurations>
+    <ProjectGuid>6aa67298-04b7-45f2-b0a2-bba5b7ab7d4e</ProjectGuid>
+  </PropertyGroup>
+
+  <Import Project="..\..\Shared\Initium.Portal.Shared\Initium.Portal.Shared.projitems" Label="Shared" />
+
+  <ItemGroup>
+    <PackageReference Include="Destructurama.ByIgnoring" Version="1.1.0-dev-00026" />
+    <PackageReference Include="FluentValidation" Version="8.6.2" />
+    <PackageReference Include="MediatR" Version="8.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.3" />
+    <PackageReference Include="Scrutor" Version="3.2.0" />
+    <PackageReference Include="Serilog" Version="2.9.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.5.0.15942">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Initium.Portal.Core\Initium.Portal.Core.csproj" />
+    <ProjectReference Include="..\Initium.Portal.Domain\Initium.Portal.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -20,8 +20,8 @@ Task("__Clean")
 
             CleanDirectories("../**/bin");
             CleanDirectories("../**/obj");
-            if (DirectoryExists("../Source/Stance.Web/node_modules")) {
-                DeleteDirectory("../Source/Stance.Web/node_modules", new DeleteDirectorySettings {
+            if (DirectoryExists("../Source/Initium.Portal.Web/node_modules")) {
+                DeleteDirectory("../Source/Initium.Portal.Web/node_modules", new DeleteDirectorySettings {
                     Recursive = true,
                     Force = true
                 });
@@ -45,7 +45,7 @@ Task("__Versioning")
 Task("__RestorePackages")
     .Does(() => {
         var npmInstallSettings = new NpmInstallSettings {
-            WorkingDirectory = "../Source/Stance.Web",
+            WorkingDirectory = "../Source/Initium.Portal.Web",
             LogLevel = NpmLogLevel.Silent
         };
         NpmInstall(npmInstallSettings);
@@ -55,7 +55,7 @@ Task("__Build")
     .Does(() => {
         var npmRunScriptSettings = new NpmRunScriptSettings {
            ScriptName = "release:build",
-           WorkingDirectory = "../Source/Stance.Web",
+           WorkingDirectory = "../Source/Initium.Portal.Web",
            LogLevel = NpmLogLevel.Silent
         };		
         NpmRunScript(npmRunScriptSettings);  
@@ -63,14 +63,14 @@ Task("__Build")
         var settings = new DotNetCoreBuildSettings {
             Configuration = "Release"
         };
-        DotNetCoreBuild("../Stance.sln", settings);
+        DotNetCoreBuild("../Initium.Portal.sln", settings);
 
         var msBuildSettings = new MSBuildSettings {
             Verbosity = Verbosity.Minimal,
             Configuration = "Database",
             PlatformTarget = PlatformTarget.MSIL
         };
-        MSBuild("../Stance.sln", msBuildSettings);
+        MSBuild("../Initium.Portal.sln", msBuildSettings);
     });
 Task("__Test")
     .Does(() => {
@@ -88,7 +88,7 @@ Task("__Test")
         CoverletOutputName = "coverage"        
     };
 
-    DotNetCoreTest("../Stance.sln", testSettings, coverletSettings);
+    DotNetCoreTest("../Initium.Portal.sln", testSettings, coverletSettings);
     });
 Task("__Publish")
     .Does(() => {
@@ -97,13 +97,13 @@ Task("__Publish")
             OutputDirectory = publishPath
         };
         
-        DotNetCorePublish("../source/Stance.Web/Stance.Web.csproj", pubSettings);
+        DotNetCorePublish("../source/Initium.Portal.Web/Initium.Portal.Web.csproj", pubSettings);
 
             });
 Task("__Package")
     .Does(() => {
-        ZipCompress(publishPath, releasePath + File("DeviousCreation.CqrsStarterTemplate.Web.zip"));        
-        ZipCompress("../Data/Stance.Data/bin/Debug/Stance.Data.dacpac", releasePath + File("Stance.Data.zip"));        
+        ZipCompress(publishPath, releasePath + File("Initium.Portal.zip"));        
+        ZipCompress("../Data/Initium.Portal.Data/bin/Debug/Initium.Portal.Data.dacpac", releasePath + File("Initium.Portal.Data.zip"));        
     });
 
 Task("Build")

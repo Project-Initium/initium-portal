@@ -1,0 +1,60 @@
+﻿@page "/app/user-management/roles/view/{id}"
+@using Initium.Portal.Web.Infrastructure.Constants
+@model Initium.Portal.Web.Pages.App.UserManagement.Roles.ViewRole
+@{
+    Layout = "Shared/_AppLayout";
+    ViewData["Title"] = $"Roles | Viewing {Model.Role.Name}";
+}
+
+
+<div class="row page-titles">
+    <div class="align-self-center">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+            <li class="breadcrumb-item">User Management</li>
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.RoleListing">Roles</a></li>
+            <li class="breadcrumb-item active">Viewing Role @Model.Role.Name</li>
+        </ol>
+    </div>
+</div>
+
+@foreach (var resource in Model.Role.Resources)
+{
+    <input type="hidden" name="pagemodel.resources" value="@resource" />
+}
+<div class="row">
+    <div class="col-md-7 pl-md-0 pr-md-2 pl-1 pr-1">
+        <div class="card card-outline-info">
+            <div class="card-body">
+                <h4 class="card-title">Details</h4>
+                <div class="form-group">
+                    <span class="text-muted">Name</span>
+                    <h6>@Model.Role.Name</h6>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-5 pl-md-2 pr-md-0 pl-1 pr-1">
+        <div class="card card-outline-info">
+            <div class="card-body">
+                <h4 class="card-title">Resources</h4>
+                <div id="tree" data-route="@Url.Action("GetNestResources", "ResourceApi")"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-6">
+        <a class="btn btn-secondary cancel" asp-page="@PageLocations.RoleListing">Go Back</a>
+    </div>
+    <div class="col-6 text-right">
+        <a class="btn btn-info text-white mr-2" asp-page="@PageLocations.RoleEdit" asp-route-id="@Model.Id">Edit</a>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/role-view.js.gz" asp-append-version="true"></script>
+}
