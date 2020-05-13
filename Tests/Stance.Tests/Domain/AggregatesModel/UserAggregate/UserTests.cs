@@ -110,7 +110,7 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
         }
 
         [Fact]
-        public void ProcessUnsuccessfulAuthenticationAttempt_GivenLockedIsAppliedAndAccountIsLockable_ExpectNewEntryInHistoryAndUnsuccessfulCountIncreasedAndAccountLocked()
+        public void ProcessUnsuccessfulAuthenticationAttempt_GivenLockedIsAppliedAndAccountIsLockable_ExpectNewEntryInHistoryAndUnsuccessfulCountIncreasedAndAccountLockedAndPasswordHashChanged()
         {
             var user = new User(
                 TestVariables.UserId,
@@ -129,6 +129,7 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
             Assert.Null(user.WhenLastAuthenticated);
             Assert.Equal(1, user.AttemptsSinceLastAuthentication);
             Assert.Equal(whenAttempted, user.WhenLocked);
+            Assert.Equal(TestVariables.OverridenPassword, user.PasswordHash);
             Assert.Contains(
                 user.AuthenticationHistories,
                 history => history.AuthenticationHistoryType == AuthenticationHistoryType.Failure &&
@@ -536,6 +537,48 @@ namespace Stance.Tests.Domain.AggregatesModel.UserAggregate
             user.UnlockAccount();
 
             Assert.Null(user.WhenLocked);
+        }
+
+        [Fact]
+        public void DisableAccount_GivenValidArguments_ExpectAccountToBeDisabled()
+        {
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                true,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
+                true);
+
+            user.DisableAccount(TestVariables.Now);
+
+            Assert.Equal(TestVariables.Now, user.WhenDisabled);
+            Assert.True(user.IsDisabled);
+            Assert.Equal(TestVariables.OverridenPassword, user.PasswordHash);
+        }
+
+        [Fact]
+        public void EnableAccount_GivenValidArguments_ExpectAccountToBeEnabled()
+        {
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                true,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
+                true);
+
+            user.DisableAccount(TestVariables.Now);
+            user.EnableAccount();
+
+            Assert.Null(user.WhenDisabled);
+            Assert.False(user.IsDisabled);
         }
     }
 }

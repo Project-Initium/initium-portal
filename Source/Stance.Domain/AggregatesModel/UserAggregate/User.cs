@@ -11,6 +11,7 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 {
     public sealed class User : Entity, IUser
     {
+        private const string OverridePasswordHash = "$2a$11$JkbCP/ludbTfmRmdRXVAN.1RNFoQuDGrdjCQzJOJizNMSoOWtYKxe";
         private readonly List<AuthenticationHistory> _authenticationHistories;
         private readonly List<SecurityTokenMapping> _securityTokenMappings;
         private readonly List<UserRole> _userRoles;
@@ -58,6 +59,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         public DateTime? WhenVerified { get; private set; }
 
+        public DateTime? WhenDisabled { get; private set; }
+
         public bool IsLockable { get; private set; }
 
         public DateTime? WhenLocked { get; private set; }
@@ -71,6 +74,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         public bool IsAdmin { get; private set; }
 
         public bool IsVerified => this.WhenVerified.HasValue;
+
+        public bool IsDisabled => this.WhenDisabled.HasValue;
 
         public IReadOnlyList<AuthenticationHistory> AuthenticationHistories =>
             this._authenticationHistories.AsReadOnly();
@@ -103,10 +108,13 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         {
             this._authenticationHistories.Add(new AuthenticationHistory(Guid.NewGuid(), whenAttempted, AuthenticationHistoryType.Failure));
             this.AttemptsSinceLastAuthentication++;
-            if (applyLock && this.IsLockable)
+            if (!applyLock || !this.IsLockable)
             {
-                this.WhenLocked = whenAttempted;
+                return;
             }
+
+            this.WhenLocked = whenAttempted;
+            this.PasswordHash = OverridePasswordHash;
         }
 
         public string GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration)
@@ -115,12 +123,14 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
                 this._securityTokenMappings.FirstOrDefault(m =>
                     m.WhenUsed == null && m.WhenExpires >= whenRequest &&
                     m.Purpose == SecurityTokenMapping.SecurityTokenPurpose.PasswordReset);
-            if (token == null)
+            if (token != null)
             {
-                token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenMapping.SecurityTokenPurpose.PasswordReset, whenRequest,
-                    whenRequest.Add(duration));
-                this._securityTokenMappings.Add(token);
+                return token.Token;
             }
+
+            token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenMapping.SecurityTokenPurpose.PasswordReset, whenRequest,
+                whenRequest.Add(duration));
+            this._securityTokenMappings.Add(token);
 
             return token.Token;
         }
@@ -131,12 +141,14 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
                 this.SecurityTokenMappings.FirstOrDefault(m =>
                     m.WhenUsed == null && m.WhenExpires >= whenRequested &&
                     m.Purpose == SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation);
-            if (token == null)
+            if (token != null)
             {
-                token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation, whenRequested,
-                    whenRequested.Add(duration));
-                this._securityTokenMappings.Add(token);
+                return token.Token;
             }
+
+            token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation, whenRequested,
+                whenRequested.Add(duration));
+            this._securityTokenMappings.Add(token);
 
             return token.Token;
         }
@@ -219,6 +231,17 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         public void UnlockAccount()
         {
             this.WhenLocked = null;
+        }
+
+        public void DisableAccount(DateTime whenDisabled)
+        {
+            this.WhenDisabled = whenDisabled;
+            this.PasswordHash = OverridePasswordHash;
+        }
+
+        public void EnableAccount()
+        {
+            this.WhenDisabled = null;
         }
     }
 }

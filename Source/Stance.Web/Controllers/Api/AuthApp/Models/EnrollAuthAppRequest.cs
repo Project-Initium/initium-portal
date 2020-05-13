@@ -11,9 +11,9 @@ namespace Stance.Web.Controllers.Api.AuthApp.Models
 
         public string SharedKey { get; set; }
 
-        public class EnrollAuthAppRequestValidator : AbstractValidator<EnrollAuthAppRequest>
+        public class Validator : AbstractValidator<EnrollAuthAppRequest>
         {
-            public EnrollAuthAppRequestValidator()
+            public Validator()
             {
                 this.RuleFor(x => x.SharedKey)
                     .NotEmpty();

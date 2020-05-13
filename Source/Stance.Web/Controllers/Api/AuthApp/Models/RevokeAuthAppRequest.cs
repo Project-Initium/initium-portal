@@ -9,9 +9,9 @@ namespace Stance.Web.Controllers.Api.AuthApp.Models
     {
         public string Password { get; set; }
 
-        public class RevokeAuthAppRequestValidator : AbstractValidator<RevokeAuthAppRequest>
+        public class Validator : AbstractValidator<RevokeAuthAppRequest>
         {
-            public RevokeAuthAppRequestValidator()
+            public Validator()
             {
                 this.RuleFor(x => x.Password)
                     .NotEmpty();

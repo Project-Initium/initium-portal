@@ -12,6 +12,7 @@ BEGIN
 		,	u.WhenLastAuthenticated
 		,	u.WhenLocked
 		,	u.IsAdmin
+		,	u.WhenDisabled
 	FROM [Identity].[User] u
 	JOIN [Identity].[Profile] p
 		ON u.Id = p.UserId

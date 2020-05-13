@@ -15,7 +15,7 @@ namespace Stance.Tests.Web.Controllers.Api.AuthApp.Models
             {
                 Password = "password",
             };
-            var validator = new RevokeAuthAppRequest.RevokeAuthAppRequestValidator();
+            var validator = new RevokeAuthAppRequest.Validator();
             var result = validator.Validate(request);
             Assert.True(result.IsValid);
         }
@@ -27,7 +27,7 @@ namespace Stance.Tests.Web.Controllers.Api.AuthApp.Models
             {
                 Password = string.Empty,
             };
-            var validator = new RevokeAuthAppRequest.RevokeAuthAppRequestValidator();
+            var validator = new RevokeAuthAppRequest.Validator();
             var result = validator.Validate(request);
             Assert.False(result.IsValid);
             Assert.Contains(
@@ -42,7 +42,7 @@ namespace Stance.Tests.Web.Controllers.Api.AuthApp.Models
             {
                 Password = null,
             };
-            var validator = new RevokeAuthAppRequest.RevokeAuthAppRequestValidator();
+            var validator = new RevokeAuthAppRequest.Validator();
             var result = validator.Validate(request);
             Assert.False(result.IsValid);
             Assert.Contains(

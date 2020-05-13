@@ -62,6 +62,16 @@ namespace Stance.Domain.CommandHandlers.UserAggregate
 
             var user = userMaybe.Value;
 
+            if (!user.IsVerified)
+            {
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.AccountNotVerified));
+            }
+
+            if (user.IsDisabled)
+            {
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.AccountIsDisabled));
+            }
+
             var whenHappened = this._clock.GetCurrentInstant().ToDateTimeUtc();
 
             var token = user.GenerateNewPasswordResetToken(

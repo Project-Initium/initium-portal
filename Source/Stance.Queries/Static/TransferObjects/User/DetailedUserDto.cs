@@ -24,5 +24,7 @@ namespace Stance.Queries.Static.TransferObjects.User
         public DateTime? WhenLocked { get; set; }
 
         public bool IsAdmin { get; set; }
+
+        public DateTime? WhenDisabled { get; set; }
     }
 }

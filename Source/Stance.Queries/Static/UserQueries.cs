@@ -110,7 +110,7 @@ namespace Stance.Queries.Static
             var resourceResult = await res.ReadAsync<Guid>();
 
             return Maybe.From(
-                new DetailedUserModel(entity.Id, entity.EmailAddress, entity.FirstName, entity.LastName, entity.IsLockable, entity.WhenCreated, entity.WhenLastAuthenticated, entity.WhenLocked, entity.IsAdmin, resourceResult.ToList()));
+                new DetailedUserModel(entity.Id, entity.EmailAddress, entity.FirstName, entity.LastName, entity.IsLockable, entity.WhenCreated, entity.WhenLastAuthenticated, entity.WhenLocked, entity.IsAdmin, resourceResult.ToList(), entity.WhenDisabled));
         }
 
         public async Task<Maybe<SystemProfileModel>> GetSystemProfileByUserId(Guid userId)

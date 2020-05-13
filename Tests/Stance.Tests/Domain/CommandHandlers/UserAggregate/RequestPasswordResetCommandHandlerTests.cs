@@ -26,6 +26,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         {
             var user = new Mock<IUser>();
             user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
+            user.Setup(x => x.IsDisabled).Returns(false);
+            user.Setup(x => x.IsVerified).Returns(true);
             var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -54,6 +56,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         {
             var user = new Mock<IUser>();
             user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
+            user.Setup(x => x.IsDisabled).Returns(false);
+            user.Setup(x => x.IsVerified).Returns(true);
             var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -81,6 +85,8 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
         {
             var user = new Mock<IUser>();
             user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
+            user.Setup(x => x.IsDisabled).Returns(false);
+            user.Setup(x => x.IsVerified).Returns(true);
             var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -131,6 +137,65 @@ namespace Stance.Tests.Domain.CommandHandlers.UserAggregate
 
             Assert.True(result.IsFailure);
             Assert.Equal(ErrorCodes.UserNotFound, result.Error.Code);
+        }
+
+        [Fact]
+        public async Task Handle_GivenUserIsNotVerified_ExpectFailedResult()
+        {
+            var user = new Mock<IUser>();
+            user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
+            user.Setup(x => x.IsVerified).Returns(false);
+            var clock = new Mock<IClock>();
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
+            {
+                PasswordTokenLifetime = 3,
+            });
+
+            var handler =
+                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var cmd = new RequestPasswordResetCommand("email-address");
+            var result = await handler.Handle(cmd, CancellationToken.None);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal(ErrorCodes.AccountNotVerified, result.Error.Code);
+        }
+
+        [Fact]
+        public async Task Handle_GivenUserIsDisabled_ExpectFailedResult()
+        {
+            var user = new Mock<IUser>();
+            user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
+            user.Setup(x => x.IsVerified).Returns(true);
+            user.Setup(x => x.IsDisabled).Returns(true);
+            var clock = new Mock<IClock>();
+            var userRepository = new Mock<IUserRepository>();
+            var unitOfWork = new Mock<IUnitOfWork>();
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
+            userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => Maybe.From(user.Object));
+
+            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+            securitySettings.Setup(x => x.Value).Returns(new SecuritySettings
+            {
+                PasswordTokenLifetime = 3,
+            });
+
+            var handler =
+                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+            var cmd = new RequestPasswordResetCommand("email-address");
+            var result = await handler.Handle(cmd, CancellationToken.None);
+
+            Assert.True(result.IsFailure);
+            Assert.Equal(ErrorCodes.AccountIsDisabled, result.Error.Code);
         }
     }
 }

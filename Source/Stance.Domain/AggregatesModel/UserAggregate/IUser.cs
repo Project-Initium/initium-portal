@@ -24,6 +24,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
 
         DateTime? WhenVerified { get; }
 
+        DateTime? WhenDisabled { get; }
+
         int AttemptsSinceLastAuthentication { get; }
 
         bool IsAdmin { get; }
@@ -45,6 +47,8 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         Profile Profile { get; }
 
         bool IsVerified { get; }
+
+        bool IsDisabled { get; }
 
         void ProcessSuccessfulAuthenticationAttempt(DateTime whenAttempted);
 
@@ -79,5 +83,9 @@ namespace Stance.Domain.AggregatesModel.UserAggregate
         void RevokeAuthenticatorDevice(Guid id, DateTime whenRevoked);
 
         void UnlockAccount();
+
+        void DisableAccount(DateTime whenDisabled);
+
+        void EnableAccount();
     }
 }
