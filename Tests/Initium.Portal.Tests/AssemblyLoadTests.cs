@@ -10,11 +10,11 @@ namespace Initium.Portal.Tests
     public class AssemblyLoadTests
     {
         [Theory]
-        [InlineData("Stance.Core")]
-        [InlineData("Stance.Domain")]
-        [InlineData("Stance.Infrastructure")]
-        [InlineData("Stance.Queries")]
-        [InlineData("Stance.Web")]
+        [InlineData("Initium.Portal.Core")]
+        [InlineData("Initium.Portal.Domain")]
+        [InlineData("Initium.Portal.Infrastructure")]
+        [InlineData("Initium.Portal.Queries")]
+        [InlineData("Initium.Portal.Web")]
         public void AssemblyLoad(string assemblyName)
         {
             var assemblyToTest = AppDomain.CurrentDomain.GetAssemblies()
