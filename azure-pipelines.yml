@@ -16,7 +16,7 @@ steps:
           sonar.exclusions=**\Resources\Themes\**
     - task: Cake@0
       inputs:
-        script: Build/build.cake
+        script: Build/build-master.cake
         target: Default
         verbosity: Verbose
     - task: PublishTestResults@2
@@ -35,4 +35,8 @@ steps:
     - task: SonarCloudPublish@1
       inputs:
         pollingTimeoutSec: '300'
-  
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: 'Build/build-artifacts/release/template.zip'
+        ArtifactName: 'template'
+        publishLocation: 'Container'
