@@ -430,3 +430,5 @@ Build/build-artifacts
 Build/tools
 lcov.info
 appsettings.*.json
+
+__template/
