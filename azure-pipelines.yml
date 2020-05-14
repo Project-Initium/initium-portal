@@ -40,3 +40,4 @@ steps:
         PathtoPublish: 'Build/build-artifacts/release/template.zip'
         ArtifactName: 'template'
         publishLocation: 'Container'
+      condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))
