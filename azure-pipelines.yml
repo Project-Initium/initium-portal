@@ -7,10 +7,10 @@ steps:
       displayName: Install Node.js
     - task: SonarCloudPrepare@1
       inputs:
-        SonarCloud: Analyze "stance"
-        organization: deviouscreation
+        SonarCloud: Sonar
+        organization: project-initium
         scannerMode: MSBuild
-        projectKey: DeviousCreation_stance
+        projectKey: initium-portal
         extraProperties: |
           sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
           sonar.exclusions=**\Resources\Themes\**

@@ -1,0 +1,91 @@
+﻿@page "/app/user-management/roles"
+@using Initium.Portal.Web.Infrastructure.Constants
+@model Initium.Portal.Web.Pages.App.UserManagement.Roles.ListRoles
+@{
+    Layout = "Shared/_AppLayout";
+    ViewData["Title"] = "Roles";
+}
+
+    <div class="row page-titles">
+        <div class="align-self-center pl-0 col-md-7 col-12">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+                <li class="breadcrumb-item">User Management</li>
+                <li class="breadcrumb-item active">Roles</li>
+            </ol>
+        </div>
+         <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
+            <a asp-page="@PageLocations.RoleCreate" class="btn btn-sm float-right btn-info text-white">Create new role</a>
+        </div>
+    </div>
+
+
+<div class="row narrow">
+    <div class="col-12 pl-md-0 pr-md-0 pl-1 pr-1">
+        <div class="card">
+            <div class="card-body">
+                
+                <h3 class="card-title">Role Management <button type="button" data-export="@ODataLocations.RoleFilteredExport" class="btn btn-sm btn-primary pull-right">Export</button></h3>
+                <h6 class="card-subtitle" id="table-description">Create new, edit existing, or delete roles</h6>
+                <form id="filters" class="container form-material">
+                    <div class="d-flex justify-content-between">
+                        <div class="input-group mr-5">
+                            <input type="text" class="form-control" placeholder="Search" aria-label="Search"  data-bind="value: searchTerm">
+                            <div class="input-group-append">
+                                <button class="btn btn-default" type="submit" id="search-bar-submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <a href class="filter-toggle">Filters (<span data-bind="text: filterCount"></span>) <i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                    </div>
+                        
+                    <div id="filter-options" class="d-none">
+                    <div class="row mt-2 mb-2">
+                        <div class="col-12 col-sm-6 col-md-4">
+                            <h6 class="search-item-heading">Resources</h6>
+                            <div class="search-item-content">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" data-bind="checked: hasResources" id="has-resources">
+                                    <label class="form-check-label" for="has-resources">Has Resources</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" data-bind="checked: hasNoResources" id="has-no-resources">
+                                    <label class="form-check-label" for="has-no-resources">Has No Resources</label>
+                                </div>          
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-6 col-md-4 mt-sm-0 mt-2">
+                            <h6 class="search-item-heading">Users</h6>
+                            <div class="search-item-content">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" data-bind="checked: hasUsers" id="has-users">
+                                    <label class="form-check-label" for="has-users">Has Users</label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" data-bind="checked: hasNoUsers" id="has-no-users">
+                                    <label class="form-check-label" for="has-no-users">Has No Users</label>
+                                </div>          
+                            </div>
+                        </div>
+                    </div>
+                        
+                    <div class="text-right">
+                        <button type="reset" class="btn btn-warning text-white btn-sm">Clear Filters</button>
+                        <button type="submit" class="ml-2 btn btn-primary btn-sm">Search</button>
+                    </div>
+                    <hr />
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table class="table table-hover clickable" id="roles" cellspacing="0" width="100%" aria-describedby="table-description" data-route-filtered="@ODataLocations.RoleFilteredListing" data-details="@Url.Page(PageLocations.RoleView, new {id = "__ID__"})">
+                       
+                    </table>                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/role-listing.js.gz" asp-append-version="true"></script>
+}

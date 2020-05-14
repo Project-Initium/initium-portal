@@ -1,12 +1,14 @@
-# Stance
+# Initium Portal
 
- A dotnet core authenticated web app with opinionated domain with CQRS, Entity Framework and Dapper.
+> This is part of Project Initium, a collection of opiated  starter templates aimed at bootstrapping .net core development.
+
+ A .net core authenticated web app with opinionated domain with CQRS, Entity Framework and Dapper.
 
  ## Build status
 
  ## Motivation
 
- After setting up a few sites with dotnet core and using the provided authentication provider, I found that  whilst it works, I could not get it to work well with a strong domain context.  This is where the idea of  Stance came from.  An example project to lay out an opinionate way to create a fully domain orientated  approached to a provide an authenticated system.  As I continued on I added MFA providers that works out of  the box whilst setting it up with modern security patterns.  
+Setting up a good authentication flow for .net core sites shouldn't be hard and with the build it providers it isn't.  But those providers only really provide the basics and once you want to start modifying the flow to a more domain centric approach you will really start to struggle. That is where this project steps in. Not only does it provide a strongly domain oriented approach to authentication and user creation with multifactor authentication, but a basic frame for a portal too.
 
 ## Getting Started
 
@@ -16,7 +18,7 @@ some prerequisites are still needed.
 ### Prerequisites
 
  - Node, for building the front end
- - DotNet Core 3.1
+ - .net core 3.1
  - Visual Studio 2019 with SSDT
  - SQL Server, although there is a compose file supplied that will create a SQL Server
 
