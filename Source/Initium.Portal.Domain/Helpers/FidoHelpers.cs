@@ -2,10 +2,13 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.Linq;
+using System.Runtime.CompilerServices;
 using Fido2NetLib;
 using Fido2NetLib.Objects;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using MaybeMonad;
+
+[assembly: InternalsVisibleTo("Initium.Portal.Tests")]
 
 namespace Initium.Portal.Domain.Helpers
 {

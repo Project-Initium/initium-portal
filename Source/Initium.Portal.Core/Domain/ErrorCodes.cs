@@ -26,5 +26,6 @@ namespace Initium.Portal.Core.Domain
         AccountIsDisabled,
         UserAlreadyDisabled,
         UserNotDisabled,
+        UserNotificationNotFound,
     }
 }

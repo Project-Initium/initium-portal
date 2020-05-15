@@ -76,6 +76,9 @@
     <Folder Include="AccessProtection\Tables" />
     <Folder Include="Portal" />
     <Folder Include="Portal\Stored Procedures" />
+    <Folder Include="Messaging" />
+    <Folder Include="Messaging\Tables" />
+    <Folder Include="Messaging\Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Security\Schemas\Identity.sql" />
@@ -108,6 +111,10 @@
     <Build Include="Portal\Stored Procedures\uspGetDeviceInfoForCurrentUser.sql" />
     <Build Include="ReadAggregation\Views\vwUserRole.sql" />
     <Build Include="Identity\Tables\PasswordHistory.sql" />
+    <Build Include="Security\Schemas\Messaging.sql" />
+    <Build Include="Messaging\Tables\Notification.sql" />
+    <Build Include="Messaging\Tables\UserNotification.sql" />
+    <Build Include="Messaging\Views\vwUserNotification.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Initium.Portal.Data.refactorlog" />

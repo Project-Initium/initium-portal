@@ -42,6 +42,8 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
 
         IReadOnlyCollection<PasswordHistory> PasswordHistories { get; }
 
+        IReadOnlyCollection<UserNotification> UserNotifications { get; }
+
         Guid SecurityStamp { get; }
 
         Profile Profile { get; }

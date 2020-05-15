@@ -6,6 +6,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Contracts.Domain;
+using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Infrastructure.Extensions;
@@ -31,6 +32,8 @@ namespace Initium.Portal.Infrastructure
 
         public DbSet<Role> Roles { get; set; }
 
+        public DbSet<Notification> Notifications { get; set; }
+
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
             await this.SaveChangesAsync(cancellationToken);
@@ -44,6 +47,26 @@ namespace Initium.Portal.Infrastructure
 
             modelBuilder.Entity<User>(this.ConfigureUser);
             modelBuilder.Entity<Role>(this.ConfigureRole);
+            modelBuilder.Entity<Notification>(this.ConfigureNotification);
+        }
+
+        private void ConfigureNotification(EntityTypeBuilder<Notification> notifications)
+        {
+            notifications.ToTable("notification", "messaging");
+            notifications.HasKey(notification => notification.Id);
+            notifications.Ignore(notification => notification.DomainEvents);
+            notifications.Property(notification => notification.Id).ValueGeneratedNever();
+
+            var navigation = notifications.Metadata.FindNavigation(nameof(Notification.UserNotifications));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            notifications.OwnsMany(role => role.UserNotifications, userNotifications =>
+            {
+                userNotifications.ToTable("vwUserNotification", "messaging");
+                userNotifications.HasKey(userNotification => userNotification.Id);
+                userNotifications.Property(userNotification => userNotification.Id).ValueGeneratedNever();
+                userNotifications.Ignore(userNotification => userNotification.DomainEvents);
+            });
         }
 
         private void ConfigureRole(EntityTypeBuilder<Role> roles)
@@ -152,6 +175,19 @@ namespace Initium.Portal.Infrastructure
                 passwordHistories.Property(passwordHistory => passwordHistory.Id)
                     .ValueGeneratedNever();
                 passwordHistories.Ignore(passwordHistory => passwordHistory.DomainEvents);
+            });
+
+            navigation = users.Metadata.FindNavigation(nameof(User.UserNotifications));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            users.OwnsMany(user => user.UserNotifications, userNotifications =>
+            {
+                userNotifications.ToTable("userNotification", "messaging");
+                userNotifications.HasKey(userNotification => userNotification.Id);
+                userNotifications.Property(userNotification => userNotification.Id)
+                    .ValueGeneratedNever();
+                userNotifications.Property(userNotification => userNotification.Id).HasColumnName("notificationId");
+                userNotifications.Ignore(userNotification => userNotification.DomainEvents);
             });
         }
     }

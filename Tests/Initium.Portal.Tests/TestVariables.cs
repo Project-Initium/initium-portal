@@ -36,5 +36,9 @@ namespace Initium.Portal.Tests
         public static readonly string OverridenPassword = "$2a$11$JkbCP/ludbTfmRmdRXVAN.1RNFoQuDGrdjCQzJOJizNMSoOWtYKxe";
 
         public static readonly Guid AuthenticatedUserId = Guid.Parse("A0E25FD5-53A0-4B30-BB8B-952573382199");
+
+        public static readonly Guid NotificationId = Guid.Parse("AB8DB248-513E-4455-8EBF-8293B49C6941");
+
+        public static readonly Guid UserNotificationId = Guid.Parse("D8D1CDB8-26CA-41EF-9B92-CF057E3B2521");
     }
 }

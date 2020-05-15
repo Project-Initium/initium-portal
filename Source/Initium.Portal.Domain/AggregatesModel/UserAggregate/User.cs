@@ -18,6 +18,7 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
         private readonly List<AuthenticatorApp> _authenticatorApps;
         private readonly List<AuthenticatorDevice> _authenticatorDevices;
         private readonly List<PasswordHistory> _passwordHistories;
+        private readonly List<UserNotification> _userNotifications;
 
         public User(Guid id, string emailAddress, string passwordHash, bool isLockable, DateTime whenCreated, string firstName, string lastName, IReadOnlyList<Guid> roles, bool isAdmin)
         {
@@ -37,6 +38,7 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
             this._authenticatorApps = new List<AuthenticatorApp>();
             this._authenticatorDevices = new List<AuthenticatorDevice>();
             this._passwordHistories = new List<PasswordHistory>();
+            this._userNotifications = new List<UserNotification>();
         }
 
         private User()
@@ -47,6 +49,7 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
             this._authenticatorApps = new List<AuthenticatorApp>();
             this._authenticatorDevices = new List<AuthenticatorDevice>();
             this._passwordHistories = new List<PasswordHistory>();
+            this._userNotifications = new List<UserNotification>();
         }
 
         public string EmailAddress { get; private set; }
@@ -64,6 +67,8 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
         public bool IsLockable { get; private set; }
 
         public DateTime? WhenLocked { get; private set; }
+
+        public IReadOnlyCollection<UserNotification> UserNotifications => this._userNotifications.AsReadOnly();
 
         public Guid SecurityStamp { get; private set; }
 
