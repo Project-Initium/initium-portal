@@ -85,6 +85,7 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
             return new ODataConventionModelBuilder()
                 .SetupUserEntity()
                 .SetupRoleEntity()
+                .SetupUserNotificationEntity()
                 .GetEdmModel();
         }
     }

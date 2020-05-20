@@ -28,7 +28,7 @@ export class UserView {
     async toggleAccountEnableState(event: MouseEvent) {
         event.preventDefault();
         try {
-            const btn = event.currentTarget as HTMLButtonElement
+            const btn = event.currentTarget as HTMLButtonElement;
             const response = await fetch(btn.dataset.endpoint, {
                 method: 'POST',
                 mode: 'same-origin',
@@ -77,7 +77,7 @@ export class UserView {
             const result = await response.json();
             if (result && result.isSuccess) {
                 UserView.showSuccessToast('The user has been unlocked.');
-                this.unlockForm.parentElement.removeChild(this.unlockForm)
+                this.unlockForm.parentElement.removeChild(this.unlockForm);
                 return                
             }        
             
@@ -109,4 +109,4 @@ export class UserView {
         });
     }
 }
-new UserView()
+new UserView();

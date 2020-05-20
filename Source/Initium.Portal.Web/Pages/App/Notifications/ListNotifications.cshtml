@@ -1,0 +1,72 @@
+﻿@page "/app/notifications"
+@using Initium.Portal.Web.Infrastructure.Constants
+@model Initium.Portal.Web.Pages.App.Notifications.ListNotifications
+@{
+    Layout = "Shared/_AppLayout";
+    ViewData["Title"] = "Notification Inbox";
+}
+
+<div class="row page-titles">
+    <div class="align-self-center pl-0 col-md-7 col-12">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+            <li class="breadcrumb-item">Notification Inbox</li>
+        </ol>
+    </div>
+    <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
+        <button id="read-all" class="btn btn-sm float-right btn-info text-white mr-2" data-url="@Url.Action("ViewedAllNotifications", "UserNotificationApi")">Read All</button>
+        <button id="dismiss-all" class="btn btn-sm float-right btn-info text-white" data-url="@Url.Action("DismissedAllNotification", "UserNotificationApi")">Dismiss All</button>
+    </div>
+</div>
+
+<div class="row narrow">
+    <div class="col-12 pl-md-0 pr-md-0 pl-1 pr-1">
+        <div class="card">
+            <div class="card-body">
+                
+                <h3 class="card-title">Notification Inbox <button type="button" data-export="@ODataLocations.UserNotificationFilteredExport" class="btn btn-sm btn-primary pull-right">Export</button></h3>
+                <h6 class="card-subtitle" id="table-description">View all pending and viewed Notifications</h6>
+                <div class="position-relative">
+                <form id="filters" class="container form-material">
+                    <div class="d-flex justify-content-between">
+                        <div class="input-group mr-5">
+                            <input type="text" class="form-control" placeholder="Search" aria-label="Search"  data-bind="value: searchTerm">
+                            <div class="input-group-append">
+                                <button class="btn btn-default" type="submit" id="search-bar-submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <a href class="filter-toggle d-none">Filters (<span data-bind="text: filterCount"></span>) <i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                    </div>
+                    <div id="filter-options" class="d-none">
+                    </div>
+                    
+                </form>
+                    <div class="table-responsive">
+                        <table class="table table-hover clickable" id="notifications" cellspacing="0" width="100%" aria-describedby="table-description" data-route-filtered="@ODataLocations.UserNotificationFilteredListing" data-read-item-uri="@Url.Action("ViewedNotification", "UserNotificationApi")"  data-dismiss-item-uri="@Url.Action("DismissedNotification", "UserNotificationApi")">
+                       
+                        </table>                    
+                    </div>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/notification-list.js.gz" asp-append-version="true"></script>
+    <script type="text/html" id="message-details">
+        <div>
+            <div class="d-flex justify-content-between align-content-center mb-2">
+                <div data-date class="small"></div>
+                <div>
+                    <button type="button" class="btn btn-primary btn-sm d-none" data-action>Action</button>
+                    <button type="button" class="btn btn-danger btn-sm ml-2 d-none" data-dismiss>Dismiss</button>
+                </div>
+            </div>
+            <h5 data-subject></h5>
+        
+            <div class="pre-formatted" data-message></div>
+        </div>
+    </script>
+}

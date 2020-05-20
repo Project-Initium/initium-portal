@@ -10,8 +10,5 @@
       "options": "single"
     },
     "prefer-for-of": false
-  },
-  "rulesDirectory": [
-    "tslint-no-unused-expression-chai"
-  ]
+  }
 }

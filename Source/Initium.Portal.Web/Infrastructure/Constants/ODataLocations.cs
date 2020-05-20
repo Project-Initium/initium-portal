@@ -9,5 +9,7 @@ namespace Initium.Portal.Web.Infrastructure.Constants
         public const string UserFilteredExport = "/odata/user/user.filteredexport";
         public const string RoleFilteredExport = "/odata/role/role.filteredexport";
         public const string RoleFilteredListing = "/odata/role/role.filtered";
+        public const string UserNotificationFilteredExport = "/odata/userNotification/userNotification.filteredexport";
+        public const string UserNotificationFilteredListing = "/odata/userNotification/userNotification.filtered";
     }
 }

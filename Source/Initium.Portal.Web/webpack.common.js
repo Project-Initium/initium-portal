@@ -20,7 +20,8 @@ module.exports = {
         'profile-device': './Resources/Scripts/pages/profile-device.ts',
         'profile-app': './Resources/Scripts/pages/profile-app.ts',
         'validate-device-mfa': './Resources/Scripts/pages/validate-device-mfa.ts',
-        'validate-email-mfa': './Resources/Scripts/pages/validate-email-mfa.ts'
+        'validate-email-mfa': './Resources/Scripts/pages/validate-email-mfa.ts',    
+        'notification-list': './Resources/Scripts/pages/notification-list.ts',    
     },
     output: {
         filename: '[name].js',
@@ -118,4 +119,4 @@ module.exports = {
         }),
         new CompressionPlugin()
     ]
-}
+};

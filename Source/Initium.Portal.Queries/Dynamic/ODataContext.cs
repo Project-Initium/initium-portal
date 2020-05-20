@@ -19,10 +19,20 @@ namespace Initium.Portal.Queries.Dynamic
 
         public DbSet<Role> Roles { get; set; }
 
+        public DbSet<UserNotification> UserNotifications { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(ConfigureUser);
             modelBuilder.Entity<Role>(ConfigureRole);
+            modelBuilder.Entity<UserNotification>(ConfigureUserNotification);
+        }
+
+        private static void ConfigureUserNotification(EntityTypeBuilder<UserNotification> userNotifications)
+        {
+            userNotifications.ToTable("vwUserNotification", "ReadAggregation");
+            userNotifications.HasKey(userNotification =>
+                new { userNotification.NotificationId, userNotification.UserId });
         }
 
         private static void ConfigureRole(EntityTypeBuilder<Role> config)

@@ -7,4 +7,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="RoleId" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="0598ce69-7bd5-4416-a6f2-19ad351a8fb3" ChangeDateTime="05/15/2020 22:51:30">
+    <Property Name="ElementName" Value="[Messaging].[Notification].[Event]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Messaging].[Notification]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="SerializedEventData" />
+  </Operation>
 </Operations>

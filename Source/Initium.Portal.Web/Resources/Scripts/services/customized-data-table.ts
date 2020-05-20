@@ -37,6 +37,7 @@ export interface ISettings  {
 export class CustomizedDataTable {
     public readonly tableApi: DataTables.Api;
     private popped: boolean = false;
+    public table: HTMLTableElement;
     
     constructor(tableElement: JQuery<HTMLElement>, private settings: ISettings, opts: DataTables.Settings) {
         const contextThis = this;
@@ -47,6 +48,7 @@ export class CustomizedDataTable {
         opts.processing = true;
         opts.serverSide = true;
         this.tableApi = tableElement.DataTable(opts);
+        this.table = tableElement[0] as HTMLTableElement;
         window.addEventListener('popstate', (event) => contextThis.listenForHistoryChange(event));
     }
 
@@ -78,7 +80,7 @@ export class CustomizedDataTable {
         
         globalFilter = searchValue.trim();
         globalFilterNumber = Number(globalFilter);
-        isGlobalFilterNumber = !isNaN(globalFilterNumber)
+        isGlobalFilterNumber = !isNaN(globalFilterNumber);
         
 
         settings.aoColumns.forEach((value) => {
@@ -114,11 +116,11 @@ export class CustomizedDataTable {
      
     public generateExport(exportUrl: string, externalFilter?: (filterQuery: IODataRequest) => ICustomQuery)  {
         const request: IODataRequest = {};
-        let settings:DataTables.SettingsLegacy = (this.tableApi.columns().data() as any).context[0]
+        let settings:DataTables.SettingsLegacy = (this.tableApi.columns().data() as any).context[0];
         request.$select = this.generateSelection(settings, true);
 
         const customQuery = externalFilter(request);
-        let searchValue = customQuery.searchParam
+        let searchValue = customQuery.searchParam;
         if (searchValue) {
             const filter =  this.generateFilters(settings, searchValue);
             if(filter) {
@@ -129,7 +131,7 @@ export class CustomizedDataTable {
         let orderBy: string[] = [];
         this.tableApi.order().forEach((value) =>{
             orderBy.push(`${CustomizedDataTable.getColumnFieldName(settings.aoColumns[value[0]])} ${value[1]}`);
-        })
+        });
 
         if (orderBy.length > 0) {
             request.$orderby = orderBy.join();
@@ -145,12 +147,12 @@ export class CustomizedDataTable {
             redirect: 'follow',
             referrerPolicy: 'no-referrer',
             method: 'POST',
-        }           
+        };           
         
         let getUrl = new URL(exportUrl, document.location.origin);
         fetchRequest.body = JSON.stringify(customQuery.requestData);
         
-        Object.keys(request).forEach(key => getUrl.searchParams.append(key, request[key]))
+        Object.keys(request).forEach(key => getUrl.searchParams.append(key, request[key]));
         fetch(getUrl.toString(), fetchRequest)
             .then((response) => {
                 return response.blob()
@@ -192,7 +194,7 @@ export class CustomizedDataTable {
             let orderBy: string[] = [];
             data.order.forEach((value) =>{
                 orderBy.push(`${CustomizedDataTable.getColumnFieldName(settings.aoColumns[value.column])} ${value.dir}`);
-            })            
+            });            
 
             if (orderBy.length > 0) {
                 request.$orderby = orderBy.join();
@@ -208,13 +210,13 @@ export class CustomizedDataTable {
                 redirect: 'follow',
                 referrerPolicy: 'no-referrer',
                 method: 'Post',
-            }
+            };
             let getUrl = new URL(url, document.location.origin);
                 fetchRequest.body = JSON.stringify(customQuery.requestData);
             
             
             
-            Object.keys(request).forEach(key => getUrl.searchParams.append(key, request[key]))
+            Object.keys(request).forEach(key => getUrl.searchParams.append(key, request[key]));
             fetch(getUrl.toString(), fetchRequest)
                 .then((response) => {
                     return response.json()
@@ -259,7 +261,7 @@ export class CustomizedDataTable {
                 c: data.order[0][0],
                 d: data.order[0][1],                
                 s: data.start
-            }
+            };
             
             if (externalState) {
                 const returned = externalState(data, dataToSave);
@@ -282,7 +284,7 @@ export class CustomizedDataTable {
     private stateLoadCallback(externalHydration?: (params: URLSearchParams) => void): (settings: DataTables.SettingsLegacy) => IStateData {
         return (): any => {
 
-            const params = new URLSearchParams(document.location.search)
+            const params = new URLSearchParams(document.location.search);
             
             const l = Number.parseInt(params.get('l'));
             const c = Number.parseInt(params.get('c'));
@@ -293,7 +295,7 @@ export class CustomizedDataTable {
                 d: c ? params.get('d') : 'desc',
                 p: params.get('p'),
                 s: s ? s : undefined,
-            }
+            };
 
             if (externalHydration) {
                 externalHydration(params);
@@ -326,3 +328,8 @@ export class CustomizedDataTable {
     }
 }
 
+(jQuery.fn.dataTable.Api as any).register( 'processing()', function ( show ) {
+    return this.iterator( 'table', function ( ctx ) {
+        ctx.oApi._fnProcessingDisplay( ctx, show );
+    } );
+} );
