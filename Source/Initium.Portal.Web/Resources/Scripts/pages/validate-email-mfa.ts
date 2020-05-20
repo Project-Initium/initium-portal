@@ -17,7 +17,7 @@ export class ValidatEmailMfa {
 
     private async resendEmail(e: MouseEvent) {
         e.preventDefault();
-        var link = e.target as HTMLAnchorElement
+        var link = e.target as HTMLAnchorElement;
         let response;
         try {
             let res = await fetch(link.href, {

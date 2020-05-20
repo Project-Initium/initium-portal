@@ -64,7 +64,7 @@ class FilterViewModel extends BaseFilterViewModel {
             hasNoResources: this.hasNoResources(),
             hasUsers: this.hasUsers(),
             hasNoUsers: this.hasNoUsers()
-        }
+        };
 
         this.customQuery = {
             requestData: request,

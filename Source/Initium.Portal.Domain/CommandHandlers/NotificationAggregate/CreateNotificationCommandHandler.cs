@@ -8,6 +8,7 @@ using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.CommandResults.NotificationAggregate;
 using Initium.Portal.Domain.Commands.NotificationAggregate;
+using Initium.Portal.Domain.Events;
 using MediatR;
 using ResultMonad;
 
@@ -52,6 +53,7 @@ namespace Initium.Portal.Domain.CommandHandlers.NotificationAggregate
             {
                 notification.SendToUser(userId);
             }
+
 
             return Result.Ok<CreateNotificationCommandResult, ErrorData>(new CreateNotificationCommandResult(notification.Id));
         }

@@ -5,6 +5,10 @@ namespace Initium.Portal.Core.Constants
 {
     public enum NotificationType
     {
-        Test,
+        AlphaNotification,
+        BetaNotification,
+        GammaNotification,
+        DeltaNotification,
+        EpsilonNotification,
     }
 }

@@ -5,12 +5,12 @@ import 'bootstrap';
 import * as moment from 'moment';
 
 export class ProfileDevice {
-    private enrollmentForm: HTMLFormElement
+    private enrollmentForm: HTMLFormElement;
     private enrollmentFormSlideOut: JQuery<any>;
     private enrollmentValidator: Validator;
     private tokenType: string;
     
-    private revokeForm: HTMLFormElement
+    private revokeForm: HTMLFormElement;
     private revokeFormSlideOut: JQuery<any>;
     private revokeValidator: Validator;
     private deviceToRevoke: string;
@@ -152,7 +152,7 @@ export class ProfileDevice {
             return;
         }
         
-        ProfileDevice.showSuccessToast('The device has been registered.')
+        ProfileDevice.showSuccessToast('The device has been registered.');
         
         const d = document.createElement('div');
         d.innerHTML = document.getElementById('device-template').innerText;
@@ -216,7 +216,7 @@ export class ProfileDevice {
                 });
                 const data: any = await response.json();
                 if (data.isSuccess) {
-                    this.registeredDevices.removeChild(this.registeredDevices.querySelector(`[data-device-id="${this.deviceToRevoke}"]`))
+                    this.registeredDevices.removeChild(this.registeredDevices.querySelector(`[data-device-id="${this.deviceToRevoke}"]`));
                     ProfileDevice.showSuccessToast('The device has been revoked.');
                     this.revokeFormSlideOut.modal('hide');
                     return;

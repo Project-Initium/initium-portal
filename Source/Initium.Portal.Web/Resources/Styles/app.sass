@@ -185,5 +185,72 @@ body
     padding: 0.5rem
     border: 1px solid #dee2e6
                 
-                
+.message-listing
+    table
+        thead
+            display: none
+        td
+            padding: 0
+            margin-bottom: 0.25rem 
+            .message-item
+                border-left: 3px solid
+                padding: 0.5rem 0.25rem
+                &.AlphaNotification
+                    border-left-color: #0f6674
+                &.BetaNotification
+                    border-left-color: #721c24
+                &.GammaNotification
+                    border-left-color: violet
+                &.DeltaNotification
+                    border-left-color: peru
+                &.EpsilonNotification
+                    border-left-color: #7abaff
+.info-panel
+    margin-top: 6px
+    border-left: 3px solid
+    padding: 0.5rem 0.25rem
+    &[data-type="AlphaNotification"]
+        border-left-color: #0f6674
+    &[data-type="BetaNotification"]
+        border-left-color: #721c24
+    &[data-type="GammaNotification"]
+        border-left-color: violet
+    &[data-type="DeltaNotification"]
+        border-left-color: peru
+    &[data-type="EpsilonNotification"]
+        border-left-color: #7abaff
+    .pre-formatted
+        white-space: pre-wrap
+        
+        
+.dataTables_processing
+    top: -0.25rem !important
+    left: -0.25rem  !important
+    bottom: -0.25rem  !important
+    right: -0.25rem  !important
+    background-color: rgba(255,255,255,0.5)
+    z-index: 100 !important
+    margin: 0 !important
+    padding: 0 !important
+    width: auto !important
+    border: 0 !important
+    border-radius: 0 !important
+    text-align: initial !important
+    align-content: center
+    justify-content: center
+    .processing-inner
+        position: absolute
+        border: 1px solid #d7dfe3
+        border-radius: 4px
+        box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.05)
+        width: 200px
+        text-align: center
+        background-color: #fff
+        padding: 1em
+        top: 50%
+        left: 50%
+        margin-left: -100px
+        margin-top: -26px
+        
+   
         

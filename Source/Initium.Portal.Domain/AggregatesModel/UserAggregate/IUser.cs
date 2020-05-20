@@ -89,5 +89,7 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
         void DisableAccount(DateTime whenDisabled);
 
         void EnableAccount();
+
+        UserNotification AddNewNotification(Guid notificationId);
     }
 }

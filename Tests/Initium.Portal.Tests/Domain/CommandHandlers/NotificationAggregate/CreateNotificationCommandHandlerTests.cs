@@ -34,7 +34,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.NotificationAggregate
             var command = new CreateNotificationCommand(
                 "subject",
                 "message",
-                NotificationType.Test,
+                NotificationType.AlphaNotification,
                 "serialized-event-data",
                 TestVariables.Now,
                 new List<Guid>
@@ -69,7 +69,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.NotificationAggregate
             var command = new CreateNotificationCommand(
                 "subject",
                 "message",
-                NotificationType.Test,
+                NotificationType.AlphaNotification,
                 "serialized-event-data",
                 TestVariables.Now,
                 new List<Guid>

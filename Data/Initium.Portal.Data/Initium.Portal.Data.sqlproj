@@ -115,6 +115,7 @@
     <Build Include="Messaging\Tables\Notification.sql" />
     <Build Include="Messaging\Tables\UserNotification.sql" />
     <Build Include="Messaging\Views\vwUserNotification.sql" />
+    <Build Include="ReadAggregation\Views\vwUserNotification.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Initium.Portal.Data.refactorlog" />

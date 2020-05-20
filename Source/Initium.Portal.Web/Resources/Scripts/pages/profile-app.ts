@@ -3,11 +3,11 @@ import {Validator} from "../services/validator";
 import Swal from 'sweetalert2';
 
 export class ProfileApp {
-    private enrollmentForm: HTMLFormElement
+    private enrollmentForm: HTMLFormElement;
     private enrollmentFormSlideOut: JQuery<any>;
     private enrollmentValidator: Validator;
     private enrollmentButton: HTMLButtonElement;
-    private revokeForm: HTMLFormElement
+    private revokeForm: HTMLFormElement;
     private revokeFormSlideOut: JQuery<any>;
     private revokeValidator: Validator;
     private revokeButton: HTMLButtonElement;
@@ -28,7 +28,7 @@ export class ProfileApp {
             backdrop: 'static'
         });
         this.enrollmentValidator = new Validator(this.enrollmentForm, false);
-        this.enrollmentForm.addEventListener('submit', (event) => contextThis.completeEnrollment(event))
+        this.enrollmentForm.addEventListener('submit', (event) => contextThis.completeEnrollment(event));
         this.enrollmentButton = document.querySelector<HTMLButtonElement>('#setup-app');
         this.enrollmentButton.addEventListener('click', (event) => contextThis.displayEnrollment(event));
 
@@ -38,7 +38,7 @@ export class ProfileApp {
             backdrop: 'static'
         });
         this.revokeValidator = new Validator(this.revokeForm, false);
-        this.revokeForm.addEventListener('submit', (event) => contextThis.completeRevoke(event))
+        this.revokeForm.addEventListener('submit', (event) => contextThis.completeRevoke(event));
         this.revokeButton = document.querySelector<HTMLButtonElement>('#remove-app');
         this.revokeButton.addEventListener('click', (event) => contextThis.displayRevoke(event));
     }
@@ -71,7 +71,7 @@ export class ProfileApp {
                     this.enrollmentButton.classList.toggle('d-none');
                     this.revokeButton.classList.toggle('d-none');
                     this.revokeFormSlideOut.modal('hide');
-                    ProfileApp.showSuccessToast('The app has been revoked')
+                    ProfileApp.showSuccessToast('The app has been revoked');
                     return;
                 }
             } catch (e) {
@@ -103,7 +103,7 @@ export class ProfileApp {
                     this.enrollmentButton.classList.toggle('d-none');
                     this.revokeButton.classList.toggle('d-none');
                     this.enrollmentFormSlideOut.modal('hide');
-                    ProfileApp.showSuccessToast('The app has been enrolled')
+                    ProfileApp.showSuccessToast('The app has been enrolled');
                     return;
                 }    
             } catch (e) {

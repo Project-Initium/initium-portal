@@ -17,7 +17,7 @@ namespace Initium.Portal.Tests.Domain.Commands.NotificationAggregate
             var command = new CreateNotificationCommand(
                 "subject",
                 "message",
-                NotificationType.Test,
+                NotificationType.AlphaNotification,
                 "serialized-event-data",
                 TestVariables.Now,
                 new List<Guid>
@@ -27,7 +27,7 @@ namespace Initium.Portal.Tests.Domain.Commands.NotificationAggregate
 
             Assert.Equal("subject", command.Subject);
             Assert.Equal("message", command.Message);
-            Assert.Equal(NotificationType.Test, command.Type);
+            Assert.Equal(NotificationType.AlphaNotification, command.Type);
             Assert.Equal("serialized-event-data", command.SerializedEventData);
             Assert.Equal(TestVariables.Now, command.WhenNotified);
             Assert.NotNull(command.UserIds);

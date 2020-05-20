@@ -148,7 +148,7 @@ class FilterViewModel extends BaseFilterViewModel {
             unlocked: this.unlocked(),
             admin: this.admin(),
             nonAdmin: this.nonAdmin()
-        }
+        };
 
         this.customQuery = {
             requestData: request,
@@ -196,7 +196,7 @@ export class UsersList extends BaseList<FilterViewModel>{
                     const m = moment(data);
                     if(m.isValid)
                     {
-                        const parsed = m.format('DD/MM/YYYY HH:mm')
+                        const parsed = m.format('DD/MM/YYYY HH:mm');
                         if (parsed !== 'Invalid date')
                         {
                             return parsed;

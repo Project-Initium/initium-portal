@@ -41,7 +41,7 @@ export class RoleView {
                 }
                 element.parentElement.removeChild(element);
             });
-            this.tree.disableAll()
+            this.tree.disableAll();
             this.tree.expandAll()
         
 

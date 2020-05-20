@@ -30,14 +30,14 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.NotificationAggregate
                 TestVariables.NotificationId,
                 "subject",
                 "message",
-                NotificationType.Test,
+                NotificationType.AlphaNotification,
                 "serialized-event-data",
                 TestVariables.Now);
 
             Assert.Equal(TestVariables.NotificationId, notification.Id);
             Assert.Equal("subject", notification.Subject);
             Assert.Equal("message", notification.Message);
-            Assert.Equal(NotificationType.Test, notification.Type);
+            Assert.Equal(NotificationType.AlphaNotification, notification.Type);
             Assert.Equal("serialized-event-data", notification.SerializedEventData);
             Assert.Equal(TestVariables.Now, notification.WhenNotified);
             Assert.NotNull(notification.UserNotifications);
@@ -56,7 +56,7 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.NotificationAggregate
                 TestVariables.NotificationId,
                 "subject",
                 "message",
-                NotificationType.Test,
+                NotificationType.AlphaNotification,
                 "serialized-event-data",
                 TestVariables.Now);
 

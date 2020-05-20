@@ -6,7 +6,7 @@ interface IValidationResult {
 
 export class Validator {
     private readonly form: HTMLFormElement;
-    private formSubmitted:boolean
+    private formSubmitted:boolean;
     private readonly elements: Element[];
     private readonly constraints: any;
     private hasValidated: boolean = false;
@@ -150,7 +150,7 @@ export class Validator {
         const group = element.closest('.form-group');
         group.classList.remove('has-success');
         group.classList.remove('has-error');
-        var elementId = element.id
+        var elementId = element.id;
         if (elementId) {
             elementId = elementId.replace('.', '_');
             const helpblock = group.querySelector(`span[data-valmsg-for]`);

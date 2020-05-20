@@ -51,6 +51,7 @@
   <ItemGroup>
     <TypeScriptCompile Include="Resources\Scripts\helpers\array-helper.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\base-list.ts" />
+    <TypeScriptCompile Include="Resources\Scripts\pages\notification-list.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\profile-app.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\profile-device.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\user-view.ts" />
@@ -69,6 +70,10 @@
     <Content Update="tslint.json">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Update="Pages\App\Notifications\ListNotifications.cshtml">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
   </ItemGroup>

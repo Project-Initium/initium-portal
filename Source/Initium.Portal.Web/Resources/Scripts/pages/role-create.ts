@@ -29,7 +29,7 @@ export class RoleCreate {
 
         
          this.form = document.querySelector('form#role-create') as HTMLFormElement;
-         this.validator = new Validator(this.form, false)
+         this.validator = new Validator(this.form, false);
          
          this.form.addEventListener('submit', (e) => { contextThis.formSubmit(e); });        
     }
@@ -38,8 +38,8 @@ export class RoleCreate {
          
         if (!this.validator.validate()) {
             this.tree.find('input[type=checkbox]:checked').each((index, value) => {
-                var checkbox = $(value)
-                checkbox.attr('name', 'pagemodel.roles')
+                var checkbox = $(value);
+                checkbox.attr('name', 'pagemodel.roles');
 
                 var parentLi = checkbox.closest('li');
                 checkbox.val(parentLi.data('id'))

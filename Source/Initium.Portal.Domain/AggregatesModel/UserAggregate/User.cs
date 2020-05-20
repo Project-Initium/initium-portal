@@ -248,5 +248,12 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
         {
             this.WhenDisabled = null;
         }
+
+        public UserNotification AddNewNotification(Guid notificationId)
+        {
+            var userNotification = new UserNotification(notificationId);
+            this._userNotifications.Add(userNotification);
+            return userNotification;
+        }
     }
 }

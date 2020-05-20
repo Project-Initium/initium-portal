@@ -41,6 +41,7 @@ namespace Initium.Portal.Infrastructure.Repositories
                 .Include(x => x.AuthenticatorApps)
                 .Include(x => x.AuthenticatorDevices)
                 .Include(x => x.PasswordHistories)
+                .Include(x => x.UserNotifications)
                 .SingleOrDefaultAsync(x => x.Id == userId, cancellationToken);
             await this.Refresh(user);
             return Maybe.From<IUser>(user);
@@ -64,6 +65,7 @@ namespace Initium.Portal.Infrastructure.Repositories
                 .Include(x => x.AuthenticatorApps)
                 .Include(x => x.AuthenticatorDevices)
                 .Include(x => x.PasswordHistories)
+                .Include(x => x.UserNotifications)
                 .SingleOrDefaultAsync(x => x.EmailAddress == emailAddress, cancellationToken);
             await this.Refresh(user);
             return Maybe.From<IUser>(user);
@@ -76,6 +78,7 @@ namespace Initium.Portal.Infrastructure.Repositories
                 .Include(x => x.AuthenticatorApps)
                 .Include(x => x.AuthenticatorDevices)
                 .Include(x => x.PasswordHistories)
+                .Include(x => x.UserNotifications)
                 .SingleOrDefaultAsync(x => x.SecurityTokenMappings.Any(y => y.Id == tokenId && y.WhenExpires > expiryDate), cancellationToken);
             await this.Refresh(user);
             return Maybe.From<IUser>(user);

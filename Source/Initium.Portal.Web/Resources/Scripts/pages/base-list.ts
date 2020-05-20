@@ -32,7 +32,7 @@ export abstract class BaseList<TBaseFilterViewModel extends BaseFilterViewModel>
         const contextThis = this;
         const $tableElement = $(tableSelector);
         this.detailsUrl = $tableElement[0].dataset.details;
-        this.filterVM = filterVM
+        this.filterVM = filterVM;
 
         this.customizedDataTable = new CustomizedDataTable($tableElement, {
             route: $tableElement.data('routeFiltered'),
@@ -44,17 +44,17 @@ export abstract class BaseList<TBaseFilterViewModel extends BaseFilterViewModel>
         }, this.tableOptions);
 
         const filterForm = document.querySelector<HTMLFormElement>('#filters');
-        filterForm.addEventListener('reset', (event) => contextThis.filterVM.reset())
+        filterForm.addEventListener('reset', (event) => contextThis.filterVM.reset());
         filterForm.addEventListener('submit', (event) => contextThis.search(event));
 
         const toggle = filterForm.querySelector('.filter-toggle');
-        toggle.addEventListener('click', (event) => contextThis.toggleFilters(event))
+        toggle.addEventListener('click', (event) => contextThis.toggleFilters(event));
         this.filterToggleIcon = toggle.querySelector('i');
         this.searchFacets = filterForm.querySelector('#filter-options');
 
         let exportBtn: HTMLButtonElement = document.querySelector('[data-export]');
         this.exportUrl = exportBtn.dataset.export;
-        exportBtn.addEventListener('click', (event) => contextThis.requestExport(event))
+        exportBtn.addEventListener('click', (event) => contextThis.requestExport(event));
 
         $tableElement.on('click', 'tbody tr', (event) => contextThis.rowClicked(event));
 
@@ -63,17 +63,17 @@ export abstract class BaseList<TBaseFilterViewModel extends BaseFilterViewModel>
             globals: window,
             bindings: ko.bindingHandlers,
             noVirtualElements: false
-        })
+        });
         ko.applyBindings(this.filterVM);
     }
     
-    private rowClicked(event: JQuery.ClickEvent): void {
+    protected rowClicked(event: JQuery.ClickEvent): void {
         window.location.href = this.detailsUrl.replace('__ID__', (<any>this.customizedDataTable.tableApi.row(event.currentTarget).data()).Id);
     }
 
     search(event: Event): any {
         event.preventDefault();
-        this.filterVM.createInternalRequest()
+        this.filterVM.createInternalRequest();
         this.customizedDataTable.tableApi.draw();
     }
 

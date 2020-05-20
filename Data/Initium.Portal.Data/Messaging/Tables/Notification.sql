@@ -4,6 +4,6 @@
     ,   [Subject] NVARCHAR(MAX) NOT NULL
     ,   [Message] NVARCHAR(MAX) NOT NULL
     ,   [Type] INT NOT NULL
-    ,   [Event] INT NOT NULL
+    ,   [SerializedEventData] NVARCHAR(MAX) NOT NULL
     ,   [WhenNotified] DATETIME2 NOT NULL
 )

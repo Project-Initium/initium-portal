@@ -34,5 +34,22 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             function.Namespace = "Role";
             return builder;
         }
+
+        internal static ODataConventionModelBuilder SetupUserNotificationEntity(this ODataConventionModelBuilder builder)
+        {
+            var userNotification = builder.EntitySet<UserNotification>("UserNotification");
+            userNotification.EntityType.HasKey(uN =>
+            new {
+                uN.NotificationId, uN.UserId
+            });
+            var function = userNotification.EntityType.Collection.Function("Filtered");
+            function.ReturnsCollectionFromEntitySet<UserNotification>("UserNotification");
+            function.Namespace = "UserNotification";
+
+            function = userNotification.EntityType.Collection.Function("FilteredExport");
+            function.Returns<FileResult>();
+            function.Namespace = "UserNotification";
+            return builder;
+        }
     }
 }
