@@ -35,13 +35,15 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             return builder;
         }
 
-        internal static ODataConventionModelBuilder SetupUserNotificationEntity(this ODataConventionModelBuilder builder)
+        internal static ODataConventionModelBuilder SetupUserNotificationEntity(
+            this ODataConventionModelBuilder builder)
         {
             var userNotification = builder.EntitySet<UserNotification>("UserNotification");
             userNotification.EntityType.HasKey(uN =>
-            new {
-                uN.NotificationId, uN.UserId
-            });
+                new
+                {
+                    uN.NotificationId, uN.UserId,
+                });
             var function = userNotification.EntityType.Collection.Function("Filtered");
             function.ReturnsCollectionFromEntitySet<UserNotification>("UserNotification");
             function.Namespace = "UserNotification";

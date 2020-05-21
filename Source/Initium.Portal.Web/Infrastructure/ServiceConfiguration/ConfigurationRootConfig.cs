@@ -5,7 +5,6 @@ using System;
 using Fido2NetLib;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Settings;
-using Initium.Portal.Core.Workers;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
