@@ -13,10 +13,10 @@ namespace Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate
     {
         ISystemAlert Add(ISystemAlert systemAlert);
 
-        Task<Maybe<ISystemAlert>> Find(Guid id, CancellationToken cancellationToken);
+        Task<Maybe<ISystemAlert>> Find(Guid id, CancellationToken cancellationToken = default);
 
-        void Delete(ISystemAlert alert);
+        void Delete(ISystemAlert systemAlert);
 
-        void Update(ISystemAlert alert);
+        void Update(ISystemAlert systemAlert);
     }
 }

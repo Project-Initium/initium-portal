@@ -40,7 +40,7 @@ namespace Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate
             var alertMaybe = await this._systemAlertRepository.Find(request.SystemAlertId, cancellationToken);
             if (alertMaybe.HasNoValue)
             {
-                return ResultWithError.Fail<ErrorData>(new ErrorData(ErrorCodes.SystemAlertNotFound));
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.SystemAlertNotFound));
             }
 
             var alert = alertMaybe.Value;
