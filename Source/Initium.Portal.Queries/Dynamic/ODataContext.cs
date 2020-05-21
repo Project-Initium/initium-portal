@@ -21,11 +21,20 @@ namespace Initium.Portal.Queries.Dynamic
 
         public DbSet<UserNotification> UserNotifications { get; set; }
 
+        public DbSet<SystemAlert> SystemAlerts { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<User>(ConfigureUser);
             modelBuilder.Entity<Role>(ConfigureRole);
             modelBuilder.Entity<UserNotification>(ConfigureUserNotification);
+            modelBuilder.Entity<SystemAlert>(ConfigureSystemAlert);
+        }
+
+        private static void ConfigureSystemAlert(EntityTypeBuilder<SystemAlert> systemAlerts)
+        {
+            systemAlerts.ToTable("vwSystemAlert", "ReadAggregation");
+            systemAlerts.HasKey(systemAlert => systemAlert.Id);
         }
 
         private static void ConfigureUserNotification(EntityTypeBuilder<UserNotification> userNotifications)
