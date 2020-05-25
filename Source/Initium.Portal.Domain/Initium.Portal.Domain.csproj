@@ -32,10 +32,4 @@
     <ProjectReference Include="..\Initium.Portal.Queries\Initium.Portal.Queries.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="CommandHandlers\UserNotificationAggregate" />
-    <Folder Include="Commands\UserNotificationAggregate" />
-    <Folder Include="CommandValidators\UserNotificationAggregate" />
-  </ItemGroup>
-
 </Project>

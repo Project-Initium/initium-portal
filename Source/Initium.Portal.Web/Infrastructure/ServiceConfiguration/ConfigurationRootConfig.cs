@@ -5,9 +5,9 @@ using System;
 using Fido2NetLib;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Settings;
-using Initium.Portal.Core.Workers;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
+using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Infrastructure.Repositories;
 using Initium.Portal.Queries.Contracts.Static;
@@ -27,10 +27,12 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
             serviceCollection.AddSingleton<IClock>(SystemClock.Instance);
             serviceCollection.AddScoped<IUserQueries, UserQueries>();
             serviceCollection.AddScoped<IRoleQueries, RoleQueries>();
+            serviceCollection.AddScoped<IMessagingQueries, MessagingQueries>();
 
             serviceCollection.AddScoped<IUserRepository, UserRepository>();
             serviceCollection.AddScoped<IRoleRepository, RoleRepository>();
             serviceCollection.AddScoped<INotificationRepository, NotificationRepository>();
+            serviceCollection.AddScoped<ISystemAlertRepository, SystemAlertRepository>();
             serviceCollection.AddScoped<IConnectionProvider, ConnectionProvider>();
 
             serviceCollection.AddScoped<ICurrentAuthenticatedUserProvider, CurrentAuthenticatedUserProvider>();

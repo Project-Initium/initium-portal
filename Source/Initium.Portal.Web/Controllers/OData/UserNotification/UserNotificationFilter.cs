@@ -5,6 +5,5 @@ namespace Initium.Portal.Web.Controllers.OData.UserNotification
 {
     public class UserNotificationFilter
     {
-        
     }
 }

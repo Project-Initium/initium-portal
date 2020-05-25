@@ -11,5 +11,9 @@ namespace Initium.Portal.Web.Infrastructure.Constants
         public const string RoleFilteredListing = "/odata/role/role.filtered";
         public const string UserNotificationFilteredExport = "/odata/userNotification/userNotification.filteredexport";
         public const string UserNotificationFilteredListing = "/odata/userNotification/userNotification.filtered";
+
+        public const string SystemAlertFilteredExport = "/odata/systemAlert/systemAlert.filteredexport";
+
+        public const string SystemAlertFilteredListing = "/odata/systemAlert/systemAlert.filtered";
     }
 }

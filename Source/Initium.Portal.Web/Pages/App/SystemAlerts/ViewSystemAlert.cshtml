@@ -1,0 +1,59 @@
+﻿@page "/app/system-alerts/view/{id}"
+@using Initium.Portal.Core.Constants
+@using Initium.Portal.Web.Infrastructure.Constants
+@model Initium.Portal.Web.Pages.App.SystemAlerts.ViewSystemAlert
+
+@{
+    Layout = "Shared/_AppLayout";
+    ViewData["Title"] = $"System Alerts | Viewing {Model.SystemAlert.Name}";
+}
+
+<div class="row page-titles">
+    <div class="align-self-center pl-0 col-md-7 col-12">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.SystemAlertListing">System Alerts</a></li>
+            <li class="breadcrumb-item active">Viewing System Alert @Model.SystemAlert.Name</li>
+        </ol>
+    </div>
+    <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
+        <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@PageLocations.SystemAlertListing">Back to Listing</a>
+        <a class="btn btn-sm btn-info text-white"  asp-page="@PageLocations.SystemAlertEdit" asp-route-id="@Model.SystemAlert.SystemAlertId" >Edit</a>        
+    </div>
+</div>
+
+<div class="row">
+    
+    <div class="col-md-7 pl-md-0 pr-md-2 pl-1 pr-1">
+            <div class="card card-outline-info">
+                <div class="card-body">
+                    <h4 class="card-title">Details</h4>
+                        
+                    <div class="form-group">
+                        <span class="text-muted">Name</span>
+                         <h6>@Model.SystemAlert.Name</h6>
+                    </div>
+                    
+                    <div class="form-group">
+                        <span class="text-muted">Message</span>
+                        <h6>@Model.SystemAlert.Message</h6>
+                    </div>
+                    
+                    <div class="form-group">
+                        <span class="text-muted">Type</span>
+                        <h6>@Model.SystemAlert.Type</h6>
+                    </div>
+                    
+                    <div class="form-group">
+                        <span class="text-muted">When To Show</span>
+                        <h6>@Model.SystemAlert.WhenToShow</h6>
+                    </div>
+                    
+                    <div class="form-group">
+                        <span class="text-muted">When To Hide</span>
+                        <h6>@Model.SystemAlert.WhenToHide</h6>
+                    </div>
+                </div>
+            </div>
+        </div>
+</div>>

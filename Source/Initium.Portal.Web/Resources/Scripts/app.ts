@@ -13,8 +13,8 @@ class App {
         this.setupNavbar();
         this.setupFormValidation();
         this.publishPageNotifications();
-
-        var url = window.location;
+        
+        const url = window.location;
         var element = $('ul#sidebarnav a').filter(function () {
             return (this as HTMLAnchorElement).href == url.href;
         }).addClass('active').parent().addClass('active');
@@ -25,6 +25,14 @@ class App {
             else {
                 break;
             }
+        }
+        
+        const systemAlertToggle = document.querySelector<HTMLButtonElement>('#global-system-alert-toggle');
+        if(systemAlertToggle) {
+            systemAlertToggle.addEventListener('click', (event) => {
+                event.preventDefault();
+                document.getElementById('global-system-alerts').classList.toggle('d-none');
+            })
         }
     }
 

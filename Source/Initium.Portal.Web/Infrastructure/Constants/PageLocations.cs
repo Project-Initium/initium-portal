@@ -35,5 +35,13 @@ namespace Initium.Portal.Web.Infrastructure.Constants
         public const string ChangePassword = "/App/Profile/Password";
 
         public const string AuthSignIn = "/Auth/UserAuthentication";
+
+        public const string SystemAlertView = "/App/SystemAlerts/ViewSystemAlert";
+
+        public const string SystemAlertListing = "/App/SystemAlerts/ListSystemAlerts";
+
+        public const string SystemAlertCreate = "/App/SystemAlerts/CreateSystemAlert";
+
+        public const string SystemAlertEdit = "/App/SystemAlerts/EditSystemAlert";
     }
 }

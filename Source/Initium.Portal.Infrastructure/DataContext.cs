@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Initium.Portal.Core.Contracts.Domain;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
+using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Infrastructure.Extensions;
 using MediatR;
@@ -34,6 +35,8 @@ namespace Initium.Portal.Infrastructure
 
         public DbSet<Notification> Notifications { get; set; }
 
+        public DbSet<SystemAlert> SystemAlerts { get; set; }
+
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
             await this.SaveChangesAsync(cancellationToken);
@@ -48,6 +51,15 @@ namespace Initium.Portal.Infrastructure
             modelBuilder.Entity<User>(this.ConfigureUser);
             modelBuilder.Entity<Role>(this.ConfigureRole);
             modelBuilder.Entity<Notification>(this.ConfigureNotification);
+            modelBuilder.Entity<SystemAlert>(this.ConfigureSystemAlert);
+        }
+
+        private void ConfigureSystemAlert(EntityTypeBuilder<SystemAlert> systemAlerts)
+        {
+            systemAlerts.ToTable("systemAlert", "messaging");
+            systemAlerts.HasKey(systemAlert => systemAlert.Id);
+            systemAlerts.Ignore(systemAlert => systemAlert.DomainEvents);
+            systemAlerts.Property(systemAlert => systemAlert.Id).ValueGeneratedNever();
         }
 
         private void ConfigureNotification(EntityTypeBuilder<Notification> notifications)

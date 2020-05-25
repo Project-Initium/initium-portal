@@ -86,6 +86,7 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
                 .SetupUserEntity()
                 .SetupRoleEntity()
                 .SetupUserNotificationEntity()
+                .SetupSystemAlertEntity()
                 .GetEdmModel();
         }
     }
