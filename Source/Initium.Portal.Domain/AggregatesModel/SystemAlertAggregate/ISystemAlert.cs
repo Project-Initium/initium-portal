@@ -9,6 +9,8 @@ namespace Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate
 {
     public interface ISystemAlert : IAggregateRoot, IEntity
     {
+        string Name { get; }
+
         string Message { get; }
 
         SystemAlertType Type { get; }
@@ -17,6 +19,7 @@ namespace Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate
 
         DateTime? WhenToHide { get; }
 
-        void UpdateDetails(string message, SystemAlertType type, DateTime? whenToShow, DateTime? whenToHide);
+        void UpdateDetails(string name, string message, SystemAlertType type, DateTime? whenToShow,
+            DateTime? whenToHide);
     }
 }

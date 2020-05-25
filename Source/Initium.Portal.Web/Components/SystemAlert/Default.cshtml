@@ -1,0 +1,26 @@
+﻿@using Initium.Portal.Core.Constants
+@model IReadOnlyList<Initium.Portal.Queries.Static.Models.Messaging.ActiveSystemAlert>
+@if (Model.Any())
+{
+  <button id="global-system-alert-toggle" class="btn btn-danger btn-circle btn-sm"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></button>
+  <div id="global-system-alerts" class="d-none">
+@foreach (var systemAlert in Model)
+{
+  string cssClass = "";
+  switch (systemAlert.Type)
+  {
+    case SystemAlertType.Critical:
+      cssClass = "alert-danger";
+      break;
+    case SystemAlertType.High:
+      cssClass = "alert-warning";
+      break;
+  }
+  
+  <div class="alert @cssClass" role="alert">
+    @systemAlert.Message
+  </div>
+}
+    
+    </div>
+}

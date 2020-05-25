@@ -41,7 +41,7 @@ namespace Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate
         private Result<CreateNewSystemAlertCommandResult, ErrorData> Process(
             CreateNewSystemAlertCommand request)
         {
-            var alert = this._systemAlertRepository.Add(new SystemAlert(Guid.NewGuid(), request.Message, request.Type,
+            var alert = this._systemAlertRepository.Add(new SystemAlert(Guid.NewGuid(), request.Name, request.Message, request.Type,
                 request.WhenToShow, request.WhenToHide));
 
             return Result.Ok<CreateNewSystemAlertCommandResult, ErrorData>(

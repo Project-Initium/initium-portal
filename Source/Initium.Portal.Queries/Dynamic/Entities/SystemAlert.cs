@@ -11,6 +11,8 @@ namespace Initium.Portal.Queries.Dynamic.Entities
     {
         public Guid Id { get; set; }
 
+        public string Name { get; set; }
+
         public string Message { get; set; }
 
         public SystemAlertType Type { get; set; }
@@ -18,5 +20,7 @@ namespace Initium.Portal.Queries.Dynamic.Entities
         public DateTime? WhenToShow { get; set; }
 
         public DateTime? WhenToHide { get; set; }
+
+        public bool IsActive { get; set; }
     }
 }

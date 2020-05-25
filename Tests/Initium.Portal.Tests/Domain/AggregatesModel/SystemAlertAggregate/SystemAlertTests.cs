@@ -29,13 +29,15 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.SystemAlertAggregate
         {
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
+                "name",
                 "message",
                 SystemAlertType.Critical,
-                TestVariables.Now.AddDays(-1),
-                TestVariables.Now.AddDays(1));
+                whenToShow: TestVariables.Now.AddDays(-1),
+                whenToHide: TestVariables.Now.AddDays(1));
 
             Assert.Equal(TestVariables.SystemAlertId, systemAlert.Id);
             Assert.Equal("message", systemAlert.Message);
+            Assert.Equal("name", systemAlert.Name);
             Assert.Equal(SystemAlertType.Critical, systemAlert.Type);
             Assert.Equal(TestVariables.Now.AddDays(-1), systemAlert.WhenToShow);
             Assert.Equal(TestVariables.Now.AddDays(1), systemAlert.WhenToHide);
@@ -53,14 +55,16 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.SystemAlertAggregate
         {
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
+                "name",
                 "message",
                 SystemAlertType.Critical,
-                TestVariables.Now.AddDays(-1),
-                TestVariables.Now.AddDays(1));
+                whenToShow: TestVariables.Now.AddDays(-1),
+                whenToHide: TestVariables.Now.AddDays(1));
 
-            systemAlert.UpdateDetails("updated-message", SystemAlertType.High, TestVariables.Now.AddDays(-2),
+            systemAlert.UpdateDetails("updated-name", "updated-message", SystemAlertType.High, TestVariables.Now.AddDays(-2),
                 TestVariables.Now.AddDays(2));
 
+            Assert.Equal("updated-name", systemAlert.Name);
             Assert.Equal("updated-message", systemAlert.Message);
             Assert.Equal(SystemAlertType.High, systemAlert.Type);
             Assert.Equal(TestVariables.Now.AddDays(-2), systemAlert.WhenToShow);

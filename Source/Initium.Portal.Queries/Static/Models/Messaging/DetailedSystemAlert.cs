@@ -3,19 +3,14 @@
 
 using System;
 using Initium.Portal.Core.Constants;
-using Initium.Portal.Core.Domain;
-using Initium.Portal.Domain.CommandResults.SystemAlertAggregate;
-using MediatR;
-using ResultMonad;
 
-namespace Initium.Portal.Domain.Commands.SystemAlertAggregate
+namespace Initium.Portal.Queries.Static.Models.Messaging
 {
-    public class CreateNewSystemAlertCommand : IRequest<Result<CreateNewSystemAlertCommandResult, ErrorData>>
+    public class DetailedSystemAlert
     {
-        public CreateNewSystemAlertCommand(string name, string message, SystemAlertType type,
-            DateTime? whenToShow,
-            DateTime? whenToHide)
+        public DetailedSystemAlert(Guid systemAlertId, string name, string message, SystemAlertType type, DateTime? whenToShow, DateTime? whenToHide)
         {
+            this.SystemAlertId = systemAlertId;
             this.Name = name;
             this.Message = message;
             this.Type = type;
@@ -23,14 +18,16 @@ namespace Initium.Portal.Domain.Commands.SystemAlertAggregate
             this.WhenToHide = whenToHide;
         }
 
+        public Guid SystemAlertId { get; }
+
         public string Name { get; }
 
         public string Message { get; }
 
-        public SystemAlertType Type { get; }
-
         public DateTime? WhenToShow { get; }
 
         public DateTime? WhenToHide { get; }
+
+        public SystemAlertType Type { get; set; }
     }
 }

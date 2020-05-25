@@ -9,10 +9,12 @@ namespace Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate
 {
     public sealed class SystemAlert : Entity, ISystemAlert
     {
-        public SystemAlert(Guid id, string message, SystemAlertType type, DateTime? whenToShow = null,
+        public SystemAlert(Guid id, string name, string message, SystemAlertType type,
+            DateTime? whenToShow = null,
             DateTime? whenToHide = null)
         {
             this.Id = id;
+            this.Name = name;
             this.Message = message;
             this.Type = type;
             this.WhenToShow = whenToShow;
@@ -23,6 +25,8 @@ namespace Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate
         {
         }
 
+        public string Name { get; private set; }
+
         public string Message { get; private set; }
 
         public SystemAlertType Type { get; private set; }
@@ -31,8 +35,10 @@ namespace Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate
 
         public DateTime? WhenToHide { get; private set; }
 
-        public void UpdateDetails(string message, SystemAlertType type, DateTime? whenToShow, DateTime? whenToHide)
+        public void UpdateDetails(string name, string message, SystemAlertType type, DateTime? whenToShow,
+            DateTime? whenToHide)
         {
+            this.Name = name;
             this.Message = message;
             this.Type = type;
             this.WhenToShow = whenToShow;

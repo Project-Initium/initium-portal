@@ -1,0 +1,56 @@
+﻿@page "/app/system-alerts"
+@using Initium.Portal.Web.Infrastructure.Constants
+@model Initium.Portal.Web.Pages.App.SystemAlerts.ListSystemAlerts
+
+@{
+    Layout = "Shared/_AppLayout";
+    ViewData["Title"] = "System Alerts";
+}
+
+<div class="row page-titles">
+    <div class="align-self-center pl-0 col-md-7 col-12">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+            <li class="breadcrumb-item">System Alerts</li>
+        </ol>
+    </div>
+    <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
+        <a asp-page="@PageLocations.SystemAlertCreate" class="btn btn-sm float-right btn-info text-white">Create new system alert</a>
+    </div>
+</div>
+
+<div class="row narrow">
+    <div class="col-12 pl-md-0 pr-md-0 pl-1 pr-1">
+        <div class="card">
+            <div class="card-body">
+                
+                <h3 class="card-title">System Alert Management <button type="button" data-export="@ODataLocations.SystemAlertFilteredExport" class="btn btn-sm btn-primary pull-right">Export</button></h3>
+                <h6 class="card-subtitle" id="table-description">Create new, edit existing, or delete system alerts</h6>
+                <form id="filters" class="container form-material">
+                    <div class="d-flex justify-content-between">
+                        <div class="input-group mr-5">
+                            <input type="text" class="form-control" placeholder="Search" aria-label="Search"  data-bind="value: searchTerm">
+                            <div class="input-group-append">
+                                <button class="btn btn-default" type="submit" id="search-bar-submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            </div>
+                        </div>
+                        <a href class="filter-toggle">Filters (<span data-bind="text: filterCount"></span>) <i class="fa fa-caret-down" aria-hidden="true"></i></a>
+                    </div>
+                        
+                    <div id="filter-options" class="d-none">
+                    
+                    </div>
+                </form>
+                <div class="table-responsive">
+                    <table class="table table-hover clickable" id="system-alerts" cellspacing="0" width="100%" aria-describedby="table-description" data-route-filtered="@ODataLocations.SystemAlertFilteredListing" data-details="@Url.Page(PageLocations.SystemAlertView, new {id = "__ID__"})">
+                       
+                    </table>                    
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="~/system-alert-list.js.gz" asp-append-version="true"></script> 
+}

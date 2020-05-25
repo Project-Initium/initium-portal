@@ -33,6 +33,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
 
             var command = new UpdateSystemAlertCommand(
                 TestVariables.SystemAlertId,
+                "name",
                 "message",
                 SystemAlertType.Critical,
                 TestVariables.Now.AddDays(-1),
@@ -59,6 +60,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
 
             var command = new UpdateSystemAlertCommand(
                 TestVariables.SystemAlertId,
+                "name",
                 "message",
                 SystemAlertType.Critical,
                 TestVariables.Now.AddDays(-1),
@@ -85,6 +87,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
 
             var command = new UpdateSystemAlertCommand(
                 TestVariables.SystemAlertId,
+                "name",
                 "message",
                 SystemAlertType.Critical,
                 TestVariables.Now.AddDays(-1),
@@ -92,7 +95,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
 
             await commandHandler.Handle(command, CancellationToken.None);
             systemAlertRepository.Verify(x => x.Update(It.IsAny<ISystemAlert>()), Times.Once);
-            systemAlert.Verify(x => x.UpdateDetails(It.IsAny<string>(), It.IsAny<SystemAlertType>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>()), Times.Once);
+            systemAlert.Verify(x => x.UpdateDetails(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<SystemAlertType>(), It.IsAny<DateTime?>(), It.IsAny<DateTime?>()), Times.Once);
         }
 
         [Fact]
@@ -110,6 +113,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
 
             var command = new UpdateSystemAlertCommand(
                 TestVariables.SystemAlertId,
+                "name",
                 "message",
                 SystemAlertType.Critical,
                 TestVariables.Now.AddDays(-1),

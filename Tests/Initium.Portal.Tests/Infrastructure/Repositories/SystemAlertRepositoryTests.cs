@@ -45,10 +45,11 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
+                "name",
                 "message",
                 SystemAlertType.Critical,
-                TestVariables.Now.AddDays(-1),
-                TestVariables.Now.AddDays(1));
+                whenToShow: TestVariables.Now.AddDays(-1),
+                whenToHide: TestVariables.Now.AddDays(1));
             var returnedSystemAlert = repository.Add(systemAlert);
             Assert.NotNull(returnedSystemAlert);
             Assert.Equal(systemAlert, returnedSystemAlert);
@@ -67,10 +68,11 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
+                "name",
                 "message",
                 SystemAlertType.Critical,
-                TestVariables.Now.AddDays(-1),
-                TestVariables.Now.AddDays(1));
+                whenToShow: TestVariables.Now.AddDays(-1),
+                whenToHide: TestVariables.Now.AddDays(1));
             repository.Add(systemAlert);
             var userInContext = context.ChangeTracker.Entries<SystemAlert>()
                 .FirstOrDefault(x => x.Entity.Id == TestVariables.SystemAlertId);
@@ -106,10 +108,11 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
+                "name",
                 "message",
                 SystemAlertType.Critical,
-                TestVariables.Now.AddDays(-1),
-                TestVariables.Now.AddDays(1));
+                whenToShow: TestVariables.Now.AddDays(-1),
+                whenToHide: TestVariables.Now.AddDays(1));
             repository.Delete(systemAlert);
             var roleInContext = context.ChangeTracker.Entries<SystemAlert>()
                 .FirstOrDefault(x => x.Entity.Id == TestVariables.SystemAlertId);
@@ -129,10 +132,11 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             await using var context = new DataContext(options, mediator.Object);
             await context.SystemAlerts.AddAsync(new SystemAlert(
                 TestVariables.SystemAlertId,
+                "name",
                 "message",
                 SystemAlertType.Critical,
-                TestVariables.Now.AddDays(-1),
-                TestVariables.Now.AddDays(1)));
+                whenToShow: TestVariables.Now.AddDays(-1),
+                whenToHide: TestVariables.Now.AddDays(1)));
             await context.SaveChangesAsync();
             var repository = new SystemAlertRepository(context);
             var maybe = await repository.Find(TestVariables.SystemAlertId);
@@ -183,10 +187,11 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
+                "name",
                 "message",
                 SystemAlertType.Critical,
-                TestVariables.Now.AddDays(-1),
-                TestVariables.Now.AddDays(1));
+                whenToShow: TestVariables.Now.AddDays(-1),
+                whenToHide: TestVariables.Now.AddDays(1));
             repository.Update(systemAlert);
             var roleInContext = context.ChangeTracker.Entries<SystemAlert>()
                 .FirstOrDefault(x => x.Entity.Id == TestVariables.SystemAlertId);

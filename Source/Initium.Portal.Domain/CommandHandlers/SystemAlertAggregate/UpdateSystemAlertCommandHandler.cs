@@ -44,7 +44,7 @@ namespace Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate
             }
 
             var alert = alertMaybe.Value;
-            alert.UpdateDetails(request.Message, request.Type, request.WhenToShow, request.WhenToHide);
+            alert.UpdateDetails(request.Name, request.Message, request.Type, request.WhenToShow, request.WhenToHide);
             this._systemAlertRepository.Update(alert);
             return ResultWithError.Ok<ErrorData>();
         }

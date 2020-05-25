@@ -13,11 +13,13 @@ namespace Initium.Portal.Tests.Domain.Commands.SystemAlertAggregate
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
             var command = new CreateNewSystemAlertCommand(
+                "name",
                 "message",
                 SystemAlertType.Critical,
                 TestVariables.Now.AddDays(-1),
                 TestVariables.Now.AddDays(1));
 
+            Assert.Equal("name", command.Name);
             Assert.Equal("message", command.Message);
             Assert.Equal(SystemAlertType.Critical, command.Type);
             Assert.Equal(TestVariables.Now.AddDays(-1), command.WhenToShow);

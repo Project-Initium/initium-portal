@@ -30,6 +30,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
                 new CreateNewSystemAlertCommandHandler(systemAlertRepository.Object);
 
             var command = new CreateNewSystemAlertCommand(
+                "name",
                 "message",
                 SystemAlertType.Critical,
                 TestVariables.Now.AddDays(-1),
@@ -55,6 +56,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
                 new CreateNewSystemAlertCommandHandler(systemAlertRepository.Object);
 
             var command = new CreateNewSystemAlertCommand(
+                "name",
                 "message",
                 SystemAlertType.Critical,
                 TestVariables.Now.AddDays(-1),
@@ -84,6 +86,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
                 new CreateNewSystemAlertCommandHandler(systemAlertRepository.Object);
 
             var command = new CreateNewSystemAlertCommand(
+                "name",
                 "message",
                 SystemAlertType.Critical,
                 TestVariables.Now.AddDays(-1),

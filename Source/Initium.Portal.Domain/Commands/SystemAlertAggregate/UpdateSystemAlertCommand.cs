@@ -11,9 +11,11 @@ namespace Initium.Portal.Domain.Commands.SystemAlertAggregate
 {
     public class UpdateSystemAlertCommand : IRequest<ResultWithError<ErrorData>>
     {
-        public UpdateSystemAlertCommand(Guid systemAlertId, string message, SystemAlertType type, DateTime? whenToShow, DateTime? whenToHide)
+        public UpdateSystemAlertCommand(Guid systemAlertId, string name, string message, SystemAlertType type,
+            DateTime? whenToShow, DateTime? whenToHide)
         {
             this.SystemAlertId = systemAlertId;
+            this.Name = name;
             this.Message = message;
             this.Type = type;
             this.WhenToShow = whenToShow;
@@ -21,6 +23,8 @@ namespace Initium.Portal.Domain.Commands.SystemAlertAggregate
         }
 
         public Guid SystemAlertId { get; }
+
+        public string Name { get; }
 
         public string Message { get; }
 

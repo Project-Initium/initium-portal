@@ -22,6 +22,7 @@ module.exports = {
         'validate-device-mfa': './Resources/Scripts/pages/validate-device-mfa.ts',
         'validate-email-mfa': './Resources/Scripts/pages/validate-email-mfa.ts',    
         'notification-list': './Resources/Scripts/pages/notification-list.ts',    
+        'system-alert-list': './Resources/Scripts/pages/system-alert-list.ts',    
     },
     output: {
         filename: '[name].js',

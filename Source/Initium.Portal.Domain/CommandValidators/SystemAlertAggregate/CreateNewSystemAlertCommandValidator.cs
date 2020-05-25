@@ -11,6 +11,8 @@ namespace Initium.Portal.Domain.CommandValidators.SystemAlertAggregate
     {
         public CreateNewSystemAlertCommandValidator()
         {
+            this.RuleFor(x => x.Name)
+                .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
             this.RuleFor(x => x.Message)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
