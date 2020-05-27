@@ -22,7 +22,8 @@
       "ts-node/register"
     ],
     "reporter": [
-      "cobertura"
+      "cobertura",
+      "lcov"
     ],
     "sourceMap": true,
     "instrument": true

@@ -41,7 +41,7 @@ steps:
       displayName: 'Publish client code coverage'
       inputs:
         codeCoverageTool: Cobertura
-        summaryFileLocation: 'build/build-artifacts/cover/client/coverage-cobertura.xml'
+        summaryFileLocation: 'build/build-artifacts/cover/client/cobertura-coverage.xml'
     - task: SonarCloudAnalyze@1
     - task: SonarCloudPublish@1
       inputs:

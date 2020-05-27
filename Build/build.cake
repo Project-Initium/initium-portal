@@ -76,7 +76,7 @@ Task("__Build")
     });
 Task("__Test")
     .Does(() => {
-        var testResults = MakeAbsolute(coverPath + File("xunit-report.xml")).FullPath;
+        var testResults = MakeAbsolute(coverServerPath + File("xunit-report.xml")).FullPath;
         var testSettings = new DotNetCoreTestSettings {
             Configuration = "Release",
             NoBuild = true,
