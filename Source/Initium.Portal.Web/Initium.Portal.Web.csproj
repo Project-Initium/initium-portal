@@ -56,6 +56,7 @@
     <TypeScriptCompile Include="Resources\Scripts\pages\profile-device.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\system-alert-list.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\user-view.ts" />
+    <TypeScriptCompile Include="Resources\Scripts\services\validator.spec.ts" />
     <TypeScriptCompile Include="Resources\Scripts\types\knockout-secure-binding.ts" />
   </ItemGroup>
 

@@ -9,6 +9,8 @@ var buildPath = Directory("./build-artifacts");
 var publishPath = buildPath + Directory("publish");
 var releasePath = buildPath + Directory("release");
 var coverPath = buildPath + Directory("cover");
+var coverClientPath = coverPath + Directory("client");
+var coverServerPath = coverPath + Directory("server");
 
 
 Task("__Clean")
@@ -79,16 +81,24 @@ Task("__Test")
             Configuration = "Release",
             NoBuild = true,
             Logger = $"trx;LogFileName={testResults};verbosity=normal"
-    };
+        };
 
-    var coverletSettings = new CoverletSettings {
-        CollectCoverage = true,
-        CoverletOutputFormat = CoverletOutputFormat.opencover|(CoverletOutputFormat)12,
-        CoverletOutputDirectory = coverPath,
-        CoverletOutputName = "coverage"        
-    };
+        var coverletSettings = new CoverletSettings {
+            CollectCoverage = true,
+            CoverletOutputFormat = CoverletOutputFormat.opencover|(CoverletOutputFormat)12,
+            CoverletOutputDirectory = coverServerPath,
+            CoverletOutputName = "coverage"        
+        };
 
-    DotNetCoreTest("../Initium.Portal.sln", testSettings, coverletSettings);
+        DotNetCoreTest("../Initium.Portal.sln", testSettings, coverletSettings);
+        
+        var npmRunScriptSettings = new NpmRunScriptSettings {
+            ScriptName = "test:coverage",
+            WorkingDirectory = "../Source/Initium.Portal.Web",
+            LogLevel = NpmLogLevel.Silent
+        };		
+        NpmRunScript(npmRunScriptSettings);  
+        CopyDirectory("../Source/Initium.Portal.Web/coverage", coverClientPath);
     });
 Task("__Publish")
     .Does(() => {

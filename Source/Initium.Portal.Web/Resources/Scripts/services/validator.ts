@@ -10,20 +10,19 @@ export class Validator {
     private readonly elements: Element[];
     private readonly constraints: any;
     private hasValidated: boolean = false;
-    
-    constructor(formQuery: string | HTMLFormElement | JQuery, validateOnSubmit: boolean = true) {
+    private canBeValidated: boolean = false;
+
+    constructor(formQuery: string | HTMLFormElement, validateOnSubmit: boolean = true) {
         const contextThis = this;
         if (formQuery.isPrototypeOf(String)) {
             this.form = document.querySelector(formQuery as string) as HTMLFormElement;
-        } else if (formQuery instanceof  jQuery && formQuery.length) {
-            this.form = formQuery[0] as HTMLFormElement;
         } else {
             this.form = formQuery as HTMLFormElement;
         }
         if (!this.form)
             return;
 
-        if (this.form.dataset['noValidate'])
+        if (this.form.dataset.noValidate || this.form.dataset.noValidate === '')
             return;
 
         this.constraints = {};
@@ -36,60 +35,61 @@ export class Validator {
                 if (elementId) {
                     elementId = elementId.replace('.', '_');
                     contextThis.constraints[elementId] = {};
-                for (let i in element.dataset) {
-                    switch (i) {
-                    case 'valRequired':
-                        needsValidation = true;
-                        contextThis.constraints[elementId].presence = {
-                            message: `^${element.dataset[i]}`
-                        };
-
-                        break;
-                    case 'valEmail':
-                        needsValidation = true;
-                        contextThis.constraints[elementId].email = {
-                            message: `^${element.dataset[i]}`
-                        };
-                        break;
-                    case 'valMinlength':
-                        needsValidation = true;
-                        contextThis.constraints[elementId].length = {
-                            tooShort: `^${element.dataset[i]}`,
-                            minimum: parseInt(element.dataset['valMinlengthMin'])
-                        };
-                        break;
-                    case 'valEqualto':
-                        needsValidation = true;
-                        if (element.dataset['valEqualtoOther'].charAt(0) === '*') {
-                            const searchTerm = element.dataset['valEqualtoOther'].replace('*.', '.');
-                            element.dataset['valEqualtoOther'] = document.querySelector('[name*="' + searchTerm + '"]').id
+                for (const i in element.dataset) {
+                    if (element.dataset.hasOwnProperty(i)) {
+                        switch (i) {
+                            case 'valRequired':
+                                needsValidation = true;
+                                contextThis.constraints[elementId].presence = {
+                                    message: `^${element.dataset[i]}`
+                                };
+                                break;
+                            case 'valEmail':
+                                needsValidation = true;
+                                contextThis.constraints[elementId].email = {
+                                    message: `^${element.dataset[i]}`
+                                };
+                                break;
+                            case 'valMinlength':
+                                needsValidation = true;
+                                contextThis.constraints[elementId].length = {
+                                    tooShort: `^${element.dataset[i]}`,
+                                    minimum: parseInt(element.dataset.valMinlengthMin, 10)
+                                };
+                                break;
+                            case 'valEqualto':
+                                needsValidation = true;
+                                if (element.dataset.valEqualtoOther.charAt(0) === '*') {
+                                    const searchTerm = element.dataset.valEqualtoOther.replace('*.', '.');
+                                    element.dataset.valEqualtoOther = document.querySelector('[name*="' + searchTerm + '"]').id
+                                }
+                                contextThis.constraints[elementId].equality = {
+                                    message: `^${element.dataset[i]}`,
+                                    attribute: element.dataset.valEqualtoOther,
+                                    comparator: (v1: any, v2: any) => {
+                                        return JSON.stringify(v1) === JSON.stringify(v2);
+                                    }
+                                };
+                                break;
+                            case 'valRegex':
+                                needsValidation = true;
+                                contextThis.constraints[elementId].format = {
+                                    message: `^${element.dataset[i]}`,
+                                    pattern: element.dataset.valRegexPattern,
+                                    flags: 'i'
+                                };
+                                break;
                         }
-                        contextThis.constraints[elementId].equality = {
-                            message: `^${element.dataset[i]}`,
-                            attribute: element.dataset['valEqualtoOther'],
-                            comparator: (v1: any, v2: any) => {
-                                return JSON.stringify(v1) === JSON.stringify(v2);
-                            }
-                        };
-                        break;
-                    case 'valRegex':
-                        needsValidation = true;
-                        contextThis.constraints[elementId].format = {
-                            message: `^${element.dataset[i]}`,
-                            pattern: element.dataset['valRegexPattern'],
-                            flags: 'i'
-                        };
-                        break;
                     }
 
                 }
                 if (needsValidation) {
-                    element.addEventListener('blur', (e) => { contextThis.elementChange(e); });
-                    element.addEventListener('change', (e) => { contextThis.elementChange(e); });
+                    this.canBeValidated = true;
+                    element.addEventListener('blur', () => { contextThis.elementChange(); });
+                    element.addEventListener('change', () => { contextThis.elementChange(); });
                     this.elements.push(element);
                 }
             }
-                
         });
         if(validateOnSubmit) {
             this.form.addEventListener('submit', (e) => { contextThis.formSubmit(e); });
@@ -98,12 +98,17 @@ export class Validator {
     }
 
     public validate(): IValidationResult {
+        if (!this.canBeValidated) {
+            return {
+                isValid: true
+            };
+        }
         this.hasValidated = true;
         return {
             isValid: !this.performValidation()
         };
     }
-    
+
     public reset(): void {
         this.elements.forEach((element: HTMLInputElement) => {
             const group = element.closest('.form-group');
@@ -113,15 +118,15 @@ export class Validator {
             helpBlock.innerHTML = '';
         });
     }
-    
-    private elementChange(event: Event): void {
+
+    private elementChange(): void {
         if (this.hasValidated) {
             this.performValidation();
         }
     }
 
     private formSubmit(event: Event): void {
-        if (this.form.dataset['noValidate'])
+        if (!this.canBeValidated)
             return;
 
         this.hasValidated = true;
@@ -139,18 +144,17 @@ export class Validator {
     private performValidation(): any {
         const formValues = JSON.parse(JSON.stringify(validate.collectFormValues(this.form)).replace(/\\\\\\\\\./g, '_'));
         const validationResult = validate(formValues, this.constraints);
-        const contextThis = this;
-        this.elements.forEach((element: HTMLInputElement) => {
-            contextThis.decorateElement(element, validationResult);
+            this.elements.forEach((element: HTMLInputElement) => {
+            Validator.decorateElement(element, validationResult);
         });
         return validationResult;
     }
 
-    private decorateElement(element: HTMLInputElement, validationResult: any) {
+    private static decorateElement(element: HTMLInputElement, validationResult: any) {
         const group = element.closest('.form-group');
         group.classList.remove('has-success');
         group.classList.remove('has-error');
-        var elementId = element.id;
+        let elementId = element.id;
         if (elementId) {
             elementId = elementId.replace('.', '_');
             const helpblock = group.querySelector(`span[data-valmsg-for]`);
@@ -167,5 +171,5 @@ export class Validator {
                 group.classList.add('has-success');
             }
         }
-    }    
+    }
 }

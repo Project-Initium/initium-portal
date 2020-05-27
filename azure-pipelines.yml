@@ -12,25 +12,36 @@ steps:
         scannerMode: MSBuild
         projectKey: initium-portal
         extraProperties: |
-          sonar.cs.opencover.reportsPaths=**/coverage.opencover.xml
+          sonar.cs.opencover.reportsPaths=build/build-artifacts/cover/server/coverage.cobertura.xml
           sonar.exclusions=**\Resources\Themes\**
+          sonar.typescript.lcov.reportPaths=build/build-artifacts/cover/client/lcov.info
     - task: Cake@0
       inputs:
         script: Build/build-master.cake
         target: Default
         verbosity: Verbose
     - task: PublishTestResults@2
-      displayName: Publish Test Results coverage/xunit-report.xml
+      displayName: Publish server test results
       inputs:
         testResultsFormat: XUnit
-        testResultsFiles: '**/xunit-report.xml'
+        testResultsFiles: 'build/build-artifacts/cover/server/xunit-report.xml'
       continueOnError: true
+    - task: PublishTestResults@2
+      displayName: 'Publish client test results'
+      inputs:
+        testResultsFormat: JUnit
+        testResultsFiles: 'build/build-artifacts/cover/client/junit-report.xml'
     - task: PublishCodeCoverageResults@1
-      displayName: Publish code coverage from coverage/cobertura-coverage.xml
+      displayName: Publish server code coverage
       inputs:
         codeCoverageTool: Cobertura
-        summaryFileLocation: build/build-artifacts/cover/coverage.cobertura.xml
+        summaryFileLocation: 'build/build-artifacts/cover/server/coverage.cobertura.xml'
       continueOnError: true 
+    - task: PublishCodeCoverageResults@1
+      displayName: 'Publish client code coverage'
+      inputs:
+        codeCoverageTool: Cobertura
+        summaryFileLocation: 'build/build-artifacts/cover/client/coverage-cobertura.xml'
     - task: SonarCloudAnalyze@1
     - task: SonarCloudPublish@1
       inputs:
