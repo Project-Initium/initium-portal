@@ -432,3 +432,7 @@ lcov.info
 appsettings.*.json
 
 __template/
+
+Source/Initium.Portal.Web/.nyc_output/
+
+Source/Initium.Portal.Web/coverage/

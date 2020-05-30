@@ -9,7 +9,7 @@
     "dev:watch": "webpack --config webpack.dev.js --watch",
     "test": "mocha -r ts-node/register Resources/Scripts/**/*.spec.ts",
     "test:watch": "mocha -r ts-node/register --reporter=min --watch Resources/Scripts/**/*.spec.ts",
-    "test:coverage": "nyc mocha Resources/Scripts/**/*.spec.ts --reporter mocha-junit-reporter --reporter-options mochaFile=./coverage/junit-report.xml Resources/Scripts/**/*.spec.ts"
+    "test:coverage": "nyc mocha ../../**/Resources/Scripts/**/*.spec.ts --reporter mocha-junit-reporter --reporter-options mochaFile=./coverage/junit-report.xml ../../**/Resources/Scripts/**/*.spec.ts"
   },
   "nyc": {
     "include": [

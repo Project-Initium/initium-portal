@@ -14,13 +14,7 @@ steps:
         extraProperties: |
           sonar.cs.opencover.reportsPaths=build/build-artifacts/cover/server/coverage.cobertura.xml
           sonar.exclusions=**\Resources\Themes\**
-          sonar.modules=front
-          front.sonar.projectBaseDir=.
-          front.sonar.typescript.lcov.reportPaths=build/build-artifacts/cover/client/lcov.info
-          front.sonar.sources=Source/Initium.Portal.Web/Resources
-          front.sonar.tests=Source/Initium.Portal.Web/Resources
-          front.sonar.test.inclusions=Source/Initium.Portal.Web/Resources/Scripts/**/*.spec.ts
-          front.sonar.exclusions=Source/Initium.Portal.Web/Resources/Scripts/**/*.spec.ts          
+          sonar.typescript.lcov.reportPaths=build/build-artifacts/cover/client/lcov.info
     - task: Cake@0
       inputs:
         script: Build/build-master.cake
