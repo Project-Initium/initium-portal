@@ -3,6 +3,7 @@
 #tool "nuget:?package=GitVersion.CommandLine&version=5.1.3"
 #addin "nuget:?package=SharpZipLib&version=1.2.0"
 #addin "nuget:?package=Cake.Compression&version=0.2.4"
+#addin "Cake.FileHelpers&version=3.2.1"
 
 var target = Argument<string>("target", "Default");
 var buildPath = Directory("./build-artifacts");
@@ -99,6 +100,7 @@ Task("__Test")
         };		
         NpmRunScript(npmRunScriptSettings);  
         CopyDirectory("../Source/Initium.Portal.Web/coverage", coverClientPath);
+        ReplaceTextInFiles("./build-artifacts/cover/client/lcov.info", "Resources\\Scripts\\", "Source\\Initium.Portal.Web\\Resources\\Scripts\\");
     });
 Task("__Publish")
     .Does(() => {

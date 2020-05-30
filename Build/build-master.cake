@@ -25,6 +25,10 @@ Task("__TemplateCopy")
         CopyFileToDirectory("../docker-compose.yml", templatePath);
         CopyFileToDirectory("../GitVersion.yml", templatePath);
         CopyFileToDirectory("../Initium.Portal.sln", templatePath);
+
+        ZipCompress(templatePath, File("template.zip"));
+
+        DeleteDirectory(templatePath, true);
     });
 Task("__Build")
     .Does(() => {
@@ -34,7 +38,7 @@ Task("__Build")
 // COMPRESS COPIED AND USE AS RELEASE
 Task("__TemplatePackage")
     .Does(() => {
-        ZipCompress(templatePath, releasePath + File("template.zip"));        
+        CopyFileToDirectory("template.zip", releasePath);
               
     });
 
