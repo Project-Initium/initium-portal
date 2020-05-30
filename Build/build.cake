@@ -95,7 +95,7 @@ Task("__Test")
         var npmRunScriptSettings = new NpmRunScriptSettings {
             ScriptName = "test:coverage",
             WorkingDirectory = "../Source/Initium.Portal.Web",
-            LogLevel = NpmLogLevel.Silent
+            //LogLevel = NpmLogLevel.Silent
         };		
         NpmRunScript(npmRunScriptSettings);  
         CopyDirectory("../Source/Initium.Portal.Web/coverage", coverClientPath);
