@@ -14,7 +14,7 @@ steps:
         extraProperties: |
           sonar.cs.opencover.reportsPaths=build/build-artifacts/cover/server/coverage.cobertura.xml
           sonar.exclusions=**\Resources\Themes\**
-          sonar.typescript.lcov.reportPaths=build/build-artifacts/cover/client/lcov.info
+          sonar.typescript.lcov.reportPaths=build/build-artifacts/cover/client/cobertura-coverage.xml
     - task: Cake@0
       inputs:
         script: Build/build-master.cake
