@@ -12,10 +12,14 @@ steps:
         scannerMode: MSBuild
         projectKey: initium-portal
         extraProperties: |
-          sonar.sources=Tests,Source,Shared,Source/Initium.Portal.Web/Resources/Scripts
           sonar.cs.opencover.reportsPaths=build/build-artifacts/cover/server/coverage.cobertura.xml
           sonar.exclusions=**\Resources\Themes\**
-          sonar.typescript.lcov.reportPaths=build/build-artifacts/cover/client/lcov.info
+          sonar.modules=front
+          front.sonar.typescript.lcov.reportPaths=build/build-artifacts/cover/client/lcov.info
+          front.sonar.sources=Source/Initium.Portal.Web/Resources/Scripts
+          front.sonar.tests=src
+          front.sonar.test.inclusions=Source/Initium.Portal.Web/Resources/Scripts/**/*.spec.ts
+          front.sonar.exclusions=Source/Initium.Portal.Web/Resources/Scripts/**/*.spec.ts          
     - task: Cake@0
       inputs:
         script: Build/build-master.cake
