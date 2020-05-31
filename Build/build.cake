@@ -86,7 +86,7 @@ Task("__Test")
 
         var coverletSettings = new CoverletSettings {
             CollectCoverage = true,
-            CoverletOutputFormat = CoverletOutputFormat.opencover|(CoverletOutputFormat)12,
+            CoverletOutputFormat = CoverletOutputFormat.opencover|CoverletOutputFormat.lcov|(CoverletOutputFormat)12,
             CoverletOutputDirectory = coverServerPath,
             CoverletOutputName = "coverage"        
         };
@@ -100,7 +100,19 @@ Task("__Test")
         };		
         NpmRunScript(npmRunScriptSettings);  
         CopyDirectory("../Source/Initium.Portal.Web/coverage", coverClientPath);
-        ReplaceTextInFiles("./build-artifacts/cover/client/lcov.info", "Resources\\Scripts\\", "Source\\Initium.Portal.Web\\Resources\\Scripts\\");
+        System.IO.StreamReader file =  new System.IO.StreamReader(MakeAbsolute(File("./build-artifacts/cover/server/coverage.info")).ToString()); 
+        string line;
+        while((line = file.ReadLine()) != null ){  
+            if (line.IndexOf("Source\\Initium.Portal.Web\\Program.cs") == -1) {
+                continue;
+            }
+            
+            ReplaceTextInFiles("./build-artifacts/cover/client/lcov.info", "Resources\\Scripts\\", line.Replace("SF:",string.Empty).Replace("Program.cs", string.Empty) + "Resources\\Scripts\\");
+            break;
+             
+        }  
+        file.Close();  
+        
     });
 Task("__Publish")
     .Does(() => {
@@ -119,13 +131,13 @@ Task("__Package")
     });
 
 Task("Build")
-    .IsDependentOn("__Clean")
-    .IsDependentOn("__Versioning")    
-    .IsDependentOn("__RestorePackages")
-    .IsDependentOn("__Build")
+    //.IsDependentOn("__Clean")
+    //.IsDependentOn("__Versioning")    
+    //.IsDependentOn("__RestorePackages")
+    //.IsDependentOn("__Build")
     .IsDependentOn("__Test")
-    .IsDependentOn("__Publish")
-    .IsDependentOn("__Package")
+    //.IsDependentOn("__Publish")
+    //.IsDependentOn("__Package")
     ;
 
 Task("Default")
