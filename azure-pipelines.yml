@@ -24,7 +24,7 @@ steps:
     - task: PublishTestResults@2
       displayName: Publish server test results
       inputs:
-        testResultsFormat: XUnit
+        testResultsFormat: VSTest
         testResultsFiles: 'build/build-artifacts/cover/server/xunit-report.xml'
       continueOnError: true
     - task: PublishTestResults@2
