@@ -63,7 +63,8 @@ export class ProfileApp {
                     }),
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': this.revokeForm.dataset.afToken
                     }
                 });
                 const data =  await response.json();
@@ -95,7 +96,8 @@ export class ProfileApp {
                     }),
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': this.enrollmentForm.dataset.afToken
                     }
                 });
                 const data =  await response.json();
@@ -124,7 +126,8 @@ export class ProfileApp {
                 credentials: 'same-origin',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': this.enrollmentForm.dataset.afToken
                 }
             });
             const data =  await response.json();

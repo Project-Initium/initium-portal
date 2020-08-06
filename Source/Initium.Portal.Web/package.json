@@ -13,7 +13,7 @@
   },
   "nyc": {
     "include": [
-      "Resources/Scripts/**/*.spec.ts"
+      "Resources/Scripts/**/*.ts"
     ],
     "extension": [
       ".ts"

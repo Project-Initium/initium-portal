@@ -7,21 +7,24 @@ using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Domain.Commands.RoleAggregate;
-using Initium.Portal.Queries.Contracts.Static;
+using Initium.Portal.Queries.Contracts;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using ResultMonad;
 
 namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
 {
     public class DeleteRoleCommandHandler : IRequestHandler<DeleteRoleCommand, ResultWithError<ErrorData>>
     {
-        private readonly IRoleQueries _roleQueries;
+        private readonly IRoleQueryService _roleQueryService;
         private readonly IRoleRepository _roleRepository;
+        private readonly ILogger _logger;
 
-        public DeleteRoleCommandHandler(IRoleRepository roleRepository, IRoleQueries roleQueries)
+        public DeleteRoleCommandHandler(IRoleRepository roleRepository, IRoleQueryService roleQueryService, ILogger<DeleteRoleCommandHandler> logger)
         {
             this._roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
-            this._roleQueries = roleQueries ?? throw new ArgumentNullException(nameof(roleQueries));
+            this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(
@@ -32,6 +35,7 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
 
             if (!dbResult)
             {
+                this._logger.LogDebug("Failed saving changes.");
                 return ResultWithError.Fail(new ErrorData(
                     ErrorCodes.SavingChanges, "Failed To Save Database"));
             }
@@ -45,12 +49,14 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
             var roleMaybe = await this._roleRepository.Find(request.RoleId, cancellationToken);
             if (roleMaybe.HasNoValue)
             {
+                this._logger.LogDebug("Entity not found.");
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.RoleNotFound));
             }
 
-            var presenceResult = await this._roleQueries.CheckForRoleUsageById(request.RoleId);
+            var presenceResult = await this._roleQueryService.CheckForRoleUsageById(request.RoleId);
             if (presenceResult.IsPresent)
             {
+                this._logger.LogDebug("Failed presence check.");
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.RoleInUse));
             }
 

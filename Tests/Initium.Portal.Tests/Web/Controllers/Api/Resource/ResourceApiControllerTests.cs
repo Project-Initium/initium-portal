@@ -3,8 +3,8 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.Role;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.Resource;
 using Initium.Portal.Web.Controllers.Api.Resource;
 using MaybeMonad;
 using Microsoft.AspNetCore.Mvc;
@@ -18,7 +18,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.Resource
         [Fact]
         public async Task GetNestResources_GivenNoResources_ExpectJsonWithEmptyList()
         {
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IResourceQueryService>();
             roleQueries.Setup(x => x.GetNestedSimpleResources()).ReturnsAsync(Maybe<List<SimpleResourceModel>>.Nothing);
             var controller = new ResourceApiController(roleQueries.Object);
 
@@ -30,7 +30,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.Resource
         [Fact]
         public async Task GetNestResources_GivenResourcesAreFound_ExpectJsonWithPopulatedList()
         {
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IResourceQueryService>();
             roleQueries.Setup(x => x.GetNestedSimpleResources()).ReturnsAsync(Maybe.From(new List<SimpleResourceModel>
             {
                 new SimpleResourceModel(TestVariables.ResourceId, "name", null),

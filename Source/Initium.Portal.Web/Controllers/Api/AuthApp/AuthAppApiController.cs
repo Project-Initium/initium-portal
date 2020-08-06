@@ -51,6 +51,7 @@ namespace Initium.Portal.Web.Controllers.Api.AuthApp
         }
 
         [HttpPost("api/auth-app/initiate-enrollment")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> InitiateAuthAppEnrollment()
         {
             var currentUserMaybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
@@ -81,29 +82,31 @@ namespace Initium.Portal.Web.Controllers.Api.AuthApp
         }
 
         [HttpPost("api/auth-app/complete-enrollment")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> EnrollAuthApp([FromBody] EnrollAuthAppRequest model)
         {
             if (!this.ModelState.IsValid)
             {
-                return this.Json(new EnrollAuthAppResponse(false));
+                return this.Json(new BasicApiResponse(false));
             }
 
             var result =
                 await this._mediator.Send(
                     new EnrollAuthenticatorAppCommand(model.SharedKey, model.Code));
-            return this.Json(new EnrollAuthAppResponse(result.IsSuccess));
+            return this.Json(new BasicApiResponse(result.IsSuccess));
         }
 
         [HttpPost("api/auth-app/revoke")]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> RevokeAuthApp([FromBody] RevokeAuthAppRequest model)
         {
             if (!this.ModelState.IsValid)
             {
-                return this.Json(new RevokeAuthAppResponse(false));
+                return this.Json(new BasicApiResponse(false));
             }
 
             var result = await this._mediator.Send(new RevokeAuthenticatorAppCommand(model.Password));
-            return this.Json(new RevokeAuthAppResponse(result.IsSuccess));
+            return this.Json(new BasicApiResponse(result.IsSuccess));
         }
 
         [HttpGet("api/auth-app/mfa-qrcode.png")]

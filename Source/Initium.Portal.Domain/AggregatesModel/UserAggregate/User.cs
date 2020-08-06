@@ -127,13 +127,13 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
             var token =
                 this._securityTokenMappings.FirstOrDefault(m =>
                     m.WhenUsed == null && m.WhenExpires >= whenRequest &&
-                    m.Purpose == SecurityTokenMapping.SecurityTokenPurpose.PasswordReset);
+                    m.Purpose == SecurityTokenPurpose.PasswordReset);
             if (token != null)
             {
                 return token.Token;
             }
 
-            token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenMapping.SecurityTokenPurpose.PasswordReset, whenRequest,
+            token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenPurpose.PasswordReset, whenRequest,
                 whenRequest.Add(duration));
             this._securityTokenMappings.Add(token);
 
@@ -145,13 +145,13 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
             var token =
                 this.SecurityTokenMappings.FirstOrDefault(m =>
                     m.WhenUsed == null && m.WhenExpires >= whenRequested &&
-                    m.Purpose == SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation);
+                    m.Purpose == SecurityTokenPurpose.AccountConfirmation);
             if (token != null)
             {
                 return token.Token;
             }
 
-            token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation, whenRequested,
+            token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenPurpose.AccountConfirmation, whenRequested,
                 whenRequested.Add(duration));
             this._securityTokenMappings.Add(token);
 

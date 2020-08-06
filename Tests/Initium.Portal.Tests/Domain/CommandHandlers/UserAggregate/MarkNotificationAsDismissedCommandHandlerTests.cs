@@ -11,6 +11,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NodaTime;
 using Xunit;
@@ -32,8 +33,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<MarkNotificationAsDismissedCommandHandler>>();
+
             var commandHandler =
-                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, clock.Object);
+                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
 
             var command = new MarkNotificationAsDismissedCommand(
                 TestVariables.UserId,
@@ -56,8 +59,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<MarkNotificationAsDismissedCommandHandler>>();
+
             var commandHandler =
-                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, clock.Object);
+                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
 
             var command = new MarkNotificationAsDismissedCommand(
                 TestVariables.UserId,
@@ -85,8 +90,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<MarkNotificationAsDismissedCommandHandler>>();
+
             var commandHandler =
-                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, clock.Object);
+                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
 
             var command = new MarkNotificationAsDismissedCommand(
                 TestVariables.UserId,
@@ -114,8 +121,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<MarkNotificationAsDismissedCommandHandler>>();
+
             var commandHandler =
-                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, clock.Object);
+                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
 
             var command = new MarkNotificationAsDismissedCommand(
                 TestVariables.UserId,

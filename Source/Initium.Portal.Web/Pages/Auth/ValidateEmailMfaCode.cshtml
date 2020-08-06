@@ -1,7 +1,10 @@
 ﻿@page "/auth/multi-factor-email"
 @model Initium.Portal.Web.Pages.Auth.ValidateEmailMfaCode
+@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery Antiforgery
 @{
     ViewData["Title"] = "Validate Your Login";
+    var token = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
 }
 
 <section id="wrapper" class="login-register login-sidebar">
@@ -10,7 +13,7 @@
             <form class="form-horizontal form-material" asp-antiforgery="true" method="post">
                 <a href="#" class="text-center d-block"><img src="~/logo.png" alt="Home" /></a>
                 <h4 class="rounded-title mt-4 mb-0">Use Email</h4>
-                <small>An email has been sent to you with an authentication code.  If you are missing the email click <a href="@Url.Action("RequestMfaEmail", "AuthEmailApi")" data-resend>here to resend</a>.</small>
+                <small>An email has been sent to you with an authentication code.  If you are missing the email click <a href="@Url.Action("RequestMfaEmail", "AuthEmailApi")" data-resend data-af-token="@token">here to resend</a>.</small>
                 <div class="form-group mt-4">
 
                     <label asp-for="PageModel.Code" class="sr-only"></label>

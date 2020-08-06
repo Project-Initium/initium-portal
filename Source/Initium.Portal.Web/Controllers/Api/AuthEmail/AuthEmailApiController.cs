@@ -4,7 +4,6 @@
 using System;
 using System.Threading.Tasks;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Web.Controllers.Api.AuthEmail.Models;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -20,6 +19,7 @@ namespace Initium.Portal.Web.Controllers.Api.AuthEmail
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        [ValidateAntiForgeryToken]
         [Authorize(AuthenticationSchemes = "login-partial")]
         [HttpPost("api/auth-email/request-mfa-email")]
         public async Task<IActionResult> RequestMfaEmail()
@@ -27,7 +27,7 @@ namespace Initium.Portal.Web.Controllers.Api.AuthEmail
             var result =
                 await this._mediator.Send(new EmailMfaRequestedCommand());
 
-            return this.Json(new RequestMfaEmailResponse(result.IsSuccess));
+            return this.Json(new BasicApiResponse(result.IsSuccess));
         }
     }
 }

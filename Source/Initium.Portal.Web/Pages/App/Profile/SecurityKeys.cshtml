@@ -2,9 +2,12 @@
 @using Fido2NetLib.Objects
 @using Initium.Portal.Web.Infrastructure.Constants
 @model Initium.Portal.Web.Pages.App.Profile.SecurityKeys
+@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery Antiforgery
 @{
     this.Layout = "Shared/_AppLayout";
     ViewData["Title"] = "Profile | Security Keys";
+    var token = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
 }
 
 <div class="row page-titles">
@@ -42,7 +45,7 @@
                                
                                 <hr />
 
-                                <form class="list-group" method="post" id="registered-devices" data-endpoint-url="@Url.Action("RevokeDevice", "AuthDeviceApi")">
+                                <form class="list-group" method="post" id="registered-devices" data-endpoint-url="@Url.Action("RevokeDevice", "AuthDeviceApi")" data-af-token="@token">
                                     <!-- .col -->
                                     @foreach (var device in Model.DeviceInfos)
                                     {
@@ -69,7 +72,7 @@
         </div>
     </div>
 
-<form class="modal fade form-material" id="new-device-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-device-registration data-initiate-url="@Url.Action("InitialAuthDeviceRegistration", "AuthDeviceApi")" data-complete-url="@Url.Action("CompleteAuthDeviceRegistration", "AuthDeviceApi")" data-no-auto-validation>
+<form class="modal fade form-material" id="new-device-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-device-registration data-initiate-url="@Url.Action("InitialAuthDeviceRegistration", "AuthDeviceApi")" data-complete-url="@Url.Action("CompleteAuthDeviceRegistration", "AuthDeviceApi")" data-no-auto-validation data-af-token="@token">
     <div class="modal-dialog modal-dialog-slideout" role="document">
         <div class="modal-content">
       
@@ -97,7 +100,7 @@
         </div>
     </div>
 </form>
-<form class="modal fade form-material" id="revoke-device-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-complete-url="@Url.Action("RevokeAuthApp", "AuthAppApi")" data-no-auto-validation>
+<form class="modal fade form-material" id="revoke-device-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-complete-url="@Url.Action("RevokeAuthApp", "AuthAppApi")" data-no-auto-validation data-af-token="@token">
     <div class="modal-dialog modal-dialog-slideout" role="document">
         <div class="modal-content">
       

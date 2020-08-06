@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.User;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.User;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Microsoft.AspNetCore.Authorization;
 
@@ -14,18 +14,18 @@ namespace Initium.Portal.Web.Pages.App.Profile
     [Authorize]
     public class SecurityKeys : PrgPageModel<SecurityKeys.Model>
     {
-        private readonly IUserQueries _userQueries;
+        private readonly IUserQueryService _userQueryService;
 
-        public SecurityKeys(IUserQueries userQueries)
+        public SecurityKeys(IUserQueryService userQueryService)
         {
-            this._userQueries = userQueries;
+            this._userQueryService = userQueryService;
         }
 
         public List<DeviceInfo> DeviceInfos { get; set; }
 
         public async Task OnGet()
         {
-            var devices = await this._userQueries.GetDeviceInfoForCurrentUser();
+            var devices = await this._userQueryService.GetDeviceInfoForCurrentUser();
             this.DeviceInfos = devices.HasValue ? devices.Value : new List<DeviceInfo>();
         }
 

@@ -8,8 +8,9 @@ using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Domain.CommandResults.RoleAggregate;
 using Initium.Portal.Domain.Commands.RoleAggregate;
-using Initium.Portal.Queries.Contracts.Static;
+using Initium.Portal.Queries.Contracts;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using ResultMonad;
 
 namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
@@ -17,13 +18,15 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
     public class
         CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, Result<CreateRoleCommandResult, ErrorData>>
     {
-        private readonly IRoleQueries _roleQueries;
+        private readonly IRoleQueryService _roleQueryService;
         private readonly IRoleRepository _roleRepository;
+        private readonly ILogger _logger;
 
-        public CreateRoleCommandHandler(IRoleRepository roleRepository, IRoleQueries roleQueries)
+        public CreateRoleCommandHandler(IRoleRepository roleRepository, IRoleQueryService roleQueryService, ILogger<CreateRoleCommandHandler> logger)
         {
             this._roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
-            this._roleQueries = roleQueries ?? throw new ArgumentNullException(nameof(roleQueries));
+            this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<Result<CreateRoleCommandResult, ErrorData>> Handle(
@@ -32,21 +35,24 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
             var result = await this.Process(request);
             var dbResult = await this._roleRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                return Result.Fail<CreateRoleCommandResult, ErrorData>(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return Result.Fail<CreateRoleCommandResult, ErrorData>(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
+
         }
 
         private async Task<Result<CreateRoleCommandResult, ErrorData>> Process(
             CreateRoleCommand request)
         {
-            var presenceResult = await this._roleQueries.CheckForPresenceOfRoleByName(request.Name);
+            var presenceResult = await this._roleQueryService.CheckForPresenceOfRoleByName(request.Name);
             if (presenceResult.IsPresent)
             {
+                this._logger.LogDebug("Failed presence check.");
                 return Result.Fail<CreateRoleCommandResult, ErrorData>(new ErrorData(ErrorCodes.RoleAlreadyExists));
             }
 

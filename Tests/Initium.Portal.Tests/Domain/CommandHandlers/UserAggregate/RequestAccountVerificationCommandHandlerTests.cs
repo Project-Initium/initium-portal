@@ -12,6 +12,7 @@ using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using Initium.Portal.Domain.Events;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NodaTime;
@@ -38,7 +39,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object);
+            var logger = new Mock<ILogger<RequestAccountVerificationCommandHandler>>();
+
+            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
             var cmd = new RequestAccountVerificationCommand("email-address");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -63,7 +66,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object);
+            var logger = new Mock<ILogger<RequestAccountVerificationCommandHandler>>();
+
+            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
             var cmd = new RequestAccountVerificationCommand("email-address");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -86,7 +91,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object);
+            var logger = new Mock<ILogger<RequestAccountVerificationCommandHandler>>();
+
+            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
             var cmd = new RequestAccountVerificationCommand("email-address");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -114,7 +121,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object);
+            var logger = new Mock<ILogger<RequestAccountVerificationCommandHandler>>();
+
+            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
             var cmd = new RequestAccountVerificationCommand("email-address");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -140,7 +149,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object);
+            var logger = new Mock<ILogger<RequestAccountVerificationCommandHandler>>();
+
+            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
             var cmd = new RequestAccountVerificationCommand("email-address");
 
             await handler.Handle(cmd, CancellationToken.None);

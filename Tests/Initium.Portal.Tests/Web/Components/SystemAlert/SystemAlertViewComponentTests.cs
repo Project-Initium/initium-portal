@@ -4,8 +4,8 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Constants;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.Messaging;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.Messaging;
 using Initium.Portal.Web.Components.SystemAlert;
 using MaybeMonad;
 using Microsoft.AspNetCore.Mvc.ViewComponents;
@@ -20,7 +20,7 @@ namespace Initium.Portal.Tests.Web.Components.SystemAlert
         [Fact]
         public async Task InvokeAsync_GivenNoData_ExpectResultWithEmptyList()
         {
-            var messagingQueries = new Mock<IMessagingQueries>();
+            var messagingQueries = new Mock<ISystemAlertQueryService>();
             messagingQueries.Setup(x => x.GetActiveSystemAlerts())
                 .ReturnsAsync(Maybe<IReadOnlyList<ActiveSystemAlert>>.Nothing);
 
@@ -40,7 +40,7 @@ namespace Initium.Portal.Tests.Web.Components.SystemAlert
                 new ActiveSystemAlert("message", SystemAlertType.Critical),
                 new ActiveSystemAlert("message", SystemAlertType.Critical),
             };
-            var messagingQueries = new Mock<IMessagingQueries>();
+            var messagingQueries = new Mock<ISystemAlertQueryService>();
             messagingQueries.Setup(x => x.GetActiveSystemAlerts())
                 .ReturnsAsync(Maybe.From<IReadOnlyList<ActiveSystemAlert>>(activeSystemAlerts.AsReadOnly()));
 

@@ -7,6 +7,7 @@ using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.Commands.UserAggregate;
+using Initium.Portal.Web.Controllers.Api;
 using Initium.Portal.Web.Controllers.Api.User;
 using Initium.Portal.Web.Controllers.Api.User.Models;
 using MaybeMonad;
@@ -31,7 +32,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             controller.ModelState.AddModelError("key", "error-message");
 
             var result = Assert.IsType<JsonResult>(await controller.UnlockAccount(new UnlockAccountRequest()));
-            var responseModel = Assert.IsType<UnlockAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(responseModel.IsSuccess);
         }
 
@@ -53,7 +54,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             {
                 UserId = TestVariables.UserId,
             }));
-            var responseModel = Assert.IsType<UnlockAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.True(responseModel.IsSuccess);
         }
 
@@ -75,7 +76,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             {
                 UserId = TestVariables.AuthenticatedUserId,
             }));
-            var responseModel = Assert.IsType<UnlockAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(responseModel.IsSuccess);
         }
 
@@ -95,7 +96,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             {
                 UserId = TestVariables.AuthenticatedUserId,
             }));
-            var responseModel = Assert.IsType<UnlockAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(responseModel.IsSuccess);
         }
 
@@ -111,7 +112,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             var controller = new UserApiController(mediator.Object, currentAuthenticatedUserProvider.Object);
 
             var result = Assert.IsType<JsonResult>(await controller.UnlockAccount(new UnlockAccountRequest()));
-            var responseModel = Assert.IsType<UnlockAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(responseModel.IsSuccess);
         }
 
@@ -126,7 +127,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             controller.ModelState.AddModelError("key", "error-message");
 
             var result = Assert.IsType<JsonResult>(await controller.DisableAccount(new DisableAccountRequest()));
-            var responseModel = Assert.IsType<DisableAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(responseModel.IsSuccess);
         }
 
@@ -148,7 +149,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             {
                 UserId = TestVariables.UserId,
             }));
-            var responseModel = Assert.IsType<DisableAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.True(responseModel.IsSuccess);
         }
 
@@ -170,7 +171,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             {
                 UserId = TestVariables.UserId,
             }));
-            var responseModel = Assert.IsType<DisableAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(responseModel.IsSuccess);
         }
 
@@ -192,7 +193,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             {
                 UserId = TestVariables.AuthenticatedUserId,
             }));
-            var responseModel = Assert.IsType<DisableAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(responseModel.IsSuccess);
         }
 
@@ -212,7 +213,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             {
                 UserId = TestVariables.UserId,
             }));
-            var responseModel = Assert.IsType<DisableAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(responseModel.IsSuccess);
         }
 
@@ -228,7 +229,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             controller.ModelState.AddModelError("key", "error-message");
 
             var result = Assert.IsType<JsonResult>(await controller.EnableAccount(new EnableAccountRequest()));
-            var responseModel = Assert.IsType<EnableAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(responseModel.IsSuccess);
         }
 
@@ -250,7 +251,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             {
                 UserId = TestVariables.UserId,
             }));
-            var responseModel = Assert.IsType<EnableAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.True(responseModel.IsSuccess);
         }
 
@@ -272,7 +273,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             {
                 UserId = TestVariables.UserId,
             }));
-            var responseModel = Assert.IsType<EnableAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(responseModel.IsSuccess);
         }
 
@@ -294,7 +295,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             {
                 UserId = TestVariables.AuthenticatedUserId,
             }));
-            var responseModel = Assert.IsType<EnableAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(responseModel.IsSuccess);
         }
 
@@ -314,7 +315,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.User
             {
                 UserId = TestVariables.UserId,
             }));
-            var responseModel = Assert.IsType<EnableAccountResponse>(result.Value);
+            var responseModel = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(responseModel.IsSuccess);
         }
     }

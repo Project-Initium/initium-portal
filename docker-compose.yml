@@ -1,16 +1,45 @@
 version: "3"
 
+networks: 
+  initium-net:
+    external: true
+
 volumes:
-  initium-sql:
+  initium-postgres:
+    external: false
+  initium-pgadmin:
     external: false
     
 services:
-  server:
-    image: mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
-    environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=mIOub5n3nG8LEpaa
-    volumes:
-     - initium-sql:/var/opt/mssql
+  pgAdmin:
+    container_name: initium-pg-admin
+    image: dpage/pgadmin4
+    networks: 
+      - initium-net
     ports:
-      - "1434:1433"
+      - "5433:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: 1234@admin.com
+      PGADMIN_DEFAULT_PASSWORD: 1234
+    volumes:
+      - initium-pgadmin:/var/lib/pgadmin
+    # server:
+    # image: mcr.microsoft.com/mssql/server:2019-CU4-ubuntu-16.04
+    # environment:
+    #   - ACCEPT_EULA=Y
+    #   - SA_PASSWORD=mIOub5n3nG8LEpaa
+    # volumes:
+    #   - initium-sql:/var/opt/mssql
+    # ports:
+    #   - "1434:1433"
+  postgres:
+    container_name: initium-pg
+    networks: 
+      - initium-net
+    image: postgres
+    environment:
+      - POSTGRES_PASSWORD=docker
+    ports:
+      - "5432:5432"
+    volumes:
+      - initium-postgres:/var/lib/postgresql/data

@@ -10,6 +10,7 @@ using Initium.Portal.Core.Domain;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.CommandResults.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
+using Initium.Portal.Web.Controllers.Api;
 using Initium.Portal.Web.Controllers.Api.AuthApp;
 using Initium.Portal.Web.Controllers.Api.AuthApp.Models;
 using MaybeMonad;
@@ -38,7 +39,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.AuthApp
                 currentAuthenticatedUserProvider.Object);
 
             var result = Assert.IsType<JsonResult>(await controller.EnrollAuthApp(new EnrollAuthAppRequest()));
-            var response = Assert.IsType<EnrollAuthAppResponse>(result.Value);
+            var response = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(response.IsSuccess);
         }
 
@@ -56,7 +57,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.AuthApp
                 currentAuthenticatedUserProvider.Object);
 
             var result = Assert.IsType<JsonResult>(await controller.EnrollAuthApp(new EnrollAuthAppRequest()));
-            var response = Assert.IsType<EnrollAuthAppResponse>(result.Value);
+            var response = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.True(response.IsSuccess);
         }
 
@@ -73,7 +74,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.AuthApp
 
             controller.ModelState.AddModelError("key", "error-message");
             var result = Assert.IsType<JsonResult>(await controller.EnrollAuthApp(null));
-            var response = Assert.IsType<EnrollAuthAppResponse>(result.Value);
+            var response = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(response.IsSuccess);
         }
 
@@ -182,7 +183,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.AuthApp
                 currentAuthenticatedUserProvider.Object);
 
             var result = Assert.IsType<JsonResult>(await controller.RevokeAuthApp(new RevokeAuthAppRequest()));
-            var response = Assert.IsType<RevokeAuthAppResponse>(result.Value);
+            var response = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(response.IsSuccess);
         }
 
@@ -200,7 +201,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.AuthApp
                 currentAuthenticatedUserProvider.Object);
 
             var result = Assert.IsType<JsonResult>(await controller.RevokeAuthApp(new RevokeAuthAppRequest()));
-            var response = Assert.IsType<RevokeAuthAppResponse>(result.Value);
+            var response = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.True(response.IsSuccess);
         }
 
@@ -217,7 +218,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.AuthApp
 
             controller.ModelState.AddModelError("key", "error-message");
             var result = Assert.IsType<JsonResult>(await controller.RevokeAuthApp(null));
-            var response = Assert.IsType<RevokeAuthAppResponse>(result.Value);
+            var response = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(response.IsSuccess);
         }
     }

@@ -15,6 +15,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -36,9 +37,11 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var fido2 = new Mock<IFido2>();
 
+            var logger = new Mock<ILogger<InitiateAuthenticatorDeviceEnrollmentCommandHandler>>();
+
             var handler =
                 new InitiateAuthenticatorDeviceEnrollmentCommandHandler(
-                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object);
+                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object, logger.Object);
 
             var cmd = new InitiateAuthenticatorDeviceEnrollmentCommand(AuthenticatorAttachment.CrossPlatform);
 
@@ -77,9 +80,11 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var fido2 = new Mock<IFido2>();
 
+            var logger = new Mock<ILogger<InitiateAuthenticatorDeviceEnrollmentCommandHandler>>();
+
             var handler =
                 new InitiateAuthenticatorDeviceEnrollmentCommandHandler(
-                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object);
+                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object, logger.Object);
 
             var cmd = new InitiateAuthenticatorDeviceEnrollmentCommand(AuthenticatorAttachment.CrossPlatform);
 
@@ -108,9 +113,11 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var fido2 = new Mock<IFido2>();
 
+            var logger = new Mock<ILogger<InitiateAuthenticatorDeviceEnrollmentCommandHandler>>();
+
             var handler =
                 new InitiateAuthenticatorDeviceEnrollmentCommandHandler(
-                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object);
+                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object, logger.Object);
 
             var cmd = new InitiateAuthenticatorDeviceEnrollmentCommand(AuthenticatorAttachment.CrossPlatform);
 

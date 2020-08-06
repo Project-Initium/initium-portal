@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.Commands.SystemAlertAggregate;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.Messaging;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.Messaging;
 using Initium.Portal.Web.Infrastructure.Constants;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Initium.Portal.Web.Pages.App.SystemAlerts;
@@ -16,6 +16,7 @@ using MaybeMonad;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using ResultMonad;
 using Xunit;
@@ -29,7 +30,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.SystemAlerts
         {
             var mediator = new Mock<IMediator>();
 
-            var messagingQueries = new Mock<IMessagingQueries>();
+            var messagingQueries = new Mock<ISystemAlertQueryService>();
             messagingQueries.Setup(x => x.GetDetailedSystemAlertById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe<DetailedSystemAlert>.Nothing);
 
@@ -50,11 +51,14 @@ namespace Initium.Portal.Tests.Web.Pages.App.SystemAlerts
                 SystemAlertType.Critical,
                 TestVariables.Now,
                 TestVariables.Now.AddHours(1));
-            var messagingQueries = new Mock<IMessagingQueries>();
+            var messagingQueries = new Mock<ISystemAlertQueryService>();
             messagingQueries.Setup(x => x.GetDetailedSystemAlertById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(detailedSystemAlert));
 
             var page = new EditSystemAlert(mediator.Object, messagingQueries.Object);
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
+
             Assert.IsType<PageResult>(await page.OnGetAsync());
             Assert.Equal(TestVariables.SystemAlertId, page.PageModel.SystemAlertId);
             Assert.Equal("name", page.PageModel.Name);
@@ -77,7 +81,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.SystemAlerts
                 SystemAlertType.Critical,
                 TestVariables.Now,
                 TestVariables.Now.AddHours(1));
-            var messagingQueries = new Mock<IMessagingQueries>();
+            var messagingQueries = new Mock<ISystemAlertQueryService>();
             messagingQueries.Setup(x => x.GetDetailedSystemAlertById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(detailedSystemAlert));
 
@@ -93,6 +97,9 @@ namespace Initium.Portal.Tests.Web.Pages.App.SystemAlerts
                     WhenToShow = TestVariables.Now.AddHours(-2),
                 },
             };
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
+
             Assert.IsType<PageResult>(await page.OnGetAsync());
             Assert.Equal(TestVariables.SystemAlertId, page.PageModel.SystemAlertId);
             Assert.Equal("name-1", page.PageModel.Name);
@@ -107,7 +114,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.SystemAlerts
         public async Task OnPostAsync_GivenInvalidModelState_ExpectRedirectToPageResult()
         {
             var mediator = new Mock<IMediator>();
-            var messagingQueries = new Mock<IMessagingQueries>();
+            var messagingQueries = new Mock<ISystemAlertQueryService>();
 
             var page = new EditSystemAlert(mediator.Object, messagingQueries.Object);
             page.ModelState.AddModelError("Error", "Error");
@@ -123,7 +130,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.SystemAlerts
             mediator.Setup(x => x.Send(It.IsAny<UpdateSystemAlertCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(
                     ResultWithError.Ok<ErrorData>());
-            var messagingQueries = new Mock<IMessagingQueries>();
+            var messagingQueries = new Mock<ISystemAlertQueryService>();
 
             var page = new EditSystemAlert(mediator.Object, messagingQueries.Object)
             {
@@ -148,7 +155,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.SystemAlerts
             mediator.Setup(x => x.Send(It.IsAny<UpdateSystemAlertCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(
                     ResultWithError.Fail(new ErrorData(ErrorCodes.AuthenticationFailed)));
-            var messagingQueries = new Mock<IMessagingQueries>();
+            var messagingQueries = new Mock<ISystemAlertQueryService>();
 
             var page = new EditSystemAlert(mediator.Object, messagingQueries.Object)
             {

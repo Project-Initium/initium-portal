@@ -4,8 +4,8 @@
 using System;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Constants;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.Messaging;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.Messaging;
 using Initium.Portal.Web.Pages.App.SystemAlerts;
 using MaybeMonad;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +20,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.SystemAlerts
         [Fact]
         public async Task OnGetAsync_GivenNoSystemAlertFound_ExpectNotFoundResult()
         {
-            var messagingQueries = new Mock<IMessagingQueries>();
+            var messagingQueries = new Mock<ISystemAlertQueryService>();
             messagingQueries.Setup(x => x.GetDetailedSystemAlertById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe<DetailedSystemAlert>.Nothing);
 
@@ -39,7 +39,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.SystemAlerts
                 SystemAlertType.Critical,
                 TestVariables.Now,
                 TestVariables.Now.AddHours(1));
-            var messagingQueries = new Mock<IMessagingQueries>();
+            var messagingQueries = new Mock<ISystemAlertQueryService>();
             messagingQueries.Setup(x => x.GetDetailedSystemAlertById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(detailedSystemAlert));
 

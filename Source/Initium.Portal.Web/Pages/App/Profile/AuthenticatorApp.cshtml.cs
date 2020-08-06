@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
-using Initium.Portal.Queries.Contracts.Static;
+using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Microsoft.AspNetCore.Authorization;
 
@@ -17,16 +17,16 @@ namespace Initium.Portal.Web.Pages.App.Profile
     {
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
-        private readonly IUserQueries _userQueries;
+        private readonly IUserQueryService _userQueryService;
 
         public AuthenticatorApp(
-            IUserQueries userQueries,
+            IUserQueryService userQueryService,
             ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ??
                                                      throw new ArgumentNullException(
                                                          nameof(currentAuthenticatedUserProvider));
-            this._userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
+            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
         }
 
         public bool IsSetup { get; private set; }
@@ -42,7 +42,7 @@ namespace Initium.Portal.Web.Pages.App.Profile
 
             if (currentUserMaybe.Value is AuthenticatedUser)
             {
-                var userCheck = await this._userQueries.CheckForPresenceOfAuthAppForCurrentUser();
+                var userCheck = await this._userQueryService.CheckForPresenceOfAuthAppForCurrentUser();
 
                 if (userCheck.IsPresent)
                 {

@@ -5,8 +5,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.Commands.UserAggregate;
+using Initium.Portal.Web.Controllers.Api;
 using Initium.Portal.Web.Controllers.Api.AuthEmail;
-using Initium.Portal.Web.Controllers.Api.AuthEmail.Models;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Moq;
@@ -33,8 +33,8 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.AuthEmail
             var response = await controller.RequestMfaEmail();
 
             var result = Assert.IsType<JsonResult>(response);
-            var options = Assert.IsType<RequestMfaEmailResponse>(result.Value);
-            Assert.True(options.Success);
+            var options = Assert.IsType<BasicApiResponse>(result.Value);
+            Assert.True(options.IsSuccess);
         }
 
         [Fact]
@@ -53,8 +53,8 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.AuthEmail
             var response = await controller.RequestMfaEmail();
 
             var result = Assert.IsType<JsonResult>(response);
-            var options = Assert.IsType<RequestMfaEmailResponse>(result.Value);
-            Assert.False(options.Success);
+            var options = Assert.IsType<BasicApiResponse>(result.Value);
+            Assert.False(options.IsSuccess);
         }
     }
 }

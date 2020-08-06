@@ -3,22 +3,20 @@
 
 namespace Initium.Portal.Web.Controllers.Api.AuthApp.Models
 {
-    public class InitiateAuthAppEnrollmentResponse
+    public class InitiateAuthAppEnrollmentResponse : BasicApiResponse
     {
         public InitiateAuthAppEnrollmentResponse()
+            : base(false)
         {
-            this.IsSuccess = false;
         }
 
         public InitiateAuthAppEnrollmentResponse(string sharedKey, string formattedSharedKey, string authenticatorUri)
+            : base(true)
         {
-            this.IsSuccess = true;
             this.SharedKey = sharedKey;
             this.FormattedSharedKey = formattedSharedKey;
             this.AuthenticatorUri = authenticatorUri;
         }
-
-        public bool IsSuccess { get; }
 
         public string SharedKey { get; }
 

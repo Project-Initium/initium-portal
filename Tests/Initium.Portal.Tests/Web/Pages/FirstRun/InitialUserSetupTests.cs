@@ -5,14 +5,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models;
 using Initium.Portal.Web.Infrastructure.Constants;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Initium.Portal.Web.Pages.FirstRun;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using ResultMonad;
 using Xunit;
@@ -24,12 +25,14 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
         [Fact]
         public async Task OnGet_GivenNoUserInSystem_ExpectPageResult()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.CheckForPresenceOfAnyUser())
                 .ReturnsAsync(new StatusCheckModel(false));
             var mediator = new Mock<IMediator>();
 
             var page = new InitialUserSetup(userQueries.Object, mediator.Object);
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
 
             var result = await page.OnGet();
             Assert.IsType<PageResult>(result);
@@ -38,7 +41,7 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
         [Fact]
         public async Task OnGet_GivenUserInSystem_ExpectNotFoundResult()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.CheckForPresenceOfAnyUser())
                 .ReturnsAsync(new StatusCheckModel(true));
             var mediator = new Mock<IMediator>();
@@ -52,7 +55,7 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
         [Fact]
         public async Task OnPost_GivenCommandFailure_ExpectRedirectToPageResultToSamePageAndPrgStateSet()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.Send(It.IsAny<CreateInitialUserCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Fail(new ErrorData(ErrorCodes.SavingChanges)));
@@ -70,7 +73,7 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
         [Fact]
         public async Task OnPost_GivenCommandSuccess_ExpectRedirectToPageResult()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.Send(It.IsAny<CreateInitialUserCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Ok<ErrorData>());
@@ -88,7 +91,7 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
         [Fact]
         public async Task OnPost_GivenInvalidModelState_ExpectRedirectToPageResult()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             var mediator = new Mock<IMediator>();
 
             var page = new InitialUserSetup(userQueries.Object, mediator.Object);

@@ -29,7 +29,10 @@ module.exports = {
         path: path.resolve(__dirname, 'wwwroot')
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js']
+        extensions: ['.ts', '.tsx', '.js'],
+        modules: [
+            path.resolve(__dirname, 'Source', 'Initium.Portal.Web'),
+        ]
     },
     module: {
         rules: [

@@ -1,9 +1,12 @@
 ﻿@page "/app/profile/authentictor-app"
 @using Initium.Portal.Web.Infrastructure.Constants
 @model Initium.Portal.Web.Pages.App.Profile.AuthenticatorApp
+@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery Antiforgery
 @{
     Layout = "Shared/_AppLayout";
     ViewData["Title"] = "Profile | Authenticator App";
+    var token = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
 }
 
 <div class="row page-titles">
@@ -23,7 +26,7 @@
 
     <div class="row">
         @await Component.InvokeAsync("ProfilePanel")
-        <div class="col-md-9 col-12 pl-md-2 pr-md-0 pl-1 pr-1">
+        <div class="col-md-9 col-12">
             <div class="card">
                 <ul class="nav nav-tabs profile-tab" role="tablist" id="profileTabs">
                     <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@PageLocations.AppProfileDetails">My Details</a> </li>
@@ -54,7 +57,7 @@
     </div>
 
 
-<form class="modal fade form-material" id="enroll-app-modal" tabindex="-1" role="dialog" aria-hidden="true" data-initiate-url="@Url.Action("InitiateAuthAppEnrollment", "AuthAppApi")" data-complete-url="@Url.Action("EnrollAuthApp", "AuthAppApi")" data-no-auto-validation>
+<form class="modal fade form-material" id="enroll-app-modal" tabindex="-1" role="dialog" aria-hidden="true" data-initiate-url="@Url.Action("InitiateAuthAppEnrollment", "AuthAppApi")" data-complete-url="@Url.Action("EnrollAuthApp", "AuthAppApi")" data-no-auto-validation data-af-token="@token">
     <div class="modal-dialog modal-dialog-slideout" role="document">
         <div class="modal-content">
       
@@ -67,7 +70,7 @@
                 </div>
             
                 <p>Scan the QR Code or enter this key <kbd></kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
-                <img class="app-mfa-code" data-mfa-image="@Url.Action("MfaQrCode", "AuthAppApi", new {authenticatorUri="__url__", nocache= "__nocache__"})" />
+                <img class="app-mfa-code" data-mfa-image="@Url.Action("MfaQrCode", "AuthAppApi", new {authenticatorUri="__url__", nocache= "__nocache__"})" data-af-token="@token" />
                 <p>
                     Once you have scanned the QR code or input the key above, your two factor authentication app will provide you
                     with a unique code. Enter the code in the confirmation box below.
@@ -88,7 +91,7 @@
     </div>
 </form>
 
-<form class="modal fade form-material" id="revoke-app-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-complete-url="@Url.Action("RevokeAuthApp", "AuthAppApi")" data-no-auto-validation>
+<form class="modal fade form-material" id="revoke-app-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-complete-url="@Url.Action("RevokeAuthApp", "AuthAppApi")" data-no-auto-validation data-af-token="@token">
     <div class="modal-dialog modal-dialog-slideout" role="document">
         <div class="modal-content">
       

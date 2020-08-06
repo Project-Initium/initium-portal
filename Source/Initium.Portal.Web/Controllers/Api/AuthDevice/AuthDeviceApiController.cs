@@ -27,6 +27,7 @@ namespace Initium.Portal.Web.Controllers.Api.AuthDevice
         }
 
         [Authorize]
+        [ValidateAntiForgeryToken]
         [HttpPost("api/auth-device/initiate-registration")]
         public async Task<IActionResult> InitialAuthDeviceRegistration([FromBody]InitialAuthDeviceRegistrationRequest request)
         {
@@ -42,6 +43,7 @@ namespace Initium.Portal.Web.Controllers.Api.AuthDevice
         }
 
         [Authorize]
+        [ValidateAntiForgeryToken]
         [HttpPost("api/auth-device/complete-registration")]
         public async Task<IActionResult> CompleteAuthDeviceRegistration(
             [FromBody] CompleteAuthDeviceRegistrationRequest model)
@@ -60,6 +62,7 @@ namespace Initium.Portal.Web.Controllers.Api.AuthDevice
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         [Authorize(AuthenticationSchemes = "login-partial")]
         [Route("api/auth-device/assertion-options")]
         public ActionResult AssertionOptionsPost()
@@ -71,6 +74,7 @@ namespace Initium.Portal.Web.Controllers.Api.AuthDevice
             return this.Content(options, "application/json");
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost("api/auth-device/make-assertion")]
         [Authorize(AuthenticationSchemes = "login-partial")]
         public async Task<JsonResult> MakeAssertion([FromBody] AuthenticatorAssertionRawResponse clientResponse)
@@ -95,12 +99,13 @@ namespace Initium.Portal.Web.Controllers.Api.AuthDevice
             });
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost("api/auth-device/revoke-device")]
         [Authorize]
         public async Task<IActionResult> RevokeDevice([FromBody] RevokeDeviceRequest request)
         {
             var result = await this._mediator.Send(new RevokeAuthenticatorDeviceCommand(request.DeviceId, request.Password));
-            return this.Json(new RevokeDeviceResponse(result.IsSuccess));
+            return this.Json(new BasicApiResponse(result.IsSuccess));
         }
     }
 }

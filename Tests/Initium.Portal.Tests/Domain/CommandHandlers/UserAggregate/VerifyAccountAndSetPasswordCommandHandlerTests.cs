@@ -10,6 +10,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NodaTime;
 using Xunit;
@@ -31,7 +32,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object);
+            var logger = new Mock<ILogger<VerifyAccountAndSetPasswordCommandHandler>>();
+
+            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object, logger.Object);
             var cmd = new VerifyAccountAndSetPasswordCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");
@@ -54,7 +57,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object);
+            var logger = new Mock<ILogger<VerifyAccountAndSetPasswordCommandHandler>>();
+
+            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object, logger.Object);
             var cmd = new VerifyAccountAndSetPasswordCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");
@@ -74,8 +79,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe<IUser>.Nothing);
 
             var clock = new Mock<IClock>();
+            var logger = new Mock<ILogger<VerifyAccountAndSetPasswordCommandHandler>>();
 
-            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object);
+            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object, logger.Object);
             var cmd = new VerifyAccountAndSetPasswordCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");
@@ -98,8 +104,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
             var clock = new Mock<IClock>();
+            var logger = new Mock<ILogger<VerifyAccountAndSetPasswordCommandHandler>>();
 
-            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object);
+            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object, logger.Object);
             var cmd = new VerifyAccountAndSetPasswordCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");
@@ -121,8 +128,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
             var clock = new Mock<IClock>();
+            var logger = new Mock<ILogger<VerifyAccountAndSetPasswordCommandHandler>>();
 
-            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object);
+            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object, logger.Object);
             var cmd = new VerifyAccountAndSetPasswordCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");

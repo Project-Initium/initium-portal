@@ -7,6 +7,7 @@ using Fido2NetLib;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.CommandResults.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
+using Initium.Portal.Web.Controllers.Api;
 using Initium.Portal.Web.Controllers.Api.AuthDevice;
 using Initium.Portal.Web.Controllers.Api.AuthDevice.Models;
 using Initium.Portal.Web.Infrastructure.Contracts;
@@ -92,7 +93,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.AuthDevice
             var response = await controller.RevokeDevice(new RevokeDeviceRequest());
 
             var result = Assert.IsType<JsonResult>(response);
-            var options = Assert.IsType<RevokeDeviceResponse>(result.Value);
+            var options = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.True(options.IsSuccess);
         }
 
@@ -113,7 +114,7 @@ namespace Initium.Portal.Tests.Web.Controllers.Api.AuthDevice
             var response = await controller.RevokeDevice(new RevokeDeviceRequest());
 
             var result = Assert.IsType<JsonResult>(response);
-            var options = Assert.IsType<RevokeDeviceResponse>(result.Value);
+            var options = Assert.IsType<BasicApiResponse>(result.Value);
             Assert.False(options.IsSuccess);
         }
     }

@@ -56,7 +56,7 @@ namespace Initium.Portal.Infrastructure
 
         private void ConfigureSystemAlert(EntityTypeBuilder<SystemAlert> systemAlerts)
         {
-            systemAlerts.ToTable("systemAlert", "messaging");
+            systemAlerts.ToTable("SystemAlert", "Messaging");
             systemAlerts.HasKey(systemAlert => systemAlert.Id);
             systemAlerts.Ignore(systemAlert => systemAlert.DomainEvents);
             systemAlerts.Property(systemAlert => systemAlert.Id).ValueGeneratedNever();
@@ -64,7 +64,7 @@ namespace Initium.Portal.Infrastructure
 
         private void ConfigureNotification(EntityTypeBuilder<Notification> notifications)
         {
-            notifications.ToTable("notification", "messaging");
+            notifications.ToTable("Notification", "Messaging");
             notifications.HasKey(notification => notification.Id);
             notifications.Ignore(notification => notification.DomainEvents);
             notifications.Property(notification => notification.Id).ValueGeneratedNever();
@@ -74,7 +74,7 @@ namespace Initium.Portal.Infrastructure
 
             notifications.OwnsMany(role => role.UserNotifications, userNotifications =>
             {
-                userNotifications.ToTable("vwUserNotification", "messaging");
+                userNotifications.ToTable("vwUserNotification", "Messaging");
                 userNotifications.HasKey(userNotification => userNotification.Id);
                 userNotifications.Property(userNotification => userNotification.Id).ValueGeneratedNever();
                 userNotifications.Ignore(userNotification => userNotification.DomainEvents);
@@ -83,7 +83,7 @@ namespace Initium.Portal.Infrastructure
 
         private void ConfigureRole(EntityTypeBuilder<Role> roles)
         {
-            roles.ToTable("role", "accessProtection");
+            roles.ToTable("Role", "AccessProtection");
             roles.HasKey(entity => entity.Id);
             roles.Ignore(b => b.DomainEvents);
             roles.Property(e => e.Id).ValueGeneratedNever();
@@ -93,17 +93,17 @@ namespace Initium.Portal.Infrastructure
 
             roles.OwnsMany(role => role.RoleResources, roleResources =>
             {
-                roleResources.ToTable("roleResource", "accessProtection");
+                roleResources.ToTable("RoleResource", "AccessProtection");
                 roleResources.HasKey(entity => entity.Id);
                 roleResources.Property(e => e.Id).ValueGeneratedNever();
-                roleResources.Property(x => x.Id).HasColumnName("resourceId");
+                roleResources.Property(x => x.Id).HasColumnName("ResourceId");
                 roleResources.Ignore(b => b.DomainEvents);
             });
         }
 
         private void ConfigureUser(EntityTypeBuilder<User> users)
         {
-            users.ToTable("user", "identity");
+            users.ToTable("User", "Identity");
             users.HasKey(entity => entity.Id);
             users.Ignore(b => b.DomainEvents);
             users.Property(e => e.Id).ValueGeneratedNever();
@@ -113,7 +113,7 @@ namespace Initium.Portal.Infrastructure
 
             users.OwnsMany<AuthenticationHistory>(user => user.AuthenticationHistories, authenticationHistories =>
             {
-                authenticationHistories.ToTable("authenticationHistory", "identity");
+                authenticationHistories.ToTable("AuthenticationHistory", "Identity");
                 authenticationHistories.HasKey(authenticationHistory => authenticationHistory.Id);
                 authenticationHistories.Property(authenticationHistory => authenticationHistory.Id)
                     .ValueGeneratedNever();
@@ -125,7 +125,7 @@ namespace Initium.Portal.Infrastructure
 
             users.OwnsMany<SecurityTokenMapping>(user => user.SecurityTokenMappings, securityTokenMappings =>
             {
-                securityTokenMappings.ToTable("securityTokenMapping", "identity");
+                securityTokenMappings.ToTable("SecurityTokenMapping", "Identity");
                 securityTokenMappings.HasKey(securityTokenMapping => securityTokenMapping.Id);
                 securityTokenMappings.Property(securityTokenMapping => securityTokenMapping.Id)
                     .ValueGeneratedNever();
@@ -134,10 +134,10 @@ namespace Initium.Portal.Infrastructure
 
             users.OwnsOne(user => user.Profile, profile =>
             {
-                profile.ToTable("profile", "identity");
+                profile.ToTable("Profile", "Identity");
                 profile.WithOwner().HasForeignKey(x => x.Id);
                 profile.HasKey(item => item.Id);
-                profile.Property(item => item.Id).HasColumnName("userId");
+                profile.Property(item => item.Id).HasColumnName("UserId");
                 profile.Ignore(item => item.DomainEvents);
             });
 
@@ -146,10 +146,10 @@ namespace Initium.Portal.Infrastructure
 
             users.OwnsMany(user => user.UserRoles, userRoles =>
             {
-                userRoles.ToTable("userRole", "identity");
+                userRoles.ToTable("UserRole", "Identity");
                 userRoles.HasKey(userRole => userRole.Id);
                 userRoles.Property(userRole => userRole.Id).ValueGeneratedNever();
-                userRoles.Property(userRole => userRole.Id).HasColumnName("roleId");
+                userRoles.Property(userRole => userRole.Id).HasColumnName("RoleId");
                 userRoles.Ignore(userRole => userRole.DomainEvents);
             });
 
@@ -158,7 +158,7 @@ namespace Initium.Portal.Infrastructure
 
             users.OwnsMany(user => user.AuthenticatorApps, authenticatorApps =>
             {
-                authenticatorApps.ToTable("authenticatorApp", "identity");
+                authenticatorApps.ToTable("AuthenticatorApp", "Identity");
                 authenticatorApps.HasKey(authenticatorApp => authenticatorApp.Id);
                 authenticatorApps.Property(authenticatorApp => authenticatorApp.Id)
                     .ValueGeneratedNever();
@@ -170,7 +170,7 @@ namespace Initium.Portal.Infrastructure
 
             users.OwnsMany(user => user.AuthenticatorDevices, authenticatorDevices =>
             {
-                authenticatorDevices.ToTable("authenticatorDevice", "identity");
+                authenticatorDevices.ToTable("AuthenticatorDevice", "Identity");
                 authenticatorDevices.HasKey(authenticatorDevice => authenticatorDevice.Id);
                 authenticatorDevices.Property(authenticatorDevice => authenticatorDevice.Id)
                     .ValueGeneratedNever();
@@ -182,7 +182,7 @@ namespace Initium.Portal.Infrastructure
 
             users.OwnsMany(user => user.PasswordHistories, passwordHistories =>
             {
-                passwordHistories.ToTable("passwordHistory", "identity");
+                passwordHistories.ToTable("PasswordHistory", "Identity");
                 passwordHistories.HasKey(passwordHistory => passwordHistory.Id);
                 passwordHistories.Property(passwordHistory => passwordHistory.Id)
                     .ValueGeneratedNever();
@@ -194,11 +194,11 @@ namespace Initium.Portal.Infrastructure
 
             users.OwnsMany(user => user.UserNotifications, userNotifications =>
             {
-                userNotifications.ToTable("userNotification", "messaging");
+                userNotifications.ToTable("UserNotification", "Messaging");
                 userNotifications.HasKey(userNotification => userNotification.Id);
                 userNotifications.Property(userNotification => userNotification.Id)
                     .ValueGeneratedNever();
-                userNotifications.Property(userNotification => userNotification.Id).HasColumnName("notificationId");
+                userNotifications.Property(userNotification => userNotification.Id).HasColumnName("NotificationId");
                 userNotifications.Ignore(userNotification => userNotification.DomainEvents);
             });
         }

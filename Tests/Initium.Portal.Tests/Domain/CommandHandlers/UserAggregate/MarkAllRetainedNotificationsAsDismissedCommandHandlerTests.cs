@@ -11,6 +11,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NodaTime;
 using Xunit;
@@ -35,7 +36,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             var clock = new Mock<IClock>();
 
-            var handler = new MarkAllRetainedNotificationsAsDismissedCommandHandler(userRepository.Object, clock.Object);
+            var logger = new Mock<ILogger<MarkAllRetainedNotificationsAsDismissedCommandHandler>>();
+
+            var handler = new MarkAllRetainedNotificationsAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
             var cmd = new MarkAllRetainedNotificationsAsDismissedCommand(TestVariables.UserId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -60,7 +63,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             var clock = new Mock<IClock>();
 
-            var handler = new MarkAllRetainedNotificationsAsDismissedCommandHandler(userRepository.Object, clock.Object);
+            var logger = new Mock<ILogger<MarkAllRetainedNotificationsAsDismissedCommandHandler>>();
+
+            var handler = new MarkAllRetainedNotificationsAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
             var cmd = new MarkAllRetainedNotificationsAsDismissedCommand(TestVariables.UserId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -79,7 +84,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             var clock = new Mock<IClock>();
 
-            var handler = new MarkAllRetainedNotificationsAsDismissedCommandHandler(userRepository.Object, clock.Object);
+            var logger = new Mock<ILogger<MarkAllRetainedNotificationsAsDismissedCommandHandler>>();
+
+            var handler = new MarkAllRetainedNotificationsAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
             var cmd = new MarkAllRetainedNotificationsAsDismissedCommand(TestVariables.UserId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);

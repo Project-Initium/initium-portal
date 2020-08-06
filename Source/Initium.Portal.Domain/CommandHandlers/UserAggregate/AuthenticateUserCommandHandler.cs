@@ -16,6 +16,7 @@ using Initium.Portal.Domain.Events;
 using Initium.Portal.Domain.Helpers;
 using MaybeMonad;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using NodaTime;
 using OtpNet;
@@ -30,9 +31,10 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly SecuritySettings _securitySettings;
         private readonly IUserRepository _userRepository;
         private readonly IFido2 _fido2;
+        private readonly ILogger _logger;
 
         public AuthenticateUserCommandHandler(IUserRepository userRepository, IClock clock,
-            IOptions<SecuritySettings> securitySettings, IFido2 fido2)
+            IOptions<SecuritySettings> securitySettings, IFido2 fido2, ILogger<AuthenticateUserCommandHandler> logger)
         {
             if (securitySettings == null)
             {
@@ -42,6 +44,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
             this._fido2 = fido2 ?? throw new ArgumentNullException(nameof(fido2));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
             this._securitySettings = securitySettings.Value;
         }
 
@@ -53,6 +56,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
 
             if (!dbResult)
             {
+                this._logger.LogDebug("Failed saving changes.");
                 return Result.Fail<AuthenticateUserCommandResult, ErrorData>(new ErrorData(
                     ErrorCodes.SavingChanges, "Failed To Save Database"));
             }
@@ -66,6 +70,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var maybe = await this._userRepository.FindByEmailAddress(request.EmailAddress, cancellationToken);
             if (maybe.HasNoValue)
             {
+                this._logger.LogDebug("Entity not found.");
                 return Result.Fail<AuthenticateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.UserNotFound));
             }
 
@@ -76,6 +81,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
                 user.ProcessUnsuccessfulAuthenticationAttempt(
                     this._clock.GetCurrentInstant().ToDateTimeUtc(),
                     false);
+                this._logger.LogDebug("User is disabled.");
                 return Result.Fail<AuthenticateUserCommandResult, ErrorData>(
                     new ErrorData(ErrorCodes.AccountIsDisabled));
             }
@@ -86,6 +92,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
                     this._clock.GetCurrentInstant().ToDateTimeUtc(),
                     this._securitySettings.AllowedAttempts != -1 && user.AttemptsSinceLastAuthentication >=
                     this._securitySettings.AllowedAttempts);
+                this._logger.LogDebug("User is not verified.");
                 return Result.Fail<AuthenticateUserCommandResult, ErrorData>(
                     new ErrorData(ErrorCodes.AccountNotVerified));
             }
@@ -96,6 +103,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
                     this._clock.GetCurrentInstant().ToDateTimeUtc(),
                     this._securitySettings.AllowedAttempts != -1 && user.AttemptsSinceLastAuthentication >=
                     this._securitySettings.AllowedAttempts);
+                this._logger.LogDebug("Password is not valid.");
                 return Result.Fail<AuthenticateUserCommandResult, ErrorData>(
                     new ErrorData(ErrorCodes.AuthenticationFailed));
             }

@@ -14,6 +14,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using OtpNet;
 using Xunit;
@@ -33,8 +34,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe<ISystemUser>.Nothing);
 
+            var logger = new Mock<ILogger<ValidateAppMfaCodeAgainstCurrentUserCommandHandler>>();
+
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, logger.Object);
 
             var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand("code");
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -62,8 +65,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
+            var logger = new Mock<ILogger<ValidateAppMfaCodeAgainstCurrentUserCommandHandler>>();
+
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, logger.Object);
 
             var totp = new Totp(Base32Encoding.ToBytes("key"));
 
@@ -95,8 +100,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
+            var logger = new Mock<ILogger<ValidateAppMfaCodeAgainstCurrentUserCommandHandler>>();
+
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, logger.Object);
 
             var totp = new Totp(Base32Encoding.ToBytes("key"));
 
@@ -121,8 +128,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
+            var logger = new Mock<ILogger<ValidateAppMfaCodeAgainstCurrentUserCommandHandler>>();
+
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, logger.Object);
 
             var cmd = new ValidateAppMfaCodeAgainstCurrentUserCommand("code");
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -152,8 +161,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
+            var logger = new Mock<ILogger<ValidateAppMfaCodeAgainstCurrentUserCommandHandler>>();
+
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, logger.Object);
 
             var totp = new Totp(Base32Encoding.ToBytes("key"));
 
@@ -187,8 +198,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
+            var logger = new Mock<ILogger<ValidateAppMfaCodeAgainstCurrentUserCommandHandler>>();
+
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, logger.Object);
 
             var totp = new Totp(Base32Encoding.ToBytes("key"));
 
@@ -218,8 +231,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
+            var logger = new Mock<ILogger<ValidateAppMfaCodeAgainstCurrentUserCommandHandler>>();
+
             var handler = new ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, logger.Object);
 
             var totp = new Totp(Base32Encoding.ToBytes("key"));
 

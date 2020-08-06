@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using Initium.Portal.Infrastructure;
-using Initium.Portal.Queries.Dynamic;
+using Initium.Portal.Queries;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,14 +15,13 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
             this IServiceCollection services, IConfigurationRoot configuration)
         {
             services.AddDistributedMemoryCache();
-            services.AddEntityFrameworkSqlServer()
+            services.AddEntityFrameworkNpgsql()
                 .AddDbContext<DataContext>(options =>
                 {
-                    options.UseSqlServer(configuration["query:connectionString"]);
-                });
-            services.AddDbContext<ODataContext>(options =>
+                    options.UseNpgsql(configuration["query:connectionString"]);
+                }).AddDbContext<QueryContext>(options =>
                 {
-                    options.UseSqlServer(configuration["query:connectionString"]);
+                    options.UseNpgsql(configuration["query:connectionString"]);
                 });
 
             return services;

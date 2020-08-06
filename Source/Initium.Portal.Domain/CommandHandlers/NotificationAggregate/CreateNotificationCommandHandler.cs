@@ -9,6 +9,7 @@ using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.CommandResults.NotificationAggregate;
 using Initium.Portal.Domain.Commands.NotificationAggregate;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using ResultMonad;
 
 namespace Initium.Portal.Domain.CommandHandlers.NotificationAggregate
@@ -17,11 +18,13 @@ namespace Initium.Portal.Domain.CommandHandlers.NotificationAggregate
         CreateNotificationCommandHandler : IRequestHandler<CreateNotificationCommand, Result<CreateNotificationCommandResult, ErrorData>>
     {
         private readonly INotificationRepository _notificationRepository;
+        private readonly ILogger _logger;
 
-        public CreateNotificationCommandHandler(INotificationRepository notificationRepository)
+        public CreateNotificationCommandHandler(INotificationRepository notificationRepository, ILogger<CreateNotificationCommandHandler> logger)
         {
             this._notificationRepository = notificationRepository ??
                                            throw new ArgumentNullException(nameof(notificationRepository));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<Result<CreateNotificationCommandResult, ErrorData>> Handle(CreateNotificationCommand request, CancellationToken cancellationToken)
@@ -29,13 +32,14 @@ namespace Initium.Portal.Domain.CommandHandlers.NotificationAggregate
             var result = this.Process(request);
             var dbResult = await this._notificationRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                return Result.Fail<CreateNotificationCommandResult, ErrorData>(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return Result.Fail<CreateNotificationCommandResult, ErrorData>(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
         private Result<CreateNotificationCommandResult, ErrorData> Process(CreateNotificationCommand request)

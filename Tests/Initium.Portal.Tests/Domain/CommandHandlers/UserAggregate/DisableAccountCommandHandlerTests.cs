@@ -11,6 +11,7 @@ using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using Initium.Portal.Domain.Events;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NodaTime;
 using Xunit;
@@ -32,8 +33,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<DisableAccountCommandHandler>>();
+
             var handler =
-                new DisableAccountCommandHandler(userRepository.Object, clock.Object);
+                new DisableAccountCommandHandler(userRepository.Object, clock.Object, logger.Object);
 
             var cmd = new DisableAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -53,8 +56,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe.From(user.Object));
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<DisableAccountCommandHandler>>();
+
             var handler =
-                new DisableAccountCommandHandler(userRepository.Object, clock.Object);
+                new DisableAccountCommandHandler(userRepository.Object, clock.Object, logger.Object);
 
             var cmd = new DisableAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -71,8 +76,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe<IUser>.Nothing);
             var clock = new Mock<IClock>();
+            var logger = new Mock<ILogger<DisableAccountCommandHandler>>();
+
             var handler =
-                new DisableAccountCommandHandler(userRepository.Object, clock.Object);
+                new DisableAccountCommandHandler(userRepository.Object, clock.Object, logger.Object);
 
             var cmd = new DisableAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -92,8 +99,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
             var clock = new Mock<IClock>();
+            var logger = new Mock<ILogger<DisableAccountCommandHandler>>();
+
             var handler =
-                new DisableAccountCommandHandler(userRepository.Object, clock.Object);
+                new DisableAccountCommandHandler(userRepository.Object, clock.Object, logger.Object);
 
             var cmd = new DisableAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -113,7 +122,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
             var clock = new Mock<IClock>();
-            var handler = new DisableAccountCommandHandler(userRepository.Object, clock.Object);
+            var logger = new Mock<ILogger<DisableAccountCommandHandler>>();
+
+            var handler =
+                new DisableAccountCommandHandler(userRepository.Object, clock.Object, logger.Object);
 
             var cmd = new DisableAccountCommand(TestVariables.UserId);
             await handler.Handle(cmd, CancellationToken.None);

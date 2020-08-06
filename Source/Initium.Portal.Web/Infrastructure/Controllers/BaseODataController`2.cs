@@ -19,7 +19,7 @@ namespace Initium.Portal.Web.Infrastructure.Controllers
         where TReadEntity : ReadEntity, new()
         where TFilterModel : class
     {
-        public abstract IActionResult Filtered(TFilterModel filter);
+        public abstract IActionResult Filtered(ODataQueryOptions<TReadEntity> options, TFilterModel filter);
 
         public abstract IActionResult FilteredExport(ODataQueryOptions<TReadEntity> options, TFilterModel filter);
 

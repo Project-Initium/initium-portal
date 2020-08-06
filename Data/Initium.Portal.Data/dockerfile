@@ -1,0 +1,13 @@
+FROM microsoft/dotnet:1.1-sdk as build-env
+WORKDIR /app
+
+
+RUN apk update && apk add ca-certificates && update-ca-certificates
+RUN wget -O pgdiff-linux-1.0b1.tar.gz https://github.com/joncrlsn/pgdiff/files/1480823/pgdiff-linux-1.0b1.tar.gz
+RUN tar -xzvf pgdiff-linux-1.0b1.tar.gz
+
+# COMPARE DATABASE
+
+
+
+ENTRYPOINT [ "bin/sh" ]

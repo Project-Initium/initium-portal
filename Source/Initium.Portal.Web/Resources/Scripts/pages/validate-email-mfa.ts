@@ -1,6 +1,7 @@
 import Swal  from 'sweetalert2';
+import {IBasicApiResponse} from '../types/IBasicApiResponse';
 
-export class ValidatEmailMfa {
+export class ValidateEmailMfa {
     constructor() {
         if (document.readyState !== 'loading') {
             this.init();
@@ -10,39 +11,39 @@ export class ValidatEmailMfa {
     }
 
     private init() {
-        const contextThis = this;
         const request = document.querySelector('[data-resend]') as HTMLAnchorElement;
-        request.addEventListener('click', (e) => contextThis.resendEmail(e))
+        request.addEventListener('click', (e) => ValidateEmailMfa.resendEmail(e))
     }
 
-    private async resendEmail(e: MouseEvent) {
+    private static async resendEmail(e: MouseEvent) {
         e.preventDefault();
-        var link = e.target as HTMLAnchorElement;
-        let response;
+        const link = e.target as HTMLAnchorElement;
+        let response: IBasicApiResponse;
         try {
-            let res = await fetch(link.href, {
+            const res = await fetch(link.href, {
                 method: 'POST',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': link.dataset.afToken
                 }
             });
             response = await res.json();
         } catch (e) {
             response = {
-                success: false
+                isSuccess: false
             };
         }
         Swal.fire({
-            icon: response.success ? 'info' : 'error',
+            icon: response.isSuccess ? 'info' : 'error',
             titleText: 'Authentication Email',
-            text: response.success ? 'Email was sent.' : 'There was an issue sending the email.',
+            text: response.isSuccess ? 'Email was sent.' : 'There was an issue sending the email.',
             toast: true,
-            position: "top-end",
+            position: 'top-end',
             timer: 4500,
             showConfirmButton: false
         });
     }
 }
 
-new ValidatEmailMfa();
+new ValidateEmailMfa();

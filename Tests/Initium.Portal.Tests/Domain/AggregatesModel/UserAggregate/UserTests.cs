@@ -249,7 +249,7 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.UserAggregate
 
             Assert.Contains(
                 user.SecurityTokenMappings,
-                x => x.Purpose == SecurityTokenMapping.SecurityTokenPurpose.PasswordReset &&
+                x => x.Purpose == SecurityTokenPurpose.PasswordReset &&
                      x.WhenCreated == TestVariables.Now.AddMinutes(30) && x.WhenExpires == TestVariables.Now.AddMinutes(30).Add(TimeSpan.FromHours(1)));
         }
 
@@ -273,7 +273,7 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.UserAggregate
 
             Assert.DoesNotContain(
                 user.SecurityTokenMappings,
-                x => x.Purpose == SecurityTokenMapping.SecurityTokenPurpose.PasswordReset &&
+                x => x.Purpose == SecurityTokenPurpose.PasswordReset &&
                      x.WhenCreated == TestVariables.Now.AddMinutes(30));
         }
 
@@ -426,7 +426,7 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.UserAggregate
 
             Assert.Contains(
                 user.SecurityTokenMappings,
-                x => x.Purpose == SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation &&
+                x => x.Purpose == SecurityTokenPurpose.AccountConfirmation &&
                      x.WhenCreated == TestVariables.Now.AddMinutes(30) && x.WhenExpires == TestVariables.Now.AddMinutes(30).Add(TimeSpan.FromHours(1)));
         }
 
@@ -450,7 +450,7 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.UserAggregate
 
             Assert.DoesNotContain(
                 user.SecurityTokenMappings,
-                x => x.Purpose == SecurityTokenMapping.SecurityTokenPurpose.AccountConfirmation &&
+                x => x.Purpose == SecurityTokenPurpose.AccountConfirmation &&
                      x.WhenCreated == TestVariables.Now.AddMinutes(45));
         }
 

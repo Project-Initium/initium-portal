@@ -3,27 +3,27 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.Role;
-using Microsoft.AspNetCore.Authorization;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.Resource;
+using Initium.Portal.Web.Infrastructure.Attributes;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.Controllers.Api.Resource
 {
-    [Authorize]
     public class ResourceApiController : Controller
     {
-        private readonly IRoleQueries _roleQueries;
+        private readonly IResourceQueryService _resourceQueryService;
 
-        public ResourceApiController(IRoleQueries roleQueries)
+        public ResourceApiController(IResourceQueryService resourceQueryService)
         {
-            this._roleQueries = roleQueries;
+            this._resourceQueryService = resourceQueryService;
         }
 
+        [ResourceBasedAuthorize("resource-list")]
         [HttpGet("api/resources/list-nested")]
         public async Task<IActionResult> GetNestResources()
         {
-            var maybe = await this._roleQueries.GetNestedSimpleResources();
+            var maybe = await this._resourceQueryService.GetNestedSimpleResources();
             return maybe.HasNoValue ? this.Json(new List<SimpleResourceModel>()) : this.Json(maybe.Value);
         }
     }

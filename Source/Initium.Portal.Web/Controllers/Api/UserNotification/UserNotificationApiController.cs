@@ -28,6 +28,7 @@ namespace Initium.Portal.Web.Controllers.Api.UserNotification
                                                          nameof(currentAuthenticatedUserProvider));
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost("api/user-notifications/view")]
         public async Task<IActionResult> ViewedNotification([FromBody] ViewedNotificationRequest model)
         {
@@ -48,6 +49,7 @@ namespace Initium.Portal.Web.Controllers.Api.UserNotification
             return this.Json(new BasicApiResponse(result.IsSuccess));
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost("api/user-notifications/view-all")]
         public async Task<IActionResult> ViewedAllNotifications()
         {
@@ -63,6 +65,7 @@ namespace Initium.Portal.Web.Controllers.Api.UserNotification
             return this.Json(new BasicApiResponse(result.IsSuccess));
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost("api/user-notifications/dismiss")]
         public async Task<IActionResult> DismissedNotification([FromBody] DismissedNotificationRequest model)
         {
@@ -83,6 +86,7 @@ namespace Initium.Portal.Web.Controllers.Api.UserNotification
             return this.Json(new BasicApiResponse(result.IsSuccess));
         }
 
+        [ValidateAntiForgeryToken]
         [HttpPost("api/user-notifications/dismiss-all")]
         public async Task<IActionResult> DismissedAllNotification()
         {

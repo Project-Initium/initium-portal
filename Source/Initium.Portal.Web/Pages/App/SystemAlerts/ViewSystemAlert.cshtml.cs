@@ -3,8 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.Messaging;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.Messaging;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
@@ -12,11 +12,11 @@ namespace Initium.Portal.Web.Pages.App.SystemAlerts
 {
     public class ViewSystemAlert : PageModel
     {
-        private readonly IMessagingQueries _messagingQueries;
+        private readonly ISystemAlertQueryService _systemAlertQueryService;
 
-        public ViewSystemAlert(IMessagingQueries messagingQueries)
+        public ViewSystemAlert(ISystemAlertQueryService systemAlertQueryService)
         {
-            this._messagingQueries = messagingQueries;
+            this._systemAlertQueryService = systemAlertQueryService;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -26,7 +26,7 @@ namespace Initium.Portal.Web.Pages.App.SystemAlerts
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var systemAlertMaybe = await this._messagingQueries.GetDetailedSystemAlertById(this.Id);
+            var systemAlertMaybe = await this._systemAlertQueryService.GetDetailedSystemAlertById(this.Id);
             if (systemAlertMaybe.HasNoValue)
             {
                 return this.NotFound();

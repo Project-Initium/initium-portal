@@ -13,6 +13,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NodaTime;
 using OtpNet;
@@ -39,8 +40,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
+            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
+
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object);
+                currentAuthenticatedUserProvider.Object, logger.Object);
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
@@ -72,8 +75,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
+            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
+
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object);
+                currentAuthenticatedUserProvider.Object, logger.Object);
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
@@ -106,8 +111,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe<ISystemUser>.Nothing);
 
+            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
+
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object);
+                currentAuthenticatedUserProvider.Object, logger.Object);
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
@@ -142,8 +149,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
+            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
+
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object);
+                currentAuthenticatedUserProvider.Object, logger.Object);
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
@@ -174,8 +183,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
+            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
+
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object);
+                currentAuthenticatedUserProvider.Object, logger.Object);
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
@@ -208,8 +219,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
+            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
+
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object);
+                currentAuthenticatedUserProvider.Object, logger.Object);
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
@@ -244,8 +257,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
+            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
+
             var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object);
+                currentAuthenticatedUserProvider.Object, logger.Object);
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);

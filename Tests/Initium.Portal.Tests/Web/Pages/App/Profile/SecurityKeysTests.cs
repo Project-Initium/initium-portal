@@ -3,8 +3,8 @@
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.User;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.User;
 using Initium.Portal.Web.Pages.App.Profile;
 using MaybeMonad;
 using Moq;
@@ -17,7 +17,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.Profile
         [Fact]
         public async Task OnGet_GivenNoDevices_ExpectEmptyDevicesList()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDeviceInfoForCurrentUser()).ReturnsAsync(Maybe<List<DeviceInfo>>.Nothing);
 
             var page = new SecurityKeys(userQueries.Object);
@@ -29,7 +29,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.Profile
         [Fact]
         public async Task OnGet_GivenUserHasDevices_ExpectPopulatedDevicesList()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDeviceInfoForCurrentUser())
                 .ReturnsAsync(Maybe.From(new List<DeviceInfo>
                 {

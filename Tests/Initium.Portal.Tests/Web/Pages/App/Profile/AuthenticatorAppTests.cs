@@ -4,8 +4,8 @@
 using System.Threading.Tasks;
 using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Initium.Portal.Web.Pages.App.Profile;
 using MaybeMonad;
@@ -19,7 +19,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.Profile
         [Fact]
         public async Task OnGetAsync_GivenNoUserAppearsToBeAuthenticate_ExpectErroredPrgState()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe<ISystemUser>.Nothing);
@@ -34,7 +34,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.Profile
         [Fact]
         public async Task OnGetAsync_GivenUserHasAnAppEnrolled_ExpectSetupToBeTrue()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.CheckForPresenceOfAuthAppForCurrentUser())
                 .ReturnsAsync(
                     () => new StatusCheckModel(true));

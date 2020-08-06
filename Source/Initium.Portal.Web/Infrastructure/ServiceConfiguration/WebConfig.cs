@@ -82,12 +82,14 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
 
         private static IEdmModel GetEdmModel()
         {
-            return new ODataConventionModelBuilder()
+            var model = new ODataConventionModelBuilder()
                 .SetupUserEntity()
                 .SetupRoleEntity()
                 .SetupUserNotificationEntity()
                 .SetupSystemAlertEntity()
                 .GetEdmModel();
+
+            return model;
         }
     }
 }

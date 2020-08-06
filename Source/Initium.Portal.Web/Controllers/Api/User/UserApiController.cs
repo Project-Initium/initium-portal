@@ -23,76 +23,79 @@ namespace Initium.Portal.Web.Controllers.Api.User
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
         }
 
+        [ValidateAntiForgeryToken]
         [ResourceBasedAuthorize("user-unlock")]
         [HttpPost("api/users/unlock-account")]
         public async Task<IActionResult> UnlockAccount([FromBody] UnlockAccountRequest request)
         {
             if (!this.ModelState.IsValid)
             {
-                return this.Json(new UnlockAccountResponse(false));
+                return this.Json(new BasicApiResponse(false));
             }
 
             var maybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
             if (maybe.HasNoValue)
             {
-                return this.Json(new UnlockAccountResponse(false));
+                return this.Json(new BasicApiResponse(false));
             }
 
             if (maybe.Value.UserId == request.UserId)
             {
-                return this.Json(new UnlockAccountResponse(false));
+                return this.Json(new BasicApiResponse(false));
             }
 
             var result = await this._mediator.Send(new UnlockAccountCommand(request.UserId));
-            return this.Json(new UnlockAccountResponse(result.IsSuccess));
+            return this.Json(new BasicApiResponse(result.IsSuccess));
         }
 
+        [ValidateAntiForgeryToken]
         [ResourceBasedAuthorize("user-disable")]
         [HttpPost("api/users/disable-account")]
         public async Task<IActionResult> DisableAccount([FromBody] DisableAccountRequest request)
         {
             if (!this.ModelState.IsValid)
             {
-                return this.Json(new DisableAccountResponse(false));
+                return this.Json(new BasicApiResponse(false));
             }
 
             var maybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
             if (maybe.HasNoValue)
             {
-                return this.Json(new DisableAccountResponse(false));
+                return this.Json(new BasicApiResponse(false));
             }
 
             if (maybe.Value.UserId == request.UserId)
             {
-                return this.Json(new DisableAccountResponse(false));
+                return this.Json(new BasicApiResponse(false));
             }
 
             var result = await this._mediator.Send(new DisableAccountCommand(request.UserId));
-            return this.Json(new DisableAccountResponse(result.IsSuccess));
+            return this.Json(new BasicApiResponse(result.IsSuccess));
         }
 
+        [ValidateAntiForgeryToken]
         [ResourceBasedAuthorize("user-enable")]
         [HttpPost("api/users/enable-account")]
         public async Task<IActionResult> EnableAccount([FromBody] EnableAccountRequest request)
         {
             if (!this.ModelState.IsValid)
             {
-                return this.Json(new EnableAccountResponse(false));
+                return this.Json(new BasicApiResponse(false));
             }
 
             var maybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
             if (maybe.HasNoValue)
             {
-                return this.Json(new EnableAccountResponse(false));
+                return this.Json(new BasicApiResponse(false));
             }
 
             if (maybe.Value.UserId == request.UserId)
             {
-                return this.Json(new EnableAccountResponse(false));
+                return this.Json(new BasicApiResponse(false));
             }
 
             var result = await this._mediator.Send(new EnableAccountCommand(request.UserId));
-            return this.Json(new EnableAccountResponse(result.IsSuccess));
+            return this.Json(new BasicApiResponse(result.IsSuccess));
         }
     }
 }

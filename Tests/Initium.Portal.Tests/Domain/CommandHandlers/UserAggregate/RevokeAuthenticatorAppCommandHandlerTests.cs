@@ -14,6 +14,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NodaTime;
 using Xunit;
@@ -43,8 +44,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<RevokeAuthenticatorAppCommandHandler>>();
+
             var handler = new RevokeAuthenticatorAppCommandHandler(
-                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object, logger.Object);
             var cmd = new RevokeAuthenticatorAppCommand("password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -76,8 +79,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<RevokeAuthenticatorAppCommandHandler>>();
+
             var handler = new RevokeAuthenticatorAppCommandHandler(
-                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object, logger.Object);
             var cmd = new RevokeAuthenticatorAppCommand("password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -108,8 +113,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<RevokeAuthenticatorAppCommandHandler>>();
+
             var handler = new RevokeAuthenticatorAppCommandHandler(
-                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object, logger.Object);
             var cmd = new RevokeAuthenticatorAppCommand("password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -139,8 +146,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<RevokeAuthenticatorAppCommandHandler>>();
+
             var handler = new RevokeAuthenticatorAppCommandHandler(
-                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object, logger.Object);
             var cmd = new RevokeAuthenticatorAppCommand("password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -171,8 +180,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<RevokeAuthenticatorAppCommandHandler>>();
+
             var handler = new RevokeAuthenticatorAppCommandHandler(
-                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object, logger.Object);
             var cmd = new RevokeAuthenticatorAppCommand("password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -199,8 +210,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<RevokeAuthenticatorAppCommandHandler>>();
+
             var handler = new RevokeAuthenticatorAppCommandHandler(
-                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object, logger.Object);
             var cmd = new RevokeAuthenticatorAppCommand("password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -228,8 +241,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
+            var logger = new Mock<ILogger<RevokeAuthenticatorAppCommandHandler>>();
+
             var handler = new RevokeAuthenticatorAppCommandHandler(
-                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object);
+                userRepository.Object, clock.Object, currentAuthenticatedUserProvider.Object, logger.Object);
             var cmd = new RevokeAuthenticatorAppCommand("wrong-password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);

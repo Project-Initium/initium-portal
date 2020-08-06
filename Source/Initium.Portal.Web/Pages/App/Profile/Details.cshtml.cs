@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Queries.Contracts.Static;
+using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -18,19 +18,19 @@ namespace Initium.Portal.Web.Pages.App.Profile
     public class Details : PrgPageModel<Details.Model>
     {
         private readonly IMediator _mediator;
-        private readonly IUserQueries _userQueries;
+        private readonly IUserQueryService _userQueryService;
 
-        public Details(IMediator mediator, IUserQueries userQueries)
+        public Details(IMediator mediator, IUserQueryService userQueryService)
         {
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
+            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
         }
 
         public async Task<IActionResult> OnGetAsync()
         {
             if (this.PageModel == null)
             {
-                var profileMaybe = await this._userQueries.GetProfileForCurrentUser();
+                var profileMaybe = await this._userQueryService.GetProfileForCurrentUser();
                 if (profileMaybe.HasNoValue)
                 {
                     return this.NotFound();

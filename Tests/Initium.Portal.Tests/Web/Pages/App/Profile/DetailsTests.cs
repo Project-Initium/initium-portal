@@ -5,14 +5,15 @@ using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.User;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.User;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Initium.Portal.Web.Pages.App.Profile;
 using MaybeMonad;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using ResultMonad;
 using Xunit;
@@ -25,7 +26,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.Profile
         public async Task OnGetAsync_GivenNullPageModelAndNoProfile_ExpectNotFoundResult()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetProfileForCurrentUser())
                 .ReturnsAsync(() => Maybe<ProfileModel>.Nothing);
 
@@ -38,11 +39,14 @@ namespace Initium.Portal.Tests.Web.Pages.App.Profile
         public async Task OnGetAsync_GivenNullPageModelAndProfile_ExpectPageResultAndPageModelDataSet()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetProfileForCurrentUser()).ReturnsAsync(() =>
                 Maybe.From(new ProfileModel("first-name", "last-name")));
 
             var page = new Details(mediator.Object, userQueries.Object);
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
+
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal("first-name", page.PageModel.FirstName);
@@ -53,9 +57,11 @@ namespace Initium.Portal.Tests.Web.Pages.App.Profile
         public async Task OnGetAsync_GivenPageModelIsNotNull_ExpectPageResultAndPageModelDataSetWithoutDataCall()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
 
             var page = new Details(mediator.Object, userQueries.Object) { PageModel = new Details.Model() };
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
 
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
@@ -66,7 +72,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.Profile
         public async Task OnPostAsync_GivenInvalidModelState_ExpectRedirectToPageResult()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
 
             var page = new Details(mediator.Object, userQueries.Object);
             page.ModelState.AddModelError("Error", "Error");
@@ -81,7 +87,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.Profile
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.Send(It.IsAny<UpdateProfileCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Fail(new ErrorData(ErrorCodes.SavingChanges)));
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
 
             var page = new Details(mediator.Object, userQueries.Object) { PageModel = new Details.Model() };
 
@@ -96,7 +102,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.Profile
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.Send(It.IsAny<UpdateProfileCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Ok<ErrorData>());
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
 
             var page = new Details(mediator.Object, userQueries.Object) { PageModel = new Details.Model() };
 

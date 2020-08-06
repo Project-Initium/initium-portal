@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,6 +13,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandResults.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using ResultMonad;
 
 namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
@@ -23,14 +25,16 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IFido2 _fido2;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger _logger;
 
         public InitiateAuthenticatorDeviceEnrollmentCommandHandler(
             ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IUserRepository userRepository,
-            IFido2 fido2)
+            IFido2 fido2, ILogger<InitiateAuthenticatorDeviceEnrollmentCommandHandler> logger)
         {
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
-            this._userRepository = userRepository;
-            this._fido2 = fido2;
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
+            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            this._fido2 = fido2 ?? throw new ArgumentNullException(nameof(fido2));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<Result<InitiateAuthenticatorDeviceEnrollmentCommandResult, ErrorData>> Handle(
@@ -39,6 +43,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var currentUserMaybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
             if (currentUserMaybe.HasNoValue)
             {
+                this._logger.LogDebug("No active user.");
                 return Result.Fail<InitiateAuthenticatorDeviceEnrollmentCommandResult, ErrorData>(
                     new ErrorData(ErrorCodes.UserNotFound));
             }
@@ -47,6 +52,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
                 await this._userRepository.Find(currentUserMaybe.Value.UserId, cancellationToken);
             if (userMaybe.HasNoValue)
             {
+                this._logger.LogDebug("Entity not found.");
                 return Result.Fail<InitiateAuthenticatorDeviceEnrollmentCommandResult, ErrorData>(
                     new ErrorData(ErrorCodes.UserNotFound));
             }

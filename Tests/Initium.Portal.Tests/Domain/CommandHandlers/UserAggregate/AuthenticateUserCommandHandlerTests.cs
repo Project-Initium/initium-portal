@@ -17,6 +17,7 @@ using Initium.Portal.Domain.CommandResults.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using Initium.Portal.Domain.Events;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NodaTime;
@@ -50,7 +51,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var fido = new Mock<IFido2>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -82,7 +85,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var fido = new Mock<IFido2>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -104,7 +109,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             var fido = new Mock<IFido2>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -133,7 +140,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             var fido = new Mock<IFido2>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -164,7 +173,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
             var fido = new Mock<IFido2>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -193,7 +204,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var fido = new Mock<IFido2>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
             var cmd = new AuthenticateUserCommand("email-address", "wrong-password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -223,7 +236,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var fido = new Mock<IFido2>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
             var cmd = new AuthenticateUserCommand("email-address", "wrong-password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -253,7 +268,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var fido = new Mock<IFido2>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
             var cmd = new AuthenticateUserCommand("email-address", "wrong-password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -289,7 +306,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var fido = new Mock<IFido2>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -331,7 +350,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var fido = new Mock<IFido2>();
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -385,7 +406,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                     It.IsAny<UserVerificationRequirement>(), It.IsAny<AuthenticationExtensionsClientInputs>()))
                 .Returns(new AssertionOptions());
 
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object);
+            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
+
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 

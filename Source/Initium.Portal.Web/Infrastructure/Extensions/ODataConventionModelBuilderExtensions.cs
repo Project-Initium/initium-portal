@@ -1,7 +1,7 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using Initium.Portal.Queries.Dynamic.Entities;
+using Initium.Portal.Queries.Entities;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,6 +12,7 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
         internal static ODataConventionModelBuilder SetupUserEntity(this ODataConventionModelBuilder builder)
         {
             var user = builder.EntitySet<User>("User");
+
             var function = user.EntityType.Collection.Function("Filtered");
             function.ReturnsCollectionFromEntitySet<User>("User");
             function.Namespace = "User";

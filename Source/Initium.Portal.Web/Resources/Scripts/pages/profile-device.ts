@@ -1,22 +1,23 @@
 ﻿import {ArrayHelpers} from '../helpers/array-helper'
 import Swal from 'sweetalert2';
-import {Validator} from "../services/validator";
+import {Validator} from '../services/validator';
 import 'bootstrap';
 import * as moment from 'moment';
+import {IBasicApiResponse} from '../types/IBasicApiResponse';
 
 export class ProfileDevice {
     private enrollmentForm: HTMLFormElement;
     private enrollmentFormSlideOut: JQuery<any>;
     private enrollmentValidator: Validator;
     private tokenType: string;
-    
+
     private revokeForm: HTMLFormElement;
     private revokeFormSlideOut: JQuery<any>;
     private revokeValidator: Validator;
     private deviceToRevoke: string;
-    
+
     private registeredDevices: HTMLFormElement;
-    
+
     constructor() {
         if (document.readyState !== 'loading') {
             this.init();
@@ -27,7 +28,6 @@ export class ProfileDevice {
 
     init() {
         const contextThis = this;
-        
         this.enrollmentForm = document.querySelector<HTMLFormElement>('#new-device-modal');
         this.enrollmentFormSlideOut = $(this.enrollmentForm).modal({
             show: false,
@@ -51,13 +51,10 @@ export class ProfileDevice {
         this.registeredDevices.addEventListener('click', (event) => contextThis.displayRevoke(event));
 
     }
-    
-    
-    
 
     private async completeEnrollment(event: Event) {
         event.preventDefault();
-        if (this.enrollmentValidator.validate().isValid) {            
+        if (this.enrollmentValidator.validate().isValid) {
             let makeCredentialOptions;
             const name = this.enrollmentForm.querySelector<HTMLInputElement>('[data-device-name]').value;
             try {
@@ -67,7 +64,7 @@ export class ProfileDevice {
                 return;
             }
 
-            if (makeCredentialOptions.status !== "ok") {
+            if (makeCredentialOptions.status !== 'ok') {
                 ProfileDevice.showFailureToast('There was an issue setting up your device. Please try again');
                 return;
             }
@@ -114,19 +111,20 @@ export class ProfileDevice {
             credentials: 'same-origin',
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': this.enrollmentForm.dataset.afToken
             }
         });
         return await response.json();
     }
 
     private async registerNewCredential(name: string, newCredential) {
-        let attestationObject = new Uint8Array(newCredential.response.attestationObject);
-        let clientDataJSON = new Uint8Array(newCredential.response.clientDataJSON);
-        let rawId = new Uint8Array(newCredential.rawId);
-    
+        const attestationObject = new Uint8Array(newCredential.response.attestationObject);
+        const clientDataJSON = new Uint8Array(newCredential.response.clientDataJSON);
+        const rawId = new Uint8Array(newCredential.rawId);
+
         const data = {
-            name: name,
+            name,
             attestationResponse: {
                id:  newCredential.id,
                 rawId: ArrayHelpers.coerceToBase64Url(rawId),
@@ -138,7 +136,7 @@ export class ProfileDevice {
                 }
             }
         };
-    
+
         let response;
         try {
             response = await this.registerCredentialWithServer(data);
@@ -146,14 +144,14 @@ export class ProfileDevice {
             ProfileDevice.showFailureToast('There was an issue setting up your device. Please try again');
             return;
         }
-    
-        if (response.result.status !== "ok") {
+
+        if (response.result.status !== 'ok') {
             ProfileDevice.showFailureToast('There was an issue setting up your device. Please try again');
             return;
         }
-        
+
         ProfileDevice.showSuccessToast('The device has been registered.');
-        
+
         const d = document.createElement('div');
         d.innerHTML = document.getElementById('device-template').innerText;
         d.dataset.deviceId = response.deviceId;
@@ -165,7 +163,7 @@ export class ProfileDevice {
     }
 
     private async registerCredentialWithServer(formData) {
-        let response = await fetch(this.enrollmentForm.dataset.completeUrl, {
+        const response = await fetch(this.enrollmentForm.dataset.completeUrl, {
             method: 'POST',
             mode: 'same-origin',
             cache: 'no-cache',
@@ -173,10 +171,11 @@ export class ProfileDevice {
             body: JSON.stringify(formData),
             headers: {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': this.enrollmentForm.dataset.afToken
             }
         });
-    
+
         return await response.json();
     }
 
@@ -195,7 +194,7 @@ export class ProfileDevice {
         this.deviceToRevoke  = (event.target as HTMLButtonElement).value;
         this.revokeFormSlideOut.modal('show');
     }
-    
+
     private async revokeDevice(event) {
         event.preventDefault();
         if (this.revokeValidator.validate().isValid) {
@@ -211,10 +210,11 @@ export class ProfileDevice {
                     }),
                     headers: {
                         'Accept': 'application/json',
-                        'Content-Type': 'application/json'
+                        'Content-Type': 'application/json',
+                        'RequestVerificationToken': this.registeredDevices.dataset.afToken
                     }
                 });
-                const data: any = await response.json();
+                const data: any = await response.json() as IBasicApiResponse;
                 if (data.isSuccess) {
                     this.registeredDevices.removeChild(this.registeredDevices.querySelector(`[data-device-id="${this.deviceToRevoke}"]`));
                     ProfileDevice.showSuccessToast('The device has been revoked.');
@@ -235,7 +235,7 @@ export class ProfileDevice {
             icon: 'success',
             text: message,
             toast: true,
-            position: "top-end",
+            position: 'top-end',
             timer: 4500,
             showConfirmButton: false
         });
@@ -246,7 +246,7 @@ export class ProfileDevice {
             icon: 'error',
             text: message,
             toast: true,
-            position: "top-end",
+            position: 'top-end',
             timer: 4500,
             showConfirmButton: false
         });

@@ -11,6 +11,7 @@ using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using Initium.Portal.Domain.Events;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NodaTime;
@@ -33,8 +34,11 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
+
+            var logger = new Mock<ILogger<UnlockAccountCommandHandler>>();
+
             var handler =
-                new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+                new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
 
             var cmd = new UnlockAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -54,8 +58,11 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
+
+            var logger = new Mock<ILogger<UnlockAccountCommandHandler>>();
+
             var handler =
-                new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+                new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
 
             var cmd = new UnlockAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -73,8 +80,11 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
+
+            var logger = new Mock<ILogger<UnlockAccountCommandHandler>>();
+
             var handler =
-                new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+                new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
 
             var cmd = new UnlockAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -94,7 +104,11 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var clock = new Mock<IClock>();
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
-            var handler = new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+
+            var logger = new Mock<ILogger<UnlockAccountCommandHandler>>();
+
+            var handler =
+                new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
 
             var cmd = new UnlockAccountCommand(TestVariables.UserId);
             await handler.Handle(cmd, CancellationToken.None);

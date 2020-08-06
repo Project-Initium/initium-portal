@@ -39,7 +39,8 @@ export class UserView {
                 credentials: 'same-origin',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': btn.dataset.afToken
                 }
             });
             const result = await response.json();
@@ -71,7 +72,8 @@ export class UserView {
                 credentials: 'same-origin',
                 headers: {
                     'Accept': 'application/json',
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': this.unlockForm.dataset.arToken
                 }
             });
             const result = await response.json();

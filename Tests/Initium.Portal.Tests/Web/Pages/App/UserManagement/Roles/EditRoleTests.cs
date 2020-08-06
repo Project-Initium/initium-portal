@@ -7,8 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.Commands.RoleAggregate;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.Role;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.Role;
 using Initium.Portal.Web.Infrastructure.Constants;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Initium.Portal.Web.Pages.App.UserManagement.Roles;
@@ -16,6 +16,7 @@ using MaybeMonad;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using ResultMonad;
 using Xunit;
@@ -29,7 +30,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Roles
             OnGetAsync_GivenRoleIsInSystemAndPageModelIsNull_ExpectPageModelNotToBeUpdatedAndPageResultReturned()
         {
             var mediator = new Mock<IMediator>();
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => Maybe.From(new DetailedRoleModel(
                     TestVariables.RoleId,
@@ -37,6 +38,8 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Roles
                     new List<Guid> { TestVariables.ResourceId })));
 
             var page = new EditRole(mediator.Object, roleQueries.Object);
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
 
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
@@ -50,7 +53,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Roles
         public async Task OnGetAsync_GivenRoleIsInSystemAndPageModelIsNotNull_ExpectPageModelSetAndPageResultReturned()
         {
             var mediator = new Mock<IMediator>();
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => Maybe.From(new DetailedRoleModel(
                     TestVariables.RoleId,
@@ -66,6 +69,8 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Roles
                     Resources = new List<Guid> { TestVariables.ResourceId },
                 },
             };
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
 
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
@@ -79,7 +84,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Roles
         public async Task OnGetAsync_GivenRoleIsNotInSystem_ExpectNotFoundResultReturned()
         {
             var mediator = new Mock<IMediator>();
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => Maybe<DetailedRoleModel>.Nothing);
 
@@ -93,7 +98,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Roles
         public async Task OnPostAsync_GivenInvalidModelState_ExpectRedirectToPageResultToSelfAndNoCommandExecuted()
         {
             var mediator = new Mock<IMediator>();
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             var page = new EditRole(mediator.Object, roleQueries.Object);
             page.ModelState.AddModelError("Error", "Error");
 
@@ -108,7 +113,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Roles
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.Send(It.IsAny<UpdateRoleCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => ResultWithError.Fail(new ErrorData(ErrorCodes.SavingChanges)));
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             var page = new EditRole(mediator.Object, roleQueries.Object) { PageModel = new EditRole.Model() };
 
             var result = await page.OnPostAsync();
@@ -124,7 +129,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Roles
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.Send(It.IsAny<UpdateRoleCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Ok<ErrorData>());
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             var page = new EditRole(mediator.Object, roleQueries.Object)
                 { PageModel = new EditRole.Model { RoleId = TestVariables.RoleId } };
 

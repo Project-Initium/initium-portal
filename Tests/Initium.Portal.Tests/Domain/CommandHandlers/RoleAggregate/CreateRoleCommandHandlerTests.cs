@@ -10,8 +10,9 @@ using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Domain.CommandHandlers.RoleAggregate;
 using Initium.Portal.Domain.Commands.RoleAggregate;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -22,7 +23,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         [Fact]
         public async Task Handle_GivenRoleAlreadyExists_ExpectFailedResult()
         {
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(true));
             var roleRepository = new Mock<IRoleRepository>();
@@ -30,7 +31,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            var handler = new CreateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
+            var logger = new Mock<ILogger<CreateRoleCommandHandler>>();
+
+            var handler = new CreateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
             var cmd = new CreateRoleCommand("name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -44,7 +47,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         public async Task Handle_GivenRoleDoesNotExists_ExpectSuccessfulResultWithIdSetAndResourcesSetAndRoleAdded()
         {
             var roleId = Guid.Empty;
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
             var roleRepository = new Mock<IRoleRepository>();
@@ -53,7 +56,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Add(It.IsAny<IRole>())).Callback((IRole role) => { roleId = role.Id; });
 
-            var handler = new CreateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
+            var logger = new Mock<ILogger<CreateRoleCommandHandler>>();
+
+            var handler = new CreateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
             var cmd = new CreateRoleCommand("name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -66,7 +71,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         [Fact]
         public async Task Handle_GivenSavingFails_ExpectFailedResult()
         {
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
             var roleRepository = new Mock<IRoleRepository>();
@@ -74,7 +79,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            var handler = new CreateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
+            var logger = new Mock<ILogger<CreateRoleCommandHandler>>();
+
+            var handler = new CreateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
             var cmd = new CreateRoleCommand("name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -86,7 +93,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         [Fact]
         public async Task Handle_GivenSavingSucceeds_ExpectSuccessfulResult()
         {
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
             var roleRepository = new Mock<IRoleRepository>();
@@ -94,7 +101,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            var handler = new CreateRoleCommandHandler(roleRepository.Object, roleQueries.Object);
+            var logger = new Mock<ILogger<CreateRoleCommandHandler>>();
+
+            var handler = new CreateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
             var cmd = new CreateRoleCommand("name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);

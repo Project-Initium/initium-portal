@@ -4,8 +4,8 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.Role;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.Role;
 using Initium.Portal.Web.Pages.App.UserManagement.Roles;
 using MaybeMonad;
 using Microsoft.AspNetCore.Mvc;
@@ -20,7 +20,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Roles
         [Fact]
         public async Task OnGetAsync_GivenRoleIsNotInSystem_ExpectNotFoundResultReturned()
         {
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => Maybe<DetailedRoleModel>.Nothing);
 
@@ -33,7 +33,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Roles
         [Fact]
         public async Task OnGetAsync_GivenRoleIsInSystem_ExpectDataToBeSetAndPageResultReturned()
         {
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.GetDetailsOfRoleById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => Maybe.From(new DetailedRoleModel(
                     TestVariables.RoleId,

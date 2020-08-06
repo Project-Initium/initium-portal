@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Queries.Contracts.Static;
+using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.Constants;
 using Initium.Portal.Web.Infrastructure.PageModels;
@@ -23,15 +23,15 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
     public class EditUser : PrgPageModel<EditUser.Model>
     {
         private readonly IMediator _mediator;
-        private readonly IUserQueries _userQueries;
-        private readonly IRoleQueries _roleQueries;
+        private readonly IUserQueryService _userQueryService;
+        private readonly IRoleQueryService _roleQueryService;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
-        public EditUser(IUserQueries userQueries, IMediator mediator, IRoleQueries roleQueries, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
+        public EditUser(IUserQueryService userQueryService, IMediator mediator, IRoleQueryService roleQueryService, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
-            this._userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
+            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._roleQueries = roleQueries ?? throw new ArgumentNullException(nameof(roleQueries));
+            this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
         }
 
@@ -61,7 +61,7 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
                 return this.NotFound();
             }
 
-            var userMaybe = await this._userQueries.GetDetailsOfUserById(this.Id);
+            var userMaybe = await this._userQueryService.GetDetailsOfUserById(this.Id);
             if (userMaybe.HasNoValue)
             {
                 return this.NotFound();
@@ -76,7 +76,7 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
                 LastName = user.LastName,
                 UserId = user.UserId,
                 IsAdmin = user.IsAdmin,
-                Roles = user.Roles.ToList(),
+                Roles = user.Resources.ToList(),
             };
 
             this.Name = $"{user.FirstName} {user.LastName}";
@@ -96,7 +96,7 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
             }
 
             this.AvailableRoles = new List<SelectListItem>();
-            var roles = await this._roleQueries.GetSimpleRoles();
+            var roles = await this._roleQueryService.GetSimpleRoles();
             if (roles.HasValue)
             {
                 this.AvailableRoles.AddRange(roles.Value.Select(x => new SelectListItem(x.Name, x.Id.ToString())));

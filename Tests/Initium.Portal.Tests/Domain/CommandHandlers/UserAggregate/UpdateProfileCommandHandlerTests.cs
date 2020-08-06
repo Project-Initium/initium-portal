@@ -13,6 +13,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -35,7 +36,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
-            var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
+            var logger = new Mock<ILogger<UpdateProfileCommandHandler>>();
+
+            var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, logger.Object);
             var result = await handler.Handle(new UpdateProfileCommand("first-name", "last-name"), CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -57,7 +60,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
-            var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
+            var logger = new Mock<ILogger<UpdateProfileCommandHandler>>();
+
+            var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, logger.Object);
             var result = await handler.Handle(new UpdateProfileCommand("first-name", "last-name"), CancellationToken.None);
 
             Assert.True(result.IsSuccess);
@@ -77,7 +82,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
-            var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
+            var logger = new Mock<ILogger<UpdateProfileCommandHandler>>();
+
+            var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, logger.Object);
             var result = await handler.Handle(new UpdateProfileCommand("first-name", "last-name"), CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -96,7 +103,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe<ISystemUser>.Nothing);
 
-            var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
+            var logger = new Mock<ILogger<UpdateProfileCommandHandler>>();
+
+            var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, logger.Object);
             var result = await handler.Handle(new UpdateProfileCommand("first-name", "last-name"), CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -118,7 +127,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
-            var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object);
+            var logger = new Mock<ILogger<UpdateProfileCommandHandler>>();
+
+            var handler = new UpdateProfileCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, logger.Object);
             var result = await handler.Handle(new UpdateProfileCommand("first-name", "last-name"), CancellationToken.None);
 
             Assert.True(result.IsSuccess);

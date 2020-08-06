@@ -12,6 +12,7 @@ using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using Initium.Portal.Domain.Events;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NodaTime;
@@ -42,8 +43,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 PasswordTokenLifetime = 3,
             });
 
+            var logger = new Mock<ILogger<RequestPasswordResetCommandHandler>>();
+
             var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
             var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -72,8 +75,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 PasswordTokenLifetime = 3,
             });
 
+            var logger = new Mock<ILogger<RequestPasswordResetCommandHandler>>();
+
             var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
             var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -102,8 +107,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 PasswordTokenLifetime = 3,
             });
 
+            var logger = new Mock<ILogger<RequestPasswordResetCommandHandler>>();
+
             var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
             var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -130,8 +137,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 PasswordTokenLifetime = 3,
             });
 
+            var logger = new Mock<ILogger<RequestPasswordResetCommandHandler>>();
+
             var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
             var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -159,8 +168,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 PasswordTokenLifetime = 3,
             });
 
+            var logger = new Mock<ILogger<RequestPasswordResetCommandHandler>>();
+
             var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
             var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -189,8 +200,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 PasswordTokenLifetime = 3,
             });
 
+            var logger = new Mock<ILogger<RequestPasswordResetCommandHandler>>();
+
             var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object);
+                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
             var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 

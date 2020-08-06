@@ -7,7 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using Initium.Portal.Domain.Commands.RoleAggregate;
-using Initium.Portal.Queries.Contracts.Static;
+using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.Constants;
 using Initium.Portal.Web.Infrastructure.PageModels;
@@ -20,12 +20,12 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Roles
     public class EditRole : PrgPageModel<EditRole.Model>
     {
         private readonly IMediator _mediator;
-        private readonly IRoleQueries _roleQueries;
+        private readonly IRoleQueryService _roleQueryService;
 
-        public EditRole(IMediator mediator, IRoleQueries roleQueries)
+        public EditRole(IMediator mediator, IRoleQueryService roleQueryService)
         {
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._roleQueries = roleQueries ?? throw new ArgumentNullException(nameof(roleQueries));
+            this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
         }
 
         [BindProperty(SupportsGet = true)]
@@ -35,7 +35,7 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Roles
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var roleMaybe = await this._roleQueries.GetDetailsOfRoleById(this.Id);
+            var roleMaybe = await this._roleQueryService.GetDetailsOfRoleById(this.Id);
             if (roleMaybe.HasNoValue)
             {
                 return this.NotFound();

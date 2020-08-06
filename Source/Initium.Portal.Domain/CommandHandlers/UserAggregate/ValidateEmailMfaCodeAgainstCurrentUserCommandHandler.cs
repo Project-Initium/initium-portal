@@ -12,6 +12,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandResults.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using NodaTime;
 using OtpNet;
 using ResultMonad;
@@ -23,12 +24,16 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly IUserRepository _userRepository;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IClock _clock;
+        private readonly ILogger _logger;
 
-        public ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(IUserRepository userRepository, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IClock clock)
+        public ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(
+            IUserRepository userRepository, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider,
+            IClock clock, ILogger<ValidateEmailMfaCodeAgainstCurrentUserCommandHandler> logger)
         {
             this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
             this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<Result<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>> Handle(ValidateEmailMfaCodeAgainstCurrentUserCommand request, CancellationToken cancellationToken)
@@ -36,13 +41,14 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                return Result.Fail<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return Result.Fail<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
         private async Task<Result<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>> Process(ValidateEmailMfaCodeAgainstCurrentUserCommand request, CancellationToken cancellationToken)
@@ -50,6 +56,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var currentUserMaybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
             if (!currentUserMaybe.HasValue || !(currentUserMaybe.Value is UnauthenticatedUser currentUser))
             {
+                this._logger.LogDebug("No active user.");
                 return Result.Fail<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>(
                     new ErrorData(ErrorCodes.UserNotFound));
             }
@@ -58,6 +65,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
 
             if (userMaybe.HasNoValue)
             {
+                this._logger.LogDebug("Entity not found.");
                 return Result.Fail<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>(
                     new ErrorData(ErrorCodes.UserNotFound));
             }
@@ -67,6 +75,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var result = totp.VerifyTotp(request.Code, out var _, new VerificationWindow(3, 3));
             if (!result)
             {
+                this._logger.LogDebug("Code not valid.");
                 user.ProcessPartialSuccessfulAuthenticationAttempt(
                     this._clock.GetCurrentInstant().ToDateTimeUtc(),
                     AuthenticationHistoryType.EmailMfaFailed);
