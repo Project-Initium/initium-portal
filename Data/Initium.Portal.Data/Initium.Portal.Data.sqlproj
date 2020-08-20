@@ -1,0 +1,120 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <Name>Initium.Portal.Data</Name>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectVersion>4.1</ProjectVersion>
+    <ProjectGuid>{f535ba2f-1fb9-4099-be05-cf7982188838}</ProjectGuid>
+    <DSP>Microsoft.Data.Tools.Schema.Sql.Sql130DatabaseSchemaProvider</DSP>
+    <OutputType>Database</OutputType>
+    <RootPath>
+    </RootPath>
+    <RootNamespace>Initium.Portal.Data</RootNamespace>
+    <AssemblyName>Initium.Portal.Data</AssemblyName>
+    <ModelCollation>1033, CI</ModelCollation>
+    <DefaultFileStructure>BySchemaAndSchemaType</DefaultFileStructure>
+    <DeployToDatabase>True</DeployToDatabase>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetLanguage>CS</TargetLanguage>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <SqlServerVerification>False</SqlServerVerification>
+    <IncludeCompositeObjects>True</IncludeCompositeObjects>
+    <TargetDatabaseSet>True</TargetDatabaseSet>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <OutputPath>bin\Debug\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <DefineDebug>true</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">11.0</VisualStudioVersion>
+    <!-- Default to the v11.0 targets path if the targets file for the current VS version is not found -->
+    <SSDTExists Condition="Exists('$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets')">True</SSDTExists>
+    <VisualStudioVersion Condition="'$(SSDTExists)' == ''">11.0</VisualStudioVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Test|AnyCPU' ">
+    <OutputPath>bin\Release\</OutputPath>
+    <BuildScriptName>$(MSBuildProjectName).sql</BuildScriptName>
+    <TreatWarningsAsErrors>False</TreatWarningsAsErrors>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <DefineDebug>false</DefineDebug>
+    <DefineTrace>true</DefineTrace>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <Import Condition="'$(SQLDBExtensionsRefPath)' != ''" Project="$(SQLDBExtensionsRefPath)\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <Import Condition="'$(SQLDBExtensionsRefPath)' == ''" Project="$(MSBuildExtensionsPath)\Microsoft\VisualStudio\v$(VisualStudioVersion)\SSDT\Microsoft.Data.Tools.Schema.SqlTasks.targets" />
+  <ItemGroup>
+    <Folder Include="Properties" />
+    <Folder Include="Security" />
+    <Folder Include="Security\Schemas" />
+    <Folder Include="Identity" />
+    <Folder Include="Identity\Tables" />
+    <Folder Include="AccessProtection" />
+    <Folder Include="AccessProtection\Tables" />
+    <Folder Include="Messaging" />
+    <Folder Include="Messaging\Tables" />
+    <Folder Include="Messaging\Views" />
+    <Folder Include="Portal" />
+    <Folder Include="Portal\Views" />
+  </ItemGroup>
+  <ItemGroup>
+    <Build Include="Security\Schemas\Identity.sql" />
+    <Build Include="Identity\Tables\User.sql" />
+    <Build Include="Identity\Tables\AuthenticationHistory.sql" />
+    <Build Include="Identity\Tables\SecurityTokenMapping.sql" />
+    <Build Include="Identity\Tables\Profile.sql" />
+    <Build Include="Security\Schemas\AccessProtection.sql" />
+    <Build Include="AccessProtection\Tables\Resource.sql" />
+    <Build Include="AccessProtection\Tables\Role.sql" />
+    <Build Include="AccessProtection\Tables\RoleResource.sql" />
+    <Build Include="Identity\Tables\UserRole.sql" />
+    <Build Include="Identity\Tables\AuthenticatorApp.sql" />
+    <Build Include="Identity\Tables\AuthenticatorDevice.sql" />
+    <Build Include="Security\Schemas\Portal.sql" />
+    <Build Include="Identity\Tables\PasswordHistory.sql" />
+    <Build Include="Security\Schemas\Messaging.sql" />
+    <Build Include="Messaging\Tables\Notification.sql" />
+    <Build Include="Messaging\Tables\UserNotification.sql" />
+    <Build Include="Messaging\Views\vwUserNotification.sql" />
+    <Build Include="Messaging\Tables\SystemAlert.sql" />
+    <Build Include="Portal\Views\vwRole.sql" />
+    <Build Include="Portal\Views\vwSystemAlert.sql" />
+    <Build Include="Portal\Views\vwUser.sql" />
+    <Build Include="Portal\Views\vwUserNotification.sql" />
+    <Build Include="Portal\Views\vwUserRole.sql" />
+    <Build Include="Portal\Views\vwAuthenticatorApp.sql" />
+    <Build Include="Portal\Views\vwAuthenticatorDevice.sql" />
+    <Build Include="Portal\Views\vwResource.sql" />
+    <Build Include="Portal\Views\vwRoleResource.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <RefactorLog Include="Initium.Portal.Data.refactorlog" />
+  </ItemGroup>
+  <ItemGroup>
+    <PostDeploy Include="Script.PostDeployment.sql" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Initium.Portal.Data.publish.xml" />
+  </ItemGroup>
+</Project>

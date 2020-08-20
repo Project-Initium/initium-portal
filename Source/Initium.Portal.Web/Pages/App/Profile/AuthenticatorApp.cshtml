@@ -57,8 +57,8 @@
     </div>
 
 
-<form class="modal fade form-material" id="enroll-app-modal" tabindex="-1" role="dialog" aria-hidden="true" data-initiate-url="@Url.Action("InitiateAuthAppEnrollment", "AuthAppApi")" data-complete-url="@Url.Action("EnrollAuthApp", "AuthAppApi")" data-no-auto-validation data-af-token="@token">
-    <div class="modal-dialog modal-dialog-slideout" role="document">
+<form class="modal fade form-material" id="enroll-app-modal" tabindex="-1" role="dialog" aria-hidden="true" data-initiate-url="@Url.Action("HandleAsync", "InitiateAuthAppEnrollment")" data-complete-url="@Url.Action("HandleAsync", "EnrollAuthApp")" data-no-auto-validation data-af-token="@token">
+    <div class="modal-dialog modal-dialog-slideout modal-lg" role="document">
         <div class="modal-content">
       
             <div class="modal-body">
@@ -70,7 +70,7 @@
                 </div>
             
                 <p>Scan the QR Code or enter this key <kbd></kbd> into your two factor authenticator app. Spaces and casing do not matter.</p>
-                <img class="app-mfa-code" data-mfa-image="@Url.Action("MfaQrCode", "AuthAppApi", new {authenticatorUri="__url__", nocache= "__nocache__"})" data-af-token="@token" />
+                <img class="app-mfa-code" data-mfa-image="@Url.Action("HandleAsync", "MfaQrCode", new {authenticatorUri="__url__", nocache= "__nocache__"})" data-af-token="@token" />
                 <p>
                     Once you have scanned the QR code or input the key above, your two factor authentication app will provide you
                     with a unique code. Enter the code in the confirmation box below.
@@ -91,7 +91,7 @@
     </div>
 </form>
 
-<form class="modal fade form-material" id="revoke-app-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-complete-url="@Url.Action("RevokeAuthApp", "AuthAppApi")" data-no-auto-validation data-af-token="@token">
+<form class="modal fade form-material" id="revoke-app-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-complete-url="@Url.Action("HandleAsync", "RevokeAuthApp")" data-no-auto-validation data-af-token="@token">
     <div class="modal-dialog modal-dialog-slideout" role="document">
         <div class="modal-content">
       

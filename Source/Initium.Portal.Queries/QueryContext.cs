@@ -33,6 +33,15 @@ namespace Initium.Portal.Queries
             modelBuilder.Entity<SystemAlert>(ConfigureSystemAlert);
             modelBuilder.Entity<User>(ConfigureUser);
             modelBuilder.Entity<UserRole>(ConfigureUserRole);
+            modelBuilder.Entity<UserNotification>(ConfigureUserNotification);
+        }
+
+        private static void ConfigureUserNotification(EntityTypeBuilder<UserNotification> userNotifications)
+        {
+            userNotifications.ToTable("vwUserNotification", "Portal");
+            userNotifications.HasKey(userNotification =>
+                new { userNotification.NotificationId, userNotification.UserId });
+            userNotifications.HasOne(x => x.User).WithMany(x => x.UserNotifications).HasForeignKey(x => x.UserId);
         }
 
         private static void ConfigureRoleResource(EntityTypeBuilder<RoleResource> roleResources)
@@ -71,7 +80,7 @@ namespace Initium.Portal.Queries
 
         private static void ConfigureUser(EntityTypeBuilder<User> users)
         {
-            users.ToTable("vwUser", "Portal");
+            users.ToTable("vwUser", "portal");
             users.HasKey(x => x.Id);
 
             users.OwnsMany(user => user.AuthenticatorApps, authenticatorApps =>
@@ -86,12 +95,7 @@ namespace Initium.Portal.Queries
                 authenticatorDevices.HasKey(authenticatorDevice => authenticatorDevice.Id);
             });
 
-            users.OwnsMany(user => user.UserNotifications, userNotifications =>
-            {
-                userNotifications.ToTable("vwUserNotification", "Portal");
-                userNotifications.HasKey(userNotification =>
-                    new { userNotification.NotificationId, userNotification.UserId });
-            });
+            users.HasMany<UserNotification>().WithOne(x => x.User).HasForeignKey(x => x.UserId);
         }
 
         private static void ConfigureUserRole(EntityTypeBuilder<UserRole> userRoles)

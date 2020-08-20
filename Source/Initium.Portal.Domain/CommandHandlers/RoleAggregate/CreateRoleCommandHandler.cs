@@ -43,7 +43,6 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
             this._logger.LogDebug("Failed saving changes.");
             return Result.Fail<CreateRoleCommandResult, ErrorData>(new ErrorData(
                 ErrorCodes.SavingChanges, "Failed To Save Database"));
-
         }
 
         private async Task<Result<CreateRoleCommandResult, ErrorData>> Process(

@@ -15,13 +15,13 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
             this IServiceCollection services, IConfigurationRoot configuration)
         {
             services.AddDistributedMemoryCache();
-            services.AddEntityFrameworkNpgsql()
+            services.AddEntityFrameworkSqlServer()
                 .AddDbContext<DataContext>(options =>
                 {
-                    options.UseNpgsql(configuration["query:connectionString"]);
+                    options.UseSqlServer(configuration["query:connectionString"]);
                 }).AddDbContext<QueryContext>(options =>
                 {
-                    options.UseNpgsql(configuration["query:connectionString"]);
+                    options.UseSqlServer(configuration["query:connectionString"]);
                 });
 
             return services;

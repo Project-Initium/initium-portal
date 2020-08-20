@@ -4,6 +4,8 @@
       "noEmitOnError": true,
       "removeComments": false,
       "sourceMap": true,
+      "esModuleInterop": true,
+      "allowSyntheticDefaultImports": true,
       "target": "es5",
       "lib": ["es5", "es6", "dom"]
     },

@@ -1,7 +1,9 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using CompressedStaticFiles;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.StaticFiles;
 
 namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
 {
@@ -9,18 +11,12 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
     {
         public static IApplicationBuilder UseCustomizedStaticFiles(this IApplicationBuilder app)
         {
-            app.UseStaticFiles(new StaticFileOptions
-            {
-                OnPrepareResponse = content =>
-                {
-                    if (!content.File.Name.EndsWith(".js.gz"))
-                    {
-                        return;
-                    }
+            var provider = new FileExtensionContentTypeProvider();
+            provider.Mappings[".webmanifest"] = "application/manifest+json";
 
-                    content.Context.Response.Headers["Content-Type"] = "text/javascript";
-                    content.Context.Response.Headers["Content-Encoding"] = "gzip";
-                },
+            app.UseCompressedStaticFiles(new StaticFileOptions()
+            {
+                ContentTypeProvider = provider,
             });
 
             return app;

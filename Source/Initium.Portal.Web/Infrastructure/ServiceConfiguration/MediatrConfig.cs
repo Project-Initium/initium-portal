@@ -17,7 +17,7 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
         {
             var assembly = typeof(CreateInitialUserCommandHandler).GetTypeInfo().Assembly;
             serviceCollection.AddMediatR(typeof(CreateInitialUserCommandHandler), typeof(LogEmailMfaToken));
-            serviceCollection.AddFluentValidation(new[] { assembly });
+            serviceCollection.AddFluentValidation(new[] { assembly }, ServiceLifetime.Transient);
             serviceCollection.AddDomainAuditLogging();
             return serviceCollection;
         }

@@ -41,7 +41,6 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             this._logger.LogDebug("Failed saving changes.");
             return ResultWithError.Fail(new ErrorData(
                 ErrorCodes.SavingChanges, "Failed To Save Database"));
-
         }
 
         private async Task<ResultWithError<ErrorData>> Process(MarkNotificationAsDismissedCommand request, CancellationToken cancellationToken)

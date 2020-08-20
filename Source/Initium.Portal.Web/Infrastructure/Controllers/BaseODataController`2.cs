@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
@@ -12,6 +13,7 @@ using LinqKit;
 using Microsoft.AspNet.OData;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OData;
 
 namespace Initium.Portal.Web.Infrastructure.Controllers
 {
@@ -81,6 +83,24 @@ namespace Initium.Portal.Web.Infrastructure.Controllers
             memoryStream.Seek(0, SeekOrigin.Begin);
 
             return memoryStream;
+        }
+
+        protected bool AreOptionsValid(ODataQueryOptions<TReadEntity> options)
+        {
+            try
+            {
+                options.Validate(new ODataValidationSettings
+                {
+                    AllowedQueryOptions = AllowedQueryOptions.All,
+                    MaxTop = 1000,
+                });
+            }
+            catch (ODataException)
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

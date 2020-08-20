@@ -8,31 +8,28 @@ const
 
 module.exports = {
     entry: {
-        theme: ['./Resources/Styles/theme.sass'],
-        'vendors-styles': './Resources/Styles/vendors.sass',
-        app: ['./Resources/Scripts/app.ts', './Resources/Styles/app.sass'],
-        'users-list': './Resources/Scripts/pages/users-list.ts',
-        'user-view': './Resources/Scripts/pages/user-view.ts',
-        'role-create': './Resources/Scripts/pages/role-create.ts',
-        'role-edit': './Resources/Scripts/pages/role-edit.ts',
-        'role-listing': './Resources/Scripts/pages/role-list.ts',
-        'role-view': './Resources/Scripts/pages/role-view.ts',
-        'profile-device': './Resources/Scripts/pages/profile-device.ts',
-        'profile-app': './Resources/Scripts/pages/profile-app.ts',
-        'validate-device-mfa': './Resources/Scripts/pages/validate-device-mfa.ts',
-        'validate-email-mfa': './Resources/Scripts/pages/validate-email-mfa.ts',    
-        'notification-list': './Resources/Scripts/pages/notification-list.ts',    
-        'system-alert-list': './Resources/Scripts/pages/system-alert-list.ts',    
+        theme: ['./Resources/Styles/theme.scss'],
+        'vendors-styles': './Resources/Styles/vendors.scss',
+        app: ['./Resources/Scripts/app.ts', './Resources/Styles/app.scss'],
+        'users-list': './Resources/Scripts/pages/users-list/users-list.ts',
+        'user-view': './Resources/Scripts/pages/user-view/user-view.ts',
+        'role-create': './Resources/Scripts/pages/role-create/role-create.ts',
+        'role-edit': './Resources/Scripts/pages/role-edit/role-edit.ts',
+        'role-listing': './Resources/Scripts/pages/role-list/role-list.ts',
+        'role-view': './Resources/Scripts/pages/role-view/role-view.ts',
+        'profile-device': './Resources/Scripts/pages/profile-device/profile-device.ts',
+        'profile-app': './Resources/Scripts/pages/profile-app/profile-app.ts',
+        'validate-device-mfa': './Resources/Scripts/pages/validate-device-mfa/validate-device-mfa.ts',
+        'validate-email-mfa': './Resources/Scripts/pages/validate-email-mfa/validate-email-mfa.ts',    
+        'notification-list': './Resources/Scripts/pages/notification-list/notification-list.ts',    
+        'system-alert-list': './Resources/Scripts/pages/system-alert-list/system-alert-list.ts',    
     },
     output: {
         filename: '[name].js',
         path: path.resolve(__dirname, 'wwwroot')
     },
     resolve: {
-        extensions: ['.ts', '.tsx', '.js'],
-        modules: [
-            path.resolve(__dirname, 'Source', 'Initium.Portal.Web'),
-        ]
+        extensions: ['.ts', '.tsx', '.js']
     },
     module: {
         rules: [
@@ -89,7 +86,7 @@ module.exports = {
                },
              commons: {
                  name: 'commons',
-                 test: /[\\/]Scripts[\\/](services)[\\/]/,
+                 test: /[\\/]Scripts[\\/](providers)[\\/]/,
                  chunks: 'all'
                },
               

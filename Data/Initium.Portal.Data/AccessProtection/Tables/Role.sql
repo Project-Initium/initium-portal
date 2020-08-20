@@ -1,0 +1,5 @@
+﻿CREATE TABLE [AccessProtection].[Role]
+(
+		[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY
+	,	[Name] NVARCHAR(100) NOT NULL
+)

@@ -14,8 +14,8 @@
         </ol>
     </div>
     <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
-        <button id="read-all" class="btn btn-sm float-right btn-info text-white mr-2" data-url="@Url.Action("ViewedAllNotifications", "UserNotificationApi")">Read All</button>
-        <button id="dismiss-all" class="btn btn-sm float-right btn-info text-white" data-url="@Url.Action("DismissedAllNotification", "UserNotificationApi")">Dismiss All</button>
+        <button id="read-all" class="btn btn-sm float-right btn-info text-white mr-2" data-url="@Url.Action("HandleAsync", "ViewedAllNotifications")">Read All</button>
+        <button id="dismiss-all" class="btn btn-sm float-right btn-info text-white" data-url="@Url.Action("HandleAsync", "DismissedAllNotification")">Dismiss All</button>
     </div>
 </div>
 
@@ -42,7 +42,7 @@
                     
                 </form>
                     <div class="table-responsive">
-                        <table class="table table-hover clickable" id="notifications" cellspacing="0" width="100%" aria-describedby="table-description" data-route-filtered="@ODataLocations.UserNotificationFilteredListing" data-read-item-uri="@Url.Action("ViewedNotification", "UserNotificationApi")"  data-dismiss-item-uri="@Url.Action("DismissedNotification", "UserNotificationApi")">
+                        <table class="table table-hover clickable" id="notifications" cellspacing="0" width="100%" aria-describedby="table-description" data-route-filtered="@ODataLocations.UserNotificationFilteredListing" data-read-item-uri="@Url.Action("HandleAsync", "ViewedNotification")"  data-dismiss-item-uri="@Url.Action("HandleAsync", "DismissedNotification")">
                        
                         </table>                    
                     </div>

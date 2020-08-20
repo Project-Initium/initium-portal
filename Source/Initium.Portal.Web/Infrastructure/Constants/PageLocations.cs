@@ -43,5 +43,6 @@ namespace Initium.Portal.Web.Infrastructure.Constants
         public const string SystemAlertCreate = "/App/SystemAlerts/CreateSystemAlert";
 
         public const string SystemAlertEdit = "/App/SystemAlerts/EditSystemAlert";
+        public const string UserNotifications = "/App/Notifications/ListNotifications";
     }
 }

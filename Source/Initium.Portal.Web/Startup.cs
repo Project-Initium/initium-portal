@@ -14,6 +14,11 @@ namespace Initium.Portal.Web
     {
         public Startup(IWebHostEnvironment env)
         {
+            if (env == null)
+            {
+                throw new ArgumentNullException(nameof(env));
+            }
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", true, true)
@@ -34,6 +39,7 @@ namespace Initium.Portal.Web
                 .AddConfigurationRoot()
                 .AddCustomizedMediatR()
                 .AddSettings(this.Configuration)
+                .AddHttpContextAccessor()
                 .AddCustomizedMvc()
                 .AddCustomizedAuthentication();
         }
@@ -45,7 +51,7 @@ namespace Initium.Portal.Web
                 .AddCustomizedErrorResponse(env)
                 .UseXContentTypeOptions()
                 .UseReferrerPolicy(opts => opts.NoReferrer())
-                .UseCustomizedCsp()
+                .UseCustomizedCsp(env)
                 .UseCustomizedStaticFiles()
                 .UseRouting()
                 .UseXfo(xfo => xfo.Deny())

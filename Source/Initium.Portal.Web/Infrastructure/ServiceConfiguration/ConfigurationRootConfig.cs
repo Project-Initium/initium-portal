@@ -28,6 +28,7 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
             serviceCollection.AddScoped<IUserQueryService, UserQueryService>();
             serviceCollection.AddScoped<IRoleQueryService, RoleQueryService>();
             serviceCollection.AddScoped<ISystemAlertQueryService, SystemAlertQueryService>();
+            serviceCollection.AddScoped<IUserNotificationQueryService, UserNotificationQueryService>();
 
             serviceCollection.AddScoped<IUserRepository, UserRepository>();
             serviceCollection.AddScoped<IRoleRepository, RoleRepository>();

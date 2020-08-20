@@ -58,7 +58,6 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             this._logger.LogDebug("Failed saving changes.");
             return Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(
                 ErrorCodes.SavingChanges, "Failed To Save Database"));
-
         }
 
         private static string GenerateRandomPassword()
