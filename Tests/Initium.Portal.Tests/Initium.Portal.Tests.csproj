@@ -44,11 +44,6 @@
     <ProjectReference Include="..\..\Source\Initium.Portal.Web\Initium.Portal.Web.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Web\Controllers" />
-    <Folder Include="Web\Controllers\" />
-  </ItemGroup>
-
   <Import Project="..\..\Shared\Initium.Portal.Shared\Initium.Portal.Shared.projitems" Label="Shared" />
 
 </Project>

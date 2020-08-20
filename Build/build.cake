@@ -21,14 +21,14 @@ Task("__Clean")
                 buildPath
             });
 
-            // CleanDirectories("../**/bin");
-            // CleanDirectories("../**/obj");
-            // if (DirectoryExists("../Source/Initium.Portal.Web/node_modules")) {
-            //     DeleteDirectory("../Source/Initium.Portal.Web/node_modules", new DeleteDirectorySettings {
-            //         Recursive = true,
-            //         Force = true
-            //     });
-            // }
+            CleanDirectories("../**/bin");
+            CleanDirectories("../**/obj");
+            if (DirectoryExists("../Source/Initium.Portal.Web/node_modules")) {
+                DeleteDirectory("../Source/Initium.Portal.Web/node_modules", new DeleteDirectorySettings {
+                    Recursive = true,
+                    Force = true
+                });
+            }
         }  
 
         CreateDirectory(releasePath);
@@ -48,7 +48,7 @@ Task("__Versioning")
 Task("__RestorePackages")
     .Does(() => {
         var npmInstallSettings = new NpmInstallSettings {
-            WorkingDirectory = "../",
+            WorkingDirectory = "../Source/Initium.Portal.Web",
             LogLevel = NpmLogLevel.Silent
         };
         NpmInstall(npmInstallSettings);
@@ -56,12 +56,12 @@ Task("__RestorePackages")
 
 Task("__Build")
     .Does(() => {
-        // var npmRunScriptSettings = new NpmRunScriptSettings {
-        //    ScriptName = "release:build",
-        //    WorkingDirectory = "../",
-        //    LogLevel = NpmLogLevel.Silent
-        // };		
-        // NpmRunScript(npmRunScriptSettings);  
+        var npmRunScriptSettings = new NpmRunScriptSettings {
+           ScriptName = "release:build",
+           WorkingDirectory = "../Source/Initium.Portal.Web",
+           LogLevel = NpmLogLevel.Silent
+        };		
+        NpmRunScript(npmRunScriptSettings);  
 
         var settings = new DotNetCoreBuildSettings {
             Configuration = "Release"
@@ -77,29 +77,29 @@ Task("__Build")
     });
 Task("__Test")
     .Does(() => {
-        // var testResults = MakeAbsolute(coverServerPath + File("xunit-report.xml")).FullPath;
-        // var testSettings = new DotNetCoreTestSettings {
-        //     Configuration = "Release",
-        //     NoBuild = true,
-        //     Logger = $"trx;LogFileName={testResults};verbosity=normal"
-        // };
+        var testResults = MakeAbsolute(coverServerPath + File("xunit-report.xml")).FullPath;
+        var testSettings = new DotNetCoreTestSettings {
+            Configuration = "Release",
+            NoBuild = true,
+            Logger = $"trx;LogFileName={testResults};verbosity=normal"
+        };
 
-        // var coverletSettings = new CoverletSettings {
-        //     CollectCoverage = true,
-        //     CoverletOutputFormat = CoverletOutputFormat.opencover|CoverletOutputFormat.lcov|(CoverletOutputFormat)12,
-        //     CoverletOutputDirectory = coverServerPath,
-        //     CoverletOutputName = "coverage"        
-        // };
+        var coverletSettings = new CoverletSettings {
+            CollectCoverage = true,
+            CoverletOutputFormat = CoverletOutputFormat.opencover|CoverletOutputFormat.lcov|(CoverletOutputFormat)12,
+            CoverletOutputDirectory = coverServerPath,
+            CoverletOutputName = "coverage"        
+        };
 
-        // DotNetCoreTest("../Initium.Portal.sln", testSettings, coverletSettings);
+        DotNetCoreTest("../Initium.Portal.sln", testSettings, coverletSettings);
         
         var npmRunScriptSettings = new NpmRunScriptSettings {
             ScriptName = "test:coverage",
-            WorkingDirectory = "../",
+            WorkingDirectory = "../Source/Initium.Portal.Web",
             //LogLevel = NpmLogLevel.Silent
         };		
         NpmRunScript(npmRunScriptSettings);  
-        // CopyDirectory("../Source/Initium.Portal.Web/coverage", coverClientPath);
+        CopyDirectory("../Source/Initium.Portal.Web/coverage", coverClientPath);
         // System.IO.StreamReader file =  new System.IO.StreamReader(MakeAbsolute(File("./build-artifacts/cover/server/coverage.info")).ToString()); 
         // string line;
         // while((line = file.ReadLine()) != null ){  
@@ -132,12 +132,12 @@ Task("__Package")
 
 Task("Build")
     .IsDependentOn("__Clean")
-    //.IsDependentOn("__Versioning")    
-    //.IsDependentOn("__RestorePackages")
+    .IsDependentOn("__Versioning")    
+    .IsDependentOn("__RestorePackages")
     .IsDependentOn("__Build")
     .IsDependentOn("__Test")
-    //.IsDependentOn("__Publish")
-    //.IsDependentOn("__Package")
+    .IsDependentOn("__Publish")
+    .IsDependentOn("__Package")
     ;
 
 Task("Default")
