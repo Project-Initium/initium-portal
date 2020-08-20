@@ -12,7 +12,7 @@ steps:
         scannerMode: MSBuild
         projectKey: initium-portal
         extraProperties: |
-          sonar.cs.opencover.reportsPaths=Build/build-artifacts/cover/server/coverage.opencover.xml
+          sonar.cs.opencover.reportsPaths=**/server/coverage.opencover.xml
           sonar.exclusions=**\Resources\Themes\**
           sonar.typescript.lcov.reportPaths=coverage/lcov.info
           sonar.test.inclusions=**/Resources/**/*.spec.ts
