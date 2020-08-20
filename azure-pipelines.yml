@@ -18,7 +18,7 @@ steps:
           sonar.test.inclusions=**/Resources/**/*.spec.ts
     - task: Cake@0
       inputs:
-        script: Build/build-master.cake
+        script: Build/build.cake
         target: Default
         verbosity: Verbose
     - task: PublishTestResults@2
