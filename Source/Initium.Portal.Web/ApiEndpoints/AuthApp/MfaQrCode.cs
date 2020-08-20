@@ -15,8 +15,13 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
     public class MfaQrCode : BaseAsyncEndpoint<MfaQrCode.EndpointRequest, BasicEndpointResponse>
     {
         [HttpGet("api/auth-app/mfa-qrcode.png")]
-        public override async Task<ActionResult<BasicEndpointResponse>> HandleAsync(EndpointRequest request, CancellationToken cancellationToken = default)
+        public override async Task<ActionResult<BasicEndpointResponse>> HandleAsync([FromQuery] EndpointRequest request, CancellationToken cancellationToken = default)
         {
+            if (!this.ModelState.IsValid)
+            {
+                return this.NotFound();
+            }
+
             var qrGenerator = new QRCodeGenerator();
 
             var qrCodeData = qrGenerator.CreateQrCode(request.AuthenticatorUri, QRCodeGenerator.ECCLevel.Q);
@@ -35,9 +40,9 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
             public string AuthenticatorUri { get; set; }
         }
 
-        public class Validator : AbstractValidator<EndpointRequest>
+        public class EndpointRequestValidator : AbstractValidator<EndpointRequest>
         {
-            public Validator()
+            public EndpointRequestValidator()
             {
                 this.RuleFor(x => x.AuthenticatorUri)
                     .NotEmpty();
