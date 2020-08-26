@@ -13,12 +13,12 @@ namespace Initium.Portal.Web.ApiEndpoints.Security
     {
         private readonly ILogger _logger;
 
-        public Report(ILogger logger)
+        public Report(ILogger<Report> logger)
         {
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
-        [HttpPost("api/security/csp-report")]
+        [HttpPost("api/security/csp-report", Name = "ReportEndpoint")]
         public override ActionResult<BasicEndpointResponse> Handle(CspPost request)
         {
             this._logger.LogCritical("CSP Violation: {Report}", request);

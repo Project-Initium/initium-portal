@@ -27,7 +27,7 @@ namespace Initium.Portal.Web.ApiEndpoints.User
 
         [ValidateAntiForgeryToken]
         [ResourceBasedAuthorize("user-unlock")]
-        [HttpPost("api/users/unlock-account")]
+        [HttpPost("api/users/unlock-account", Name = "UnlockAccountEndpoint")]
         public override async Task<ActionResult<BasicEndpointResponse>> HandleAsync([FromBody] EndpointRequest request, CancellationToken cancellationToken = default)
         {
             if (!this.ModelState.IsValid)

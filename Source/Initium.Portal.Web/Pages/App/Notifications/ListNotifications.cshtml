@@ -14,8 +14,8 @@
         </ol>
     </div>
     <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
-        <button id="read-all" class="btn btn-sm float-right btn-info text-white mr-2" data-url="@Url.Action("HandleAsync", "ViewedAllNotifications")">Read All</button>
-        <button id="dismiss-all" class="btn btn-sm float-right btn-info text-white" data-url="@Url.Action("HandleAsync", "DismissedAllNotification")">Dismiss All</button>
+        <button id="read-all" class="btn btn-sm float-right btn-info text-white mr-2" data-url="@Url.RouteUrl("ViewedAllNotificationsEndpoint")">Read All</button>
+        <button id="dismiss-all" class="btn btn-sm float-right btn-info text-white" data-url="@Url.RouteUrl("DismissedAllNotificationEndpoint")">Dismiss All</button>
     </div>
 </div>
 

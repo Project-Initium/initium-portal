@@ -24,7 +24,7 @@ namespace Initium.Portal.Web.ApiEndpoints.UserNotification
         }
 
         [ValidateAntiForgeryToken]
-        [HttpPost("api/user-notifications/dismiss-all")]
+        [HttpPost("api/user-notifications/dismiss-all", Name = "DismissedAllNotificationEndpoint")]
         public override async Task<ActionResult<BasicEndpointResponse>> HandleAsync(CancellationToken cancellationToken = default)
         {
             var currentUser = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;

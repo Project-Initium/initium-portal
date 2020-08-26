@@ -28,7 +28,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
 
         [Authorize]
         [ValidateAntiForgeryToken]
-        [HttpPost("api/auth-device/initiate-registration")]
+        [HttpPost("api/auth-device/initiate-registration", Name = "InitialAuthDeviceRegistrationEndpoint")]
         public override async Task<ActionResult<CredentialCreateOptions>> HandleAsync([FromBody] EndpointRequest request, CancellationToken cancellationToken = default)
         {
             var result = await this._mediator.Send(new InitiateAuthenticatorDeviceEnrollmentCommand(request.AuthenticatorAttachment), cancellationToken);

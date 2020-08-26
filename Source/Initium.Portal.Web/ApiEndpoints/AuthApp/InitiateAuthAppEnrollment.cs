@@ -42,7 +42,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
             this._securitySettings = securitySettings.Value;
         }
 
-        [HttpPost("api/auth-app/initiate-enrollment")]
+        [HttpPost("api/auth-app/initiate-enrollment", Name = "InitiateAuthAppEnrollmentEndpoint")]
         [ValidateAntiForgeryToken]
         public override async Task<ActionResult<EndpointResponse>> HandleAsync(CancellationToken cancellationToken = default)
         {

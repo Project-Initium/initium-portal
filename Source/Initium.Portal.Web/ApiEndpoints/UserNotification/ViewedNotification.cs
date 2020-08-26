@@ -25,7 +25,7 @@ namespace Initium.Portal.Web.ApiEndpoints.UserNotification
         }
 
         [ValidateAntiForgeryToken]
-        [HttpPost("api/user-notifications/view")]
+        [HttpPost("api/user-notifications/view", Name = "ViewedNotificationEndpoint")]
         public override async Task<ActionResult<BasicEndpointResponse>> HandleAsync(EndpointRequest request, CancellationToken cancellationToken = default)
         {
             if (!this.ModelState.IsValid)

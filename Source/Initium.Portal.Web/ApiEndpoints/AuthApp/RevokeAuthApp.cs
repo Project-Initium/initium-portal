@@ -22,7 +22,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        [HttpPost("api/auth-app/revoke")]
+        [HttpPost("api/auth-app/revoke", Name = "RevokeAuthAppEndpoint")]
         [ValidateAntiForgeryToken]
         [Authorize]
         public override async Task<ActionResult<BasicEndpointResponse>> HandleAsync([FromBody] EndpointRequest request, CancellationToken cancellationToken = default)

@@ -45,7 +45,7 @@
                                
                                 <hr />
 
-                                <form class="list-group" method="post" id="registered-devices" data-endpoint-url="@Url.Action("HandleAsync", "RevokeDevice")" data-af-token="@token">
+                                <form class="list-group" method="post" id="registered-devices" data-endpoint-url="@Url.RouteUrl("RevokeDeviceEndpoint")" data-af-token="@token">
                                     <!-- .col -->
                                     @foreach (var device in Model.DeviceInfos)
                                     {
@@ -72,7 +72,7 @@
         </div>
     </div>
 
-<form class="modal fade form-material" id="new-device-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-device-registration data-initiate-url="@Url.Action("HandleAsync", "InitialAuthDeviceRegistration")" data-complete-url="@Url.Action("HandleAsync", "CompleteAuthDeviceRegistration")" data-no-auto-validation data-af-token="@token">
+<form class="modal fade form-material" id="new-device-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-device-registration data-initiate-url="@Url.RouteUrl( "InitialAuthDeviceRegistrationEndpoint")" data-complete-url="@Url.RouteUrl("CompleteAuthDeviceRegistrationEndpoint")" data-no-auto-validation data-af-token="@token">
     <div class="modal-dialog modal-dialog-slideout" role="document">
         <div class="modal-content">
       
@@ -100,7 +100,7 @@
         </div>
     </div>
 </form>
-<form class="modal fade form-material" id="revoke-device-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-complete-url="@Url.Action("HandleAsync", "RevokeAuthApp")" data-no-auto-validation data-af-token="@token">
+<form class="modal fade form-material" id="revoke-device-modal" tabindex="-1" role="dialog"  aria-hidden="true" data-complete-url="@Url.RouteUrl("RevokeAuthAppEndpoint")" data-no-auto-validation data-af-token="@token">
     <div class="modal-dialog modal-dialog-slideout" role="document">
         <div class="modal-content">
       

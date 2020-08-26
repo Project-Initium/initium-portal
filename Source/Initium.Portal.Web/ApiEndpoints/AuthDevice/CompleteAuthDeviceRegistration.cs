@@ -28,7 +28,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
 
         [Authorize]
         [ValidateAntiForgeryToken]
-        [HttpPost("api/auth-device/complete-registration")]
+        [HttpPost("api/auth-device/complete-registration", Name = "CompleteAuthDeviceRegistrationEndpoint")]
         public override async Task<ActionResult<EndpointResponse>> HandleAsync([FromBody] EndpointRequest request, CancellationToken cancellationToken = default)
         {
             var tempData = this._tempDataDictionaryFactory.GetTempData(this.HttpContext);

@@ -68,7 +68,8 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapRazorPages();
-                endpoints.MapControllerRoute("areaRoute", "{area:exists}/{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapControllers();
+                
             });
 
             app.UseMvc(routeBuilder =>

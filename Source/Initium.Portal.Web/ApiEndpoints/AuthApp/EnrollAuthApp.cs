@@ -21,7 +21,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        [HttpPost("api/auth-app/complete-enrollment")]
+        [HttpPost("api/auth-app/complete-enrollment", Name = "EnrollAuthAppEndpoint")]
         [ValidateAntiForgeryToken]
         public override async Task<ActionResult<BasicEndpointResponse>> HandleAsync([FromBody] EndpointRequest request, CancellationToken cancellationToken = default)
         {

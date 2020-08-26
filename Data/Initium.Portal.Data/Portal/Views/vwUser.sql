@@ -11,6 +11,8 @@ SELECT
 	,	u.WhenCreated
 	,	p.FirstName
 	,	p.LastName
+	,   u.WhenLocked
+	,   u.WhenDisabled
 FROM [Identity].[User] u
 LEFT JOIN [Identity].Profile p
 	ON u.Id = p.UserId

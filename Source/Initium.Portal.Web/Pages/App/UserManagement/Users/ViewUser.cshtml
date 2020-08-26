@@ -23,17 +23,17 @@
         <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@PageLocations.UserListing">Back to Listing</a>
         @if (!this.Model.ViewingSelf && User.HasPermissions("user-unlock") && Model.DetailedUser.WhenLocked.HasValue)
         {
-            <form class="mr-2" id="unlock-form" method="post" data-user-id="@Model.Id" data-af-token="@token" data-endpoint="@Url.Action("HandleAsync", "UnlockAccount")">
+            <form class="mr-2" id="unlock-form" method="post" data-user-id="@Model.Id" data-af-token="@token" data-endpoint="@Url.RouteUrl("UnlockAccountEndpoint")">
                 <button type="submit" class="btn btn-sm btn-primary">Unlock</button>
             </form>
         }
         @if (!this.Model.ViewingSelf && User.HasPermissions("user-disable"))
         {
-            <button type="button" class="btn btn-sm btn-warning text-white mr-2 @(this.Model.DetailedUser.WhenDisabled.HasValue ? "d-none" : "")" data-af-token="@token" data-enable-toggle data-message="The user has been disabled" data-user-id="@Model.Id" data-endpoint="@Url.Action("HandleAsync", "DisableAccount")">Disable</button>
+            <button type="button" class="btn btn-sm btn-warning text-white mr-2 @(this.Model.DetailedUser.WhenDisabled.HasValue ? "d-none" : "")" data-af-token="@token" data-enable-toggle data-message="The user has been disabled" data-user-id="@Model.Id" data-endpoint="@Url.RouteUrl("DisableAccountEndpoint")">Disable</button>
         }
         @if (!this.Model.ViewingSelf && User.HasPermissions("user-enable"))
         {
-            <button type="button" class="btn btn-sm btn-warning text-white mr-2 @(this.Model.DetailedUser.WhenDisabled.HasValue ? "" : "d-none")" data-af-token="@token" data-enable-toggle data-message="The user has been enabled" data-user-id="@Model.Id" data-endpoint="@Url.Action("HandleAsync", "EnableAccount")">Enable</button>
+            <button type="button" class="btn btn-sm btn-warning text-white mr-2 @(this.Model.DetailedUser.WhenDisabled.HasValue ? "" : "d-none")" data-af-token="@token" data-enable-toggle data-message="The user has been enabled" data-user-id="@Model.Id" data-endpoint="@Url.RouteUrl("EnableAccountEndpoint")">Enable</button>
         }
         @if (!this.Model.ViewingSelf)
         {

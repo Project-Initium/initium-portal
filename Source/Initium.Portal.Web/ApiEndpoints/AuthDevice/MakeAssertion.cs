@@ -31,7 +31,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
         }
 
         [ValidateAntiForgeryToken]
-        [HttpPost("api/auth-device/make-assertion")]
+        [HttpPost("api/auth-device/make-assertion", Name = "MakeAssertionEndpoint")]
         [Authorize(AuthenticationSchemes = "login-partial")]
         public override async Task<ActionResult<AssertionVerificationResult>> HandleAsync(
             AuthenticatorAssertionRawResponse request, CancellationToken cancellationToken = default)

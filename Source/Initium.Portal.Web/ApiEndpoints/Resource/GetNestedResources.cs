@@ -23,7 +23,7 @@ namespace Initium.Portal.Web.ApiEndpoints.Resource
         }
 
         [ResourceBasedAuthorize("resource-list")]
-        [HttpGet("api/resources/list-nested")]
+        [HttpGet("api/resources/list-nested", Name = "GetNestedResourcesEndpoint")]
 
         public override async Task<ActionResult<List<SimpleResourceModel>>> HandleAsync(CancellationToken cancellationToken = default)
         {

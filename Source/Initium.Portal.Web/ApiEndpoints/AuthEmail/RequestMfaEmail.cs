@@ -23,7 +23,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthEmail
 
         [ValidateAntiForgeryToken]
         [Authorize(AuthenticationSchemes = "login-partial")]
-        [HttpPost("api/auth-email/request-mfa-email")]
+        [HttpPost("api/auth-email/request-mfa-email", Name = "RequestMfaEmailEndpoint")]
         public override async Task<ActionResult<BasicEndpointResponse>> HandleAsync(CancellationToken cancellationToken = default)
         {
             var result =

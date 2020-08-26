@@ -21,7 +21,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(AuthenticationSchemes = "login-partial")]
-        [Route("api/auth-device/assertion-options")]
+        [Route("api/auth-device/assertion-options", Name = "AssertionOptionsPostEndpoint")]
         public override ActionResult<BasicEndpointResponse> Handle()
         {
             var tempData = this._tempDataDictionaryFactory.GetTempData(this.HttpContext);

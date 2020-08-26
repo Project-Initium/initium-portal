@@ -15,7 +15,7 @@
                 <li class="nav-item"> <a class="nav-link nav-toggler d-none d-md-block text-muted waves-effect waves-dark"><i class="fa fa-bars"></i></a> </li>
             </ul>
             <ul class="navbar-nav">
-                <li class="nav-item dropdown" id="nav-notifications" data-af-token="@Xsrf.GetAndStoreTokens(Context).RequestToken" data-odata-root="@ODataLocations.Root" data-read-item-uri="@Url.Action("HandleAsync", "ViewedNotification")">
+                <li class="nav-item dropdown" id="nav-notifications" data-af-token="@Xsrf.GetAndStoreTokens(Context).RequestToken" data-odata-root="@ODataLocations.Root" data-read-item-uri="@Url.RouteUrl("ViewedNotificationEndpoint")">
                     <a  class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false"> <i class="fa fa-comment"></i>
                         @if (this.Model.HasUnreadNotifications)

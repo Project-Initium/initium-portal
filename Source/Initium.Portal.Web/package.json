@@ -37,6 +37,7 @@
     "@types/gijgo": "^1.9.1",
     "@types/jquery": "^3.3.33",
     "@types/knockout": "^3.4.67",
+    "@widgetjs/tree": "^1.8.3",
     "bootstrap": "^4.4.1",
     "datatables.net-bs4": "^1.10.20",
     "gijgo": "^1.9.13",

@@ -1,4 +1,4 @@
-﻿import 'knockout';
+﻿import ko from 'knockout';
 import {ICustomQuery, ISimpleStateData, IStateData} from '../../providers';
 import {BaseFilterViewModel} from '../base-list';
 

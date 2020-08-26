@@ -23,7 +23,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
         }
 
         [ValidateAntiForgeryToken]
-        [HttpPost("api/auth-device/revoke-device")]
+        [HttpPost("api/auth-device/revoke-device", Name = "RevokeDeviceEndpoint")]
         [Authorize]
         public override async Task<ActionResult<BasicEndpointResponse>> HandleAsync(EndpointRequest request, CancellationToken cancellationToken = default)
         {

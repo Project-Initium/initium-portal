@@ -90,4 +90,8 @@
     </Content>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Infrastructure\MappingProfiles\" />
+  </ItemGroup>
+
 </Project>

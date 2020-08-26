@@ -13,7 +13,7 @@
             <form class="form-horizontal form-material" asp-antiforgery="true" method="post">
                 <a href="#" class="text-center d-block"><img src="~/logo.png" alt="Home" /></a>
                 <h4 class="rounded-title mt-4 mb-0">Use Email</h4>
-                <small>An email has been sent to you with an authentication code.  If you are missing the email click <a href="@Url.Action("HandleAsync", "RequestMfaEmail")" data-resend data-af-token="@token">here to resend</a>.</small>
+                <small>An email has been sent to you with an authentication code.  If you are missing the email click <a href="@Url.RouteUrl("RequestMfaEmailEndpoint")" data-resend data-af-token="@token">here to resend</a>.</small>
                 <div class="form-group mt-4">
 
                     <label asp-for="PageModel.Code" class="sr-only"></label>
