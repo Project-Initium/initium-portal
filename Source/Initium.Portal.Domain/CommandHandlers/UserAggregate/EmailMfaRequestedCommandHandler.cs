@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Constants;
@@ -10,6 +11,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using Initium.Portal.Domain.Events;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using NodaTime;
 using OtpNet;
 using ResultMonad;
@@ -21,14 +23,16 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly IClock _clock;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger _logger;
 
         public EmailMfaRequestedCommandHandler(
             IUserRepository userRepository, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider,
-            IClock clock)
+            IClock clock, ILogger<EmailMfaRequestedCommandHandler> logger)
         {
-            this._userRepository = userRepository;
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
-            this._clock = clock;
+            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
+            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(
@@ -37,13 +41,14 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var result = await this.Process(cancellationToken);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                return ResultWithError.Fail(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return ResultWithError.Fail(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
         private async Task<ResultWithError<ErrorData>> Process(CancellationToken cancellationToken)
@@ -51,6 +56,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var currentUserMaybe = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
             if (currentUserMaybe.HasNoValue)
             {
+                this._logger.LogDebug("No active user.");
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.UserNotFound));
             }
 
@@ -58,6 +64,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
 
             if (userMaybe.HasNoValue)
             {
+                this._logger.LogDebug("Entity not found.");
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.UserNotFound));
             }
 

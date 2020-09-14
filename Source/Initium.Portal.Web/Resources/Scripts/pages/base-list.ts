@@ -1,6 +1,6 @@
-﻿import {CustomizedDataTable, ICustomQuery, ISimpleStateData, IStateData} from "../services/customized-data-table";
+﻿import {CustomizedDataTableProvider, ICustomQuery, ISimpleStateData, IStateData} from '../providers';
 import * as ko from 'knockout'
-import * as KnockoutSecureBinding from 'knockout-secure-binding'
+import KnockoutSecureBinding from 'knockout-secure-binding'
 
 export abstract class BaseFilterViewModel {
     abstract getFilter(): ICustomQuery;
@@ -23,7 +23,7 @@ export abstract class BaseList<TBaseFilterViewModel extends BaseFilterViewModel>
     protected exportUrl: string;
     protected filterVM: TBaseFilterViewModel;
     protected abstract readonly tableOptions: DataTables.Settings;
-    protected customizedDataTable: CustomizedDataTable;
+    protected customizedDataTable: CustomizedDataTableProvider;
     private filterToggleIcon: HTMLSpanElement;
     private searchFacets: HTMLDivElement;
     
@@ -34,7 +34,7 @@ export abstract class BaseList<TBaseFilterViewModel extends BaseFilterViewModel>
         this.detailsUrl = $tableElement[0].dataset.details;
         this.filterVM = filterVM;
 
-        this.customizedDataTable = new CustomizedDataTable($tableElement, {
+        this.customizedDataTable = new CustomizedDataTableProvider($tableElement, {
             route: $tableElement.data('routeFiltered'),
             externalHydration: (params: URLSearchParams) => contextThis.filterVM.hydrateFromParams(params),
             externalState: (stateData: IStateData, simpleStateData: ISimpleStateData) => contextThis.filterVM.generateStateData(stateData, simpleStateData),

@@ -7,7 +7,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Constants;
-using Initium.Portal.Queries.Contracts.Static;
+using Initium.Portal.Queries.Contracts;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
@@ -18,17 +18,17 @@ namespace Initium.Portal.Web.Infrastructure.Services
     public class AuthenticationService : Contracts.IAuthenticationService
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IUserQueries _userQueries;
+        private readonly IUserQueryService _userQueryService;
 
-        public AuthenticationService(IHttpContextAccessor httpContextAccessor, IUserQueries userQueries)
+        public AuthenticationService(IHttpContextAccessor httpContextAccessor, IUserQueryService userQueryService)
         {
             this._httpContextAccessor = httpContextAccessor;
-            this._userQueries = userQueries;
+            this._userQueryService = userQueryService;
         }
 
         public async Task SignInUserAsync(Guid userId)
         {
-            var maybe = await this._userQueries.GetSystemProfileByUserId(userId);
+            var maybe = await this._userQueryService.GetSystemProfileByUserId(userId);
             if (maybe.HasNoValue)
             {
                 throw new InvalidOperationException();

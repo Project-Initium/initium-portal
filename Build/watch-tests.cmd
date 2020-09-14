@@ -1,1 +1,1 @@
-dotnet watch --project Tests\Stance.Tests test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=../../lcov.info 
+dotnet watch --project Tests\Initium.Portal.Tests test /p:CollectCoverage=true /p:CoverletOutputFormat=lcov /p:CoverletOutput=../../lcov.info 

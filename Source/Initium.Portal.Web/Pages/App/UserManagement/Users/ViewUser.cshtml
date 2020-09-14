@@ -1,10 +1,13 @@
 ﻿@page "/app/user-management/users/view/{id}"
 @using Initium.Portal.Web.Infrastructure.Constants
 @using Initium.Portal.Web.Infrastructure.Extensions
+@using Microsoft.AspNetCore.Antiforgery
+@inject IAntiforgery Antiforgery
 @model Initium.Portal.Web.Pages.App.UserManagement.Users.ViewUser
 @{
     Layout = "Shared/_AppLayout";
     ViewData["Title"] = $"Users | Viewing {Model.DetailedUser.FirstName} {Model.DetailedUser.LastName}";
+    var token = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
 }
 
 <div class="row page-titles">
@@ -20,17 +23,17 @@
         <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@PageLocations.UserListing">Back to Listing</a>
         @if (!this.Model.ViewingSelf && User.HasPermissions("user-unlock") && Model.DetailedUser.WhenLocked.HasValue)
         {
-            <form class="mr-2" id="unlock-form" method="post" data-user-id="@Model.Id" data-endpoint="@Url.Action("UnlockAccount", "UserApi")">
+            <form class="mr-2" id="unlock-form" method="post" data-user-id="@Model.Id" data-af-token="@token" data-endpoint="@Url.RouteUrl("UnlockAccountEndpoint")">
                 <button type="submit" class="btn btn-sm btn-primary">Unlock</button>
             </form>
         }
         @if (!this.Model.ViewingSelf && User.HasPermissions("user-disable"))
         {
-            <button type="button" class="btn btn-sm btn-warning text-white mr-2 @(this.Model.DetailedUser.WhenDisable.HasValue ? "d-none" : "")" data-enable-toggle data-message="The user has been disabled" data-user-id="@Model.Id" data-endpoint="@Url.Action("DisableAccount", "UserApi")">Disable</button>
+            <button type="button" class="btn btn-sm btn-warning text-white mr-2 @(this.Model.DetailedUser.WhenDisabled.HasValue ? "d-none" : "")" data-af-token="@token" data-enable-toggle data-message="The user has been disabled" data-user-id="@Model.Id" data-endpoint="@Url.RouteUrl("DisableAccountEndpoint")">Disable</button>
         }
         @if (!this.Model.ViewingSelf && User.HasPermissions("user-enable"))
         {
-            <button type="button" class="btn btn-sm btn-warning text-white mr-2 @(this.Model.DetailedUser.WhenDisable.HasValue ? "" : "d-none")" data-enable-toggle data-message="The user has been enabled" data-user-id="@Model.Id" data-endpoint="@Url.Action("EnableAccount", "UserApi")">Enable</button>
+            <button type="button" class="btn btn-sm btn-warning text-white mr-2 @(this.Model.DetailedUser.WhenDisabled.HasValue ? "" : "d-none")" data-af-token="@token" data-enable-toggle data-message="The user has been enabled" data-user-id="@Model.Id" data-endpoint="@Url.RouteUrl("EnableAccountEndpoint")">Enable</button>
         }
         @if (!this.Model.ViewingSelf)
         {
@@ -40,7 +43,7 @@
 </div>
 
 <div class="row">
-    <div class="col-md-7 pl-md-0 pr-md-2 pl-1 pr-1">
+    <div class="col-md-7">
         <!-- Column -->
         <div class="card card-outline-info">
             <div class="card-body">
@@ -60,7 +63,7 @@
 
 
     </div>
-    <div class="col-md-5 pl-md-2 pr-md-0 pl-1 pr-1">
+    <div class="col-md-5">
         <div class="card card-outline-info">
             <div class="card-body">
                 <h4 class="card-title">User Activity</h4>

@@ -41,9 +41,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Initium.Portal.Tests", "Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Initium.Portal.Infrastructure", "Source\Initium.Portal.Infrastructure\Initium.Portal.Infrastructure.csproj", "{6AA67298-04B7-45F2-B0A2-BBA5B7AB7D4E}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{523A69A7-75D3-4BC1-A9C3-D77D1B8FF0C3}"
+EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Initium.Portal.Data", "Data\Initium.Portal.Data\Initium.Portal.Data.sqlproj", "{F535BA2F-1FB9-4099-BE05-CF7982188838}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Data", "Data", "{523A69A7-75D3-4BC1-A9C3-D77D1B8FF0C3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{ABD468EC-BAB0-4BDD-A3DB-94CC4D088473}"
+	ProjectSection(SolutionItems) = preProject
+		Resources\cert-gen.ps1 = Resources\cert-gen.ps1
+		Resources\project-setup.ps1 = Resources\project-setup.ps1
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -94,7 +100,9 @@ Global
 		{F535BA2F-1FB9-4099-BE05-CF7982188838}.Database|Any CPU.Build.0 = Debug|Any CPU
 		{F535BA2F-1FB9-4099-BE05-CF7982188838}.Database|Any CPU.Deploy.0 = Debug|Any CPU
 		{F535BA2F-1FB9-4099-BE05-CF7982188838}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F535BA2F-1FB9-4099-BE05-CF7982188838}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
 		{F535BA2F-1FB9-4099-BE05-CF7982188838}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F535BA2F-1FB9-4099-BE05-CF7982188838}.Release|Any CPU.Deploy.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

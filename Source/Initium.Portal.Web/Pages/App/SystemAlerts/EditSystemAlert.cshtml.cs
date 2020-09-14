@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using FluentValidation;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Domain.Commands.SystemAlertAggregate;
-using Initium.Portal.Queries.Contracts.Static;
+using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Web.Infrastructure.Constants;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using MediatR;
@@ -17,12 +17,12 @@ namespace Initium.Portal.Web.Pages.App.SystemAlerts
     public class EditSystemAlert : PrgPageModel<EditSystemAlert.Model>
     {
         private readonly IMediator _mediator;
-        private readonly IMessagingQueries _messagingQueries;
+        private readonly ISystemAlertQueryService _systemAlertQueryService;
 
-        public EditSystemAlert(IMediator mediator, IMessagingQueries messagingQueries)
+        public EditSystemAlert(IMediator mediator, ISystemAlertQueryService systemAlertQueryService)
         {
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._messagingQueries = messagingQueries ?? throw new ArgumentNullException(nameof(messagingQueries));
+            this._systemAlertQueryService = systemAlertQueryService ?? throw new ArgumentNullException(nameof(systemAlertQueryService));
         }
 
         [BindProperty(SupportsGet = true)]
@@ -32,7 +32,7 @@ namespace Initium.Portal.Web.Pages.App.SystemAlerts
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var systemAlertMaybe = await this._messagingQueries.GetDetailedSystemAlertById(this.Id);
+            var systemAlertMaybe = await this._systemAlertQueryService.GetDetailedSystemAlertById(this.Id);
             if (systemAlertMaybe.HasNoValue)
             {
                 return this.NotFound();

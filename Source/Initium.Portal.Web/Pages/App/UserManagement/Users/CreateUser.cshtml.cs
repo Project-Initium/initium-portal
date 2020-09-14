@@ -8,7 +8,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Queries.Contracts.Static;
+using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.Constants;
 using Initium.Portal.Web.Infrastructure.PageModels;
@@ -22,12 +22,12 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
     public class CreateUser : PrgPageModel<CreateUser.Model>
     {
         private readonly IMediator _mediator;
-        private readonly IRoleQueries _roleQueries;
+        private readonly IRoleQueryService _roleQueryService;
 
-        public CreateUser(IMediator mediator, IRoleQueries roleQueries)
+        public CreateUser(IMediator mediator, IRoleQueryService roleQueryService)
         {
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._roleQueries = roleQueries ?? throw new ArgumentNullException(nameof(roleQueries));
+            this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
         }
 
         public List<SelectListItem> AvailableRoles { get; set; }
@@ -35,7 +35,7 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync()
         {
             this.AvailableRoles = new List<SelectListItem>();
-            var roles = await this._roleQueries.GetSimpleRoles();
+            var roles = await this._roleQueryService.GetSimpleRoles();
             if (roles.HasValue)
             {
                 this.AvailableRoles.AddRange(roles.Value.Select(x => new SelectListItem(x.Name, x.Id.ToString())));

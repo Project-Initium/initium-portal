@@ -11,6 +11,6 @@ services:
       - ACCEPT_EULA=Y
       - SA_PASSWORD=mIOub5n3nG8LEpaa
     volumes:
-     - initium-sql:/var/opt/mssql
+      - initium-sql:/var/opt/mssql
     ports:
       - "1434:1433"

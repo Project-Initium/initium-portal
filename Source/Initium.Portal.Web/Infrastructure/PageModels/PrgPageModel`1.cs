@@ -4,6 +4,7 @@
 using Initium.Portal.Web.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 using Newtonsoft.Json;
 
 namespace Initium.Portal.Web.Infrastructure.PageModels
@@ -69,6 +70,22 @@ namespace Initium.Portal.Web.Infrastructure.PageModels
                     this.TempData[$"{Key}PageModel"] = pageModel;
                 }
             }
+        }
+
+        public override PageResult Page()
+        {
+            this.PrgState = PrgState.Default;
+            if (this.TempData.ContainsKey($"{Key}ModelState"))
+            {
+                this.TempData.Remove($"{Key}ModelState");
+            }
+
+            if (this.TempData.ContainsKey($"{Key}PageModel"))
+            {
+                this.TempData.Remove($"{Key}PageModel");
+            }
+
+            return base.Page();
         }
     }
 }

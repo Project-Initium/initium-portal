@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.User;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.User;
 using Initium.Portal.Web.Pages.App.UserManagement.Users;
 using MaybeMonad;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +22,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         [Fact]
         public async Task OnGetAsync_GivenUserDoesNotExist_ExpectNotFoundResultReturn()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe<DetailedUserModel>.Nothing);
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
@@ -39,7 +39,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         [Fact]
         public async Task OnGetAsync_GivenNoAuthenticateUser_ExpectNotFoundResultReturn()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe<DetailedUserModel>.Nothing);
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
@@ -54,7 +54,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         [Fact]
         public async Task OnGetAsync_GivenAuthenticateUserIsTheSameAsTheOneSelected_ExpectDataToBeSetAndPageResultReturnAndViewingSelfToBeSet()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
                     "last-name", true, TestVariables.Now, null, TestVariables.Now, true, new List<Guid>(), null)));
@@ -77,7 +77,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         [Fact]
         public async Task OnGetAsync_GivenUserExists_ExpectDataToBeSetAndPageResultReturn()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
                     "last-name", true, TestVariables.Now, null, TestVariables.Now, true, new List<Guid>(), null)));

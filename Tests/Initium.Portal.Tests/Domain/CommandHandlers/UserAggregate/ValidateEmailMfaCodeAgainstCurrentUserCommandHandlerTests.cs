@@ -13,6 +13,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NodaTime;
 using OtpNet;
@@ -41,7 +42,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
+            var logger = new Mock<ILogger<ValidateEmailMfaCodeAgainstCurrentUserCommandHandler>>();
+
+            var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
 
             var totp = new Totp(securityStamp.ToByteArray());
 
@@ -73,7 +76,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
+            var logger = new Mock<ILogger<ValidateEmailMfaCodeAgainstCurrentUserCommandHandler>>();
+
+            var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
 
             var totp = new Totp(securityStamp.ToByteArray());
 
@@ -98,7 +103,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
+            var logger = new Mock<ILogger<ValidateEmailMfaCodeAgainstCurrentUserCommandHandler>>();
+
+            var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
 
             var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand("code");
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -122,7 +129,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
+            var logger = new Mock<ILogger<ValidateEmailMfaCodeAgainstCurrentUserCommandHandler>>();
+
+            var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
 
             var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand("code");
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -147,7 +156,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
+            var logger = new Mock<ILogger<ValidateEmailMfaCodeAgainstCurrentUserCommandHandler>>();
+
+            var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
 
             var cmd = new ValidateEmailMfaCodeAgainstCurrentUserCommand("code");
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -180,7 +191,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var clock = new Mock<IClock>();
 
-            var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object);
+            var logger = new Mock<ILogger<ValidateEmailMfaCodeAgainstCurrentUserCommandHandler>>();
+
+            var handler = new ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
 
             var totp = new Totp(securityStamp.ToByteArray());
 

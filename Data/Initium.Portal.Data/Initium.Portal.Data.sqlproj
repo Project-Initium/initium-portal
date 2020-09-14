@@ -70,15 +70,13 @@
     <Folder Include="Security\Schemas" />
     <Folder Include="Identity" />
     <Folder Include="Identity\Tables" />
-    <Folder Include="ReadAggregation" />
-    <Folder Include="ReadAggregation\Views" />
     <Folder Include="AccessProtection" />
     <Folder Include="AccessProtection\Tables" />
-    <Folder Include="Portal" />
-    <Folder Include="Portal\Stored Procedures" />
     <Folder Include="Messaging" />
     <Folder Include="Messaging\Tables" />
     <Folder Include="Messaging\Views" />
+    <Folder Include="Portal" />
+    <Folder Include="Portal\Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Security\Schemas\Identity.sql" />
@@ -86,38 +84,29 @@
     <Build Include="Identity\Tables\AuthenticationHistory.sql" />
     <Build Include="Identity\Tables\SecurityTokenMapping.sql" />
     <Build Include="Identity\Tables\Profile.sql" />
-    <Build Include="Security\Schemas\ReadAggregation.sql" />
-    <Build Include="ReadAggregation\Views\vwUser.sql" />
     <Build Include="Security\Schemas\AccessProtection.sql" />
     <Build Include="AccessProtection\Tables\Resource.sql" />
     <Build Include="AccessProtection\Tables\Role.sql" />
     <Build Include="AccessProtection\Tables\RoleResource.sql" />
-    <Build Include="ReadAggregation\Views\vwRole.sql" />
     <Build Include="Identity\Tables\UserRole.sql" />
     <Build Include="Identity\Tables\AuthenticatorApp.sql" />
     <Build Include="Identity\Tables\AuthenticatorDevice.sql" />
     <Build Include="Security\Schemas\Portal.sql" />
-    <Build Include="Portal\Stored Procedures\uspCheckForPresenceOfRoleByName.sql" />
-    <Build Include="Portal\Stored Procedures\uspCheckForRoleUsageById.sql" />
-    <Build Include="Portal\Stored Procedures\uspGetDetailsOfRoleById.sql" />
-    <Build Include="Portal\Stored Procedures\uspGetNestedSimpleResources.sql" />
-    <Build Include="Portal\Stored Procedures\uspGetSimpleRoles.sql" />
-    <Build Include="Portal\Stored Procedures\uspCheckForPresenceOfAnyUser.sql" />
-    <Build Include="Portal\Stored Procedures\uspGetProfileForCurrentUser.sql" />
-    <Build Include="Portal\Stored Procedures\uspCheckForPresenceOfUserByEmailAddress.sql" />
-    <Build Include="Portal\Stored Procedures\uspGetDetailsOfUserById.sql" />
-    <Build Include="Portal\Stored Procedures\uspGetSystemProfileByUserId.sql" />
-    <Build Include="Portal\Stored Procedures\uspCheckForPresenceOfAuthAppForCurrentUser.sql" />
-    <Build Include="Portal\Stored Procedures\uspGetDeviceInfoForCurrentUser.sql" />
-    <Build Include="ReadAggregation\Views\vwUserRole.sql" />
     <Build Include="Identity\Tables\PasswordHistory.sql" />
     <Build Include="Security\Schemas\Messaging.sql" />
     <Build Include="Messaging\Tables\Notification.sql" />
     <Build Include="Messaging\Tables\UserNotification.sql" />
     <Build Include="Messaging\Views\vwUserNotification.sql" />
-    <Build Include="ReadAggregation\Views\vwUserNotification.sql" />
     <Build Include="Messaging\Tables\SystemAlert.sql" />
-    <Build Include="ReadAggregation\Views\vwSystemAlert.sql" />
+    <Build Include="Portal\Views\vwRole.sql" />
+    <Build Include="Portal\Views\vwSystemAlert.sql" />
+    <Build Include="Portal\Views\vwUser.sql" />
+    <Build Include="Portal\Views\vwUserNotification.sql" />
+    <Build Include="Portal\Views\vwUserRole.sql" />
+    <Build Include="Portal\Views\vwAuthenticatorApp.sql" />
+    <Build Include="Portal\Views\vwAuthenticatorDevice.sql" />
+    <Build Include="Portal\Views\vwResource.sql" />
+    <Build Include="Portal\Views\vwRoleResource.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Initium.Portal.Data.refactorlog" />

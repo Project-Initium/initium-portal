@@ -1,5 +1,7 @@
-﻿@using Initium.Portal.Web.Infrastructure.Constants
+﻿@model Initium.Portal.Web.Components.TopNav.TopNavViewModel
+@using Initium.Portal.Web.Infrastructure.Constants
 @addTagHelper *, GravatarHelper.AspNetCore
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 <header class="topbar">
     <nav class="navbar top-navbar navbar-expand-md navbar-light">
         <div class="navbar-header">
@@ -12,11 +14,38 @@
             <ul class="navbar-nav mr-auto mt-md-0">
                 <li class="nav-item"> <a class="nav-link nav-toggler d-none d-md-block text-muted waves-effect waves-dark"><i class="fa fa-bars"></i></a> </li>
             </ul>
-            <ul class="navbar-nav my-lg-0">
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown" id="nav-notifications" data-af-token="@Xsrf.GetAndStoreTokens(Context).RequestToken" data-odata-root="@ODataLocations.Root" data-read-item-uri="@Url.RouteUrl("ViewedNotificationEndpoint")">
+                    <a  class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown"
+                       aria-haspopup="true" aria-expanded="false"> <i class="fa fa-comment"></i>
+                        @if (this.Model.HasUnreadNotifications)
+                        {
+                            <div class="notify"> <span class="heartbit"></span> <span class="point"></span> </div>
+                        }
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right mailbox scale-up">
+                        <ul class="list-style-none">
+                            <li>
+                                <div class="border-bottom rounded-top py-3 px-4">
+                                    <h5 class="mb-0 font-weight-medium">Notifications</h5>
+                                </div>
+                            </li>
+                            <li>
+                                <div class="message-center notifications position-relative" @* style="height:250px;" *@>
+                                     
+
+                                </div>
+                            </li>
+                            <li>
+                                <a class="nav-link border-top text-center text-dark pt-3" href="@Url.Page(PageLocations.UserNotifications)"> <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i> </a>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle text-muted" href=""
                        data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                        <img gravatar-email="@Model.EmailAddress" gravatar-size="30" alt="user" class="profile-pic" />
+                        <img gravatar-email="@Model.EmailAddress" gravatar-size="30" alt="user" class="profile-pic"/>
                     </a>
                     <div class="dropdown-menu dropdown-menu-right scale-up">
                         <ul class="dropdown-user">

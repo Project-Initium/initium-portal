@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using Initium.Portal.Core.Constants;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Xunit;
 
@@ -15,14 +16,14 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.UserAggregate
         {
             var securityTokenMapping = new SecurityTokenMapping(
                 TestVariables.SecurityTokenMappingId,
-                SecurityTokenMapping.SecurityTokenPurpose.PasswordReset,
+                SecurityTokenPurpose.PasswordReset,
                 TestVariables.Now,
                 TestVariables.Now.AddHours(1));
 
             Assert.Equal(TestVariables.SecurityTokenMappingId, securityTokenMapping.Id);
             Assert.Equal(TestVariables.Now, securityTokenMapping.WhenCreated);
             Assert.Equal(TestVariables.Now.AddHours(1), securityTokenMapping.WhenExpires);
-            Assert.Equal(SecurityTokenMapping.SecurityTokenPurpose.PasswordReset, securityTokenMapping.Purpose);
+            Assert.Equal(SecurityTokenPurpose.PasswordReset, securityTokenMapping.Purpose);
             Assert.Null(securityTokenMapping.WhenUsed);
             Assert.Equal(Convert.ToBase64String(TestVariables.SecurityTokenMappingId.ToByteArray()), securityTokenMapping.Token);
 
@@ -51,7 +52,7 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.UserAggregate
         {
             var securityTokenMapping = new SecurityTokenMapping(
                 TestVariables.SecurityTokenMappingId,
-                SecurityTokenMapping.SecurityTokenPurpose.PasswordReset,
+                SecurityTokenPurpose.PasswordReset,
                 TestVariables.Now,
                 TestVariables.Now.AddHours(1));
 

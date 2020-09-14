@@ -3,8 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.Role;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.Role;
 using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +14,11 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Roles
     [ResourceBasedAuthorize("role-view")]
     public class ViewRole : NotificationPageModel
     {
-        private readonly IRoleQueries _roleQueries;
+        private readonly IRoleQueryService _roleQueryService;
 
-        public ViewRole(IRoleQueries roleQueries)
+        public ViewRole(IRoleQueryService roleQueryService)
         {
-            this._roleQueries = roleQueries;
+            this._roleQueryService = roleQueryService;
         }
 
         [BindProperty(SupportsGet = true)]
@@ -30,7 +30,7 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Roles
 
         public async Task<IActionResult> OnGetAsync()
         {
-            var roleMaybe = await this._roleQueries.GetDetailsOfRoleById(this.Id);
+            var roleMaybe = await this._roleQueryService.GetDetailsOfRoleById(this.Id);
             if (roleMaybe.HasNoValue)
             {
                 return this.NotFound();

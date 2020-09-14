@@ -9,6 +9,7 @@ using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
 using Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate;
 using Initium.Portal.Domain.Commands.SystemAlertAggregate;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -26,8 +27,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
             systemAlertRepository.Setup(x => x.Add(It.IsAny<ISystemAlert>()))
                 .Returns((ISystemAlert systemAlert) => systemAlert);
 
+            var logger = new Mock<ILogger<CreateNewSystemAlertCommandHandler>>();
+
             var commandHandler =
-                new CreateNewSystemAlertCommandHandler(systemAlertRepository.Object);
+                new CreateNewSystemAlertCommandHandler(systemAlertRepository.Object, logger.Object);
 
             var command = new CreateNewSystemAlertCommand(
                 "name",
@@ -52,8 +55,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
             systemAlertRepository.Setup(x => x.Add(It.IsAny<ISystemAlert>()))
                 .Returns((ISystemAlert systemAlert) => systemAlert);
 
+            var logger = new Mock<ILogger<CreateNewSystemAlertCommandHandler>>();
+
             var commandHandler =
-                new CreateNewSystemAlertCommandHandler(systemAlertRepository.Object);
+                new CreateNewSystemAlertCommandHandler(systemAlertRepository.Object, logger.Object);
 
             var command = new CreateNewSystemAlertCommand(
                 "name",
@@ -82,8 +87,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
                     return n;
                 });
 
+            var logger = new Mock<ILogger<CreateNewSystemAlertCommandHandler>>();
+
             var commandHandler =
-                new CreateNewSystemAlertCommandHandler(systemAlertRepository.Object);
+                new CreateNewSystemAlertCommandHandler(systemAlertRepository.Object, logger.Object);
 
             var command = new CreateNewSystemAlertCommand(
                 "name",

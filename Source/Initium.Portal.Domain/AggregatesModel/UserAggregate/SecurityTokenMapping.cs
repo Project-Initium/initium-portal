@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Domain;
 
 namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
@@ -18,12 +19,6 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
 
         private SecurityTokenMapping()
         {
-        }
-
-        public enum SecurityTokenPurpose
-        {
-            PasswordReset,
-            AccountConfirmation,
         }
 
         public string Token => Convert.ToBase64String(this.Id.ToByteArray());

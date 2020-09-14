@@ -6,13 +6,10 @@
 }
 <section id="wrapper" class="login-register login-sidebar">
     <div class="login-box card">
-        <div class="card-body">
-            
-                <a href="#" class="text-center d-block"><img src="~/logo.png" alt="Home" /></a>
-                <h3 class="p-2 rounded-title mt-4 mb-0">Signed Out</h3>
-                <small>You have now been signed out of the system.  Please click <a href="@Url.Page(PageLocations.AuthSignIn)">here to sign back in</a>.</small>
-                
-            
+        <div class="card-body d-flex align-items-center justify-content-center flex-column">
+            <a href="#" class="text-center d-block"><img src="~/logo.png" alt="Home" /></a>
+            <h3 class="p-2 rounded-title mt-4 mb-0">Signed Out</h3>
+            <small>You have now been signed out of the system.  Please click <a href="@Url.Page(PageLocations.AuthSignIn)">here to sign back in</a>.</small>
         </div>
     </div>
 </section>

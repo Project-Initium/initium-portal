@@ -1,21 +1,23 @@
-import { Validator } from './services/validator';
+import { ValidationProvider } from './providers';
 import Swal  from 'sweetalert2';
 import 'bootstrap';
 import 'metismenu';
+import {TopNav} from './sections/top-nav';
+import PerfectScrollbar from 'perfect-scrollbar';
 
 class App {
     private header: HTMLElement;
     private pageWrapper: HTMLElement;
     init() {
         this.header = document.querySelector('header.topbar');
-        this.pageWrapper = document.querySelector(".page-wrapper");
+        this.pageWrapper = document.querySelector('.page-wrapper');
 
         this.setupNavbar();
         this.setupFormValidation();
         this.publishPageNotifications();
-        
+
         const url = window.location;
-        var element = $('ul#sidebarnav a').filter(function () {
+        let element = $('ul#sidebarnav a').filter(function () {
             return (this as HTMLAnchorElement).href == url.href;
         }).addClass('active').parent().addClass('active');
         while (true) {
@@ -26,7 +28,7 @@ class App {
                 break;
             }
         }
-        
+
         const systemAlertToggle = document.querySelector<HTMLButtonElement>('#global-system-alert-toggle');
         if(systemAlertToggle) {
             systemAlertToggle.addEventListener('click', (event) => {
@@ -34,25 +36,26 @@ class App {
                 document.getElementById('global-system-alerts').classList.toggle('d-none');
             })
         }
+        const t = new TopNav('#nav-notifications');
     }
 
     private setupFormValidation() {
         const forms = document.querySelectorAll('form:not([data-no-auto-validation])');
         Array.prototype.forEach.call(forms, (form: any) => {
-            const v = new Validator(form);
+            const v = new ValidationProvider(form);
         });
     }
-    
+
     private publishPageNotifications() {
-        var pageNotifications = document.querySelectorAll('span[data-page-notification]');
+        const pageNotifications = document.querySelectorAll('span[data-page-notification]');
         if (pageNotifications.length) {
             pageNotifications.forEach((value) => {
-                var pageNotification = value as HTMLSpanElement;
+                const pageNotification = value as HTMLSpanElement;
                 Swal.fire({
-                    icon: <any>pageNotification.dataset.type,
+                    icon: pageNotification.dataset.type as any,
                     text: pageNotification.dataset.message,
                     toast: true,
-                    position: "top-end",
+                    position: 'top-end',
                     timer: 4500,
                     showConfirmButton: false
                 });
@@ -61,11 +64,17 @@ class App {
     }
     private setupNavbar() {
         if (this.header) {
-            $("#sidebarnav").metisMenu();
+            $('#sidebarnav').metisMenu();
+            const ps = new PerfectScrollbar('.scroll-sidebar', {
+                wheelSpeed: 2,
+                wheelPropagation: true,
+                minScrollbarLength: 20
+            });
+            
             const contextThis = this;
             window.addEventListener('resize', () => contextThis.windowResizeListener());
             document.querySelector('.nav-toggler').addEventListener('click', () => {
-                document.body.classList.toggle('mini-sidebar');                
+                document.body.classList.toggle('mini-sidebar');
             });
             $('.dropdown-toggle').dropdown();
             this.windowResizeListener();
@@ -74,24 +83,20 @@ class App {
 
     private windowResizeListener(): void {
         if (this.header) {
-            var width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
-            var topOffset = 70;
+            const width = (window.innerWidth > 0) ? window.innerWidth : screen.width;
+            const topOffset = 70;
 
             if (width < 1170) {
-                document.body.classList.add('mini-sidebar')
-                //document.querySelector('.navbar-brand span').classList.add('d-none');
-                // document.querySelector(".scroll-sidebar, .slimScrollDiv").classList.add('overflow-auto')
-                // document.querySelector(".scroll-sidebar, .slimScrollDiv").parentElement.classList.add('overflow-hidden');
+                document.body.classList.add('mini-sidebar');
             } else {
                 document.body.classList.remove('mini-sidebar');
                 document.querySelector('.navbar-brand span').classList.remove('d-none');
             }
         }
-        
     }
 }
 
-let app = new App();
+const app = new App();
 $(() => {
     app.init();
 });

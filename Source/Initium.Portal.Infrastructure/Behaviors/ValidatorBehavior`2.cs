@@ -31,7 +31,7 @@ namespace Initium.Portal.Infrastructure.Behaviors
 
             if (failures.Any())
             {
-                throw new StanceException(
+                throw new CustomException(
                     $"Command Validation Errors for type {typeof(TRequest).Name}",
                     new ValidationException("Validation exception", failures));
             }

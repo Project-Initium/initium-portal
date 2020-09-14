@@ -6,18 +6,21 @@ namespace Initium.Portal.Web.Components.TopNav
     public class TopNavViewModel
     {
         public TopNavViewModel()
-            : this(string.Empty, string.Empty)
+            : this(string.Empty, string.Empty, default)
         {
         }
 
-        public TopNavViewModel(string emailAddress, string name)
+        public TopNavViewModel(string emailAddress, string name, bool hasUnreadNotifications)
         {
             this.EmailAddress = emailAddress;
             this.Name = name;
+            this.HasUnreadNotifications = hasUnreadNotifications;
         }
 
         public string EmailAddress { get; }
 
         public string Name { get; }
+
+        public bool HasUnreadNotifications { get; }
     }
 }

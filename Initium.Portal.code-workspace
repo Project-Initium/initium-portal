@@ -1,0 +1,12 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"lcov.path": "./lcov.info",
+		"markiscodecoverage.searchCriteria": "./lcov.info"
+	},
+	"lcov.path": "./lcov.info"
+}

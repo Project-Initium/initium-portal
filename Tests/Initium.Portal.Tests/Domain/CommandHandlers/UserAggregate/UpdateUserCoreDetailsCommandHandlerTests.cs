@@ -10,9 +10,10 @@ using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -25,7 +26,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
         {
             var user = new Mock<IUser>();
             user.Setup(x => x.EmailAddress).Returns("email-address");
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x =>
                     x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(true));
@@ -36,7 +37,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(user.Object));
 
-            var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object);
+            var logger = new Mock<ILogger<UpdateUserCoreDetailsCommandHandler>>();
+
+            var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object, logger.Object);
             var cmd = new UpdateUserCoreDetailsCommand(TestVariables.UserId, "new-email-address", "first-name",
                 "last-name", false, false, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -51,7 +54,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             user.Setup(x => x.EmailAddress).Returns("email-address");
 
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x =>
                     x.CheckForPresenceOfUserByEmailAddress(It.IsAny<string>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
@@ -63,7 +66,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(user.Object));
 
-            var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object);
+            var logger = new Mock<ILogger<UpdateUserCoreDetailsCommandHandler>>();
+
+            var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object, logger.Object);
             var cmd = new UpdateUserCoreDetailsCommand(TestVariables.UserId, "email-address", "first-name",
                 "last-name", false, false, new List<Guid>());
             await handler.Handle(cmd, CancellationToken.None);
@@ -77,7 +82,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             user.Setup(x => x.EmailAddress).Returns("email-address");
 
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -86,7 +91,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(user.Object));
 
-            var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object);
+            var logger = new Mock<ILogger<UpdateUserCoreDetailsCommandHandler>>();
+
+            var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object, logger.Object);
             var cmd = new UpdateUserCoreDetailsCommand(TestVariables.UserId, "email-address", "first-name",
                 "last-name", false, false, new List<Guid>());
             await handler.Handle(cmd, CancellationToken.None);
@@ -98,7 +105,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
         [Fact]
         public async Task Handle_GivenNotUserInSystem_ExpectFailedResult()
         {
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -106,7 +113,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe<IUser>.Nothing);
 
-            var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object);
+            var logger = new Mock<ILogger<UpdateUserCoreDetailsCommandHandler>>();
+
+            var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object, logger.Object);
             var cmd = new UpdateUserCoreDetailsCommand(TestVariables.UserId, "email-address", "first-name",
                 "last-name", false, false, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -120,7 +129,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
         {
             var user = new Mock<IUser>();
             user.Setup(x => x.EmailAddress).Returns("email-address");
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
@@ -128,7 +137,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(user.Object));
 
-            var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object);
+            var logger = new Mock<ILogger<UpdateUserCoreDetailsCommandHandler>>();
+
+            var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object, logger.Object);
             var cmd = new UpdateUserCoreDetailsCommand(TestVariables.UserId, "email-address", "first-name",
                 "last-name", false, false, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -142,7 +153,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
         {
             var user = new Mock<IUser>();
             user.Setup(x => x.EmailAddress).Returns("email-address");
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
@@ -151,7 +162,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(user.Object));
 
-            var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object);
+            var logger = new Mock<ILogger<UpdateUserCoreDetailsCommandHandler>>();
+
+            var handler = new UpdateUserCoreDetailsCommandHandler(userRepository.Object, userQueries.Object, logger.Object);
             var cmd = new UpdateUserCoreDetailsCommand(TestVariables.UserId, "email-address", "first-name",
                 "last-name", false, false, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);

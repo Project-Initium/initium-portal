@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Queries.Contracts.Static;
+using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Web.Infrastructure.Constants;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using MediatR;
@@ -16,18 +16,18 @@ namespace Initium.Portal.Web.Pages.FirstRun
 {
     public class InitialUserSetup : PrgPageModel<InitialUserSetup.Model>
     {
-        private readonly IUserQueries _userQueries;
+        private readonly IUserQueryService _userQueryService;
         private readonly IMediator _mediator;
 
-        public InitialUserSetup(IUserQueries userQueries, IMediator mediator)
+        public InitialUserSetup(IUserQueryService userQueryService, IMediator mediator)
         {
-            this._userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
+            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
         public async Task<IActionResult> OnGet()
         {
-            var check = await this._userQueries.CheckForPresenceOfAnyUser();
+            var check = await this._userQueryService.CheckForPresenceOfAnyUser();
             if (check.IsPresent)
             {
                 return this.NotFound();

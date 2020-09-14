@@ -11,8 +11,9 @@ using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NodaTime;
@@ -26,7 +27,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
         public async Task Handle_GivenSavingFails_ExpectFailedResult()
         {
             var clock = new Mock<IClock>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
@@ -37,7 +38,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
 
-            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object);
+            var logger = new Mock<ILogger<CreateUserCommandHandler>>();
+
+            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object, logger.Object);
             var cmd = new CreateUserCommand("email-address", "first-name", "last-name", false, true, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -49,7 +52,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
         public async Task Handle_GivenSavingSucceeds_ExpectSuccessfulResult()
         {
             var clock = new Mock<IClock>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -61,7 +64,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object);
+            var logger = new Mock<ILogger<CreateUserCommandHandler>>();
+
+            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object, logger.Object);
             var cmd = new CreateUserCommand("email-address", "first-name", "last-name", false, true, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -72,7 +77,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
         public async Task Handle_GivenUserInSystem_ExpectFailedResult()
         {
             var clock = new Mock<IClock>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -83,7 +88,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
 
-            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object);
+            var logger = new Mock<ILogger<CreateUserCommandHandler>>();
+
+            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object, logger.Object);
             var cmd = new CreateUserCommand("email-address", "first-name", "last-name", false, true, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -96,7 +103,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
         {
             var userId = Guid.Empty;
             var clock = new Mock<IClock>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -109,7 +116,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object);
+            var logger = new Mock<ILogger<CreateUserCommandHandler>>();
+
+            var handler = new CreateUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, securitySettings.Object, logger.Object);
             var cmd = new CreateUserCommand("email-address", "first-name", "last-name", false, true, new List<Guid>());
             var result = await handler.Handle(cmd, CancellationToken.None);
 

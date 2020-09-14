@@ -10,6 +10,7 @@ using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
 using Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate;
 using Initium.Portal.Domain.Commands.SystemAlertAggregate;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -27,8 +28,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
             systemAlertRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe<ISystemAlert>.Nothing);
 
+            var logger = new Mock<ILogger<DeleteSystemAlertCommandHandler>>();
+
             var commandHandler =
-                new DeleteSystemAlertCommandHandler(systemAlertRepository.Object);
+                new DeleteSystemAlertCommandHandler(systemAlertRepository.Object, logger.Object);
 
             var command = new DeleteSystemAlertCommand(TestVariables.SystemAlertId);
 
@@ -47,8 +50,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
             systemAlertRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new Mock<ISystemAlert>().Object));
 
+            var logger = new Mock<ILogger<DeleteSystemAlertCommandHandler>>();
+
             var commandHandler =
-                new DeleteSystemAlertCommandHandler(systemAlertRepository.Object);
+                new DeleteSystemAlertCommandHandler(systemAlertRepository.Object, logger.Object);
 
             var command = new DeleteSystemAlertCommand(TestVariables.SystemAlertId);
 
@@ -66,8 +71,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
             systemAlertRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new Mock<ISystemAlert>().Object));
 
+            var logger = new Mock<ILogger<DeleteSystemAlertCommandHandler>>();
+
             var commandHandler =
-                new DeleteSystemAlertCommandHandler(systemAlertRepository.Object);
+                new DeleteSystemAlertCommandHandler(systemAlertRepository.Object, logger.Object);
 
             var command = new DeleteSystemAlertCommand(TestVariables.SystemAlertId);
 
@@ -87,8 +94,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
             systemAlertRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new Mock<ISystemAlert>().Object));
 
+            var logger = new Mock<ILogger<DeleteSystemAlertCommandHandler>>();
+
             var commandHandler =
-                new DeleteSystemAlertCommandHandler(systemAlertRepository.Object);
+                new DeleteSystemAlertCommandHandler(systemAlertRepository.Object, logger.Object);
 
             var command = new DeleteSystemAlertCommand(TestVariables.SystemAlertId);
 

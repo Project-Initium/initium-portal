@@ -11,6 +11,7 @@ using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
 using Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate;
 using Initium.Portal.Domain.Commands.SystemAlertAggregate;
 using MaybeMonad;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
@@ -28,8 +29,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
             systemAlertRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new Mock<ISystemAlert>().Object));
 
+            var logger = new Mock<ILogger<UpdateSystemAlertCommandHandler>>();
+
             var commandHandler =
-                new UpdateSystemAlertCommandHandler(systemAlertRepository.Object);
+                new UpdateSystemAlertCommandHandler(systemAlertRepository.Object, logger.Object);
 
             var command = new UpdateSystemAlertCommand(
                 TestVariables.SystemAlertId,
@@ -55,8 +58,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
             systemAlertRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(new Mock<ISystemAlert>().Object));
 
+            var logger = new Mock<ILogger<UpdateSystemAlertCommandHandler>>();
+
             var commandHandler =
-                new UpdateSystemAlertCommandHandler(systemAlertRepository.Object);
+                new UpdateSystemAlertCommandHandler(systemAlertRepository.Object, logger.Object);
 
             var command = new UpdateSystemAlertCommand(
                 TestVariables.SystemAlertId,
@@ -82,8 +87,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
             systemAlertRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe.From(systemAlert.Object));
 
+            var logger = new Mock<ILogger<UpdateSystemAlertCommandHandler>>();
+
             var commandHandler =
-                new UpdateSystemAlertCommandHandler(systemAlertRepository.Object);
+                new UpdateSystemAlertCommandHandler(systemAlertRepository.Object, logger.Object);
 
             var command = new UpdateSystemAlertCommand(
                 TestVariables.SystemAlertId,
@@ -108,8 +115,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
             systemAlertRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Maybe<ISystemAlert>.Nothing);
 
+            var logger = new Mock<ILogger<UpdateSystemAlertCommandHandler>>();
+
             var commandHandler =
-                new UpdateSystemAlertCommandHandler(systemAlertRepository.Object);
+                new UpdateSystemAlertCommandHandler(systemAlertRepository.Object, logger.Object);
 
             var command = new UpdateSystemAlertCommand(
                 TestVariables.SystemAlertId,

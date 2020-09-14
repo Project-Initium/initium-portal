@@ -9,6 +9,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using Initium.Portal.Domain.Events;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using ResultMonad;
 
 namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
@@ -16,10 +17,12 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
     public class EnableAccountCommandHandler : IRequestHandler<EnableAccountCommand, ResultWithError<ErrorData>>
     {
         private readonly IUserRepository _userRepository;
+        private readonly ILogger _logger;
 
-        public EnableAccountCommandHandler(IUserRepository userRepository)
+        public EnableAccountCommandHandler(IUserRepository userRepository, ILogger<EnableAccountCommandHandler> logger)
         {
             this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(EnableAccountCommand request, CancellationToken cancellationToken)
@@ -27,13 +30,14 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                return ResultWithError.Fail(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return ResultWithError.Fail(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
         private async Task<ResultWithError<ErrorData>> Process(EnableAccountCommand request, CancellationToken cancellationToken)
@@ -41,12 +45,14 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var userMaybe = await this._userRepository.Find(request.UserId, cancellationToken);
             if (userMaybe.HasNoValue)
             {
+                this._logger.LogDebug("Entity not found.");
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.UserNotFound));
             }
 
             var user = userMaybe.Value;
             if (!user.IsDisabled)
             {
+                this._logger.LogDebug("User not disabled.");
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.UserNotDisabled));
             }
 

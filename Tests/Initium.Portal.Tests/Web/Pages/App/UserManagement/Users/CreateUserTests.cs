@@ -7,8 +7,8 @@ using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.CommandResults.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.Role;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.Role;
 using Initium.Portal.Web.Infrastructure.Constants;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Initium.Portal.Web.Pages.App.UserManagement.Users;
@@ -27,7 +27,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenThereAreNoRoles_ExpectEmptyList()
         {
             var mediator = new Mock<IMediator>();
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.GetSimpleRoles())
                 .ReturnsAsync(Maybe<List<SimpleRoleModel>>.Nothing);
 
@@ -41,7 +41,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenThereAreRoles_ExpectPopulatedList()
         {
             var mediator = new Mock<IMediator>();
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.GetSimpleRoles())
                 .ReturnsAsync(Maybe.From(new List<SimpleRoleModel>
                 {
@@ -58,7 +58,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnPostAsync_GivenInvalidModelState_ExpectRedirectToPageResult()
         {
             var mediator = new Mock<IMediator>();
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
 
             var page = new CreateUser(mediator.Object, roleQueries.Object);
             page.ModelState.AddModelError("Error", "Error");
@@ -74,7 +74,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.Send(It.IsAny<CreateUserCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.SavingChanges)));
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
 
             var page = new CreateUser(mediator.Object, roleQueries.Object) { PageModel = new CreateUser.Model() };
 
@@ -91,7 +91,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
             mediator.Setup(x => x.Send(It.IsAny<CreateUserCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Result.Ok<CreateUserCommandResult, ErrorData>(new CreateUserCommandResult(TestVariables.UserId)));
 
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
 
             var page = new CreateUser(mediator.Object, roleQueries.Object) { PageModel = new CreateUser.Model() };
 

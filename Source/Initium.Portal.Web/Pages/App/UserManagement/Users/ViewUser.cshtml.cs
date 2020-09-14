@@ -4,8 +4,8 @@
 using System;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Contracts;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.User;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.User;
 using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Microsoft.AspNetCore.Mvc;
@@ -15,12 +15,12 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
     [ResourceBasedAuthorize("user-view")]
     public class ViewUser : NotificationPageModel
     {
-        private readonly IUserQueries _userQueries;
+        private readonly IUserQueryService _userQueryService;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
-        public ViewUser(IUserQueries userQueries, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
+        public ViewUser(IUserQueryService userQueryService, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
-            this._userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
+            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
         }
 
@@ -44,7 +44,7 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
                 this.ViewingSelf = true;
             }
 
-            var userMaybe = await this._userQueries.GetDetailsOfUserById(this.Id);
+            var userMaybe = await this._userQueryService.GetDetailsOfUserById(this.Id);
             if (userMaybe.HasNoValue)
             {
                 return this.NotFound();

@@ -5,6 +5,7 @@ namespace Initium.Portal.Web.Infrastructure.Constants
 {
     public static class ODataLocations
     {
+        public const string Root = "/odata/";
         public const string UserFilteredListing = "/odata/user/user.filtered";
         public const string UserFilteredExport = "/odata/user/user.filteredexport";
         public const string RoleFilteredExport = "/odata/role/role.filteredexport";

@@ -8,8 +8,9 @@ using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Queries.Contracts.Static;
+using Initium.Portal.Queries.Contracts;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using NodaTime;
 using ResultMonad;
 
@@ -19,14 +20,16 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         CreateInitialUserCommandHandler : IRequestHandler<CreateInitialUserCommand, ResultWithError<ErrorData>>
     {
         private readonly IClock _clock;
-        private readonly IUserQueries _userQueries;
+        private readonly IUserQueryService _userQueryService;
         private readonly IUserRepository _userRepository;
+        private readonly ILogger _logger;
 
-        public CreateInitialUserCommandHandler(IUserRepository userRepository, IClock clock, IUserQueries userQueries)
+        public CreateInitialUserCommandHandler(IUserRepository userRepository, IClock clock, IUserQueryService userQueryService, ILogger<CreateInitialUserCommandHandler> logger)
         {
             this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
             this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._userQueries = userQueries ?? throw new ArgumentNullException(nameof(userQueries));
+            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(
@@ -35,22 +38,24 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var result = await this.Process(request);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                return ResultWithError.Fail(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return ResultWithError.Fail(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
         private async Task<ResultWithError<ErrorData>> Process(
             CreateInitialUserCommand request)
         {
-            var statusCheck = await this._userQueries.CheckForPresenceOfAnyUser();
+            var statusCheck = await this._userQueryService.CheckForPresenceOfAnyUser();
 
             if (statusCheck.IsPresent)
             {
+                this._logger.LogDebug("Failed presence check.");
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.SystemIsAlreadySetup));
             }
 

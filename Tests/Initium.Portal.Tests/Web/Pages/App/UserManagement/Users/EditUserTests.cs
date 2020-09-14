@@ -10,9 +10,9 @@ using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.Role;
-using Initium.Portal.Queries.Static.Models.User;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.Role;
+using Initium.Portal.Queries.Models.User;
 using Initium.Portal.Web.Infrastructure.Constants;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Initium.Portal.Web.Pages.App.UserManagement.Users;
@@ -20,6 +20,7 @@ using MaybeMonad;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Moq;
 using ResultMonad;
 using Xunit;
@@ -32,8 +33,8 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenNoUserIsAuthenticated_ExpectNotFoundResult()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
-            var roleQueries = new Mock<IRoleQueries>();
+            var userQueries = new Mock<IUserQueryService>();
+            var roleQueries = new Mock<IRoleQueryService>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe<ISystemUser>.Nothing);
@@ -47,8 +48,8 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenAttemptToEditSelf_ExpectNotFoundResult()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
-            var roleQueries = new Mock<IRoleQueries>();
+            var userQueries = new Mock<IUserQueryService>();
+            var roleQueries = new Mock<IRoleQueryService>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             var authenticatedUser = new Mock<ISystemUser>();
             authenticatedUser.Setup(x => x.UserId).Returns(TestVariables.AuthenticatedUserId);
@@ -67,11 +68,11 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenPageModelIsNotNull_ExpectPageModelNotToBeOverridenAndPageResultReturn()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
                     "last-name", true, TestVariables.Now, null, null, true, new List<Guid>(), null)));
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
@@ -82,6 +83,9 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object, currentAuthenticatedUserProvider.Object)
                 { PageModel = new EditUser.Model() };
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
+
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Null(page.PageModel.EmailAddress);
@@ -91,11 +95,11 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenPageModelIsNull_ExpectPageModelToBeSetFromDatabaseAndPageResultReturn()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
                     "last-name", true, TestVariables.Now, null, null, true, new List<Guid>(), null)));
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>
                 {
@@ -108,6 +112,9 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
                 .Returns(Maybe.From(authenticatedUser.Object));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object, currentAuthenticatedUserProvider.Object);
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
+
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal("email-address", page.PageModel.EmailAddress);
@@ -120,11 +127,11 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenUserIsLockableAndIsLocked_ExpectLockedStatusToHaveCorrectMessage()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
                     "last-name", true, TestVariables.Now, null, TestVariables.Now, true, new List<Guid>(), null)));
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
@@ -134,6 +141,9 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
                 .Returns(Maybe.From(authenticatedUser.Object));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object, currentAuthenticatedUserProvider.Object);
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
+
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal(TestVariables.Now.ToString(CultureInfo.CurrentCulture), page.LockedStatus);
@@ -143,11 +153,11 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenUserIsLockableButIsNotLocked_ExpectLockedStatusToHaveCorrectMessage()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
                     "last-name", true, TestVariables.Now, null, null, true, new List<Guid>(), null)));
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
@@ -157,6 +167,9 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
                 .Returns(Maybe.From(authenticatedUser.Object));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object, currentAuthenticatedUserProvider.Object);
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
+
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal("Not Locked", page.LockedStatus);
@@ -166,10 +179,10 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenUserIsNotInSystem_ExpectNotFoundResultReturn()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe<DetailedUserModel>.Nothing);
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             var authenticatedUser = new Mock<ISystemUser>();
             authenticatedUser.Setup(x => x.UserId).Returns(TestVariables.AuthenticatedUserId);
@@ -185,12 +198,12 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenUserIsNotLockable_ExpectLockedStatusToHaveCorrectMessage()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
 
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
                     "last-name", false, TestVariables.Now, null, null, true, new List<Guid>(), null)));
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
@@ -200,6 +213,9 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
                 .Returns(Maybe.From(authenticatedUser.Object));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object, currentAuthenticatedUserProvider.Object);
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
+
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal("User is not lockable", page.LockedStatus);
@@ -210,12 +226,12 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
             OnGetAsync_GivenWhenLastAuthenticatedIsNotNull_ExpectAuthenticationStatusToHaveCorrectMessage()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
                     "last-name", false, TestVariables.Now, TestVariables.Now.AddMinutes(30), null, true,
                     new List<Guid>(), null)));
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
@@ -225,6 +241,9 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
                 .Returns(Maybe.From(authenticatedUser.Object));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object, currentAuthenticatedUserProvider.Object);
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
+
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal(TestVariables.Now.AddMinutes(30).ToString(CultureInfo.CurrentCulture), page.AuthenticationStatus);
@@ -234,11 +253,11 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnGetAsync_GivenWhenLastAuthenticatedIsNull_ExpectAuthenticationStatusToHaveCorrectMessage()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetDetailsOfUserById(It.IsAny<Guid>()))
                 .ReturnsAsync(Maybe.From(new DetailedUserModel(TestVariables.UserId, "email-address", "first-name",
                     "last-name", true, TestVariables.Now, null, null, true, new List<Guid>(), null)));
-            var roleQueries = new Mock<IRoleQueries>();
+            var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(s => s.GetSimpleRoles())
                 .ReturnsAsync(() => Maybe.From(new List<SimpleRoleModel>()));
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
@@ -248,6 +267,9 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
                 .Returns(Maybe.From(authenticatedUser.Object));
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object, currentAuthenticatedUserProvider.Object);
+            var tempDataDictionary = new Mock<ITempDataDictionary>();
+            page.TempData = tempDataDictionary.Object;
+
             var result = await page.OnGetAsync();
             Assert.IsType<PageResult>(result);
             Assert.Equal("Never Authenticated", page.AuthenticationStatus);
@@ -257,8 +279,8 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
         public async Task OnPostAsync_GivenInvalidModelState_ExpectRedirectToPageResult()
         {
             var mediator = new Mock<IMediator>();
-            var userQueries = new Mock<IUserQueries>();
-            var roleQueries = new Mock<IRoleQueries>();
+            var userQueries = new Mock<IUserQueryService>();
+            var roleQueries = new Mock<IRoleQueryService>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object, currentAuthenticatedUserProvider.Object);
@@ -275,8 +297,8 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.Send(It.IsAny<UpdateUserCoreDetailsCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Ok<ErrorData>());
-            var userQueries = new Mock<IUserQueries>();
-            var roleQueries = new Mock<IRoleQueries>();
+            var userQueries = new Mock<IUserQueryService>();
+            var roleQueries = new Mock<IRoleQueryService>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object, currentAuthenticatedUserProvider.Object)
@@ -294,8 +316,8 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
             var mediator = new Mock<IMediator>();
             mediator.Setup(x => x.Send(It.IsAny<UpdateUserCoreDetailsCommand>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(ResultWithError.Fail(new ErrorData(ErrorCodes.SavingChanges)));
-            var userQueries = new Mock<IUserQueries>();
-            var roleQueries = new Mock<IRoleQueries>();
+            var userQueries = new Mock<IUserQueryService>();
+            var roleQueries = new Mock<IRoleQueryService>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
 
             var page = new EditUser(userQueries.Object, mediator.Object, roleQueries.Object, currentAuthenticatedUserProvider.Object)

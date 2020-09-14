@@ -6,8 +6,8 @@ using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Constants;
-using Initium.Portal.Queries.Contracts.Static;
-using Initium.Portal.Queries.Static.Models.User;
+using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Models.User;
 using MaybeMonad;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -24,7 +24,7 @@ namespace Initium.Portal.Tests.Web.Infrastructure.Services
         public async Task SignInUserAsync_GivenUserDoesNotExist_ExpectException()
         {
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetSystemProfileByUserId(It.IsAny<Guid>()))
                 .ReturnsAsync(() => Maybe<SystemProfileModel>.Nothing);
 
@@ -52,7 +52,7 @@ namespace Initium.Portal.Tests.Web.Infrastructure.Services
 
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
             userQueries.Setup(x => x.GetSystemProfileByUserId(It.IsAny<Guid>()))
                 .ReturnsAsync(
                     () => Maybe.From(new SystemProfileModel(
@@ -93,7 +93,7 @@ namespace Initium.Portal.Tests.Web.Infrastructure.Services
 
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
 
             var authenticationService =
                 new AuthenticationService(
@@ -125,7 +125,7 @@ namespace Initium.Portal.Tests.Web.Infrastructure.Services
             };
             var httpContextAccessor = new Mock<IHttpContextAccessor>();
             httpContextAccessor.Setup(x => x.HttpContext).Returns(httpContext);
-            var userQueries = new Mock<IUserQueries>();
+            var userQueries = new Mock<IUserQueryService>();
 
             var authenticationService =
                 new AuthenticationService(

@@ -7,8 +7,9 @@ using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Queries.Contracts.Static;
+using Initium.Portal.Queries.Contracts;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using ResultMonad;
 
 namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
@@ -16,12 +17,14 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
     public class UpdateUserCoreDetailsCommandHandler : IRequestHandler<UpdateUserCoreDetailsCommand, ResultWithError<ErrorData>>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IUserQueries _userQueries;
+        private readonly IUserQueryService _userQueryService;
+        private readonly ILogger _logger;
 
-        public UpdateUserCoreDetailsCommandHandler(IUserRepository userRepository, IUserQueries userQueries)
+        public UpdateUserCoreDetailsCommandHandler(IUserRepository userRepository, IUserQueryService userQueryService, ILogger<UpdateUserCoreDetailsCommandHandler> logger)
         {
-            this._userRepository = userRepository;
-            this._userQueries = userQueries;
+            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
+            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(
@@ -30,13 +33,14 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                return ResultWithError.Fail(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return ResultWithError.Fail(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
         private async Task<ResultWithError<ErrorData>> Process(
@@ -46,6 +50,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
 
             if (userMaybe.HasNoValue)
             {
+                this._logger.LogDebug("Entity not found.");
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.UserNotFound));
             }
 
@@ -53,9 +58,10 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             if (!string.Equals(request.EmailAddress, user.EmailAddress, StringComparison.InvariantCultureIgnoreCase))
             {
                 var statusCheck =
-                    await this._userQueries.CheckForPresenceOfUserByEmailAddress(request.EmailAddress);
+                    await this._userQueryService.CheckForPresenceOfUserByEmailAddress(request.EmailAddress);
                 if (statusCheck.IsPresent)
                 {
+                    this._logger.LogDebug("Failed presence check.");
                     return ResultWithError.Fail(new ErrorData(ErrorCodes.UserAlreadyExists));
                 }
             }

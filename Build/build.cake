@@ -3,12 +3,15 @@
 #tool "nuget:?package=GitVersion.CommandLine&version=5.1.3"
 #addin "nuget:?package=SharpZipLib&version=1.2.0"
 #addin "nuget:?package=Cake.Compression&version=0.2.4"
+#addin "Cake.FileHelpers&version=3.2.1"
 
 var target = Argument<string>("target", "Default");
 var buildPath = Directory("./build-artifacts");
 var publishPath = buildPath + Directory("publish");
 var releasePath = buildPath + Directory("release");
 var coverPath = buildPath + Directory("cover");
+var coverClientPath = coverPath + Directory("client");
+var coverServerPath = coverPath + Directory("server");
 
 
 Task("__Clean")
@@ -74,21 +77,42 @@ Task("__Build")
     });
 Task("__Test")
     .Does(() => {
-        var testResults = MakeAbsolute(coverPath + File("xunit-report.xml")).FullPath;
+        var testResults = MakeAbsolute(coverServerPath + File("xunit-report.xml")).FullPath;
         var testSettings = new DotNetCoreTestSettings {
             Configuration = "Release",
             NoBuild = true,
             Logger = $"trx;LogFileName={testResults};verbosity=normal"
-    };
+        };
 
-    var coverletSettings = new CoverletSettings {
-        CollectCoverage = true,
-        CoverletOutputFormat = CoverletOutputFormat.opencover|(CoverletOutputFormat)12,
-        CoverletOutputDirectory = coverPath,
-        CoverletOutputName = "coverage"        
-    };
+        var coverletSettings = new CoverletSettings {
+            CollectCoverage = true,
+            CoverletOutputFormat = CoverletOutputFormat.opencover|CoverletOutputFormat.lcov|(CoverletOutputFormat)12,
+            CoverletOutputDirectory = coverServerPath,
+            CoverletOutputName = "coverage"        
+        };
 
-    DotNetCoreTest("../Initium.Portal.sln", testSettings, coverletSettings);
+        DotNetCoreTest("../Initium.Portal.sln", testSettings, coverletSettings);
+        
+        var npmRunScriptSettings = new NpmRunScriptSettings {
+            ScriptName = "test:coverage",
+            WorkingDirectory = "../Source/Initium.Portal.Web",
+            //LogLevel = NpmLogLevel.Silent
+        };		
+        NpmRunScript(npmRunScriptSettings);  
+        CopyDirectory("../Source/Initium.Portal.Web/coverage", coverClientPath);
+        // System.IO.StreamReader file =  new System.IO.StreamReader(MakeAbsolute(File("./build-artifacts/cover/server/coverage.info")).ToString()); 
+        // string line;
+        // while((line = file.ReadLine()) != null ){  
+        //     if (line.IndexOf("Source\\Initium.Portal.Web\\Program.cs") == -1) {
+        //         continue;
+        //     }
+            
+        //     ReplaceTextInFiles("./build-artifacts/cover/client/lcov.info", "Resources\\Scripts\\", line.Replace("SF:",string.Empty).Replace("Program.cs", string.Empty) + "Resources\\Scripts\\");
+        //     break;
+             
+        // }  
+        // file.Close();  
+        
     });
 Task("__Publish")
     .Does(() => {
