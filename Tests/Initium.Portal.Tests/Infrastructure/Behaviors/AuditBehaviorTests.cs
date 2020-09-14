@@ -47,7 +47,7 @@ namespace Initium.Portal.Tests.Infrastructure.Behaviors
 
             auditLogger.Verify(x => x.Error(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<ValidateAppMfaCodeAgainstCurrentUserCommand>(),
-                It.Is<string>(x => x == TestVariables.UserId.ToString())));
+                It.Is<string>(prop2 => prop2 == TestVariables.UserId.ToString())));
         }
 
         [Fact]
@@ -75,7 +75,7 @@ namespace Initium.Portal.Tests.Infrastructure.Behaviors
 
             auditLogger.Verify(x => x.Information(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<ValidateAppMfaCodeAgainstCurrentUserCommand>(),
-                It.Is<string>(x => x == TestVariables.UserId.ToString())));
+                It.Is<string>(prop2 => prop2 == TestVariables.UserId.ToString())));
         }
 
         [Fact]
@@ -102,7 +102,7 @@ namespace Initium.Portal.Tests.Infrastructure.Behaviors
 
             auditLogger.Verify(x => x.Error(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<UnlockAccountCommand>(),
-                It.Is<string>(x => x == TestVariables.UserId.ToString())));
+                It.Is<string>(prop2 => prop2 == TestVariables.UserId.ToString())));
         }
 
         [Fact]
@@ -128,11 +128,11 @@ namespace Initium.Portal.Tests.Infrastructure.Behaviors
 
             auditLogger.Verify(x => x.Information(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<UnlockAccountCommand>(),
-                It.Is<string>(x => x == TestVariables.UserId.ToString())));
+                It.Is<string>(prop2 => prop2 == TestVariables.UserId.ToString())));
         }
 
         [Fact]
-        public async Task Handle_GivenResponseIsUnknownType_ExpectExpection()
+        public async Task Handle_GivenResponseIsUnknownType_ExpectException()
         {
             var auditLogger = new Mock<ILogger>();
             var authenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
@@ -144,7 +144,7 @@ namespace Initium.Portal.Tests.Infrastructure.Behaviors
             requestHandlerDelegate.Setup(x => x())
                 .ReturnsAsync(string.Empty);
 
-            await Assert.ThrowsAsync<StanceException>(() => auditBehavior.Handle("some-request", CancellationToken.None, requestHandlerDelegate.Object));
+            await Assert.ThrowsAsync<CustomException>(() => auditBehavior.Handle("some-request", CancellationToken.None, requestHandlerDelegate.Object));
         }
     }
 }

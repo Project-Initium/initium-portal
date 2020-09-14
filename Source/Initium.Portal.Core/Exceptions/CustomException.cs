@@ -7,23 +7,23 @@ using System.Runtime.Serialization;
 namespace Initium.Portal.Core.Exceptions
 {
     [Serializable]
-    public class StanceException : Exception
+    public class CustomException : Exception
     {
-        public StanceException()
+        public CustomException()
         {
         }
 
-        public StanceException(string message)
+        public CustomException(string message)
             : base(message)
         {
         }
 
-        public StanceException(string message, Exception innerException)
+        public CustomException(string message, Exception innerException)
             : base(message, innerException)
         {
         }
 
-        protected StanceException(SerializationInfo info, StreamingContext context)
+        protected CustomException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
         }

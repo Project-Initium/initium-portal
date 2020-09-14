@@ -100,18 +100,19 @@ module.exports = {
             chunkFilename: '[id].css',
             ignoreOrder: false
         }),
-        new CopyWebpackPlugin([
+        new CopyWebpackPlugin({
+            patterns: [
             './Resources/Assets/logo.png',
             './Resources/Assets/logo-text.png',
             './Resources/Assets/logo-icon.png',
             './Resources/Assets/android-chrome-192x192.png',
             './Resources/Assets/android-chrome-512x512.png',
             './Resources/Assets/apple-touch-icon.png',
-            './Resources/Assets/favicon.png',
+            './Resources/Assets/favicon.ico',
             './Resources/Assets/favicon-16x16.png',
             './Resources/Assets/favicon-32x32.png',
             './Resources/Assets/site.webmanifest',
-        ]),
+        ]}),
         new webpack.ProvidePlugin({
             $: "jquery",
             jQuery: "jquery",

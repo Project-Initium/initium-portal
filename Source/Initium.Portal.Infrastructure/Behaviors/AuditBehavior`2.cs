@@ -43,7 +43,7 @@ namespace Initium.Portal.Infrastructure.Behaviors
                     resultType = typeof(ResultWithError<>).MakeGenericType(typeof(ErrorData));
                     break;
                 default:
-                    throw new StanceException("Non result type used as command result");
+                    throw new CustomException("Non result type used as command result");
             }
 
             var propToCheck = resultType.GetProperty("IsSuccess");

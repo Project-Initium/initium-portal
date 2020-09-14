@@ -48,6 +48,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Resources", "Resources", "{ABD468EC-BAB0-4BDD-A3DB-94CC4D088473}"
 	ProjectSection(SolutionItems) = preProject
 		Resources\cert-gen.ps1 = Resources\cert-gen.ps1
+		Resources\project-setup.ps1 = Resources\project-setup.ps1
 	EndProjectSection
 EndProject
 Global
