@@ -19,7 +19,8 @@ namespace Initium.Portal.Queries
         private readonly ITenantInfo _tenantInfo;
         private readonly MultiTenantSettings _multiTenantSettings;
 
-        public QueryContext(ITenantInfo tenantInfo, IOptions<MultiTenantSettings> multiTenantSettings)
+        public QueryContext(ITenantInfo tenantInfo, DbContextOptions<QueryContext> options, IOptions<MultiTenantSettings> multiTenantSettings)
+            : base(options)
         {
             if (multiTenantSettings == null)
             {
@@ -29,14 +30,14 @@ namespace Initium.Portal.Queries
             this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
             this._multiTenantSettings = multiTenantSettings.Value;
             this.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
+            this._multiTenantSettings = multiTenantSettings.Value;
         }
 
-        internal QueryContext(DbContextOptions<QueryContext> options, ITenantInfo tenantInfo, IOptions<MultiTenantSettings> multiTenantSettings)
+        internal QueryContext(DbContextOptions<QueryContext> options, ITenantInfo tenantInfo)
             : base(options)
         {
             this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
             this.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
-            this._multiTenantSettings = multiTenantSettings.Value;
         }
 
         public DbSet<User> Users { get; set; }

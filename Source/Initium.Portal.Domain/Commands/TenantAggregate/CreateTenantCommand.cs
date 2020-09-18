@@ -10,15 +10,15 @@ namespace Initium.Portal.Domain.Commands.TenantAggregate
 {
     public class CreateTenantCommand : IRequest<ResultWithError<ErrorData>>
     {
-        public CreateTenantCommand(Guid tenantId, string identifier, string name, string connectionString)
+        public CreateTenantCommand(Guid id, string identifier, string name, string connectionString)
         {
-            this.TenantId = tenantId;
+            this.Id = id;
             this.Identifier = identifier;
             this.Name = name;
             this.ConnectionString = connectionString;
         }
 
-        public Guid TenantId { get; }
+        public Guid Id { get; }
 
         public string Identifier { get; }
 

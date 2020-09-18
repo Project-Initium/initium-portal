@@ -2,11 +2,11 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using FluentValidation;
 using Initium.Portal.Domain.Commands.TenantAggregate;
 using Initium.Portal.Queries.Contracts;
-using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.Constants;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using MediatR;
@@ -14,7 +14,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.Pages.App.Tenants
 {
-    [SystemOwnerAuthorize]
     public class EditTenant : PrgPageModel<EditTenant.Model>
     {
         private readonly ITenantQueryService _tenantQueryService;
@@ -63,7 +62,8 @@ namespace Initium.Portal.Web.Pages.App.Tenants
             var result = await this._mediator.Send(new UpdateTenantCommand(
                 this.PageModel.TenantId,
                 this.PageModel.Identifier,
-                this.PageModel.Name));
+                this.PageModel.Name,
+                new List<Guid>()));
 
             if (result.IsSuccess)
             {
@@ -90,9 +90,6 @@ namespace Initium.Portal.Web.Pages.App.Tenants
         {
             public Validator()
             {
-                this.RuleFor(x => x.TenantId)
-                    .NotEqual(Guid.Empty);
-
                 this.RuleFor(x => x.Name)
                     .NotEmpty();
 

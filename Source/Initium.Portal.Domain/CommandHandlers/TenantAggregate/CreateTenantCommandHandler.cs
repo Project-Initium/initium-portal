@@ -1,3 +1,4 @@
+using Microsoft.Extensions.Logging;
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
@@ -48,10 +49,10 @@ namespace Initium.Portal.Domain.CommandHandlers.TenantAggregate
             if (presenceResult.IsPresent)
             {
                 this._logger.LogDebug("Failed presence check.");
-                return ResultWithError.Fail(new ErrorData(ErrorCodes.TenantAlreadyExists));
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.RoleAlreadyExists));
             }
 
-            var role = new Tenant(request.TenantId, request.Identifier, request.Name, request.ConnectionString);
+            var role = new Tenant(request.Id, request.Identifier, request.Name, request.ConnectionString);
             this._tenantRepository.Add(role);
 
             return ResultWithError.Ok<ErrorData>();

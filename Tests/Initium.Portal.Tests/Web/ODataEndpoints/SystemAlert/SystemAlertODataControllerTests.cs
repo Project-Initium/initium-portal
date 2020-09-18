@@ -43,13 +43,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.SystemAlert
             var tenantInfo = new Mock<ITenantInfo>();
             tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
 
-            var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
-            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
-            {
-                DefaultTenantId = TestVariables.TenantId,
-            });
-
-            using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            using var context = new QueryContext(options, tenantInfo.Object);
             context.Add(new Portal.Queries.Entities.SystemAlert
             {
                 Id = Guid.NewGuid(),

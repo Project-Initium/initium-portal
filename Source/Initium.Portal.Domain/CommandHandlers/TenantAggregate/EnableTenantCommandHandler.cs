@@ -45,7 +45,7 @@ namespace Initium.Portal.Domain.CommandHandlers.TenantAggregate
             if (tenantMaybe.HasNoValue)
             {
                 this._logger.LogDebug("Entity not found.");
-                return ResultWithError.Fail(new ErrorData(ErrorCodes.TenantNotFound));
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.RoleNotFound));
             }
 
             var tenant = tenantMaybe.Value;

@@ -48,6 +48,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Initium.Portal.Domain\Initium.Portal.Domain.csproj" />
+    <ProjectReference Include="..\Initium.Portal.MultiTenant\Initium.Portal.MultiTenant.csproj" />
     <ProjectReference Include="..\Initium.Portal.Queries\Initium.Portal.Queries.csproj" />
     <ProjectReference Include="..\Initium.Portal.Infrastructure\Initium.Portal.Infrastructure.csproj" />
   </ItemGroup>

@@ -12,7 +12,7 @@ namespace Initium.Portal.Domain.CommandValidators.TenantAggregate
     {
         public CreateTenantCommandValidator()
         {
-            this.RuleFor(x => x.TenantId)
+            this.RuleFor(x => x.Id)
                 .NotEqual(Guid.Empty).WithErrorCode(ValidationCodes.FieldIsRequired);
             this.RuleFor(x => x.Identifier)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);

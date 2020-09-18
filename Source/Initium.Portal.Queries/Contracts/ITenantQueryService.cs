@@ -17,5 +17,7 @@ namespace Initium.Portal.Queries.Contracts
         Task<StatusCheckModel> CheckForPresenceOfTenantByIdentifier(string identifier, CancellationToken cancellationToken = default);
 
         Task<Maybe<TenantMetadata>> GetTenantMetadataById(Guid id, CancellationToken cancellationToken = default);
+
+        Task<Maybe<TenantMetadata>> GetTenantMetadataByIdentifier(string identifier, CancellationToken cancellationToken = default);
     }
 }

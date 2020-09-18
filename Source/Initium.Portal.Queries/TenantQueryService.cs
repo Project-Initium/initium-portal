@@ -35,5 +35,11 @@ namespace Initium.Portal.Queries
             var data = await this._queryContext.Tenants.FirstOrDefaultAsync(x => x.Id == id, cancellationToken: cancellationToken);
             return data == null ? Maybe<TenantMetadata>.Nothing : new TenantMetadata(data.Id, data.Identifier, data.Name, data.ConnectionString, data.WhenDisabled);
         }
+
+        public async Task<Maybe<TenantMetadata>> GetTenantMetadataByIdentifier(string identifier, CancellationToken cancellationToken = default)
+        {
+            var data = await this._queryContext.Tenants.FirstOrDefaultAsync(x => x.Identifier == identifier, cancellationToken: cancellationToken);
+            return data == null ? Maybe<TenantMetadata>.Nothing : new TenantMetadata(data.Id, data.Identifier, data.Name, data.ConnectionString, data.WhenDisabled);
+        }
     }
 }
