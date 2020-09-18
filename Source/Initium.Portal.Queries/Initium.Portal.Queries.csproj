@@ -10,10 +10,12 @@
   <Import Project="..\..\Shared\Initium.Portal.Shared\Initium.Portal.Shared.projitems" Label="Shared" />
 
   <ItemGroup>
+    <PackageReference Include="Finbuckle.MultiTenant" Version="6.0.0" />
     <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="3.0.0" />
     <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.7" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="3.1.7" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.7" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="3.1.7" />
     <PackageReference Include="SonarAnalyzer.CSharp" Version="8.11.0.20529">
       <PrivateAssets>all</PrivateAssets>

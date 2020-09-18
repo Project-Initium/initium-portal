@@ -69,7 +69,6 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
-                
             });
 
             app.UseMvc(routeBuilder =>
@@ -88,6 +87,7 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
                 .SetupRoleEntity()
                 .SetupUserNotificationEntity()
                 .SetupSystemAlertEntity()
+                .SetupTenantEntity()
                 .GetEdmModel();
 
             return model;

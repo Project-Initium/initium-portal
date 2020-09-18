@@ -47,13 +47,13 @@ namespace Initium.Portal.Web.Pages.FirstRun
                 await this._mediator.Send(new CreateInitialUserCommand(
                     this.PageModel.EmailAddress, this.PageModel.Password, this.PageModel.FirstName, this.PageModel.LastName));
 
-            if (result.IsFailure)
+            if (!result.IsFailure)
             {
-                this.PrgState = PrgState.Failed;
-                return this.RedirectToPage();
+                return this.RedirectToPage(PageLocations.FirstRunSetupCompleted);
             }
 
-            return this.RedirectToPage(PageLocations.FirstRunSetupCompleted);
+            this.PrgState = PrgState.Failed;
+            return this.RedirectToPage();
         }
 
         public class Model

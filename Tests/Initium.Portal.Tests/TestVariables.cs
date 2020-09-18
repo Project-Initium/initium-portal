@@ -42,5 +42,7 @@ namespace Initium.Portal.Tests
         public static readonly Guid UserNotificationId = Guid.Parse("D8D1CDB8-26CA-41EF-9B92-CF057E3B2521");
 
         public static readonly Guid SystemAlertId = Guid.Parse("1D17E3FF-299C-4BAA-94BB-68E9EF7FC764");
+
+        public static readonly Guid TenantId = Guid.Parse("0fb824e5-4ce5-4dfd-b157-70b22ed4a0db");
     }
 }

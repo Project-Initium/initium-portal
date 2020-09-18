@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Finbuckle.MultiTenant;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Web.ODataEndpoints.Role;
@@ -55,35 +56,38 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            using var context = new QueryContext(options, tenantInfo.Object);
             context.Add(new Portal.Queries.Entities.Role
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-1",
                 ResourceCount = 0,
                 UserCount = 3,
-            });
+            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.Add(new Portal.Queries.Entities.Role
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-2",
                 ResourceCount = 2,
                 UserCount = 0,
-            });
+            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.Add(new Portal.Queries.Entities.Role
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-3",
                 ResourceCount = 4,
                 UserCount = 0,
-            });
+            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.Add(new Portal.Queries.Entities.Role
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-4",
                 ResourceCount = 0,
                 UserCount = 0,
-            });
+            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.SaveChanges();
             var roleQueryService = new Mock<IRoleQueryService>();
             roleQueryService.Setup(x => x.QueryableEntity).Returns(context.Roles);
@@ -101,35 +105,38 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            using var context = new QueryContext(options, tenantInfo.Object);
             context.Add(new Portal.Queries.Entities.Role
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-1",
                 ResourceCount = 0,
                 UserCount = 3,
-            });
+            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.Add(new Portal.Queries.Entities.Role
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-2",
                 ResourceCount = 2,
                 UserCount = 0,
-            });
+            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.Add(new Portal.Queries.Entities.Role
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-3",
                 ResourceCount = 4,
                 UserCount = 4,
-            });
+            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.Add(new Portal.Queries.Entities.Role
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-4",
                 ResourceCount = 0,
                 UserCount = 0,
-            });
+            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.SaveChanges();
 
             var roleQueryService = new Mock<IRoleQueryService>();

@@ -1,10 +1,11 @@
 ﻿CREATE TABLE [Identity].[AuthenticationHistory]
 (
-	[Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY, 
-	[UserId] UNIQUEIDENTIFIER NOT NULL, 
-    [WhenHappened] DATETIME2 NOT NULL, 
-    [AuthenticationHistoryType] INT NOT NULL, 
-    CONSTRAINT [FK_AuthenticationHistory_Identity_User] FOREIGN KEY ([UserId]) REFERENCES [Identity].[User]([Id])
+	    [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY
+    ,   [UserId] UNIQUEIDENTIFIER NOT NULL
+    ,   [WhenHappened] DATETIME2 NOT NULL
+    ,   [AuthenticationHistoryType] INT NOT NULL
+    ,   [TenantId] UNIQUEIDENTIFIER NOT NULL
+    ,   CONSTRAINT [FK_AuthenticationHistory_Identity_User] FOREIGN KEY ([UserId]) REFERENCES [Identity].[User]([Id])
 )
 
 GO

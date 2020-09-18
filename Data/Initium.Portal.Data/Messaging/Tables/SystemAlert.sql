@@ -6,4 +6,5 @@
     ,   [Type] INT NOT NULL
     ,   [WhenToShow] DATETIME2 NULL
     ,   [WhenToHide] DATETIME2 NULL
+    ,   [TenantId] UNIQUEIDENTIFIER NOT NULL
 )

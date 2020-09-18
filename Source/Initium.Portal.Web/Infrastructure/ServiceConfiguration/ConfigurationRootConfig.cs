@@ -8,6 +8,7 @@ using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
+using Initium.Portal.Domain.AggregatesModel.TenantAggregate;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Infrastructure.Repositories;
 using Initium.Portal.Queries;
@@ -30,11 +31,13 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
             serviceCollection.AddScoped<ISystemAlertQueryService, SystemAlertQueryService>();
             serviceCollection.AddScoped<IUserNotificationQueryService, UserNotificationQueryService>();
             serviceCollection.AddScoped<IResourceQueryService, ResourceQueryService>();
+            serviceCollection.AddScoped<ITenantQueryService, TenantQueryService>();
 
             serviceCollection.AddScoped<IUserRepository, UserRepository>();
             serviceCollection.AddScoped<IRoleRepository, RoleRepository>();
             serviceCollection.AddScoped<INotificationRepository, NotificationRepository>();
             serviceCollection.AddScoped<ISystemAlertRepository, SystemAlertRepository>();
+            serviceCollection.AddScoped<ITenantRepository, TenantRepository>();
 
             serviceCollection.AddScoped<ICurrentAuthenticatedUserProvider, CurrentAuthenticatedUserProvider>();
             serviceCollection.AddScoped<IAuthenticationService, AuthenticationService>();

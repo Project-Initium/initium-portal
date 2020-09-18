@@ -23,6 +23,9 @@ module.exports = {
         'validate-email-mfa': './Resources/Scripts/pages/validate-email-mfa/validate-email-mfa.ts',    
         'notification-list': './Resources/Scripts/pages/notification-list/notification-list.ts',    
         'system-alert-list': './Resources/Scripts/pages/system-alert-list/system-alert-list.ts',    
+        'tenant-list': './Resources/Scripts/pages/tenant-list/tenant-list.ts',    
+        'tenant-create': './Resources/Scripts/pages/tenant-create/tenant-create.ts',    
+        'tenant-view': './Resources/Scripts/pages/tenant-view/tenant-view.ts',    
     },
     output: {
         filename: '[name].js',

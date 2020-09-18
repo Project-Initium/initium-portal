@@ -32,3 +32,13 @@ VALUES (Id, Name, NormalizedName, ParentResourceId)
 -- delete rows that are in the target but not the source
 WHEN NOT MATCHED BY SOURCE THEN
 DELETE;
+
+MERGE INTO [Admin].[Tenant] AS Target
+USING (VALUES
+    ('9836546d-cca4-4f4d-8e2a-3882f00c36f0', 'default', 'default', '')
+)
+AS SOURCE (Id, Identifier, Name, ConnectionString)
+ON Target.Id = Source.Id
+WHEN NOT MATCHED BY TARGET THEN
+INSERT (Id, Identifier, Name, ConnectionString)
+VALUES (Id, Identifier, Name, ConnectionString);

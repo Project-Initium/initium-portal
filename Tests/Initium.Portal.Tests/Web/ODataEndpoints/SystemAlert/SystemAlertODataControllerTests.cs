@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using Finbuckle.MultiTenant;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
@@ -37,35 +38,38 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.SystemAlert
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            using var context = new QueryContext(options, tenantInfo.Object);
             context.Add(new Portal.Queries.Entities.SystemAlert
             {
                 Id = Guid.NewGuid(),
                 Name = "name-1",
                 Type = SystemAlertType.Critical,
                 Message = "message-1",
-            });
+            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.Add(new Portal.Queries.Entities.SystemAlert
             {
                 Id = Guid.NewGuid(),
                 Name = "name-2",
                 Type = SystemAlertType.Critical,
                 Message = "message-2",
-            });
+            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.Add(new Portal.Queries.Entities.SystemAlert
             {
                 Id = Guid.NewGuid(),
                 Name = "name-3",
                 Type = SystemAlertType.Critical,
                 Message = "message-3",
-            });
+            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.Add(new Portal.Queries.Entities.SystemAlert
             {
                 Id = Guid.NewGuid(),
                 Name = "name-4",
                 Type = SystemAlertType.Critical,
                 Message = "message-4",
-            });
+            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.SaveChanges();
 
             var systemAlertQueryService = new Mock<ISystemAlertQueryService>();

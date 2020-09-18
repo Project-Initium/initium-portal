@@ -12,6 +12,7 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
         public static IServiceCollection AddSettings(this IServiceCollection services, IConfiguration configuration)
         {
             services.Configure<SecuritySettings>(configuration.GetSection("Security"));
+            services.Configure<MultiTenantSettings>(configuration.GetSection("MultiTenant"));
             return services;
         }
     }

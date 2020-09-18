@@ -8,6 +8,7 @@ SELECT
     ,   sA.WhenToShow
     ,   sA.WhenToHide
     ,   Cast(sA.IsActive as bit) as IsActive
+    ,   sA.TenantId
 FROM (
 SELECT 
         Id
@@ -23,4 +24,5 @@ SELECT
             WHEN WhenToShow > GETUTCDATE() and WhenToHide < GETUTCDATE() THEN 1
             ELSE 0
         END AS IsActive
+    ,   TenantId
 FROM Messaging.SystemAlert)  sA

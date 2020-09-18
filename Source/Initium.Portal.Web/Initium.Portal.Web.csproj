@@ -19,6 +19,7 @@
     <PackageReference Include="Ardalis.ApiEndpoints.CodeAnalyzers" Version="1.1.1" />
     <PackageReference Include="CompressedStaticFiles" Version="1.1.0" />
     <PackageReference Include="CsvHelper" Version="15.0.5" />
+    <PackageReference Include="Finbuckle.MultiTenant.AspNetCore" Version="6.0.0" />
     <PackageReference Include="FluentValidation" Version="8.6.2" />
     <PackageReference Include="FluentValidation.AspNetCore" Version="8.6.2" />
     <PackageReference Include="GravatarHelper.AspNetCore" Version="1.1.0" />
@@ -47,6 +48,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Initium.Portal.Domain\Initium.Portal.Domain.csproj" />
+    <ProjectReference Include="..\Initium.Portal.MultiTenant\Initium.Portal.MultiTenant.csproj" />
     <ProjectReference Include="..\Initium.Portal.Queries\Initium.Portal.Queries.csproj" />
     <ProjectReference Include="..\Initium.Portal.Infrastructure\Initium.Portal.Infrastructure.csproj" />
   </ItemGroup>
@@ -62,6 +64,7 @@
     <TypeScriptCompile Include="Resources\Scripts\pages\role-list\filter-view-model.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\system-alert-list\filter-view-model.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\system-alert-list\system-alert-list.ts" />
+    <TypeScriptCompile Include="Resources\Scripts\pages\tenant-list\filter-view-model.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\user-view\user-view.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\users-list\filter-view-model.ts" />
     <TypeScriptCompile Include="Resources\Scripts\providers\index.ts" />
@@ -88,10 +91,6 @@
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Infrastructure\MappingProfiles\" />
   </ItemGroup>
 
 </Project>

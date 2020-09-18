@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Finbuckle.MultiTenant;
 using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Queries;
@@ -25,11 +26,16 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
-            await context.Users.AddAsync(new User
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
+            var user = await context.Users.AddAsync(new User
             {
                 Id = TestVariables.UserId,
             });
+            user.Property("TenantId").CurrentValue = TestVariables.TenantId;
+
             await context.SaveChangesAsync();
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
@@ -45,7 +51,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.CheckForPresenceOfAnyUser();
@@ -63,13 +72,18 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
-            await context.Users.AddAsync(new User
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
+            var user = await context.Users.AddAsync(new User
             {
                 Id = TestVariables.UserId,
                 FirstName = "first-name",
                 LastName = "last-name",
             });
+            user.Property("TenantId").CurrentValue = TestVariables.TenantId;
+
             await context.SaveChangesAsync();
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
@@ -90,7 +104,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.GetProfileForCurrentUser();
@@ -107,7 +124,9 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.GetProfileForCurrentUser();
@@ -122,11 +141,16 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
-            await context.Users.AddAsync(new User
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
+            var user = await context.Users.AddAsync(new User
             {
                 EmailAddress = "email-address",
             });
+            user.Property("TenantId").CurrentValue = TestVariables.TenantId;
+
             await context.SaveChangesAsync();
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.CheckForPresenceOfUserByEmailAddress("email-address");
@@ -141,7 +165,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.CheckForPresenceOfUserByEmailAddress("email-address");
             Assert.False(result.IsPresent);
@@ -155,7 +182,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.GetDetailsOfUserById(TestVariables.UserId);
             Assert.True(result.HasNoValue);
@@ -169,8 +199,32 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
-            await context.Users.AddAsync(new User
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
+            var roleResource = await context.RoleResources.AddAsync(new RoleResource
+            {
+                ResourceId = TestVariables.ResourceId,
+            });
+            roleResource.Property("TenantId").CurrentValue = TestVariables.TenantId;
+
+            var role = await context.Roles.AddAsync(new Role
+            {
+                RoleResources = new List<RoleResource>
+                {
+                    roleResource.Entity,
+                },
+            });
+            role.Property("TenantId").CurrentValue = TestVariables.TenantId;
+
+            var userRole = await context.UserRoles.AddAsync(new UserRole
+            {
+                Role = role.Entity,
+            });
+            userRole.Property("TenantId").CurrentValue = TestVariables.TenantId;
+
+            var user = await context.Users.AddAsync(new User
             {
                 Id = TestVariables.UserId,
                 EmailAddress = "email-address",
@@ -184,21 +238,10 @@ namespace Initium.Portal.Tests.Queries
                 WhenDisabled = TestVariables.Now,
                 UserRoles = new List<UserRole>
                 {
-                    new UserRole
-                    {
-                        Role = new Role
-                        {
-                            RoleResources = new List<RoleResource>
-                            {
-                                new RoleResource
-                                {
-                                    ResourceId = TestVariables.ResourceId,
-                                },
-                            },
-                        },
-                    },
+                    userRole.Entity,
                 },
             });
+            user.Property("TenantId").CurrentValue = TestVariables.TenantId;
             await context.SaveChangesAsync();
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
@@ -227,7 +270,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.GetSystemProfileByUserId(TestVariables.UserId);
@@ -243,8 +289,36 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
-            await context.Users.AddAsync(new User
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
+
+            var roleResource = await context.RoleResources.AddAsync(new RoleResource
+            {
+                Resource = new Resource
+                {
+                    NormalizedName = "normalized-name",
+                },
+            });
+            roleResource.Property("TenantId").CurrentValue = TestVariables.TenantId;
+
+            var role = await context.Roles.AddAsync(new Role
+            {
+                RoleResources = new List<RoleResource>
+                {
+                    roleResource.Entity,
+                },
+            });
+            role.Property("TenantId").CurrentValue = TestVariables.TenantId;
+
+            var userRole = await context.UserRoles.AddAsync(new UserRole
+            {
+                Role = role.Entity,
+            });
+            userRole.Property("TenantId").CurrentValue = TestVariables.TenantId;
+
+            var user = await context.Users.AddAsync(new User
             {
                 Id = TestVariables.UserId,
                 EmailAddress = "email-address",
@@ -252,24 +326,10 @@ namespace Initium.Portal.Tests.Queries
                 LastName = "last-name",
                 UserRoles = new List<UserRole>
                 {
-                    new UserRole
-                    {
-                        Role = new Role
-                        {
-                            RoleResources = new List<RoleResource>
-                            {
-                                new RoleResource
-                                {
-                                    Resource = new Resource
-                                    {
-                                        NormalizedName = "normalized-name",
-                                    },
-                                },
-                            },
-                        },
-                    },
+                    userRole.Entity,
                 },
             });
+            user.Property("TenantId").CurrentValue = TestVariables.TenantId;
             await context.SaveChangesAsync();
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
@@ -292,7 +352,9 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
             await context.Users.AddAsync(new User
             {
                 Id = TestVariables.UserId,
@@ -315,7 +377,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.CheckForPresenceOfAuthAppForCurrentUser();
@@ -333,7 +398,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
             await context.Users.AddAsync(new User
             {
                 Id = TestVariables.UserId,
@@ -356,8 +424,11 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
-            await context.Users.AddAsync(new User
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
+            var user = await context.Users.AddAsync(new User
             {
                 Id = TestVariables.UserId,
                 AuthenticatorApps = new List<AuthenticatorApp>
@@ -368,6 +439,7 @@ namespace Initium.Portal.Tests.Queries
                     },
                 },
             });
+            user.Property("TenantId").CurrentValue = TestVariables.TenantId;
             await context.SaveChangesAsync();
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.CheckForPresenceOfAuthAppForCurrentUser();
@@ -383,7 +455,9 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.GetDeviceInfoForCurrentUser();
@@ -403,7 +477,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.GetDeviceInfoForCurrentUser();
@@ -423,7 +500,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
             await context.Users.AddAsync(new User
             {
                 Id = TestVariables.UserId,
@@ -448,8 +528,11 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            await using var context = new QueryContext(options);
-            await context.Users.AddAsync(new User
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new QueryContext(options, tenantInfo.Object);
+            var user = await context.Users.AddAsync(new User
             {
                 Id = TestVariables.UserId,
                 AuthenticatorDevices = new List<AuthenticatorDevice>
@@ -463,6 +546,7 @@ namespace Initium.Portal.Tests.Queries
                     },
                 },
             });
+            user.Property("TenantId").CurrentValue = TestVariables.TenantId;
             await context.SaveChangesAsync();
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
