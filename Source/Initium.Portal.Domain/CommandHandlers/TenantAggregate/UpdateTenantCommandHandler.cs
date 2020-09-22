@@ -20,7 +20,7 @@ namespace Initium.Portal.Domain.CommandHandlers.TenantAggregate
         private readonly ILogger _logger;
         private readonly ITenantQueryService _tenantQueryService;
 
-        public UpdateTenantCommandHandler(ITenantRepository tenantRepository, ILogger<CreateTenantCommandHandler> logger, ITenantQueryService tenantQueryService)
+        public UpdateTenantCommandHandler(ITenantRepository tenantRepository, ILogger<UpdateTenantCommandHandler> logger, ITenantQueryService tenantQueryService)
         {
             this._tenantRepository = tenantRepository ?? throw new ArgumentNullException(nameof(tenantRepository));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -48,7 +48,7 @@ namespace Initium.Portal.Domain.CommandHandlers.TenantAggregate
             if (tenantMaybe.HasNoValue)
             {
                 this._logger.LogDebug("Entity not found.");
-                return ResultWithError.Fail(new ErrorData(ErrorCodes.RoleNotFound));
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.TenantNotFound));
             }
 
             var tenant = tenantMaybe.Value;
@@ -61,12 +61,11 @@ namespace Initium.Portal.Domain.CommandHandlers.TenantAggregate
                 if (presenceResult.IsPresent)
                 {
                     this._logger.LogDebug("Failed presence check.");
-                    return ResultWithError.Fail(new ErrorData(ErrorCodes.RoleAlreadyExists));
+                    return ResultWithError.Fail(new ErrorData(ErrorCodes.TenantAlreadyExists));
                 }
             }
 
             tenant.UpdateDetails(request.Identifier, tenant.Name, tenant.ConnectionString);
-            tenant.SetTenantFeatures(request.Features);
 
             this._tenantRepository.Update(tenant);
             return ResultWithError.Ok<ErrorData>();

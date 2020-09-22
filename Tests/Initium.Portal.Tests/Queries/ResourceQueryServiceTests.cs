@@ -5,9 +5,11 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Finbuckle.MultiTenant;
+using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
 
@@ -24,7 +26,13 @@ namespace Initium.Portal.Tests.Queries
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            await using var context = new QueryContext(options, tenantInfo.Object);
+            var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
+            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
+            {
+                DefaultTenantId = TestVariables.TenantId,
+            });
+
+            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             context.Add(new Resource
             {
                 Id = TestVariables.ResourceId,
@@ -66,7 +74,13 @@ namespace Initium.Portal.Tests.Queries
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            await using var context = new QueryContext(options, tenantInfo.Object);
+            var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
+            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
+            {
+                DefaultTenantId = TestVariables.TenantId,
+            });
+
+            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
 
             var roleQueries = new ResourceQueryService(context);
             var result = await roleQueries.GetNestedSimpleResources();

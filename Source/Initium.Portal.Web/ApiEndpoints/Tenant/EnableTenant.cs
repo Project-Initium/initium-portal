@@ -23,6 +23,7 @@ namespace Initium.Portal.Web.ApiEndpoints.Tenant
         }
 
         [ValidateAntiForgeryToken]
+        [SystemOwnerAuthorize]
         [ResourceBasedAuthorize("tenant-enable")]
         [HttpPost("api/tenants/enable-tenant", Name = "EnableTenantEndpoint")]
         public override async Task<ActionResult<BasicEndpointResponse>> HandleAsync(EndpointRequest request, CancellationToken cancellationToken = default)

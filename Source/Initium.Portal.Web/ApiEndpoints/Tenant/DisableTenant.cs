@@ -23,6 +23,7 @@ namespace Initium.Portal.Web.ApiEndpoints.Tenant
         }
 
         [ValidateAntiForgeryToken]
+        [SystemOwnerAuthorize]
         [ResourceBasedAuthorize("tenant-disable")]
         [HttpPost("api/tenants/disable-tenant", Name = "DisableTenantEndpoint")]
         public override async Task<ActionResult<BasicEndpointResponse>> HandleAsync(EndpointRequest request, CancellationToken cancellationToken = default)
@@ -32,7 +33,7 @@ namespace Initium.Portal.Web.ApiEndpoints.Tenant
                 return this.Ok(new BasicEndpointResponse(false));
             }
 
-            var result = await this._mediator.Send(new DisableTenantCommand(request.TenantId));
+            var result = await this._mediator.Send(new DisableTenantCommand(request.TenantId), cancellationToken);
             return this.Ok(new BasicEndpointResponse(result.IsSuccess));
         }
 
