@@ -20,7 +20,7 @@ namespace Initium.Portal.Domain.CommandHandlers.TenantAggregate
         private readonly ILogger _logger;
         private readonly IClock _clock;
 
-        public DisableTenantCommandHandler(ITenantRepository tenantRepository, ILogger<EnableTenantCommandHandler> logger, IClock clock)
+        public DisableTenantCommandHandler(ITenantRepository tenantRepository, ILogger<DisableTenantCommandHandler> logger, IClock clock)
         {
             this._tenantRepository = tenantRepository ?? throw new ArgumentNullException(nameof(tenantRepository));
             this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
@@ -48,7 +48,7 @@ namespace Initium.Portal.Domain.CommandHandlers.TenantAggregate
             if (tenantMaybe.HasNoValue)
             {
                 this._logger.LogDebug("Entity not found.");
-                return ResultWithError.Fail(new ErrorData(ErrorCodes.RoleNotFound));
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.TenantNotFound));
             }
 
             var tenant = tenantMaybe.Value;

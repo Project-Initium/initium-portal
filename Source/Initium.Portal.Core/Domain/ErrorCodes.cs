@@ -28,5 +28,7 @@ namespace Initium.Portal.Core.Domain
         UserNotDisabled,
         UserNotificationNotFound,
         SystemAlertNotFound,
+        TenantAlreadyExists,
+        TenantNotFound
     }
 }

@@ -9,6 +9,7 @@ using FluentValidation;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.Commands.TenantAggregate;
+using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.Constants;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using MediatR;
@@ -17,6 +18,7 @@ using Microsoft.Extensions.Options;
 
 namespace Initium.Portal.Web.Pages.App.Tenants
 {
+    [SystemOwnerAuthorize]
     public class CreateTenant : PrgPageModel<CreateTenant.Model>
     {
         private readonly IMediator _mediator;
@@ -69,7 +71,7 @@ namespace Initium.Portal.Web.Pages.App.Tenants
                     Id = tenantId.ToString(),
                     Identifier = this.PageModel.Identifier,
                     Name = this.PageModel.Name,
-                    ConnectionString = string.Empty,
+                    ConnectionString = connStr,
                 });
                 this.PrgState = PrgState.Success;
                 this.AddPageNotification("The system alert was created successfully", PageNotification.Success);

@@ -3,8 +3,8 @@
 
 using System;
 using Fido2NetLib;
+using Finbuckle.MultiTenant;
 using Initium.Portal.Core.Contracts;
-using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
@@ -15,8 +15,8 @@ using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Web.Infrastructure.Contracts;
 using Initium.Portal.Web.Infrastructure.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using NodaTime;
 
 namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
@@ -48,13 +48,14 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
 
         private static IFido2 ConfigureFido(IServiceProvider arg)
         {
-            var options = arg.GetService<IOptions<SecuritySettings>>();
+            var httpContextAccessor = arg.GetRequiredService<IHttpContextAccessor>();
+            var tenantInfo = httpContextAccessor.HttpContext.GetMultiTenantContext<TenantInfo>();
 
-            return new Fido2(new Fido2Configuration()
+            return new Fido2(new Fido2Configuration
             {
-                ServerDomain = options.Value.ServerDomain,
-                ServerName = options.Value.SiteName,
-                Origin = options.Value.Origin,
+                ServerDomain = httpContextAccessor.HttpContext.Request.Host.Host,
+                ServerName = tenantInfo.TenantInfo.Name,
+                Origin = $"https://{httpContextAccessor.HttpContext.Request.Host.ToString()}",
             });
         }
     }

@@ -5,11 +5,13 @@ using System;
 using System.Threading.Tasks;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Models.Tenant;
+using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.Pages.App.Tenants
 {
+    [SystemOwnerAuthorize]
     public class ViewTenant : NotificationPageModel
     {
         private readonly ITenantQueryService _tenantQueryService;

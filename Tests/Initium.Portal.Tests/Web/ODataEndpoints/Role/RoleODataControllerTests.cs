@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Finbuckle.MultiTenant;
+using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Web.ODataEndpoints.Role;
@@ -13,6 +14,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Query.Internal;
+using Microsoft.Extensions.Options;
 using Microsoft.OData.Edm;
 using Moq;
 using Xunit;
@@ -59,7 +61,13 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
             var tenantInfo = new Mock<ITenantInfo>();
             tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
 
-            using var context = new QueryContext(options, tenantInfo.Object);
+            var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
+            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
+            {
+                DefaultTenantId = TestVariables.TenantId,
+            });
+
+            using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             context.Add(new Portal.Queries.Entities.Role
             {
                 Id = Guid.NewGuid(),
@@ -108,7 +116,13 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
             var tenantInfo = new Mock<ITenantInfo>();
             tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
 
-            using var context = new QueryContext(options, tenantInfo.Object);
+            var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
+            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
+            {
+                DefaultTenantId = TestVariables.TenantId,
+            });
+
+            using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             context.Add(new Portal.Queries.Entities.Role
             {
                 Id = Guid.NewGuid(),

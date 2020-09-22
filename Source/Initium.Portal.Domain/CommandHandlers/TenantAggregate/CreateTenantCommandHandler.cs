@@ -48,10 +48,10 @@ namespace Initium.Portal.Domain.CommandHandlers.TenantAggregate
             if (presenceResult.IsPresent)
             {
                 this._logger.LogDebug("Failed presence check.");
-                return ResultWithError.Fail(new ErrorData(ErrorCodes.RoleAlreadyExists));
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.TenantAlreadyExists));
             }
 
-            var role = new Tenant(request.Id, request.Identifier, request.Name, request.ConnectionString);
+            var role = new Tenant(request.TenantId, request.Identifier, request.Name, request.ConnectionString);
             this._tenantRepository.Add(role);
 
             return ResultWithError.Ok<ErrorData>();

@@ -6,7 +6,6 @@ namespace Initium.Portal.Core.Constants
     public enum MultiTenantType
     {
         TableSplit = 1,
-        SchemaSplit = 3,
         DatabaseSplit = 5,
     }
 }
