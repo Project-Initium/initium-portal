@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Finbuckle.MultiTenant;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
 using Initium.Portal.Infrastructure;
@@ -26,7 +27,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Add(new Mock<ISystemAlert>().Object));
             Assert.Equal("systemAlert", exception.Message);
@@ -41,7 +44,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
@@ -64,7 +69,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
@@ -89,7 +96,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Delete(new Mock<ISystemAlert>().Object));
             Assert.Equal("systemAlert", exception.Message);
@@ -104,7 +113,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
@@ -129,7 +140,10 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            await using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             await context.SystemAlerts.AddAsync(new SystemAlert(
                 TestVariables.SystemAlertId,
                 "name",
@@ -153,7 +167,10 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            await using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var maybe = await repository.Find(Guid.Empty);
             Assert.True(maybe.HasNoValue);
@@ -168,7 +185,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Update(new Mock<ISystemAlert>().Object));
             Assert.Equal("systemAlert", exception.Message);
@@ -183,7 +202,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,

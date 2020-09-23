@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Finbuckle.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Infrastructure;
 using Initium.Portal.Infrastructure.Repositories;
@@ -26,7 +27,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var userRepository = new UserRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => userRepository.Add(new Mock<IUser>().Object));
             Assert.Equal("user", exception.Message);
@@ -41,7 +44,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var userRepository = new UserRepository(context);
             var user = new User(
                 TestVariables.UserId,
@@ -70,7 +75,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var userRepository = new UserRepository(context);
             var user = new User(
                 TestVariables.UserId,
@@ -100,7 +107,10 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            await using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             await context.Users.AddAsync(new User(
                 TestVariables.UserId,
                 "email-address",
@@ -130,7 +140,10 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            await using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var userRepository = new UserRepository(context);
             var maybe = await userRepository.Find(Guid.Empty);
             Assert.True(maybe.HasNoValue);
@@ -145,7 +158,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var userRepository = new UserRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => userRepository.Update(new Mock<IUser>().Object));
             Assert.Equal("user", exception.Message);
@@ -160,7 +175,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var userRepository = new UserRepository(context);
             var user = new User(
                 TestVariables.UserId,
@@ -207,7 +224,10 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             user.GenerateNewPasswordResetToken(TestVariables.Now, TimeSpan.FromHours(2));
             var tokenId = user.SecurityTokenMappings.First().Id;
 
-            await using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
             var userRepository = new UserRepository(context);
@@ -225,7 +245,10 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            await using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var userRepository = new UserRepository(context);
             var maybe = await userRepository.FindByUserBySecurityToken(Guid.Empty, DateTime.UtcNow);
             Assert.True(maybe.HasNoValue);
@@ -254,7 +277,10 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 },
                 true);
 
-            await using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
             var userRepository = new UserRepository(context);
@@ -272,7 +298,10 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            await using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var userRepository = new UserRepository(context);
             var maybe = await userRepository.FindByEmailAddress(string.Empty);
             Assert.True(maybe.HasNoValue);

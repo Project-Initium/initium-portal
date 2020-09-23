@@ -8,13 +8,12 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
+using Finbuckle.MultiTenant;
 using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
-using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Options;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthApp
 {
@@ -27,19 +26,14 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IMediator _mediator;
         private readonly UrlEncoder _urlEncoder;
-        private readonly SecuritySettings _securitySettings;
+        private readonly ITenantInfo _tenantInfo;
 
-        public InitiateAuthAppEnrollment(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IMediator mediator, UrlEncoder urlEncoder, IOptions<SecuritySettings> securitySettings)
+        public InitiateAuthAppEnrollment(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IMediator mediator, UrlEncoder urlEncoder, ITenantInfo tenantInfo)
         {
-            if (securitySettings == null)
-            {
-                throw new ArgumentNullException(nameof(securitySettings));
-            }
-
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
             this._urlEncoder = urlEncoder ?? throw new ArgumentNullException(nameof(urlEncoder));
-            this._securitySettings = securitySettings.Value;
+            this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
         }
 
         [HttpPost("api/auth-app/initiate-enrollment", Name = "InitiateAuthAppEnrollmentEndpoint")]
@@ -57,7 +51,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
                 return this.Ok(new EndpointResponse());
             }
 
-            var result = await this._mediator.Send(new InitiateAuthenticatorAppEnrollmentCommand());
+            var result = await this._mediator.Send(new InitiateAuthenticatorAppEnrollmentCommand(), cancellationToken);
             if (result.IsFailure)
             {
                 return this.Ok(new EndpointResponse());
@@ -66,7 +60,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
             var formattedSharedKey = FormatAuthenticatorAppKey(result.Value.SharedKey);
             var authenticatorUri = string.Format(
                 AuthenticatorUriFormat,
-                this._urlEncoder.Encode(this._securitySettings.SiteName),
+                this._urlEncoder.Encode(this._tenantInfo.Name),
                 this._urlEncoder.Encode(user.EmailAddress),
                 result.Value.SharedKey);
             return this.Ok(new EndpointResponse(result.Value.SharedKey, formattedSharedKey,

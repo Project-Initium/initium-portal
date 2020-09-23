@@ -3,7 +3,6 @@
 
 using Initium.Portal.Infrastructure;
 using Initium.Portal.Queries;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -16,12 +15,10 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
         {
             services.AddDistributedMemoryCache();
             services.AddEntityFrameworkSqlServer()
-                .AddDbContext<DataContext>(options =>
+                .AddDbContext<DataContext>()
+                .AddDbContext<QueryContext>(options =>
                 {
-                    options.UseSqlServer(configuration["query:connectionString"]);
-                }).AddDbContext<QueryContext>(options =>
-                {
-                    options.UseSqlServer(configuration["query:connectionString"]);
+                    options.EnableSensitiveDataLogging();
                 });
 
             return services;

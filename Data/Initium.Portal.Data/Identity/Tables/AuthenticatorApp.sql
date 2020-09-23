@@ -5,4 +5,5 @@
     ,   [WhenEnrolled] DATETIME2 NOT NULL
     ,   [WhenRevoked] DATETIME2 NULL
     ,   [UserId] UNIQUEIDENTIFIER NOT NULL
+    ,   [TenantId] UNIQUEIDENTIFIER NOT NULL
 )

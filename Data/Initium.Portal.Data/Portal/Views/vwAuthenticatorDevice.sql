@@ -9,6 +9,7 @@ SELECT ad.Id,
        ad.PublicKey,
        ad.Aaguid,
        ad.Counter,
-       ad.CredType
+       ad.CredType,
+       ad.TenantId
 FROM [Identity].AuthenticatorDevice ad
 WHERE ad.WhenRevoked IS NULL;

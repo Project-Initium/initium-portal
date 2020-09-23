@@ -67,5 +67,18 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             function.Namespace = "SystemAlert";
             return builder;
         }
+
+        internal static ODataConventionModelBuilder SetupTenantEntity(this ODataConventionModelBuilder builder)
+        {
+            var tenant = builder.EntitySet<TenantDto>("Tenant");
+            var function = tenant.EntityType.Collection.Function("Filtered");
+            function.ReturnsCollectionFromEntitySet<TenantDto>("Tenant");
+            function.Namespace = "Tenant";
+
+            function = tenant.EntityType.Collection.Function("FilteredExport");
+            function.Returns<FileResult>();
+            function.Namespace = "Tenant";
+            return builder;
+        }
     }
 }

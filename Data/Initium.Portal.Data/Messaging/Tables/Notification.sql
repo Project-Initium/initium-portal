@@ -6,4 +6,5 @@
     ,   [Type] INT NOT NULL
     ,   [SerializedEventData] NVARCHAR(MAX) NOT NULL
     ,   [WhenNotified] DATETIME2 NOT NULL
+    ,   [TenantId] UNIQUEIDENTIFIER NOT NULL
 )

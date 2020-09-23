@@ -59,7 +59,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.SystemAlerts
             var tempDataDictionary = new Mock<ITempDataDictionary>();
             page.TempData = tempDataDictionary.Object;
 
-            Assert.IsType<PageResult>(await page.OnGetAsync());
+            Assert.IsAssignableFrom<PageResult>(await page.OnGetAsync());
             Assert.Equal(TestVariables.SystemAlertId, page.PageModel.SystemAlertId);
             Assert.Equal("name", page.PageModel.Name);
             Assert.Equal("message", page.PageModel.Message);

@@ -3,5 +3,6 @@
 	    [UserId] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY
     ,   [FirstName] NVARCHAR(300) NULL
     ,   [LastName] NVARCHAR(300) NULL
+    ,   [TenantId] UNIQUEIDENTIFIER NOT NULL
     ,   CONSTRAINT [FK_Profile_User] FOREIGN KEY ([UserId]) REFERENCES [Identity].[User]([Id])
 )

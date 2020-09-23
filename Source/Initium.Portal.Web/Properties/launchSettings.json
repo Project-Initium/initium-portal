@@ -3,7 +3,7 @@
     "windowsAuthentication": false,
     "anonymousAuthentication": true,
     "iisExpress": {
-      "applicationUrl": "http://initium.portal:57485",
+      "applicationUrl": "http://localhost:57485",
       "sslPort": 44356
     }
   },
@@ -20,7 +20,7 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },
-      "applicationUrl": "https://initium.portal:44356;http://initium.portal:57485"
+      "applicationUrl": "https://initium-portal.local.dev:44356;http://initium-portal.local.dev:52485"
     }
   }
 }
