@@ -1,9 +1,9 @@
-﻿import {o, OdataConfig} from 'odata';
-import 'bootstrap';
-import {ToastHelper} from '../helpers';
+﻿import 'bootstrap';
 import moment from 'moment';
-import PerfectScrollbar from
-        'perfect-scrollbar';
+import PerfectScrollbar from 'perfect-scrollbar';
+import { o, OdataConfig } from 'odata';
+import { ToastHelper } from '../helpers';
+
 
 export interface Value {
     NotificationId: string;
@@ -21,7 +21,7 @@ export interface ODataResponse {
     value: Value[];
 }
 export class TopNav {
-    private notifications: HTMLUListElement;
+    private readonly notifications: HTMLUListElement;
     private notificationListContainer: HTMLDivElement;
     private hasData: boolean = false;
     constructor(notificationSelector: string) {
@@ -32,8 +32,8 @@ export class TopNav {
         const contextThis = this;
         $not.on('show.bs.dropdown',  () => contextThis.getNotifications());
 
-        const ps = new
-        PerfectScrollbar(`${notificationSelector} .message-center`, {
+        // tslint:disable-next-line:no-unused-expression
+        new PerfectScrollbar(`${notificationSelector} .message-center`, {
             wheelSpeed: 2,
             wheelPropagation: true,
             minScrollbarLength: 20
@@ -64,7 +64,8 @@ export class TopNav {
             credentials: 'same-origin',
             redirect: 'follow',
             referrerPolicy: 'no-referrer'
-        }
+        };
+
         const data: ODataResponse = await o(this.notifications.dataset.odataRoot, config)
             .get('UserNotification')
             .query({ $top: 5, $orderby: 'WhenNotified' });

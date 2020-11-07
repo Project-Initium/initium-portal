@@ -1,6 +1,7 @@
-﻿CREATE VIEW [Portal].[vwRoleResource]
+CREATE VIEW [Portal].[vwRoleResource]
 AS
-SELECT rr.RoleId,
-       rr.ResourceId,
-       rr.TenantId
+SELECT 
+        rr.RoleId
+    ,   rr.ResourceId
+    ,   rr.TenantId
 FROM AccessProtection.RoleResource rr;

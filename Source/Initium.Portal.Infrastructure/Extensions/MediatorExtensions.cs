@@ -28,5 +28,24 @@ namespace Initium.Portal.Infrastructure.Extensions
 
             await Task.WhenAll(tasks);
         }
+
+        public static async Task DispatchIntegrationEventsAsync(this IMediator mediator, DataContext ctx)
+        {
+            var domainEntities = ctx.ChangeTracker
+                .Entries<Entity>()
+                .Where(x => x.Entity.IntegrationEvents != null && x.Entity.IntegrationEvents.Any()).ToList();
+
+            var integrationEvents = domainEntities
+                .SelectMany(x => x.Entity.DomainEvents)
+                .ToList();
+
+            domainEntities.ToList()
+                .ForEach(entity => entity.Entity.DomainEvents.Clear());
+
+            var tasks = integrationEvents
+                .Select(async integrationEvent => { await mediator.Publish(integrationEvent); });
+
+            await Task.WhenAll(tasks);
+        }
     }
 }

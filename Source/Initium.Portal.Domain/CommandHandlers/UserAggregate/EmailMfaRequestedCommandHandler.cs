@@ -9,7 +9,7 @@ using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NodaTime;
@@ -74,7 +74,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
 
             var token = totp.ComputeTotp();
 
-            user.AddDomainEvent(new EmailMfaTokenGeneratedEvent(
+            user.AddIntegrationEvent(new EmailMfaTokenGeneratedIntegrationEvent(
                 user.EmailAddress,
                 user.Profile.FirstName,
                 user.Profile.LastName,

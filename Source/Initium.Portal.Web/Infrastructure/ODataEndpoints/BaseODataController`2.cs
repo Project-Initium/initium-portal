@@ -7,6 +7,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
+using Initium.Portal.Core.Exceptions;
 using Initium.Portal.Core.Infrastructure;
 using Initium.Portal.Web.Infrastructure.Extensions;
 using LinqKit;
@@ -15,19 +16,19 @@ using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OData;
 
-namespace Initium.Portal.Web.Infrastructure.Controllers
+namespace Initium.Portal.Web.Infrastructure.ODataEndpoints
 {
     public abstract class BaseODataController<TReadEntity, TFilterModel> : ODataController
         where TReadEntity : ReadEntity, new()
-        where TFilterModel : class
+        where TFilterModel : IODataFilter
     {
         public abstract IActionResult Filtered(ODataQueryOptions<TReadEntity> options, TFilterModel filter);
 
-        public abstract IActionResult FilteredExport(ODataQueryOptions<TReadEntity> options, TFilterModel filter);
+        public abstract IActionResult FilteredExport(ODataQueryOptions<TReadEntity> options, ExportableFilter<TFilterModel> filter);
 
         protected abstract ExpressionStarter<TReadEntity> GeneratePredicate(TFilterModel filter);
 
-        protected Stream GenerateCsvStream(IQueryable query, ODataQueryOptions<TReadEntity> options)
+        protected Stream GenerateCsvStream(IQueryable query, ODataQueryOptions<TReadEntity> options, IDictionary<string, string> mappings)
         {
             var results = options.ApplyTo(query);
             var resultList = new List<TReadEntity>();
@@ -53,22 +54,23 @@ namespace Initium.Portal.Web.Infrastructure.Controllers
             var csvWriter = new CsvWriter(streamWriter, CultureInfo.InvariantCulture);
             if (options.SelectExpand == null || string.IsNullOrEmpty(options.SelectExpand.RawSelect))
             {
-                csvWriter.WriteHeader<TReadEntity>();
-                csvWriter.NextRecord();
-            }
-            else
-            {
-                streamWriter.WriteLine(options.SelectExpand.RawSelect);
+                throw new CustomException("Can only generate CSV when a custom select is used.");
             }
 
-            foreach (var user in resultList)
+            foreach (var heading in options.SelectExpand.RawSelect.Split(',', StringSplitOptions.RemoveEmptyEntries))
+            {
+                csvWriter.WriteField(mappings.ContainsKey(heading) ? mappings[heading] : heading);
+            }
+
+            csvWriter.NextRecord();
+            foreach (var resultItem in resultList)
             {
                 foreach (var selectedProperty in selectedProperties)
                 {
                     var prop = type.GetProperty(selectedProperty);
                     if (prop != null)
                     {
-                        csvWriter.WriteField(prop.GetValue(user));
+                        csvWriter.WriteField(prop.GetValue(resultItem));
                     }
                     else
                     {

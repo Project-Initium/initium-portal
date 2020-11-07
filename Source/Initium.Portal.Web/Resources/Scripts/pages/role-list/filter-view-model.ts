@@ -1,6 +1,6 @@
 ﻿import ko from 'knockout';
-import {ICustomQuery, ISimpleStateData, IStateData} from '../../providers';
-import {BaseFilterViewModel} from '../base-list';
+import { ICustomQuery, ISimpleStateData, IStateData } from '../../providers';
+import { BaseFilterViewModel } from '../base-list';
 
 interface IRequest {
     hasResources: boolean;
@@ -32,16 +32,16 @@ export class FilterViewModel extends BaseFilterViewModel {
     public filterCount = ko.computed<number>(() => {
         let count = 0;
         if(this.hasResources()) {
-            count ++
+            count ++;
         }
         if(this.hasNoResources()) {
-            count ++
+            count ++;
         }
         if(this.hasUsers()) {
-            count ++
+            count ++;
         }
         if(this.hasNoUsers()) {
-            count ++
+            count ++;
         }
         return count;
     });
@@ -49,7 +49,7 @@ export class FilterViewModel extends BaseFilterViewModel {
     private customQuery: ICustomQuery;
 
     constructor() {
-        super()
+        super();
     }
 
     createInternalRequest() {
@@ -63,7 +63,7 @@ export class FilterViewModel extends BaseFilterViewModel {
         this.customQuery = {
             requestData: request,
             searchParam: this.searchTerm()
-        }
+        };
     }
 
     generateStateData(stateData: IRoleStateData, simpleStateData: IRoleSimpleStateData): { stateData: IStateData; simpleStateData: ISimpleStateData } {
@@ -84,12 +84,12 @@ export class FilterViewModel extends BaseFilterViewModel {
             simpleStateData.fhnu = '1';
         }
         stateData.search = this.searchTerm();
-        return {stateData: stateData, simpleStateData: simpleStateData}
+        return {stateData, simpleStateData};
     }
 
     getFilter(): ICustomQuery {
         if (!this.customQuery) {
-            this.createInternalRequest()
+            this.createInternalRequest();
         }
         return this.customQuery;
     }
@@ -115,5 +115,4 @@ export class FilterViewModel extends BaseFilterViewModel {
         this.hasUsers(false);
         this.hasNoUsers(false);
     }
-
 }

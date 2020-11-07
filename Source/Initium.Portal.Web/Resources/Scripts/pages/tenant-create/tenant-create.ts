@@ -1,10 +1,11 @@
-﻿import slugify  from 'slugify'
+﻿import slugify  from 'slugify';
+
 export class TenantCreate {
     constructor() {
         if (document.readyState !== 'loading') {
             this.init();
         } else {
-            document.addEventListener('DOMContentLoaded', e => this.init());
+            document.addEventListener('DOMContentLoaded', _ => this.init());
         }
     }
 
@@ -14,11 +15,12 @@ export class TenantCreate {
 
         nameInput.addEventListener('blur', () => {
             identifierInput.value = slugify(nameInput.value, {
-                lower: true,      // convert to lower case, defaults to `false`
+                lower: true,
                 strict: true,
             });
-        })
+        });
     }
 }
 
-const p = new TenantCreate()
+// tslint:disable-next-line:no-unused-expression
+new TenantCreate();

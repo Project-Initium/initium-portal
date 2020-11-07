@@ -95,7 +95,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             }
 
             user.ChangePassword(BCrypt.Net.BCrypt.HashPassword(request.NewPassword), this._clock.GetCurrentInstant().ToDateTimeUtc());
-            user.AddDomainEvent(new PasswordChangedEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName));
+            user.AddIntegrationEvent(new PasswordChangedIntegrationEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName));
 
             this._userRepository.Update(user);
 

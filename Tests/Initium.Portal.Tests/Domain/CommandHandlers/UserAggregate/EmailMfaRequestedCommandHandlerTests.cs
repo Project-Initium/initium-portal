@@ -12,7 +12,7 @@ using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MaybeMonad;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -142,7 +142,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             user.Verify(
                 x => x.ProcessPartialSuccessfulAuthenticationAttempt(
                     It.IsAny<DateTime>(), It.IsAny<AuthenticationHistoryType>()), Times.Once);
-            user.Verify(x => x.AddDomainEvent(It.IsAny<EmailMfaTokenGeneratedEvent>()));
+            user.Verify(x => x.AddDomainEvent(It.IsAny<EmailMfaTokenGeneratedIntegrationEvent>()));
         }
 
         [Fact]

@@ -3,13 +3,14 @@
 
 using MediatR;
 
-namespace Initium.Portal.Domain.Events
+namespace Initium.Portal.Domain.Events.IntegrationEvents
 {
-    public class UserDisabledEvent : INotification
+    public class PasswordResetTokenGeneratedIntegrationEvent : INotification
     {
-        public UserDisabledEvent(string emailAddress, string firstName, string lastName)
+        public PasswordResetTokenGeneratedIntegrationEvent(string emailAddress, string firstName, string lastName, string token)
         {
             this.EmailAddress = emailAddress;
+            this.Token = token;
             this.FirstName = firstName;
             this.LastName = lastName;
         }
@@ -19,5 +20,7 @@ namespace Initium.Portal.Domain.Events
         public string FirstName { get; }
 
         public string LastName { get; }
+
+        public string Token { get; }
     }
 }

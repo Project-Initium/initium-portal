@@ -38,7 +38,6 @@ namespace Initium.Portal.Queries
         public async Task<Maybe<DetailedRoleModel>> GetDetailsOfRoleById(Guid roleId)
         {
             var data = await this.QueryableEntity
-                .Include(x => x.RoleResources)
                 .Where(role => role.Id == roleId)
                 .Select(role => new
                 {

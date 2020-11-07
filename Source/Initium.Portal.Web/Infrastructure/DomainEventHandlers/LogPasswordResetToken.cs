@@ -3,13 +3,13 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Initium.Portal.Web.Infrastructure.DomainEventHandlers
 {
-    public class LogPasswordResetToken : INotificationHandler<PasswordResetTokenGeneratedEvent>
+    public class LogPasswordResetToken : INotificationHandler<PasswordResetTokenGeneratedIntegrationEvent>
     {
         private readonly ILogger _logger;
 
@@ -18,7 +18,7 @@ namespace Initium.Portal.Web.Infrastructure.DomainEventHandlers
             this._logger = logger;
         }
 
-        public Task Handle(PasswordResetTokenGeneratedEvent notification, CancellationToken cancellationToken)
+        public Task Handle(PasswordResetTokenGeneratedIntegrationEvent notification, CancellationToken cancellationToken)
         {
             this._logger.LogInformation("Password Reset Token for email {EmailAddress} is {Token}", notification.EmailAddress,
                 notification.Token);

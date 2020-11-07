@@ -9,6 +9,8 @@
     "quotemark": {
       "options": "single"
     },
-    "prefer-for-of": false
+    "prefer-for-of": false,
+    "whitespace": [true, "check-module"],
+    "semicolon": [true, "always"]
   }
 }

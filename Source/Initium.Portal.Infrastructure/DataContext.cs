@@ -51,8 +51,9 @@ namespace Initium.Portal.Infrastructure
 
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
-            await this.SaveChangesAsync(cancellationToken);
             await this._mediator.DispatchDomainEventsAsync(this);
+            await this.SaveChangesAsync(cancellationToken);
+            await this._mediator.DispatchIntegrationEventsAsync(this);
             return true;
         }
 
@@ -94,6 +95,7 @@ namespace Initium.Portal.Infrastructure
             tenants.ToTable("Tenant", "Admin");
             tenants.HasKey(tenant => tenant.Id);
             tenants.Ignore(tenant => tenant.DomainEvents);
+            tenants.Ignore(tenant => tenant.IntegrationEvents);
             tenants.Property(tenant => tenant.Id).ValueGeneratedNever();
 
             var navigation = tenants.Metadata.FindNavigation(nameof(Tenant.TenantFeatures));
@@ -106,6 +108,7 @@ namespace Initium.Portal.Infrastructure
                 tenantFeatures.Property(tenantFeature => tenantFeature.Id).ValueGeneratedNever();
                 tenantFeatures.Property(tenantFeature => tenantFeature.Id).HasColumnName("FeatureId");
                 tenantFeatures.Ignore(tenantFeature => tenantFeature.DomainEvents);
+                tenantFeatures.Ignore(tenantFeature => tenantFeature.IntegrationEvents);
             });
         }
 
@@ -114,10 +117,11 @@ namespace Initium.Portal.Infrastructure
             systemAlerts.ToTable("SystemAlert", "Messaging");
             systemAlerts.HasKey(systemAlert => systemAlert.Id);
             systemAlerts.Ignore(systemAlert => systemAlert.DomainEvents);
+            systemAlerts.Ignore(systemAlert => systemAlert.IntegrationEvents);
             systemAlerts.Property(systemAlert => systemAlert.Id).ValueGeneratedNever();
             systemAlerts.Metadata.AddAnnotation("MULTI_TENANT", null);
             systemAlerts.Property<Guid>("TenantId");
-            systemAlerts.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
+            systemAlerts.HasQueryFilter(systemAlert => EF.Property<Guid>(systemAlert, "TenantId") == Guid.Parse(this._tenantInfo.Id));
         }
 
         private void ConfigureNotification(EntityTypeBuilder<Notification> notifications)
@@ -125,10 +129,11 @@ namespace Initium.Portal.Infrastructure
             notifications.ToTable("Notification", "Messaging");
             notifications.HasKey(notification => notification.Id);
             notifications.Ignore(notification => notification.DomainEvents);
+            notifications.Ignore(notification => notification.IntegrationEvents);
             notifications.Property(notification => notification.Id).ValueGeneratedNever();
             notifications.Metadata.AddAnnotation("MULTI_TENANT", null);
             notifications.Property<Guid>("TenantId");
-            notifications.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
+            notifications.HasQueryFilter(notification => EF.Property<Guid>(notification, "TenantId") == Guid.Parse(this._tenantInfo.Id));
 
             var navigation = notifications.Metadata.FindNavigation(nameof(Notification.UserNotifications));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
@@ -139,7 +144,8 @@ namespace Initium.Portal.Infrastructure
                 userNotifications.HasKey(userNotification => userNotification.Id);
                 userNotifications.Property(userNotification => userNotification.Id).ValueGeneratedNever();
                 userNotifications.Ignore(userNotification => userNotification.DomainEvents);
-                userNotifications.Metadata.AddAnnotation("MULTI_TENANT", null);
+                userNotifications.Ignore(userNotification => userNotification.IntegrationEvents);
+                userNotifications.OwnedEntityType.AddAnnotation("MULTI_TENANT", null);
                 userNotifications.Property<Guid>("TenantId");
             });
         }
@@ -147,12 +153,13 @@ namespace Initium.Portal.Infrastructure
         private void ConfigureRole(EntityTypeBuilder<Role> roles)
         {
             roles.ToTable("Role", "AccessProtection");
-            roles.HasKey(entity => entity.Id);
-            roles.Ignore(b => b.DomainEvents);
-            roles.Property(e => e.Id).ValueGeneratedNever();
+            roles.HasKey(role => role.Id);
+            roles.Ignore(role => role.DomainEvents);
+            roles.Ignore(role => role.IntegrationEvents);
+            roles.Property(role => role.Id).ValueGeneratedNever();
             roles.Metadata.AddAnnotation("MULTI_TENANT", null);
             roles.Property<Guid>("TenantId");
-            roles.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
+            roles.HasQueryFilter(role => EF.Property<Guid>(role, "TenantId") == Guid.Parse(this._tenantInfo.Id));
 
             var navigation = roles.Metadata.FindNavigation(nameof(Role.RoleResources));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
@@ -161,10 +168,11 @@ namespace Initium.Portal.Infrastructure
             {
                 roleResources.ToTable("RoleResource", "AccessProtection");
                 roleResources.HasKey(entity => entity.Id);
-                roleResources.Property(e => e.Id).ValueGeneratedNever();
-                roleResources.Property(x => x.Id).HasColumnName("ResourceId");
-                roleResources.Ignore(b => b.DomainEvents);
-                roleResources.Metadata.AddAnnotation("MULTI_TENANT", null);
+                roleResources.Property(roleResource => roleResource.Id).ValueGeneratedNever();
+                roleResources.Property(roleResource => roleResource.Id).HasColumnName("ResourceId");
+                roleResources.Ignore(roleResource => roleResource.DomainEvents);
+                roleResources.Ignore(roleResource => roleResource.IntegrationEvents);
+                roleResources.OwnedEntityType.AddAnnotation("MULTI_TENANT", null);
                 roleResources.Property<Guid>("TenantId");
             });
         }
@@ -172,12 +180,13 @@ namespace Initium.Portal.Infrastructure
         private void ConfigureUser(EntityTypeBuilder<User> users)
         {
             users.ToTable("User", "Identity");
-            users.HasKey(entity => entity.Id);
-            users.Ignore(b => b.DomainEvents);
-            users.Property(e => e.Id).ValueGeneratedNever();
+            users.HasKey(user => user.Id);
+            users.Ignore(user => user.DomainEvents);
+            users.Ignore(user => user.IntegrationEvents);
+            users.Property(user => user.Id).ValueGeneratedNever();
             users.Metadata.AddAnnotation("MULTI_TENANT", null);
             users.Property<Guid>("TenantId");
-            users.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
+            users.HasQueryFilter(user => EF.Property<Guid>(user, "TenantId") == Guid.Parse(this._tenantInfo.Id));
 
             var navigation = users.Metadata.FindNavigation(nameof(User.AuthenticationHistories));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
@@ -189,7 +198,8 @@ namespace Initium.Portal.Infrastructure
                 authenticationHistories.Property(authenticationHistory => authenticationHistory.Id)
                     .ValueGeneratedNever();
                 authenticationHistories.Ignore(authenticationHistory => authenticationHistory.DomainEvents);
-                authenticationHistories.Metadata.AddAnnotation("MULTI_TENANT", null);
+                authenticationHistories.Ignore(authenticationHistory => authenticationHistory.IntegrationEvents);
+                authenticationHistories.OwnedEntityType.AddAnnotation("MULTI_TENANT", null);
                 authenticationHistories.Property<Guid>("TenantId");
             });
 
@@ -203,7 +213,8 @@ namespace Initium.Portal.Infrastructure
                 securityTokenMappings.Property(securityTokenMapping => securityTokenMapping.Id)
                     .ValueGeneratedNever();
                 securityTokenMappings.Ignore(securityTokenMapping => securityTokenMapping.DomainEvents);
-                securityTokenMappings.Metadata.AddAnnotation("MULTI_TENANT", null);
+                securityTokenMappings.Ignore(securityTokenMapping => securityTokenMapping.IntegrationEvents);
+                securityTokenMappings.OwnedEntityType.AddAnnotation("MULTI_TENANT", null);
                 securityTokenMappings.Property<Guid>("TenantId");
             });
 
@@ -214,7 +225,8 @@ namespace Initium.Portal.Infrastructure
                 profile.HasKey(item => item.Id);
                 profile.Property(item => item.Id).HasColumnName("UserId");
                 profile.Ignore(item => item.DomainEvents);
-                profile.Metadata.AddAnnotation("MULTI_TENANT", null);
+                profile.Ignore(item => item.IntegrationEvents);
+                profile.OwnedEntityType.AddAnnotation("MULTI_TENANT", null);
                 profile.Property<Guid>("TenantId");
             });
 
@@ -224,11 +236,12 @@ namespace Initium.Portal.Infrastructure
             users.OwnsMany(user => user.UserRoles, userRoles =>
             {
                 userRoles.ToTable("UserRole", "Identity");
-                userRoles.HasKey(userRole => userRole.Id);
                 userRoles.Property(userRole => userRole.Id).ValueGeneratedNever();
                 userRoles.Property(userRole => userRole.Id).HasColumnName("RoleId");
+                userRoles.HasKey("Id", "UserId");
                 userRoles.Ignore(userRole => userRole.DomainEvents);
-                userRoles.Metadata.AddAnnotation("MULTI_TENANT", null);
+                userRoles.Ignore(userRole => userRole.IntegrationEvents);
+                userRoles.OwnedEntityType.AddAnnotation("MULTI_TENANT", null);
                 userRoles.Property<Guid>("TenantId");
             });
 
@@ -242,7 +255,8 @@ namespace Initium.Portal.Infrastructure
                 authenticatorApps.Property(authenticatorApp => authenticatorApp.Id)
                     .ValueGeneratedNever();
                 authenticatorApps.Ignore(authenticatorApp => authenticatorApp.DomainEvents);
-                authenticatorApps.Metadata.AddAnnotation("MULTI_TENANT", null);
+                authenticatorApps.Ignore(authenticatorApp => authenticatorApp.IntegrationEvents);
+                authenticatorApps.OwnedEntityType.AddAnnotation("MULTI_TENANT", null);
                 authenticatorApps.Property<Guid>("TenantId");
             });
 
@@ -256,7 +270,8 @@ namespace Initium.Portal.Infrastructure
                 authenticatorDevices.Property(authenticatorDevice => authenticatorDevice.Id)
                     .ValueGeneratedNever();
                 authenticatorDevices.Ignore(authenticatorDevice => authenticatorDevice.DomainEvents);
-                authenticatorDevices.Metadata.AddAnnotation("MULTI_TENANT", null);
+                authenticatorDevices.Ignore(authenticatorDevice => authenticatorDevice.IntegrationEvents);
+                authenticatorDevices.OwnedEntityType.AddAnnotation("MULTI_TENANT", null);
                 authenticatorDevices.Property<Guid>("TenantId");
             });
 
@@ -270,7 +285,8 @@ namespace Initium.Portal.Infrastructure
                 passwordHistories.Property(passwordHistory => passwordHistory.Id)
                     .ValueGeneratedNever();
                 passwordHistories.Ignore(passwordHistory => passwordHistory.DomainEvents);
-                passwordHistories.Metadata.AddAnnotation("MULTI_TENANT", null);
+                passwordHistories.Ignore(passwordHistory => passwordHistory.IntegrationEvents);
+                passwordHistories.OwnedEntityType.AddAnnotation("MULTI_TENANT", null);
                 passwordHistories.Property<Guid>("TenantId");
             });
 
@@ -285,7 +301,8 @@ namespace Initium.Portal.Infrastructure
                     .ValueGeneratedNever();
                 userNotifications.Property(userNotification => userNotification.Id).HasColumnName("NotificationId");
                 userNotifications.Ignore(userNotification => userNotification.DomainEvents);
-                userNotifications.Metadata.AddAnnotation("MULTI_TENANT", null);
+                userNotifications.Ignore(userNotification => userNotification.IntegrationEvents);
+                userNotifications.OwnedEntityType.AddAnnotation("MULTI_TENANT", null);
                 userNotifications.Property<Guid>("TenantId");
             });
         }

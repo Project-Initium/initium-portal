@@ -1,4 +1,4 @@
-﻿CREATE TABLE [Identity].[User]
+CREATE TABLE [Identity].[User]
 (
 	    [Id] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY
     ,   [EmailAddress] NVARCHAR(320) NOT NULL
@@ -13,4 +13,8 @@
     ,   [WhenVerified] DATETIME2 NULL
     ,   [WhenDisabled] DATETIME2 NULL
     ,   [TenantId] UNIQUEIDENTIFIER NOT NULL
+    ,   CONSTRAINT [FK_User_Tenant] FOREIGN KEY ([TenantId]) REFERENCES [Admin].[Tenant]([Id])
 )
+GO
+
+CREATE INDEX [IX_User_TenantId] ON [Identity].[User] ([TenantId])

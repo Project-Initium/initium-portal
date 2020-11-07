@@ -9,7 +9,7 @@ using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MaybeMonad;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -115,7 +115,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             user.Verify(x => x.UnlockAccount(), Times.Once);
             user.Verify(x => x.GenerateNewPasswordResetToken(It.IsAny<DateTime>(), It.IsAny<TimeSpan>()), Times.Once);
-            user.Verify(x => x.AddDomainEvent(It.IsAny<PasswordResetTokenGeneratedEvent>()));
+            user.Verify(x => x.AddDomainEvent(It.IsAny<PasswordResetTokenGeneratedIntegrationEvent>()));
         }
     }
 }

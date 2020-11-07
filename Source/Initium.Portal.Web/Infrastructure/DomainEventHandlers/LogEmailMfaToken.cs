@@ -3,13 +3,13 @@
 
 using System.Threading;
 using System.Threading.Tasks;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Initium.Portal.Web.Infrastructure.DomainEventHandlers
 {
-    public class LogEmailMfaToken : INotificationHandler<EmailMfaTokenGeneratedEvent>
+    public class LogEmailMfaToken : INotificationHandler<EmailMfaTokenGeneratedIntegrationEvent>
     {
         private readonly ILogger _logger;
 
@@ -18,7 +18,7 @@ namespace Initium.Portal.Web.Infrastructure.DomainEventHandlers
             this._logger = logger;
         }
 
-        public Task Handle(EmailMfaTokenGeneratedEvent notification, CancellationToken cancellationToken)
+        public Task Handle(EmailMfaTokenGeneratedIntegrationEvent notification, CancellationToken cancellationToken)
         {
             this._logger.LogInformation("MFA Token for email {EmailAddress} is {Token}", notification.EmailAddress,
                 notification.Token);

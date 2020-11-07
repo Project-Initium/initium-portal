@@ -55,6 +55,10 @@
   <ItemGroup>
     <TypeScriptCompile Include="Resources\Scripts\helpers\array-helper\array-helper.ts" />
     <TypeScriptCompile Include="Resources\Scripts\helpers\index.ts" />
+    <TypeScriptCompile Include="Resources\Scripts\helpers\monads\result-status.ts" />
+    <TypeScriptCompile Include="Resources\Scripts\helpers\monads\result-with-error.ts" />
+    <TypeScriptCompile Include="Resources\Scripts\helpers\monads\result.ts" />
+    <TypeScriptCompile Include="Resources\Scripts\helpers\xhr-helper\xhr-helper.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\base-list.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\notification-list\filter-view-model.ts" />
     <TypeScriptCompile Include="Resources\Scripts\pages\notification-list\notification-list.ts" />

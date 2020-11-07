@@ -8,7 +8,7 @@ using Initium.Portal.Core.Domain;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -66,7 +66,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             user.UnlockAccount();
             var token = user.GenerateNewPasswordResetToken(whenHappened, TimeSpan.FromDays(this._securitySettings.PasswordTokenLifetime));
 
-            user.AddDomainEvent(new PasswordResetTokenGeneratedEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token));
+            user.AddIntegrationEvent(new PasswordResetTokenGeneratedIntegrationEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token));
 
             this._userRepository.Update(user);
             return ResultWithError.Ok<ErrorData>();

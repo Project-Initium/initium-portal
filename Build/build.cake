@@ -1,6 +1,6 @@
 #addin "nuget:?package=Cake.Npm&version=0.17.0"
 #addin "nuget:?package=Cake.Coverlet&version=2.4.2"
-#tool "nuget:?package=GitVersion.CommandLine&version=5.1.3"
+#tool "nuget:?package=GitVersion.CommandLine&version=5.0.0"
 #addin "nuget:?package=SharpZipLib&version=1.2.0"
 #addin "nuget:?package=Cake.Compression&version=0.2.4"
 #addin "Cake.FileHelpers&version=3.2.1"

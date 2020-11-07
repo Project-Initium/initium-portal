@@ -1,1 +1,1 @@
-﻿CREATE SCHEMA [Identity]
+CREATE SCHEMA [Identity]

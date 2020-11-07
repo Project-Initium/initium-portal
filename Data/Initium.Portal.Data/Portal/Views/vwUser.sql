@@ -1,4 +1,4 @@
-﻿CREATE VIEW [Portal].[vwUser]
+CREATE VIEW [Portal].[vwUser]
 AS
 SELECT 
 		u.Id

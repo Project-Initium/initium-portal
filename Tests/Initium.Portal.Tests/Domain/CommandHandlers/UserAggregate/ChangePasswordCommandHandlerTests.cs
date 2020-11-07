@@ -233,7 +233,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             await handler.Handle(cmd, CancellationToken.None);
             user.Verify(x => x.ChangePassword(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Once);
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
-            user.Verify(x => x.AddDomainEvent(It.IsAny<PasswordChangedEvent>()), Times.Once);
+            user.Verify(x => x.AddDomainEvent(It.IsAny<PasswordChangedIntegrationEvent>()), Times.Once);
         }
 
         [Fact]

@@ -1,9 +1,7 @@
-﻿import 'datatables.net'
-import 'datatables.net-bs4'
-import {BaseList} from '../base-list';
-import moment from 'moment';
-import {FilterViewModel} from './filter-view-model';
-
+﻿import 'datatables.net';
+import 'datatables.net-bs4';
+import { BaseList } from '../base-list';
+import { FilterViewModel } from './filter-view-model';
 
 export class TenantList extends BaseList<FilterViewModel>{
     protected readonly tableOptions: DataTables.Settings = {
@@ -24,7 +22,10 @@ export class TenantList extends BaseList<FilterViewModel>{
                 visible: false
             },
         ],
-        dom: 'rt<"table-information"lpi>'
+        dom: 'rt<"table-information"lpi>',
+        language: {
+            processing: '<div class="processing-inner">Processing...</div>'
+        }
     };
 
     constructor() {
@@ -32,7 +33,7 @@ export class TenantList extends BaseList<FilterViewModel>{
         if (document.readyState !== 'loading') {
             this.init();
         } else {
-            document.addEventListener('DOMContentLoaded', e => this.init());
+            document.addEventListener('DOMContentLoaded', _ => this.init());
         }
     }
 
@@ -40,4 +41,5 @@ export class TenantList extends BaseList<FilterViewModel>{
         this.baseInit('#tenants', new FilterViewModel());
     }
 }
-const p = new TenantList();
+// tslint:disable-next-line:no-unused-expression
+new TenantList();

@@ -1,4 +1,5 @@
-﻿import {ToastHelper} from '../../helpers';
+﻿import { ToastHelper, XhrHelper } from '../../helpers';
+import { IBasicApiResponse } from '../../types/IBasicApiResponse';
 
 export class UserView {
     private enableTenantToggles: NodeListOf<HTMLButtonElement>;
@@ -6,7 +7,7 @@ export class UserView {
         if (document.readyState !== 'loading') {
             this.init();
         } else {
-            document.addEventListener('DOMContentLoaded', e => this.init());
+            document.addEventListener('DOMContentLoaded', _ => this.init());
         }
     }
 
@@ -15,41 +16,33 @@ export class UserView {
         this.enableTenantToggles = document.querySelectorAll<HTMLButtonElement>('[data-enable-toggle]');
         if(this.enableTenantToggles) {
             this.enableTenantToggles.forEach((element) => {
-                element.addEventListener('click', (event) => contextThis.toggleTenantEnableState(event))
-            })
+                element.addEventListener('click', (event) => contextThis.toggleTenantEnableState(event));
+            });
         }
     }
 
     async toggleTenantEnableState(event: MouseEvent) {
         event.preventDefault();
-        try {
-            const btn = event.currentTarget as HTMLButtonElement;
-            const response = await fetch(btn.dataset.endpoint, {
-                method: 'POST',
-                mode: 'same-origin',
-                cache: 'no-cache',
-                body: JSON.stringify({
-                    tenantId: btn.dataset.tenantId
-                }),
-                credentials: 'same-origin',
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': btn.dataset.afToken
-                }
-            });
-            const result = await response.json();
-            if (result && result.isSuccess) {
-                this.enableTenantToggles.forEach((element) => {
-                    element.classList.toggle('d-none');
-                });
-                ToastHelper.showSuccessToast(btn.dataset.message);
-                return
-            }
+
+        this.enableTenantToggles.forEach(ele => ele.disabled = true);
+        const btn = event.currentTarget as HTMLButtonElement;
+        const result = await XhrHelper.PostJsonInternalOfT<IBasicApiResponse>(
+            btn.dataset.endpoint,
+            {
+                tenantId: btn.dataset.tenantId
+            },
+            btn.dataset.afToken
+        );
+
+        if (result.isSuccess && result.value.isSuccess) {
+            this.enableTenantToggles.forEach(ele => ele.hidden = !ele.hidden);
+            ToastHelper.showSuccessToast(btn.dataset.message);
+        } else {
+            ToastHelper.showFailureToast('Sorry, there was an issue. Please try again.');
         }
-        catch (e) {
-        }
-        ToastHelper.showFailureToast('Sorry, there was an issue. Please try again.')
+        this.enableTenantToggles.forEach(ele => ele.disabled = false);
+
     }
 }
-const p = new UserView();
+// tslint:disable-next-line:no-unused-expression
+new UserView();

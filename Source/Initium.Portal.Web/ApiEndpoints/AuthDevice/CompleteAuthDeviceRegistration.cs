@@ -43,7 +43,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
             return this.Ok(result.IsFailure
                 ? new EndpointResponse()
                 : new EndpointResponse(result.Value.CredentialMakeResult, result.Value.DeviceId, request.Name));
-        }
+}
 
         public class EndpointRequest
         {
@@ -67,17 +67,17 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
             public EndpointResponse()
             {
                 this.DeviceId = Guid.Empty;
-                this.Result = new Fido2.CredentialMakeResult { Status = "error" };
+                this.CredentialMakeResult = new Fido2.CredentialMakeResult { Status = "error" };
             }
 
             public EndpointResponse(Fido2.CredentialMakeResult result, Guid deviceId, string name)
             {
-                this.Result = result;
+                this.CredentialMakeResult = result;
                 this.DeviceId = deviceId;
                 this.Name = name;
             }
 
-            public Fido2.CredentialMakeResult Result { get; }
+            public Fido2.CredentialMakeResult CredentialMakeResult { get; }
 
             public Guid DeviceId { get; }
 

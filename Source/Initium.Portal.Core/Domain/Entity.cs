@@ -14,6 +14,8 @@ namespace Initium.Portal.Core.Domain
 
         public virtual Guid Id { get; protected set; }
 
+        public List<INotification> IntegrationEvents { get;  private set; }
+
         public List<INotification> DomainEvents { get; private set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Blocker Code Smell", "S3875:\"operator==\" should not be overloaded on reference types", Justification = "Initially suppressing everything before evaluating what's wanted and what's appropriate.")]
@@ -33,9 +35,20 @@ namespace Initium.Portal.Core.Domain
             this.DomainEvents.Add(eventItem);
         }
 
+        public void AddIntegrationEvent(INotification eventItem)
+        {
+            this.IntegrationEvents = this.IntegrationEvents ?? new List<INotification>();
+            this.IntegrationEvents.Add(eventItem);
+        }
+
         public void RemoveDomainEvent(INotification eventItem)
         {
             this.DomainEvents?.Remove(eventItem);
+        }
+
+        public void RemoveIntegrationEvent(INotification eventItem)
+        {
+            this.IntegrationEvents?.Remove(eventItem);
         }
 
         public bool IsTransient()

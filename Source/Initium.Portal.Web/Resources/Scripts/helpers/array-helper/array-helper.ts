@@ -24,7 +24,7 @@
         }
 
         return data;
-    };
+    }
 
 
     public static coerceToBase64Url(data: Uint8Array | ArrayBuffer | string) {

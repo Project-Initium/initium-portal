@@ -1,4 +1,4 @@
-﻿CREATE VIEW [Portal].[vwSystemAlert]
+CREATE VIEW [Portal].[vwSystemAlert]
 AS
 SELECT
         sA.Id
@@ -7,7 +7,7 @@ SELECT
     ,   sA.Type
     ,   sA.WhenToShow
     ,   sA.WhenToHide
-    ,   Cast(sA.IsActive as bit) as IsActive
+    ,   Cast(sA.IsActive as bit) as IsActive    
     ,   sA.TenantId
 FROM (
 SELECT 

@@ -1,8 +1,8 @@
-﻿import 'datatables.net'
-import 'datatables.net-bs4'
-import {BaseList} from '../base-list';
+﻿import 'datatables.net';
+import 'datatables.net-bs4';
+import { BaseList } from '../base-list';
 import moment from 'moment';
-import {FilterViewModel} from './filter-view-model';
+import { FilterViewModel } from './filter-view-model';
 
 
 export class SystemAlertList extends BaseList<FilterViewModel>{
@@ -21,7 +21,7 @@ export class SystemAlertList extends BaseList<FilterViewModel>{
             {
                 data: 'IsActive',
                 type: 'boolean',
-                render: (data, type, full, meta) => {
+                render: (data) => {
                     if (data === true) {
                         return '<i class="fa fa-check" aria-hidden="true"></i>';
                     }
@@ -32,7 +32,7 @@ export class SystemAlertList extends BaseList<FilterViewModel>{
             {
                 data: 'WhenToShow',
                 type: 'date',
-                render: (data, type, full, meta) => {
+                render: (data) => {
                     const m = moment(data);
                     if(m.isValid)
                     {
@@ -49,7 +49,7 @@ export class SystemAlertList extends BaseList<FilterViewModel>{
             {
                 data: 'WhenToHide',
                 type: 'date',
-                render: (data, type, full, meta) => {
+                render: (data) => {
                     const m = moment(data);
                     if(m.isValid)
                     {
@@ -69,7 +69,10 @@ export class SystemAlertList extends BaseList<FilterViewModel>{
                 visible: false
             },
         ],
-        dom: 'rt<"table-information"lpi>'
+        dom: 'rt<"table-information"lpi>',
+        language: {
+            processing: '<div class="processing-inner">Processing...</div>'
+        }
     };
 
     constructor() {
@@ -77,7 +80,7 @@ export class SystemAlertList extends BaseList<FilterViewModel>{
         if (document.readyState !== 'loading') {
             this.init();
         } else {
-            document.addEventListener('DOMContentLoaded', e => this.init());
+            document.addEventListener('DOMContentLoaded', _ => this.init());
         }
     }
 
@@ -85,4 +88,5 @@ export class SystemAlertList extends BaseList<FilterViewModel>{
         this.baseInit('#system-alerts', new FilterViewModel());
     }
 }
-const p = new SystemAlertList();
+// tslint:disable-next-line:no-unused-expression
+new SystemAlertList();

@@ -1,1 +1,1 @@
-﻿CREATE SCHEMA [AccessProtection]
+CREATE SCHEMA [AccessProtection]

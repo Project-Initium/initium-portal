@@ -3,11 +3,11 @@
 
 using MediatR;
 
-namespace Initium.Portal.Domain.Events
+namespace Initium.Portal.Domain.Events.IntegrationEvents
 {
-    public class PasswordChangedEvent : INotification
+    public class UserDisabledIntegrationEvent : INotification
     {
-        public PasswordChangedEvent(string emailAddress, string firstName, string lastName)
+        public UserDisabledIntegrationEvent(string emailAddress, string firstName, string lastName)
         {
             this.EmailAddress = emailAddress;
             this.FirstName = firstName;

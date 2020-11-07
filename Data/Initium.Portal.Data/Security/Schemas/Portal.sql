@@ -1,1 +1,1 @@
-﻿CREATE SCHEMA [Portal]
+CREATE SCHEMA [Portal]

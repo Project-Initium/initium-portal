@@ -3,10 +3,10 @@
 AS
 BEGIN
 	SELECT 
-		t.Id
-	,	t.Identifier
-	,	t.Name
-	,	t.ConnectionString
+			t.Id
+		,	t.Identifier
+		,	t.Name
+		,	t.ConnectionString
 	FROM [Admin].[Tenant] t
 	WHERE t.Id = @id
 END

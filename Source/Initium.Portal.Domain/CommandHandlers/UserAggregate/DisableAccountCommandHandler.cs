@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using NodaTime;
@@ -62,7 +62,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
 
             user.DisableAccount(whenHappened);
 
-            user.AddDomainEvent(new UserDisabledEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName));
+            user.AddIntegrationEvent(new UserDisabledIntegrationEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName));
 
             this._userRepository.Update(user);
             return ResultWithError.Ok<ErrorData>();

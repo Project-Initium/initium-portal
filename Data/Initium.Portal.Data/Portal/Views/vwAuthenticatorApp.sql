@@ -1,4 +1,4 @@
-﻿CREATE VIEW [Portal].[vwAuthenticatorApp]
+CREATE VIEW [Portal].[vwAuthenticatorApp]
 AS
 SELECT 
         aa.Id

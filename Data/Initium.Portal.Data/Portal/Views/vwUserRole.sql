@@ -1,4 +1,4 @@
-﻿CREATE VIEW [Portal].[vwUserRole]
+CREATE VIEW [Portal].[vwUserRole]
 AS 
 SELECT 
 		ur.RoleId

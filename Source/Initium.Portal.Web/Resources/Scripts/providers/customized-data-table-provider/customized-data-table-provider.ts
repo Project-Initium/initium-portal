@@ -72,6 +72,25 @@ export class CustomizedDataTableProvider {
         return select;
     }
 
+    private generateSelectionMapping(settings: DataTables.SettingsLegacy, excludeNonVisible: boolean = false) {
+        const select = {
+            
+        };
+        settings.aoColumns.forEach(value => {
+            if (excludeNonVisible && !value.bVisible) {
+                return;
+            }
+            const fieldName = CustomizedDataTableProvider.getColumnTypeInformation(value);
+            if (!fieldName) {
+                return;
+            }
+            
+            select[fieldName.fieldName] = fieldName.fieldTitle;
+        });
+
+        return select;
+    }
+
     private generateFilters(settings: DataTables.SettingsLegacy, searchValue: string): string {
         const filters: string[] = [];
         let globalFilter: string;
@@ -131,6 +150,7 @@ export class CustomizedDataTableProvider {
             orderBy.push(`${CustomizedDataTableProvider.getColumnFieldName(settings.aoColumns[value[0]])} ${value[1]}`);
         });
 
+
         if (orderBy.length > 0) {
             request.$orderby = orderBy.join();
         }
@@ -148,7 +168,10 @@ export class CustomizedDataTableProvider {
         };
 
         const getUrl = new URL(exportUrl, document.location.origin);
-        fetchRequest.body = JSON.stringify(customQuery.requestData);
+        fetchRequest.body = JSON.stringify( {
+            filter: customQuery.requestData,
+            mappings: this.generateSelectionMapping(settings, true)
+        });
 
         Object.keys(request).forEach(key => getUrl.searchParams.append(key, request[key]));
         fetch(getUrl.toString(), fetchRequest)
@@ -242,8 +265,15 @@ export class CustomizedDataTableProvider {
         }
     }
 
-    private static getColumnFieldName(column: any) {
-        return column.name || column.data;
+    private static getColumnFieldName(column: DataTables.ColumnLegacy): string {
+        return column.mData;
+    }
+
+    private static getColumnTypeInformation(column: DataTables.ColumnLegacy): { fieldName: string, fieldTitle: string } {
+        return {
+            fieldName: column.mData,
+            fieldTitle: column.sTitle
+        };
     }
 
     private stateSaveCallback(externalState?: (stateData: IStateData, simpleStateData: ISimpleStateData) => {stateData: IStateData, simpleStateData: ISimpleStateData}): (settings: DataTables.SettingsLegacy, data: IStateData) => void {

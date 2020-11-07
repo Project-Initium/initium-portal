@@ -1,18 +1,19 @@
-﻿import 'datatables.net'
-import 'datatables.net-bs4'
+﻿import 'datatables.net';
+import 'datatables.net-bs4';
 import { BaseList } from '../base-list';
 import  moment from 'moment';
 import { FilterViewModel } from './filter-view-model';
-import {ToastHelper} from '../../helpers';
+import { ToastHelper, XhrHelper } from '../../helpers';
+import { IBasicApiResponse } from '../../types/IBasicApiResponse';
 
 interface INotification {
     Message: string;
     NotificationId: string;
-    SerializedEventData: string
+    SerializedEventData: string;
     Subject: string;
     Type: string;
-    WhenNotified: Date
-    WhenViewed: Date
+    WhenNotified: Date;
+    WhenViewed: Date;
 }
 
 export class NotificationList extends BaseList<FilterViewModel> {
@@ -43,7 +44,7 @@ export class NotificationList extends BaseList<FilterViewModel> {
                 render: (data, type, row) => {
                     const m = moment(row.WhenNotified);
                     const readState = row.WhenViewed ? 'font-weight-lighter' : 'font-weight-normal';
-                    return `<div class="message-item ${readState} d-flex justify-content-between ${row.Type}"><span>${row.Subject}</span> <span>${m.format('DD/MM/YYYY HH:mm')}</span></div>`
+                    return `<div class="message-item ${readState} d-flex justify-content-between ${row.Type}"><span>${row.Subject}</span> <span>${m.format('DD/MM/YYYY HH:mm')}</span></div>`;
                 }
             },
             {
@@ -78,7 +79,7 @@ export class NotificationList extends BaseList<FilterViewModel> {
         if (document.readyState !== 'loading') {
             this.init();
         } else {
-            document.addEventListener('DOMContentLoaded', e => this.init());
+            document.addEventListener('DOMContentLoaded', _ => this.init());
         }
     }
 
@@ -97,72 +98,43 @@ export class NotificationList extends BaseList<FilterViewModel> {
         this.infoPanelDate = this.infoPanel.querySelector('[data-date]');
 
         document.getElementById('read-all').addEventListener('click', (event) => contextThis.readAll(event));
-        document.getElementById('dismiss-all').addEventListener('click', (event) => contextThis.dismissAll(event))
+        document.getElementById('dismiss-all').addEventListener('click', (event) => contextThis.dismissAll(event));
     }
 
-    private static action(event: MouseEvent): any {
+    private static action(_: MouseEvent): any {
         ToastHelper.showSuccessToast('Make something happen here');
     }
 
     private async dismissAll(event: MouseEvent) {
         event.preventDefault();
-        await fetch((event.currentTarget as HTMLButtonElement).dataset.url, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            mode: 'same-origin',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer'
-        });
+        const btn = event.currentTarget as HTMLButtonElement;
+        await XhrHelper.PostInternalOfT(btn.dataset.url, btn.dataset.afToken);
         this.customizedDataTable.tableApi.draw();
     }
 
     private async readAll(event: MouseEvent) {
         event.preventDefault();
-        await fetch((event.currentTarget as HTMLButtonElement).dataset.url, {
-            method: 'POST',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            },
-            mode: 'same-origin',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer'
-        });
+        const btn = event.currentTarget as HTMLButtonElement;
+        await XhrHelper.PostInternalOfT(btn.dataset.url, btn.dataset.afToken);
         this.customizedDataTable.tableApi.draw();
     }
 
-    protected rowClicked(event: JQuery.ClickEvent) {
+    protected async rowClicked(event: JQuery.ClickEvent) {
 
         this.selectedNotification = this.customizedDataTable.tableApi.row(event.currentTarget).data() as INotification;
 
         if(this.selectedNotification) {
             if (!this.selectedNotification.WhenViewed) {
                 this.selectedNotification.WhenViewed = new Date();
-                fetch(this.customizedDataTable.table.dataset.readItemUri, {
-                    method: 'POST',
-                    body: JSON.stringify({
+                await XhrHelper.PostJsonInternalOfT<IBasicApiResponse>(
+                    this.customizedDataTable.table.dataset.readItemUri,
+                    {
                         notificationId: this.selectedNotification.NotificationId
-                    }),
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
                     },
-                    mode: 'same-origin',
-                    cache: 'no-cache',
-                    credentials: 'same-origin',
-                    redirect: 'follow',
-                    referrerPolicy: 'no-referrer'
-                });
+                    this.customizedDataTable.table.dataset.afToken);
             }
             this.infoPanel.dataset.type = this.selectedNotification.Type;
-            this.infoPanelDismiss.classList.remove('d-none');
+            this.infoPanelDismiss.hidden = false;
             this.infoPanelSubject.textContent = this.selectedNotification.Subject;
             this.infoPanelMessage.textContent = this.selectedNotification.Message;
             const m = moment(this.selectedNotification.WhenNotified);
@@ -173,26 +145,17 @@ export class NotificationList extends BaseList<FilterViewModel> {
         event.preventDefault();
         this.customizedDataTable.tableApi.processing(true);
 
-        const response = await fetch(this.customizedDataTable.table.dataset.dismissItemUri, {
-            method: 'POST',
-            body: JSON.stringify({
+        const result = await XhrHelper.PostJsonInternalOfT<IBasicApiResponse>(
+            this.customizedDataTable.table.dataset.dismissItemUri,
+            {
                 notificationId: this.selectedNotification.NotificationId
-            }),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
             },
-            mode: 'same-origin',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            redirect: 'follow',
-            referrerPolicy: 'no-referrer'
-        });
-        const data = await response.json();
-        if (data && data.isSuccess){
+            this.customizedDataTable.table.dataset.afToken);
+
+        if (result.isSuccess && result.value.isSuccess){
             this.infoPanel.dataset.type = '';
-            this.infoPanelDismiss.classList.add('d-none');
-            this.infoPanelAction.classList.add('d-none');
+            this.infoPanelDismiss.hidden = true;
+            this.infoPanelAction.hidden = true;
             this.infoPanelSubject.textContent = '';
             this.infoPanelMessage.textContent = '';
             this.infoPanelDate.textContent = '';
@@ -202,5 +165,7 @@ export class NotificationList extends BaseList<FilterViewModel> {
         this.customizedDataTable.tableApi.processing(false);
     }
 }
-const p = new NotificationList();
+
+// tslint:disable-next-line:no-unused-expression
+new NotificationList();
 

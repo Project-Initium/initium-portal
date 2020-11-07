@@ -15,7 +15,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.CommandResults.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MaybeMonad;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -318,7 +318,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             Assert.True(result.Value.SetupMfaProviders.HasFlag(MfaProvider.Email));
             Assert.Equal(BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaEmailCode, result.Value.AuthenticationStatus);
             user.Verify(x => x.ProcessPartialSuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), AuthenticationHistoryType.EmailMfaRequested));
-            user.Verify(x => x.AddDomainEvent(It.IsAny<EmailMfaTokenGeneratedEvent>()));
+            user.Verify(x => x.AddDomainEvent(It.IsAny<EmailMfaTokenGeneratedIntegrationEvent>()));
         }
 
         [Fact]

@@ -9,7 +9,7 @@ using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MaybeMonad;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -131,7 +131,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             await handler.Handle(cmd, CancellationToken.None);
 
             user.Verify(x => x.DisableAccount(It.IsAny<DateTime>()), Times.Once);
-            user.Verify(x => x.AddDomainEvent(It.IsAny<UserDisabledEvent>()));
+            user.Verify(x => x.AddDomainEvent(It.IsAny<UserDisabledIntegrationEvent>()));
         }
     }
 }

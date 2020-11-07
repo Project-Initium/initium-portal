@@ -4,15 +4,15 @@
 using Initium.Portal.Domain.Events;
 using Xunit;
 
-namespace Initium.Portal.Tests.Domain.Events
+namespace Initium.Portal.Tests.Domain.Events.IntegrationEvents
 {
-    public class PasswordChangedEventTests
+    public class PasswordChangedIntegrationEventTests
     {
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
             var @event =
-                new PasswordChangedEvent("email-address", "first-name", "last-name");
+                new PasswordChangedIntegrationEvent("email-address", "first-name", "last-name");
 
             Assert.Equal("email-address", @event.EmailAddress);
             Assert.Equal("first-name", @event.FirstName);

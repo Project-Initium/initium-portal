@@ -3,16 +3,15 @@
 
 using MediatR;
 
-namespace Initium.Portal.Domain.Events
+namespace Initium.Portal.Domain.Events.IntegrationEvents
 {
-    public class AccountConfirmationTokenGeneratedEvent : INotification
+    public class UserEnabledIntegrationEvent : INotification
     {
-        public AccountConfirmationTokenGeneratedEvent(string emailAddress, string firstName, string lastName, string token)
+        public UserEnabledIntegrationEvent(string emailAddress, string firstName, string lastName)
         {
-            this.Token = token;
+            this.EmailAddress = emailAddress;
             this.FirstName = firstName;
             this.LastName = lastName;
-            this.EmailAddress = emailAddress;
         }
 
         public string EmailAddress { get; }
@@ -20,7 +19,5 @@ namespace Initium.Portal.Domain.Events
         public string FirstName { get; }
 
         public string LastName { get; }
-
-        public string Token { get; }
     }
 }

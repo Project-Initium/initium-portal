@@ -1,1 +1,1 @@
-﻿CREATE SCHEMA [Messaging]
+CREATE SCHEMA [Messaging]
