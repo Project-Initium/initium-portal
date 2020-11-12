@@ -8,6 +8,7 @@ using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Management;
 using Initium.Portal.Web.ODataEndpoints.SystemAlert;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +37,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.SystemAlert
         [Fact]
         public void Filtered_GivenFilterIsNull_ExpectUnfiltered()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -49,7 +50,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.SystemAlert
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             context.Add(new Portal.Queries.Entities.SystemAlert
             {
                 Id = Guid.NewGuid(),

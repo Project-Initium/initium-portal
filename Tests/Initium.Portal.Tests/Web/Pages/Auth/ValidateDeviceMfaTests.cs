@@ -91,7 +91,7 @@ namespace Initium.Portal.Tests.Web.Pages.Auth
             var page = new ValidateDeviceMfa(currentAuthenticatedUserProvider.Object, mediator.Object);
 
             var result = Assert.IsType<RedirectToPageResult>(await page.OnPostAppMfaAsync());
-            Assert.Equal(PageLocations.AuthAppMfa, result.PageName);
+            Assert.Equal(CorePageLocations.AuthAppMfa, result.PageName);
         }
 
         [Fact]
@@ -118,7 +118,7 @@ namespace Initium.Portal.Tests.Web.Pages.Auth
             var page = new ValidateDeviceMfa(currentAuthenticatedUserProvider.Object, mediator.Object);
 
             var result = Assert.IsType<RedirectToPageResult>(await page.OnPostEmailMfaAsync());
-            Assert.Equal(PageLocations.AuthEmailMfa, result.PageName);
+            Assert.Equal(CorePageLocations.AuthEmailMfa, result.PageName);
         }
     }
 }

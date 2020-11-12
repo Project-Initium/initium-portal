@@ -13,14 +13,14 @@
 <div class="row page-titles">
     <div class="align-self-center col-md-7 col-12 pl-0">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+            <li class="breadcrumb-item"><a asp-page="@CorePageLocations.AppDashboard">Home</a></li>
             <li class="breadcrumb-item">User Management</li>
-            <li class="breadcrumb-item"><a asp-page="@PageLocations.UserListing">Users</a></li>
+            <li class="breadcrumb-item"><a asp-page="@CorePageLocations.UserListing">Users</a></li>
             <li class="breadcrumb-item active">Viewing User @Model.DetailedUser.FirstName @Model.DetailedUser.LastName</li>
         </ol>
     </div>
     <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
-        <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@PageLocations.UserListing">Back to Listing</a>
+        <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@CorePageLocations.UserListing">Back to Listing</a>
         @if (!this.Model.ViewingSelf && User.HasPermissions("user-unlock") && Model.DetailedUser.WhenLocked.HasValue)
         {
             <form class="mr-2" id="unlock-form" method="post" data-user-id="@Model.Id" data-af-token="@token" data-endpoint="@Url.RouteUrl("UnlockAccountEndpoint")">
@@ -37,7 +37,7 @@
         }
         @if (!this.Model.ViewingSelf)
         {
-            <a class="btn btn-info btn-sm text-white mr-2" asp-page="@PageLocations.UserEdit" asp-route-id="@Model.DetailedUser.UserId">Edit</a>
+            <a class="btn btn-info btn-sm text-white mr-2" asp-page="@CorePageLocations.UserEdit" asp-route-id="@Model.DetailedUser.UserId">Edit</a>
         }
     </div>
 </div>

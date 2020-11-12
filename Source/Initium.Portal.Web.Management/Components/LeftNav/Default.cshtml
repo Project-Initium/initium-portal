@@ -1,0 +1,48 @@
+﻿@using Initium.Portal.Web.Infrastructure.Constants
+@using Initium.Portal.Web.Infrastructure.Extensions
+@using Initium.Portal.Web.Management.Infrastructure.Constants
+<aside class="left-sidebar">
+    <div class="scroll-sidebar">
+        <nav class="sidebar-nav">
+            <ul id="sidebarnav" class="in">
+                <li><a class="waves-effect waves-dark" href="@Url.Page(CorePageLocations.AppDashboard)" aria-expanded="false"><i class="fa fa-tachometer"></i>&nbsp;<span class="hide-menu">Dashboard </span></a></li>
+                @if (User.HasPermissions("user-view") || User.HasPermissions("role-view"))
+                {
+                    <li class="nav-small-cap">USER MANAGEMENT</li>
+                    <li>
+                        @if (User.HasPermissions("user-view"))
+                        {
+                            <a class="waves-effect waves-dark" href="@Url.Page(CorePageLocations.UserListing)" aria-expanded="false"><i class="fa fa-users"></i>&nbsp;<span class="hide-menu">Users </span></a>
+                        }
+                    </li>
+                    <li>
+                        @if (User.HasPermissions("role-view"))
+                        {
+                            <a class="waves-effect waves-dark" href="@Url.Page(CorePageLocations.RoleListing)" aria-expanded="false"><i class="fa fa-key"></i>&nbsp;<span class="hide-menu">Roles</span></a>
+                        }
+                    </li>
+                }
+                @if (User.HasPermissions("system-alert-view") || (User.HasPermissions("tenant-view")))
+                {
+                    <li class="nav-small-cap">SYSTEM CONFIGURATION</li>
+                    <li>
+                        @if (User.HasPermissions("system-alert-view"))
+                        {
+                            <a class="waves-effect waves-dark" href="@Url.Page(CorePageLocations.SystemAlertListing)" aria-expanded="false"><i class="fa fa-users"></i>&nbsp;<span class="hide-menu">System Alerts</span></a>
+                        }
+                        @if (User.HasPermissions("tenant-view"))
+                        {
+                            <a class="waves-effect waves-dark" href="@Url.Page(PageLocations.TenantListing)" aria-expanded="false"><i class="fa fa-tasks"></i>&nbsp;<span class="hide-menu">Tenants</span></a>
+                        }
+                    </li>
+                }
+                
+                
+            </ul>
+        </nav>
+    </div>
+    <div class="sidebar-footer">
+        <a href="@Url.Page(CorePageLocations.AuthSignOut)" class="link" data-toggle="tooltip" title="Logout"><i class="fa fa-power-off"></i></a>
+    </div>
+    <!-- End Bottom points-->
+</aside>

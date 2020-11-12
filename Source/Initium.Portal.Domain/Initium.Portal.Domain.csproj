@@ -32,4 +32,8 @@
     <ProjectReference Include="..\Initium.Portal.Queries\Initium.Portal.Queries.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="EventHandlers\DomainEventHandlers" />
+  </ItemGroup>
+
 </Project>

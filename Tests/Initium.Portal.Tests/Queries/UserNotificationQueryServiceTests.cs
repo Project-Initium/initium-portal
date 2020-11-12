@@ -9,6 +9,7 @@ using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Entities;
+using Initium.Portal.Queries.Management;
 using MaybeMonad;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -25,7 +26,7 @@ namespace Initium.Portal.Tests.Queries
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe<ISystemUser>.Nothing);
 
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -38,7 +39,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             var tenantQueryService = new UserNotificationQueryService(context, currentAuthenticatedUserProvider.Object);
             var maybe = await tenantQueryService.GetLatestNotifications(1);
             Assert.True(maybe.HasNoValue);
@@ -57,7 +58,7 @@ namespace Initium.Portal.Tests.Queries
                 "first-name",
                 "last-name") as ISystemUser));
 
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -70,7 +71,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             (await context.UserNotifications.AddAsync(new UserNotification
             {
                 NotificationId = Guid.NewGuid(),
@@ -135,7 +136,7 @@ namespace Initium.Portal.Tests.Queries
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe<ISystemUser>.Nothing);
 
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -148,7 +149,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             var tenantQueryService = new UserNotificationQueryService(context, currentAuthenticatedUserProvider.Object);
             var result = await tenantQueryService.AnyUnread();
             Assert.False(result);
@@ -164,7 +165,7 @@ namespace Initium.Portal.Tests.Queries
                 "first-name",
                 "last-name") as ISystemUser));
 
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -177,7 +178,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             var tenantQueryService = new UserNotificationQueryService(context, currentAuthenticatedUserProvider.Object);
             var result = await tenantQueryService.AnyUnread();
             Assert.False(result);
@@ -193,7 +194,7 @@ namespace Initium.Portal.Tests.Queries
                 "first-name",
                 "last-name") as ISystemUser));
 
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -206,7 +207,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             (await context.UserNotifications.AddAsync(new UserNotification
             {
                 NotificationId = Guid.NewGuid(),
@@ -242,7 +243,7 @@ namespace Initium.Portal.Tests.Queries
                 "first-name",
                 "last-name") as ISystemUser));
 
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -255,7 +256,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             (await context.UserNotifications.AddAsync(new UserNotification
             {
                 NotificationId = Guid.NewGuid(),

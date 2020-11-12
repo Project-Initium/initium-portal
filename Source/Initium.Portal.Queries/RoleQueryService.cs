@@ -16,11 +16,11 @@ namespace Initium.Portal.Queries
 {
     public class RoleQueryService : IRoleQueryService
     {
-        private readonly QueryContext _context;
+        private readonly ICoreQueryContext _context;
 
-        public RoleQueryService(QueryContext context)
+        public RoleQueryService(ICoreQueryContext context)
         {
-            this._context = context;
+            this._context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public IQueryable<Role> QueryableEntity => this._context.Roles;

@@ -8,6 +8,7 @@ using Finbuckle.MultiTenant;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
 using Initium.Portal.Infrastructure;
+using Initium.Portal.Infrastructure.Admin;
 using Initium.Portal.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Add_GivenArgumentIsNotSystemAlertType_ExpectException()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -29,7 +30,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Add(new Mock<ISystemAlert>().Object));
             Assert.Equal("systemAlert", exception.Message);
@@ -38,7 +39,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Add_GivenArgumentIsSystemAlertType_ExpectReturnedUserToBeIdenticalAsArgument()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -46,7 +47,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
@@ -63,7 +64,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Add_GivenArgumentIsSystemAlertType_ExpectSystemAlertToBeAddedToContext()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -71,7 +72,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
@@ -90,7 +91,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Delete_GivenArgumentIsNotSystemAlert_ExpectArgumentException()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -98,7 +99,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Delete(new Mock<ISystemAlert>().Object));
             Assert.Equal("systemAlert", exception.Message);
@@ -107,7 +108,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Delete_GivenArgumentIsSystemAlert_ExpectSystemAlertToBeDeletedInTheContext()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -115,7 +116,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
@@ -134,7 +135,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public async Task Find_GivenSystemAlertDoesExist_ExpectMaybeWithData()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -143,7 +144,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var tenantInfo = new Mock<ITenantInfo>();
             tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
 
-            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             await context.SystemAlerts.AddAsync(new SystemAlert(
                 TestVariables.SystemAlertId,
                 "name",
@@ -161,7 +162,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public async Task Find_GivenSystemAlertDoesNotExist_ExpectMaybeWithNoValue()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -170,7 +171,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var tenantInfo = new Mock<ITenantInfo>();
             tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
 
-            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var maybe = await repository.Find(Guid.Empty);
             Assert.True(maybe.HasNoValue);
@@ -179,7 +180,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Update_GivenArgumentIsNotRole_ExpectArgumentException()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -187,7 +188,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Update(new Mock<ISystemAlert>().Object));
             Assert.Equal("systemAlert", exception.Message);
@@ -196,7 +197,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Update_GivenArgumentIsRole_ExpectSystemAlertToBeDeletedInTheContext()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -204,7 +205,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,

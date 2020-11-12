@@ -123,7 +123,7 @@ namespace Initium.Portal.Tests.Web.Pages.Auth
                 currentAuthenticatedUserProvider.Object) { PageModel = new ValidateAppMfaCode.Model() };
 
             var result = Assert.IsType<RedirectToPageResult>(await page.OnPostAsync());
-            Assert.Equal(PageLocations.AppDashboard, result.PageName);
+            Assert.Equal(CorePageLocations.AppDashboard, result.PageName);
         }
 
         [Fact]
@@ -199,7 +199,7 @@ namespace Initium.Portal.Tests.Web.Pages.Auth
             };
 
             var result = Assert.IsType<RedirectToPageResult>(await page.OnPostDeviceMfaAsync());
-            Assert.Equal(PageLocations.AuthDeviceMfa, result.PageName);
+            Assert.Equal(CorePageLocations.AuthDeviceMfa, result.PageName);
         }
 
         [Fact]
@@ -231,7 +231,7 @@ namespace Initium.Portal.Tests.Web.Pages.Auth
                 currentAuthenticatedUserProvider.Object);
 
             var result = Assert.IsType<RedirectToPageResult>(await page.OnPostEmailMfaAsync());
-            Assert.Equal(PageLocations.AuthEmailMfa, result.PageName);
+            Assert.Equal(CorePageLocations.AuthEmailMfa, result.PageName);
         }
 
         public class ValidatorTests

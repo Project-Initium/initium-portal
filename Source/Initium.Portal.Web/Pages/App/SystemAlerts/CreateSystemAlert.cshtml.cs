@@ -42,7 +42,7 @@ namespace Initium.Portal.Web.Pages.App.SystemAlerts
             {
                 this.PrgState = PrgState.Success;
                 this.AddPageNotification("The system alert was created successfully", PageNotification.Success);
-                return this.RedirectToPage(PageLocations.SystemAlertView, new { id = result.Value.SystemAlertId });
+                return this.RedirectToPage(CorePageLocations.SystemAlertView, new { id = result.Value.SystemAlertId });
             }
 
             this.AddPageNotification("There was an issue creating the system alert.", PageNotification.Error);

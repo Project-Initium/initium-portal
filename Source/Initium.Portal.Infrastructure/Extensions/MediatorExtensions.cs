@@ -5,12 +5,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace Initium.Portal.Infrastructure.Extensions
 {
-    internal static class MediatorExtensions
+    public static class MediatorExtensions
     {
-        public static async Task DispatchDomainEventsAsync(this IMediator mediator, DataContext ctx)
+        public static async Task DispatchDomainEventsAsync(this IMediator mediator, DbContext ctx)
         {
             var domainEntities = ctx.ChangeTracker
                 .Entries<Entity>()
@@ -29,7 +30,7 @@ namespace Initium.Portal.Infrastructure.Extensions
             await Task.WhenAll(tasks);
         }
 
-        public static async Task DispatchIntegrationEventsAsync(this IMediator mediator, DataContext ctx)
+        public static async Task DispatchIntegrationEventsAsync(this IMediator mediator, DbContext ctx)
         {
             var domainEntities = ctx.ChangeTracker
                 .Entries<Entity>()

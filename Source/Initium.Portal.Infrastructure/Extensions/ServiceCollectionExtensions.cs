@@ -4,9 +4,14 @@
 using System;
 using Destructurama;
 using FluentValidation;
+using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
+using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
+using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
+using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using Initium.Portal.Domain.CommandValidators.UserAggregate;
 using Initium.Portal.Infrastructure.Behaviors;
+using Initium.Portal.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
@@ -41,6 +46,15 @@ namespace Initium.Portal.Infrastructure.Extensions
                     .AddClasses(filter => filter.Where(t => t.BaseType == typeof(AbstractValidator<>)))
                     .AsMatchingInterface());
 
+            return serviceCollection;
+        }
+
+        public static IServiceCollection AddCoreRepositories(this IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddScoped<IUserRepository, UserRepository>();
+            serviceCollection.AddScoped<IRoleRepository, RoleRepository>();
+            serviceCollection.AddScoped<INotificationRepository, NotificationRepository>();
+            serviceCollection.AddScoped<ISystemAlertRepository, SystemAlertRepository>();
             return serviceCollection;
         }
     }

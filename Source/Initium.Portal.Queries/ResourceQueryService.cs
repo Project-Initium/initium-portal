@@ -15,9 +15,9 @@ namespace Initium.Portal.Queries
 {
     public class ResourceQueryService : IResourceQueryService
     {
-        private readonly QueryContext _context;
+        private readonly ICoreQueryContext _context;
 
-        public ResourceQueryService(QueryContext context)
+        public ResourceQueryService(ICoreQueryContext context)
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
         }

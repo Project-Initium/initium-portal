@@ -68,7 +68,7 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Roles
             {
                 this.PrgState = PrgState.Success;
                 this.AddPageNotification("The role was updated successfully", PageNotification.Success);
-                return this.RedirectToPage(PageLocations.RoleView, new { id = this.PageModel.RoleId });
+                return this.RedirectToPage(CorePageLocations.RoleView, new { id = this.PageModel.RoleId });
             }
 
             this.AddPageNotification("There was an issue updating the role.", PageNotification.Error);

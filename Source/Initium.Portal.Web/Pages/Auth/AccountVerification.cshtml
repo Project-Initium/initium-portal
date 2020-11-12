@@ -14,7 +14,7 @@
                     <img src="~/logo.png" alt="Home" />
                 </a>
                 <h3 class="p-2 rounded-title mt-4 mb-0">Account Verification</h3>
-                <small>Your account has now verified. Click <a href="@Url.Page(PageLocations.AuthSignIn)">here</a> to login.</small>
+                <small>Your account has now verified. Click <a href="@Url.Page(CorePageLocations.AuthSignIn)">here</a> to login.</small>
             }
             else
             {
@@ -27,7 +27,7 @@
                     <div class="form-group mt-4">
 
                         <label asp-for="PageModel.Password" class="sr-only"></label>
-                        <input class="form-control" type="password" asp-for="PageModel.Password" placeholder="@Html.DisplayNameFor(x => x.PageModel.Password)">
+                        <input class="form-control" type="password" asp-for="PageModel.Password" placeholder="@Html.DisplayNameFor(x=>x.PageModel.Password)">
                         <span class="text-danger small" asp-validation-for="PageModel.Password"></span>
 
                     </div>

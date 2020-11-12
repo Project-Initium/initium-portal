@@ -85,7 +85,7 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
 
             var result = await page.OnPost();
             var redirectToPageResult = Assert.IsType<RedirectToPageResult>(result);
-            Assert.Equal(PageLocations.FirstRunSetupCompleted, redirectToPageResult.PageName);
+            Assert.Equal(CorePageLocations.FirstRunSetupCompleted, redirectToPageResult.PageName);
         }
 
         [Fact]

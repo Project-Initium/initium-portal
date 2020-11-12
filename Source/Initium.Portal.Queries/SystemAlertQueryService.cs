@@ -15,9 +15,9 @@ namespace Initium.Portal.Queries
 {
     public class SystemAlertQueryService : ISystemAlertQueryService
     {
-        private readonly QueryContext _context;
+        private readonly ICoreQueryContext _context;
 
-        public SystemAlertQueryService(QueryContext context)
+        public SystemAlertQueryService(ICoreQueryContext context)
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
         }

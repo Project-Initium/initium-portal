@@ -16,10 +16,10 @@ namespace Initium.Portal.Queries
 {
     public class UserNotificationQueryService : IUserNotificationQueryService
     {
-        private readonly QueryContext _context;
+        private readonly ICoreQueryContext _context;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
-        public UserNotificationQueryService(QueryContext context, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
+        public UserNotificationQueryService(ICoreQueryContext context, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));

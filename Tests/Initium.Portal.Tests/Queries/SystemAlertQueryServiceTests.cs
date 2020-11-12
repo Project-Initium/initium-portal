@@ -8,6 +8,7 @@ using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Entities;
+using Initium.Portal.Queries.Management;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -20,7 +21,7 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetActiveSystemAlerts_GivenNoActiveSystemAlerts_ExpectMaybeWithNoData()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -33,7 +34,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             context.Add(new SystemAlert
             {
                 Id = Guid.NewGuid(),
@@ -73,7 +74,7 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetActiveSystemAlerts_GivenActiveSystemAlerts_ExpectMaybeWithData()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -86,7 +87,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             context.Add(new SystemAlert
             {
                 Id = Guid.NewGuid(),
@@ -127,7 +128,7 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetDetailedSystemAlertById__GivenNoSystemAlertFound_ExpectMaybeWithNoData()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -140,7 +141,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             context.Add(new SystemAlert
             {
                 Id = Guid.NewGuid(),
@@ -163,7 +164,7 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetDetailedSystemAlertById__GivenSystemAlertFound_ExpectMaybeWithCorrectlyMappedData()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -176,7 +177,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             context.Add(new SystemAlert
             {
                 Id = TestVariables.SystemAlertId,

@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Finbuckle.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Infrastructure;
+using Initium.Portal.Infrastructure.Admin;
 using Initium.Portal.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,7 +23,7 @@ namespace Initium.Portal.Tests.Infrastructure.Extensions
         public async Task
             DispatchDomainEventsAsync_GivenEntitiesWithEvents_NotificationsArePublishedAndEventsAreCleared()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -30,7 +31,7 @@ namespace Initium.Portal.Tests.Infrastructure.Extensions
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             var @event = new Mock<INotification>();
             role.AddDomainEvent(@event.Object);

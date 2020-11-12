@@ -9,13 +9,13 @@
 <div class="row page-titles">
         <div class="align-self-center pl-0 col-md-7 col-12">
             <ol class="breadcrumb">
-                <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+                <li class="breadcrumb-item"><a asp-page="@CorePageLocations.AppDashboard">Home</a></li>
                 <li class="breadcrumb-item">User Management</li>
                 <li class="breadcrumb-item active">Users</li>
             </ol>
         </div>
         <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
-            <a asp-page="@PageLocations.UserCreate" class="btn btn-sm float-right btn-info text-white">Create new user</a>
+            <a asp-page="@CorePageLocations.UserCreate" class="btn btn-sm float-right btn-info text-white">Create new user</a>
         </div>
     </div>
 
@@ -25,7 +25,7 @@
             <div class="card">
                 <div class="card-body">
                     
-                    <h3 class="card-title">User Management <button type="button" data-export="@ODataLocations.UserFilteredExport" class="btn btn-sm btn-primary pull-right">Export</button></h3>
+                    <h3 class="card-title">User Management <button type="button" data-export="@CoreODataLocations.UserFilteredExport" class="btn btn-sm btn-primary pull-right">Export</button></h3>
                     <h6 class="card-subtitle" id="table-description">Create new, edit existing, or delete users</h6>
                     <form id="filters" class="container form-material">
                         <div class="d-flex justify-content-between">
@@ -91,7 +91,7 @@
                     
                     
                     <div class="table-responsive">
-                        <table class="table table-hover clickable" id="users" aria-describedby="table-description" data-route-filtered="@ODataLocations.UserFilteredListing" data-details="@Url.PageLink(pageName: PageLocations.UserView, values: new {id = "__ID__"})">
+                        <table class="table table-hover clickable" id="users" aria-describedby="table-description" data-route-filtered="@CoreODataLocations.UserFilteredListing" data-details="@Url.PageLink(pageName: CorePageLocations.UserView, values: new {id = "__ID__"})">
                             
                         </table>
                     </div>

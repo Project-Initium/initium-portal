@@ -9,7 +9,7 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
 {
     public static class ODataConventionModelBuilderExtensions
     {
-        internal static ODataConventionModelBuilder SetupUserEntity(this ODataConventionModelBuilder builder)
+        public static ODataConventionModelBuilder SetupUserEntity(this ODataConventionModelBuilder builder)
         {
             var user = builder.EntitySet<User>("User");
 
@@ -23,7 +23,7 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             return builder;
         }
 
-        internal static ODataConventionModelBuilder SetupRoleEntity(this ODataConventionModelBuilder builder)
+        public static ODataConventionModelBuilder SetupRoleEntity(this ODataConventionModelBuilder builder)
         {
             var role = builder.EntitySet<Role>("Role");
             var function = role.EntityType.Collection.Function("Filtered");
@@ -36,7 +36,7 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             return builder;
         }
 
-        internal static ODataConventionModelBuilder SetupUserNotificationEntity(
+        public static ODataConventionModelBuilder SetupUserNotificationEntity(
             this ODataConventionModelBuilder builder)
         {
             var userNotification = builder.EntitySet<UserNotification>("UserNotification");
@@ -55,7 +55,7 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             return builder;
         }
 
-        internal static ODataConventionModelBuilder SetupSystemAlertEntity(this ODataConventionModelBuilder builder)
+        public static ODataConventionModelBuilder SetupSystemAlertEntity(this ODataConventionModelBuilder builder)
         {
             var systemAlert = builder.EntitySet<SystemAlert>("SystemAlert");
             var function = systemAlert.EntityType.Collection.Function("Filtered");
@@ -65,19 +65,6 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             function = systemAlert.EntityType.Collection.Function("FilteredExport");
             function.Returns<FileResult>();
             function.Namespace = "SystemAlert";
-            return builder;
-        }
-
-        internal static ODataConventionModelBuilder SetupTenantEntity(this ODataConventionModelBuilder builder)
-        {
-            var tenant = builder.EntitySet<TenantDto>("Tenant");
-            var function = tenant.EntityType.Collection.Function("Filtered");
-            function.ReturnsCollectionFromEntitySet<TenantDto>("Tenant");
-            function.Namespace = "Tenant";
-
-            function = tenant.EntityType.Collection.Function("FilteredExport");
-            function.Returns<FileResult>();
-            function.Namespace = "Tenant";
             return builder;
         }
     }

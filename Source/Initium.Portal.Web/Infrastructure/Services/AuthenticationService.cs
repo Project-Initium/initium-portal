@@ -99,7 +99,7 @@ namespace Initium.Portal.Web.Infrastructure.Services
             return returnUrl;
         }
 
-        internal class AuthenticationProfile
+        public sealed class AuthenticationProfile
         {
             [JsonConstructor]
             public AuthenticationProfile(Guid userId, MfaProvider setupMfaProviders)
@@ -113,7 +113,7 @@ namespace Initium.Portal.Web.Infrastructure.Services
             public MfaProvider SetupMfaProviders { get; }
         }
 
-        internal class UserProfile
+        public sealed class UserProfile
         {
             [JsonConstructor]
             public UserProfile(Guid userId, string emailAddress, string firstName, string lastName, bool isAdmin,

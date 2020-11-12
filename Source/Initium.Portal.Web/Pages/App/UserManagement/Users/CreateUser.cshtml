@@ -9,14 +9,14 @@
         <div class="row page-titles">
             <div class="align-self-center pl-0 col-md-7 col-12">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+                    <li class="breadcrumb-item"><a asp-page="@CorePageLocations.AppDashboard">Home</a></li>
                     <li class="breadcrumb-item">User Management</li>
-                    <li class="breadcrumb-item"><a asp-page="@PageLocations.UserListing">Users</a></li>
+                    <li class="breadcrumb-item"><a asp-page="@CorePageLocations.UserListing">Users</a></li>
                     <li class="breadcrumb-item active">Create New User</li>
                 </ol>
             </div>
             <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
-                <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@PageLocations.UserListing">Back to Listing</a>
+                <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@CorePageLocations.UserListing">Back to Listing</a>
                 <button class="btn btn-sm btn-info text-white" type="submit" form="create-user">Save</button>        
             </div>
         </div>

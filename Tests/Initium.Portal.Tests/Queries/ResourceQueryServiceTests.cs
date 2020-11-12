@@ -8,6 +8,7 @@ using Finbuckle.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Entities;
+using Initium.Portal.Queries.Management;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -20,7 +21,7 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetNestedSimpleResources_GivenDataIsFound_ExpectMaybeWithMappedData()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -32,7 +33,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             context.Add(new Resource
             {
                 Id = TestVariables.ResourceId,
@@ -68,7 +69,7 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetNestedSimpleResources_GivenNoDataIsFound_ExpectMaybeWithNothing()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -80,7 +81,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
 
             var roleQueries = new ResourceQueryService(context);
             var result = await roleQueries.GetNestedSimpleResources();

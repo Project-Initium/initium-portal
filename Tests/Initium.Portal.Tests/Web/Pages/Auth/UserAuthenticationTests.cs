@@ -114,7 +114,7 @@ namespace Initium.Portal.Tests.Web.Pages.Auth
             page.TempData = tempDataDictionary.Object;
 
             var result = Assert.IsType<RedirectToPageResult>(await page.OnPostAsync());
-            Assert.Equal(PageLocations.AuthDeviceMfa, result.PageName);
+            Assert.Equal(CorePageLocations.AuthDeviceMfa, result.PageName);
         }
 
         [Fact]
@@ -134,7 +134,7 @@ namespace Initium.Portal.Tests.Web.Pages.Auth
             };
 
             var result = Assert.IsType<RedirectToPageResult>(await page.OnPostAsync());
-            Assert.Equal(PageLocations.AuthAppMfa, result.PageName);
+            Assert.Equal(CorePageLocations.AuthAppMfa, result.PageName);
         }
 
         [Fact]
@@ -154,7 +154,7 @@ namespace Initium.Portal.Tests.Web.Pages.Auth
             };
 
             var result = Assert.IsType<RedirectToPageResult>(await page.OnPostAsync());
-            Assert.Equal(PageLocations.AuthEmailMfa, result.PageName);
+            Assert.Equal(CorePageLocations.AuthEmailMfa, result.PageName);
         }
 
         public class ValidatorTests

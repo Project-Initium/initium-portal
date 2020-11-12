@@ -11,7 +11,6 @@ using LinqKit;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.OData;
 
 namespace Initium.Portal.Web.ODataEndpoints.User
 {

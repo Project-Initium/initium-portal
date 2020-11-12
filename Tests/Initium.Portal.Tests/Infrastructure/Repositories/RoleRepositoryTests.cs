@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Finbuckle.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Infrastructure;
+using Initium.Portal.Infrastructure.Admin;
 using Initium.Portal.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Add_GivenArgumentIsNotRole_ExpectArgumentException()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -29,7 +30,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Add(new Mock<IRole>().Object));
             Assert.Equal("role", exception.Message);
@@ -38,7 +39,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Add_GivenArgumentIsRole_ExpectRoleToBeAddedToTheContext()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -46,7 +47,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             roleRepository.Add(role);
@@ -58,7 +59,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Delete_GivenArgumentIsNotRole_ExpectArgumentException()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -66,7 +67,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Delete(new Mock<IRole>().Object));
             Assert.Equal("role", exception.Message);
@@ -75,7 +76,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Delete_GivenArgumentIsRole_ExpectRoleToBeDeletedInTheContext()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -83,7 +84,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "nane", new List<Guid>());
             roleRepository.Delete(role);
@@ -95,7 +96,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public async Task Find_GivenUserDoesExist_ExpectMaybeWithUser()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -104,7 +105,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var tenantInfo = new Mock<ITenantInfo>();
             tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
 
-            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             await context.Roles.AddAsync(role);
             await context.SaveEntitiesAsync();
@@ -116,7 +117,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public async Task Find_GivenUserDoesNotExist_ExpectMaybeWithNoData()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -125,7 +126,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var tenantInfo = new Mock<ITenantInfo>();
             tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
 
-            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var maybe = await roleRepository.Find(TestVariables.RoleId);
             Assert.True(maybe.HasNoValue);
@@ -134,7 +135,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Update_GivenArgumentIsNotRole_ExpectArgumentException()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -142,7 +143,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Update(new Mock<IRole>().Object));
             Assert.Equal("role", exception.Message);
@@ -151,7 +152,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Update_GivenArgumentIsRole_ExpectRoleToBeUpdatedInTheContext()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -159,7 +160,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var tenantInfo = new Mock<ITenantInfo>();
 
-            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             roleRepository.Update(role);

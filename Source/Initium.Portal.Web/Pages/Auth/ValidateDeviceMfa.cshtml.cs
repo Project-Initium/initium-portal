@@ -42,7 +42,7 @@ namespace Initium.Portal.Web.Pages.Auth
             var result =
                 await this._mediator.Send(new EmailMfaRequestedCommand());
 
-            return result.IsSuccess ? this.RedirectToPage(PageLocations.AuthEmailMfa) : this.RedirectToPage();
+            return result.IsSuccess ? this.RedirectToPage(CorePageLocations.AuthEmailMfa) : this.RedirectToPage();
         }
 
         public async Task<IActionResult> OnPostAppMfaAsync()
@@ -50,7 +50,7 @@ namespace Initium.Portal.Web.Pages.Auth
             var result =
                 await this._mediator.Send(new AppMfaRequestedCommand());
 
-            return result.IsSuccess ? this.RedirectToPage(PageLocations.AuthAppMfa) : this.RedirectToPage();
+            return result.IsSuccess ? this.RedirectToPage(CorePageLocations.AuthAppMfa) : this.RedirectToPage();
         }
     }
 }

@@ -1,11 +1,11 @@
-﻿@model Initium.Portal.Web.Components.TopNav.TopNavViewModel
-@using Initium.Portal.Web.Infrastructure.Constants
+﻿@using Initium.Portal.Web.Infrastructure.Constants
+@model Initium.Portal.Web.Components.TopNav.TopNavViewModel
 @addTagHelper *, GravatarHelper.AspNetCore
 @inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
 <header class="topbar">
     <nav class="navbar top-navbar navbar-expand-md navbar-light">
         <div class="navbar-header">
-            <a class="navbar-brand" href="@Url.Page(PageLocations.AppDashboard)">
+            <a class="navbar-brand" href="@Url.Page(CorePageLocations.AppDashboard)">
                 <b><img src="~/logo-icon.png" alt="homepage" /></b>
                 <span><img src="~/logo-text.png" alt="homepage" /></span>
             </a>
@@ -15,7 +15,7 @@
                 <li class="nav-item"> <a class="nav-link nav-toggler d-none d-md-block text-muted waves-effect waves-dark"><i class="fa fa-bars"></i></a> </li>
             </ul>
             <ul class="navbar-nav">
-                <li class="nav-item dropdown" id="nav-notifications" data-af-token="@Xsrf.GetAndStoreTokens(Context).RequestToken" data-odata-root="@ODataLocations.Root" data-read-item-uri="@Url.RouteUrl("ViewedNotificationEndpoint")">
+                <li class="nav-item dropdown" id="nav-notifications" data-af-token="@Xsrf.GetAndStoreTokens(Context).RequestToken" data-odata-root="@CoreODataLocations.Root" data-read-item-uri="@Url.RouteUrl("ViewedNotificationEndpoint")">
                     <a  class="nav-link dropdown-toggle waves-effect waves-dark" href="" data-toggle="dropdown"
                        aria-haspopup="true" aria-expanded="false"> <i class="fa fa-comment"></i>
                         @if (this.Model.HasUnreadNotifications)
@@ -37,7 +37,7 @@
                                 </div>
                             </li>
                             <li>
-                                <a class="nav-link border-top text-center text-dark pt-3" href="@Url.Page(PageLocations.UserNotifications)"> <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i> </a>
+                                <a class="nav-link border-top text-center text-dark pt-3" href="@Url.Page(CorePageLocations.UserNotifications)"> <strong>Check all notifications</strong> <i class="fa fa-angle-right"></i> </a>
                             </li>
                         </ul>
                     </div>
@@ -49,9 +49,9 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right scale-up">
                         <ul class="dropdown-user">
-                            <li><a href="@Url.Page(PageLocations.AppProfileDetails)"><i class="fa fa-address-card"></i> My Profile</a></li>
+                            <li><a href="@Url.Page(CorePageLocations.AppProfileDetails)"><i class="fa fa-address-card"></i> My Profile</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a href="@Url.Page(PageLocations.AuthSignOut)"><i class="fa fa-power-off"></i> Logout</a></li>
+                            <li><a href="@Url.Page(CorePageLocations.AuthSignOut)"><i class="fa fa-power-off"></i> Logout</a></li>
                         </ul>
                     </div>
                 </li>

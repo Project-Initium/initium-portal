@@ -306,7 +306,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
 
             var result = await page.OnPostAsync();
             var pageResult = Assert.IsType<RedirectToPageResult>(result);
-            Assert.Equal(PageLocations.UserView, pageResult.PageName);
+            Assert.Equal(CorePageLocations.UserView, pageResult.PageName);
         }
 
         [Fact]

@@ -10,9 +10,9 @@
 <div class="row page-titles">
     <div class="align-self-center">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+            <li class="breadcrumb-item"><a asp-page="@CorePageLocations.AppDashboard">Home</a></li>
             <li class="breadcrumb-item">User Management</li>
-            <li class="breadcrumb-item"><a asp-page="@PageLocations.RoleListing">Roles</a></li>
+            <li class="breadcrumb-item"><a asp-page="@CorePageLocations.RoleListing">Roles</a></li>
             <li class="breadcrumb-item active">Viewing Role @Model.Role.Name</li>
         </ol>
     </div>
@@ -47,10 +47,10 @@
 
 <div class="row">
     <div class="col-6">
-        <a class="btn btn-secondary cancel" asp-page="@PageLocations.RoleListing">Go Back</a>
+        <a class="btn btn-secondary cancel" asp-page="@CorePageLocations.RoleListing">Go Back</a>
     </div>
     <div class="col-6 text-right">
-        <a class="btn btn-info text-white mr-2" asp-page="@PageLocations.RoleEdit" asp-route-id="@Model.Id">Edit</a>
+        <a class="btn btn-info text-white mr-2" asp-page="@CorePageLocations.RoleEdit" asp-route-id="@Model.Id">Edit</a>
     </div>
 </div>
 

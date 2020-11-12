@@ -17,10 +17,10 @@ namespace Initium.Portal.Queries
 {
     public sealed class UserQueryService : IUserQueryService
     {
-        private readonly QueryContext _context;
+        private readonly ICoreQueryContext _context;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
-        public UserQueryService(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, QueryContext context)
+        public UserQueryService(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, ICoreQueryContext context)
         {
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ??
                                                      throw new ArgumentNullException(

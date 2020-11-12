@@ -10,12 +10,12 @@
 <div class="row page-titles">
     <div class="align-self-center pl-0 col-md-7 col-12">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+            <li class="breadcrumb-item"><a asp-page="@CorePageLocations.AppDashboard">Home</a></li>
             <li class="breadcrumb-item">System Alerts</li>
         </ol>
     </div>
     <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
-        <a asp-page="@PageLocations.SystemAlertCreate" class="btn btn-sm float-right btn-info text-white">Create new system alert</a>
+        <a asp-page="@CorePageLocations.SystemAlertCreate" class="btn btn-sm float-right btn-info text-white">Create new system alert</a>
     </div>
 </div>
 
@@ -24,7 +24,7 @@
         <div class="card">
             <div class="card-body">
                 
-                <h3 class="card-title">System Alert Management <button type="button" data-export="@ODataLocations.SystemAlertFilteredExport" class="btn btn-sm btn-primary pull-right">Export</button></h3>
+                <h3 class="card-title">System Alert Management <button type="button" data-export="@CoreODataLocations.SystemAlertFilteredExport" class="btn btn-sm btn-primary pull-right">Export</button></h3>
                 <h6 class="card-subtitle" id="table-description">Create new, edit existing, or delete system alerts</h6>
                 <form id="filters" class="container form-material">
                     <div class="d-flex justify-content-between">
@@ -42,7 +42,7 @@
                     </div>
                 </form>
                 <div class="table-responsive">
-                    <table class="table table-hover clickable" id="system-alerts" aria-describedby="table-description" data-route-filtered="@ODataLocations.SystemAlertFilteredListing" data-details="@Url.Page(PageLocations.SystemAlertView, new {id = "__ID__"})">
+                    <table class="table table-hover clickable" id="system-alerts" aria-describedby="table-description" data-route-filtered="@CoreODataLocations.SystemAlertFilteredListing" data-details="@Url.Page(CorePageLocations.SystemAlertView, new {id = "__ID__"})">
                        
                     </table>                    
                 </div>

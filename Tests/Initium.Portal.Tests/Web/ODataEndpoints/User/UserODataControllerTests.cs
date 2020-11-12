@@ -8,6 +8,7 @@ using Finbuckle.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Management;
 using Initium.Portal.Web.ODataEndpoints.User;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -57,7 +58,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.User
         [MemberData(nameof(FilterData))]
         public void Filtered_GivenFilterIsNotNull_ExpectFilteredData(UserFilter filter, int count)
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
@@ -70,7 +71,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.User
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             context.Add(new Portal.Queries.Entities.User
             {
                 Id = Guid.NewGuid(),
@@ -125,7 +126,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.User
         [Fact]
         public void Filtered_GivenFilterIsNull_ExpectUnfiltered()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
             var tenantInfo = new Mock<ITenantInfo>();
@@ -137,7 +138,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.User
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
             context.Add(new Portal.Queries.Entities.User
             {
                 Id = Guid.NewGuid(),

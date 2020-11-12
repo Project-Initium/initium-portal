@@ -50,7 +50,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.SystemAlerts
             Assert.Equal(PrgState.Success, page.PrgState);
             Assert.Single(page.PageNotifications, x => x.PageNotificationType == NotificationPageModel.PageNotification.Success);
             Assert.Equal(TestVariables.SystemAlertId, pageResult.RouteValues["id"]);
-            Assert.Equal(PageLocations.SystemAlertView, pageResult.PageName);
+            Assert.Equal(CorePageLocations.SystemAlertView, pageResult.PageName);
         }
 
         [Fact]

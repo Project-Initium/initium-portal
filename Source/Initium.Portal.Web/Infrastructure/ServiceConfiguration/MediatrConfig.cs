@@ -4,7 +4,6 @@
 using System.Reflection;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Infrastructure.Extensions;
-using Initium.Portal.Web.Infrastructure.DomainEventHandlers;
 using MediatR;
 using MediatR.Extensions.FluentValidation.AspNetCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,7 +15,7 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
         public static IServiceCollection AddCustomizedMediatR(this IServiceCollection serviceCollection)
         {
             var assembly = typeof(CreateInitialUserCommandHandler).GetTypeInfo().Assembly;
-            serviceCollection.AddMediatR(typeof(CreateInitialUserCommandHandler), typeof(LogEmailMfaToken));
+            serviceCollection.AddMediatR(typeof(CreateInitialUserCommandHandler));
             serviceCollection.AddFluentValidation(new[] { assembly }, ServiceLifetime.Transient);
             serviceCollection.AddDomainAuditLogging();
             return serviceCollection;

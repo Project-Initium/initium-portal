@@ -15,9 +15,9 @@ namespace Initium.Portal.Infrastructure.Repositories
 {
     public class RoleRepository : IRoleRepository
     {
-        private readonly DataContext _context;
+        private readonly ICoreDataContext _context;
 
-        public RoleRepository(DataContext context)
+        public RoleRepository(ICoreDataContext context)
         {
             this._context = context;
         }

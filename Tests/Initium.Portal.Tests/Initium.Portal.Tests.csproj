@@ -38,10 +38,24 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Source\Initium.Portal.Core\Initium.Portal.Core.csproj" />
+    <ProjectReference Include="..\..\Source\Initium.Portal.Domain.Management\Initium.Portal.Domain.Management.csproj" />
     <ProjectReference Include="..\..\Source\Initium.Portal.Domain\Initium.Portal.Domain.csproj" />
+    <ProjectReference Include="..\..\Source\Initium.Portal.Infrastructure.Management\Initium.Portal.Infrastructure.Management.csproj" />
     <ProjectReference Include="..\..\Source\Initium.Portal.Infrastructure\Initium.Portal.Infrastructure.csproj" />
     <ProjectReference Include="..\..\Source\Initium.Portal.Queries\Initium.Portal.Queries.csproj" />
+    <ProjectReference Include="..\..\Source\Initium.Portal.Web.Management\Initium.Portal.Web.Management.csproj" />
     <ProjectReference Include="..\..\Source\Initium.Portal.Web\Initium.Portal.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Domain_Management\AggregatesModel" />
+    <Folder Include="Domain_Management\CommandHandlers" />
+    <Folder Include="Domain_Management\Commands" />
+    <Folder Include="Domain_Management\CommandValidators" />
+    <Folder Include="Web_Management\ApiEndpoints" />
+    <Folder Include="Web_Management\ODataEndpoints" />
+    <Folder Include="Web_Management\Pages\App" />
+    <Folder Include="Web_Tenant" />
   </ItemGroup>
 
   <Import Project="..\..\Shared\Initium.Portal.Shared\Initium.Portal.Shared.projitems" Label="Shared" />
