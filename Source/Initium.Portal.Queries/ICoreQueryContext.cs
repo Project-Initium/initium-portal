@@ -8,18 +8,18 @@ namespace Initium.Portal.Queries
 {
     public interface ICoreQueryContext
     {
-        DbSet<User> Users { get; set; }
+        DbSet<UserReadEntity> Users { get; set; }
 
-        DbSet<Role> Roles { get; set; }
+        DbSet<RoleReadEntity> Roles { get; set; }
 
         DbSet<UserNotification> UserNotifications { get; set; }
 
-        DbSet<SystemAlert> SystemAlerts { get; set; }
+        DbSet<SystemAlertReadEntity> SystemAlerts { get; set; }
 
-        DbSet<Resource> Resources { get; set; }
+        DbSet<ResourceReadEntity> Resources { get; set; }
 
-        DbSet<RoleResource> RoleResources { get; set; }
+        DbSet<RoleResourceReadEntity> RoleResources { get; set; }
 
-        DbSet<UserRole> UserRoles { get; set; }
+        DbSet<UserRoleReadEntity> UserRoles { get; set; }
     }
 }

@@ -22,7 +22,7 @@ namespace Initium.Portal.Queries
             this._context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public IQueryable<Resource> QueryableEntity => this._context.Resources;
+        public IQueryable<ResourceReadEntity> QueryableEntity => this._context.Resources;
 
         public async Task<Maybe<List<SimpleResourceModel>>> GetNestedSimpleResources()
         {

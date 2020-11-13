@@ -10,7 +10,7 @@ using MaybeMonad;
 
 namespace Initium.Portal.Queries.Contracts
 {
-    public interface IResourceQueryService : IQueryService<Resource>
+    public interface IResourceQueryService : IQueryService<ResourceReadEntity>
     {
         Task<Maybe<List<SimpleResourceModel>>> GetNestedSimpleResources();
     }

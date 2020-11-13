@@ -318,7 +318,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             Assert.True(result.Value.SetupMfaProviders.HasFlag(MfaProvider.Email));
             Assert.Equal(BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaEmailCode, result.Value.AuthenticationStatus);
             user.Verify(x => x.ProcessPartialSuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), AuthenticationHistoryType.EmailMfaRequested));
-            user.Verify(x => x.AddDomainEvent(It.IsAny<EmailMfaTokenGeneratedIntegrationEvent>()));
+            user.Verify(x => x.AddIntegrationEvent(It.IsAny<EmailMfaTokenGeneratedIntegrationEvent>()));
         }
 
         [Fact]

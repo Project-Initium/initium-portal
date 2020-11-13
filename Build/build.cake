@@ -7,8 +7,14 @@
 
 var target = Argument<string>("target", "Default");
 var buildPath = Directory("./build-artifacts");
+
 var publishPath = buildPath + Directory("publish");
+var tenantPublishPath = publishPath + Directory("tenant");
+var managementPublishPath = publishPath + Directory("management");
+var databasePublishPath = publishPath + Directory("database");
+
 var releasePath = buildPath + Directory("release");
+
 var coverPath = buildPath + Directory("cover");
 var coverClientPath = coverPath + Directory("client");
 var coverServerPath = coverPath + Directory("server");
@@ -23,16 +29,19 @@ Task("__Clean")
 
             CleanDirectories("../**/bin");
             CleanDirectories("../**/obj");
-            if (DirectoryExists("../Source/Initium.Portal.Web/node_modules")) {
-                DeleteDirectory("../Source/Initium.Portal.Web/node_modules", new DeleteDirectorySettings {
-                    Recursive = true,
-                    Force = true
-                });
+            if (DirectoryExists("../node_modules")) {
+               DeleteDirectory("../node_modules", new DeleteDirectorySettings {
+                   Recursive = true,
+                   Force = true
+               });
             }
         }  
 
         CreateDirectory(releasePath);
         CreateDirectory(publishPath);
+        CreateDirectory(tenantPublishPath);
+        CreateDirectory(managementPublishPath);
+        CreateDirectory(databasePublishPath);
         CreateDirectory(coverPath);   
     });
 
@@ -48,7 +57,7 @@ Task("__Versioning")
 Task("__RestorePackages")
     .Does(() => {
         var npmInstallSettings = new NpmInstallSettings {
-            WorkingDirectory = "../Source/Initium.Portal.Web",
+            WorkingDirectory = "../",
             LogLevel = NpmLogLevel.Silent
         };
         NpmInstall(npmInstallSettings);
@@ -57,23 +66,19 @@ Task("__RestorePackages")
 Task("__Build")
     .Does(() => {
         var npmRunScriptSettings = new NpmRunScriptSettings {
-           ScriptName = "release:build",
-           WorkingDirectory = "../Source/Initium.Portal.Web",
+           ScriptName = "management:release:build",
+           WorkingDirectory = "../",
            LogLevel = NpmLogLevel.Silent
         };		
         NpmRunScript(npmRunScriptSettings);  
+        
+        npmRunScriptSettings.ScriptName = "tenant:release:build";
 
         var settings = new DotNetCoreBuildSettings {
             Configuration = "Release"
         };
         DotNetCoreBuild("../Initium.Portal.sln", settings);
 
-        var msBuildSettings = new MSBuildSettings {
-            Verbosity = Verbosity.Minimal,
-            Configuration = "Database",
-            PlatformTarget = PlatformTarget.MSIL
-        };
-        MSBuild("../Initium.Portal.sln", msBuildSettings);
     });
 Task("__Test")
     .Does(() => {
@@ -92,42 +97,26 @@ Task("__Test")
         };
 
         DotNetCoreTest("../Initium.Portal.sln", testSettings, coverletSettings);
-        
-        var npmRunScriptSettings = new NpmRunScriptSettings {
-            ScriptName = "test:coverage",
-            WorkingDirectory = "../Source/Initium.Portal.Web",
-            //LogLevel = NpmLogLevel.Silent
-        };		
-        NpmRunScript(npmRunScriptSettings);  
-        CopyDirectory("../Source/Initium.Portal.Web/coverage", coverClientPath);
-        // System.IO.StreamReader file =  new System.IO.StreamReader(MakeAbsolute(File("./build-artifacts/cover/server/coverage.info")).ToString()); 
-        // string line;
-        // while((line = file.ReadLine()) != null ){  
-        //     if (line.IndexOf("Source\\Initium.Portal.Web\\Program.cs") == -1) {
-        //         continue;
-        //     }
-            
-        //     ReplaceTextInFiles("./build-artifacts/cover/client/lcov.info", "Resources\\Scripts\\", line.Replace("SF:",string.Empty).Replace("Program.cs", string.Empty) + "Resources\\Scripts\\");
-        //     break;
-             
-        // }  
-        // file.Close();  
-        
     });
 Task("__Publish")
     .Does(() => {
         var pubSettings = new DotNetCorePublishSettings {
             Configuration = "Release",
-            OutputDirectory = publishPath
+            OutputDirectory = managementPublishPath
         };
+        DotNetCorePublish("../source/Initium.Portal.Web.Management/Initium.Portal.Web.Management.csproj", pubSettings);
         
-        DotNetCorePublish("../source/Initium.Portal.Web/Initium.Portal.Web.csproj", pubSettings);
+        pubSettings.OutputDirectory = tenantPublishPath;
+        DotNetCorePublish("../source/Initium.Portal.Web.Tenant/Initium.Portal.Web.Tenant.csproj", pubSettings);
 
-            });
+        pubSettings.OutputDirectory = databasePublishPath;
+        DotNetCorePublish("../data/Initium.Portal.Data.Build/Initium.Portal.Data.Build.csproj", pubSettings);
+    });
 Task("__Package")
     .Does(() => {
-        ZipCompress(publishPath, releasePath + File("Initium.Portal.zip"));        
-        ZipCompress("../Data/Initium.Portal.Data/bin/Debug/Initium.Portal.Data.dacpac", releasePath + File("Initium.Portal.Data.zip"));        
+        ZipCompress(managementPublishPath, releasePath + File("Initium.Portal.Management.zip"));        
+        ZipCompress(tenantPublishPath, releasePath + File("Initium.Portal.Tenant.zip"));        
+        ZipCompress(databasePublishPath, releasePath + File("Initium.Portal.Data.zip"));
     });
 
 Task("Build")
@@ -137,8 +126,7 @@ Task("Build")
     .IsDependentOn("__Build")
     .IsDependentOn("__Test")
     .IsDependentOn("__Publish")
-    .IsDependentOn("__Package")
-    ;
+    .IsDependentOn("__Package");
 
 Task("Default")
     .IsDependentOn("Build");

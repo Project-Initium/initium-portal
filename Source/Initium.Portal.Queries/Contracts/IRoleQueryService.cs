@@ -12,7 +12,7 @@ using MaybeMonad;
 
 namespace Initium.Portal.Queries.Contracts
 {
-    public interface IRoleQueryService : IQueryService<Role>
+    public interface IRoleQueryService : IQueryService<RoleReadEntity>
     {
         Task<StatusCheckModel> CheckForPresenceOfRoleByName(string name);
 

@@ -7,13 +7,13 @@ using Initium.Portal.Core.Infrastructure;
 
 namespace Initium.Portal.Queries.Entities
 {
-    public class User : ReadEntity
+    public class UserReadEntity : ReadEntity
     {
-        public User()
+        public UserReadEntity()
         {
-            this.UserRoles = new List<UserRole>();
-            this.AuthenticatorApps = new List<AuthenticatorApp>();
-            this.AuthenticatorDevices = new List<AuthenticatorDevice>();
+            this.UserRoles = new List<UserRoleReadEntity>();
+            this.AuthenticatorApps = new List<AuthenticatorAppReadEntity>();
+            this.AuthenticatorDevices = new List<AuthenticatorDeviceReadEntity>();
             this.UserNotifications = new List<UserNotification>();
         }
 
@@ -41,11 +41,11 @@ namespace Initium.Portal.Queries.Entities
 
         public DateTime? WhenDisabled { get; set; }
 
-        public List<UserRole> UserRoles { get; set; }
+        public List<UserRoleReadEntity> UserRoles { get; set; }
 
-        public List<AuthenticatorApp> AuthenticatorApps { get; set; }
+        public List<AuthenticatorAppReadEntity> AuthenticatorApps { get; set; }
 
-        public List<AuthenticatorDevice> AuthenticatorDevices { get; set; }
+        public List<AuthenticatorDeviceReadEntity> AuthenticatorDevices { get; set; }
 
         public List<UserNotification> UserNotifications { get; set; }
     }

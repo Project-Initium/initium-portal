@@ -1,6 +1,6 @@
 ﻿import 'datatables.net';
 import 'datatables.net-bs4';
-import { BaseList } from '../base-list';
+import { BaseList } from '../../../../../Initium.Portal.Web/Resources/Scripts/pages';
 import { FilterViewModel } from './filter-view-model';
 
 export class TenantList extends BaseList<FilterViewModel>{

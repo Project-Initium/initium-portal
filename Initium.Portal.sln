@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_", "_", "{8C2A9944-2A43-46
 		GitVersion.yml = GitVersion.yml
 		LICENSE = LICENSE
 		README.md = README.md
+		package.json = package.json
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Build", "Build", "{6EF45D1E-5322-4EF3-849F-ADF6C1246F2B}"
@@ -66,6 +67,8 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Initium.Portal.Web.Tenant", "Source\Initium.Portal.Web.Tenant\Initium.Portal.Web.Tenant.csproj", "{118DDE70-B2CD-4114-AD23-D23E053F3B05}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Initium.Portal.Web", "Source\Initium.Portal.Web\Initium.Portal.Web.csproj", "{92635ECF-1D1F-4E0A-91F6-C77AD413FE31}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Initium.Portal.Data.Build", "Data\Initium.Portal.Data.Build\Initium.Portal.Data.Build.csproj", "{004431C8-9C67-4292-B2A1-F6BE329B18A2}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
@@ -175,6 +178,12 @@ Global
 		{92635ECF-1D1F-4E0A-91F6-C77AD413FE31}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{92635ECF-1D1F-4E0A-91F6-C77AD413FE31}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{92635ECF-1D1F-4E0A-91F6-C77AD413FE31}.Release|Any CPU.Build.0 = Release|Any CPU
+		{004431C8-9C67-4292-B2A1-F6BE329B18A2}.Database|Any CPU.ActiveCfg = Debug|Any CPU
+		{004431C8-9C67-4292-B2A1-F6BE329B18A2}.Database|Any CPU.Build.0 = Debug|Any CPU
+		{004431C8-9C67-4292-B2A1-F6BE329B18A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{004431C8-9C67-4292-B2A1-F6BE329B18A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{004431C8-9C67-4292-B2A1-F6BE329B18A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{004431C8-9C67-4292-B2A1-F6BE329B18A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -196,6 +205,7 @@ Global
 		{BC209D91-2F5E-4CBD-890E-1121A8918BFD} = {35A764FB-8948-4DFB-9FE9-7C499130F106}
 		{118DDE70-B2CD-4114-AD23-D23E053F3B05} = {35A764FB-8948-4DFB-9FE9-7C499130F106}
 		{92635ECF-1D1F-4E0A-91F6-C77AD413FE31} = {35A764FB-8948-4DFB-9FE9-7C499130F106}
+		{004431C8-9C67-4292-B2A1-F6BE329B18A2} = {523A69A7-75D3-4BC1-A9C3-D77D1B8FF0C3}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0BA8A014-6B06-41AB-8A28-25A06E50A519}

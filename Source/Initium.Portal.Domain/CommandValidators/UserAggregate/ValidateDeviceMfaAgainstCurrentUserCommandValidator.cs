@@ -13,8 +13,11 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public ValidateDeviceMfaAgainstCurrentUserCommandValidator()
         {
             this.RuleFor(x => x.AssertionOptions)
+                .Cascade(CascadeMode.Stop)
                 .NotNull().WithErrorCode(ValidationCodes.FieldIsRequired);
+
             this.RuleFor(x => x.AuthenticatorAssertionRawResponse)
+                .Cascade(CascadeMode.Stop)
                 .NotNull().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

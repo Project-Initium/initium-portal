@@ -13,6 +13,7 @@ namespace Initium.Portal.Domain.CommandValidators.SystemAlertAggregate
         public DeleteSystemAlertCommandValidator()
         {
             this.RuleFor(x => x.SystemAlertId)
+                .Cascade(CascadeMode.Stop)
                 .NotEqual(Guid.Empty).WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

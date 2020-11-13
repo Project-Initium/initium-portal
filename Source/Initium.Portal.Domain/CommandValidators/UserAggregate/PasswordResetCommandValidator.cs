@@ -12,8 +12,11 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public PasswordResetCommandValidator()
         {
             this.RuleFor(x => x.Token)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
+
             this.RuleFor(x => x.NewPassword)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

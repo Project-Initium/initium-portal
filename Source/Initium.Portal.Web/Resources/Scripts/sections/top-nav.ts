@@ -57,7 +57,8 @@ export class TopNav {
                 useChangset: false,
                 headers:new Headers({
                     'Content-Type': 'application/json',
-                })
+                }),
+                useRelativeURLs: false
             },
             mode: 'same-origin',
             cache: 'no-cache',

@@ -16,7 +16,7 @@ namespace Initium.Portal.Web.ODataEndpoints.Role
 {
     [ResourceBasedAuthorize("role-list")]
     [ODataRoutePrefix("Role")]
-    public class RoleODataController : BaseODataController<Queries.Entities.Role, RoleFilter>
+    public class RoleODataController : BaseODataController<Queries.Entities.RoleReadEntity, RoleFilter>
     {
         private readonly IRoleQueryService _roleQueryService;
 
@@ -26,7 +26,7 @@ namespace Initium.Portal.Web.ODataEndpoints.Role
         }
 
         [ODataRoute("Role.Filtered")]
-        public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.Role> options, [FromBody]RoleFilter filter)
+        public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.RoleReadEntity> options, [FromBody]RoleFilter filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -43,7 +43,7 @@ namespace Initium.Portal.Web.ODataEndpoints.Role
         }
 
         [ODataRoute("Role.FilteredExport")]
-        public override IActionResult FilteredExport(ODataQueryOptions<Queries.Entities.Role> options, [FromBody]ExportableFilter<RoleFilter> filter)
+        public override IActionResult FilteredExport(ODataQueryOptions<Queries.Entities.RoleReadEntity> options, [FromBody]ExportableFilter<RoleFilter> filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -67,9 +67,9 @@ namespace Initium.Portal.Web.ODataEndpoints.Role
             return this.File(this.GenerateCsvStream(query, options, mappings), "application/csv");
         }
 
-        protected override ExpressionStarter<Queries.Entities.Role> GeneratePredicate(RoleFilter filter)
+        protected override ExpressionStarter<Queries.Entities.RoleReadEntity> GeneratePredicate(RoleFilter filter)
         {
-            var predicate = PredicateBuilder.New<Queries.Entities.Role>(true);
+            var predicate = PredicateBuilder.New<Queries.Entities.RoleReadEntity>(true);
             if (filter.HasResources && !filter.HasNoResources)
             {
                 predicate.And(x => x.ResourceCount > 0);

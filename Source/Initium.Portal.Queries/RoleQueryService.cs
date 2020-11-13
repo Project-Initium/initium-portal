@@ -23,7 +23,7 @@ namespace Initium.Portal.Queries
             this._context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public IQueryable<Role> QueryableEntity => this._context.Roles;
+        public IQueryable<RoleReadEntity> QueryableEntity => this._context.Roles;
 
         public async Task<StatusCheckModel> CheckForPresenceOfRoleByName(string name)
         {

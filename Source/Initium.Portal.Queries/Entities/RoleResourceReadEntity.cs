@@ -6,16 +6,14 @@ using Initium.Portal.Core.Infrastructure;
 
 namespace Initium.Portal.Queries.Entities
 {
-    public class AuthenticatorApp : ReadEntity
+    public class RoleResourceReadEntity : ReadEntity
     {
-        public Guid Id { get; set; }
+        public Guid RoleId { get; set; }
 
-        public Guid UserId { get; set; }
+        public Guid ResourceId { get; set; }
 
-        public string Key { get; set; }
+        public RoleReadEntity Role { get; set; }
 
-        public DateTime WhenEnrolled { get; set; }
-
-        public User User { get; set; }
+        public ResourceReadEntity Resource { get; set; }
     }
 }

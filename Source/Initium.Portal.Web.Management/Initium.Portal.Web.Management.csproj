@@ -12,7 +12,7 @@
       <PackageReference Include="Ardalis.ApiEndpoints" Version="2.0.0" />
       <PackageReference Include="MediatR" Version="8.1.0" />
       <PackageReference Include="ZKWeb.Fork.QRCoder" Version="1.3.0" />
-        <PackageReference Include="FluentValidation.AspNetCore" Version="9.2.0" />
+        <PackageReference Include="FluentValidation.AspNetCore" Version="9.3.0" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.NewtonsoftJson" Version="3.1.7" />
         <PackageReference Include="Microsoft.AspNetCore.Mvc.Razor.RuntimeCompilation" Version="3.1.7" />
         <PackageReference Include="SonarAnalyzer.CSharp" Version="8.11.0.20529">
@@ -31,6 +31,10 @@
       <ProjectReference Include="..\Initium.Portal.Domain\Initium.Portal.Domain.csproj" />
       <ProjectReference Include="..\Initium.Portal.Infrastructure.Management\Initium.Portal.Infrastructure.Management.csproj" />
       <ProjectReference Include="..\Initium.Portal.Web\Initium.Portal.Web.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Resources\Scripts\pages" />
     </ItemGroup>
    
 

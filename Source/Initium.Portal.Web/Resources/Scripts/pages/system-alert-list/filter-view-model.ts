@@ -1,6 +1,6 @@
 ﻿import ko from 'knockout';
 import { ICustomQuery, ISimpleStateData, IStateData } from '../../providers';
-import { BaseFilterViewModel } from '../base-list';
+import { BaseFilterViewModel } from '../';
 
 export class FilterViewModel extends BaseFilterViewModel {
     public searchTerm = ko.observable<string>('');

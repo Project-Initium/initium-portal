@@ -143,7 +143,7 @@ export class NotificationList extends BaseList<FilterViewModel> {
     }
     private async dismiss(event: MouseEvent) {
         event.preventDefault();
-        this.customizedDataTable.tableApi.processing(true);
+        //this.customizedDataTable.tableApi.processing(true);
 
         const result = await XhrHelper.PostJsonInternalOfT<IBasicApiResponse>(
             this.customizedDataTable.table.dataset.dismissItemUri,
@@ -162,7 +162,7 @@ export class NotificationList extends BaseList<FilterViewModel> {
             this.customizedDataTable.tableApi.draw();
         }
 
-        this.customizedDataTable.tableApi.processing(false);
+        //this.customizedDataTable.tableApi.processing(false);
     }
 }
 

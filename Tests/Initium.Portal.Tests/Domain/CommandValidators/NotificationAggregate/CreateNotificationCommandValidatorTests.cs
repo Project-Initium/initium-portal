@@ -45,6 +45,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.NotificationAggregate
 
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(result.Errors, x => x.ErrorCode == ValidationCodes.FieldIsRequired && x.PropertyName == "UserIds");
         }
     }

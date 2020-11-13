@@ -124,7 +124,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             user.Verify(x => x.ChangePassword(It.IsAny<string>(), It.IsAny<DateTime>()), Times.Once);
             user.Verify(x => x.CompleteTokenLifecycle(It.IsAny<Guid>(), It.IsAny<DateTime>()), Times.Once);
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
-            user.Verify(x => x.AddDomainEvent(It.IsAny<PasswordChangedIntegrationEvent>()), Times.Once);
+            user.Verify(x => x.AddIntegrationEvent(It.IsAny<PasswordChangedIntegrationEvent>()), Times.Once);
         }
 
         [Fact]

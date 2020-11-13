@@ -13,6 +13,7 @@ namespace Initium.Portal.Domain.CommandValidators.RoleAggregate
         public DeleteRoleCommandValidator()
         {
             this.RuleFor(x => x.RoleId)
+                .Cascade(CascadeMode.Stop)
                 .NotEqual(Guid.Empty).WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

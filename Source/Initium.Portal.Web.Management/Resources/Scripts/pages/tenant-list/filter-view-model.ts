@@ -1,6 +1,6 @@
 ﻿import ko from 'knockout';
-import { ICustomQuery, ISimpleStateData, IStateData } from '../../providers';
-import { BaseFilterViewModel } from '../base-list';
+import { ICustomQuery, ISimpleStateData, IStateData } from '../../../../../Initium.Portal.Web/Resources/Scripts/providers';
+import { BaseFilterViewModel } from '../../../../../Initium.Portal.Web/Resources/Scripts/pages';
 
 export class FilterViewModel extends BaseFilterViewModel {
     public searchTerm = ko.observable<string>('');

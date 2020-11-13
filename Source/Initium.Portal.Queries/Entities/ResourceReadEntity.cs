@@ -7,11 +7,11 @@ using Initium.Portal.Core.Infrastructure;
 
 namespace Initium.Portal.Queries.Entities
 {
-    public class Resource : ReadEntity
+    public class ResourceReadEntity : ReadEntity
     {
-        public Resource()
+        public ResourceReadEntity()
         {
-            this.RoleResources = new List<RoleResource>();
+            this.RoleResources = new List<RoleResourceReadEntity>();
         }
 
         public Guid Id { get; set; }
@@ -22,8 +22,8 @@ namespace Initium.Portal.Queries.Entities
 
         public Guid? ParentResourceId { get; set; }
 
-        public List<RoleResource> RoleResources { get; set; }
+        public List<RoleResourceReadEntity> RoleResources { get; set; }
 
-        public Resource ParentResource { get; set; }
+        public ResourceReadEntity ParentResource { get; set; }
     }
 }

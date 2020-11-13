@@ -130,7 +130,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             await handler.Handle(cmd, CancellationToken.None);
 
             user.Verify(x => x.EnableAccount(), Times.Once);
-            user.Verify(x => x.AddDomainEvent(It.IsAny<UserEnabledIntegrationEvent>()));
+            user.Verify(x => x.AddIntegrationEvent(It.IsAny<UserEnabledIntegrationEvent>()));
         }
     }
 }

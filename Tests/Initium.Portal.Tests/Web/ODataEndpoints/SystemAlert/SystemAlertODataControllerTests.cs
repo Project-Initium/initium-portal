@@ -21,14 +21,14 @@ using Xunit;
 
 namespace Initium.Portal.Tests.Web.ODataEndpoints.SystemAlert
 {
-    public class SystemAlertODataControllerTests : BaseODataControllerTest<Portal.Queries.Entities.SystemAlert>
+    public class SystemAlertODataControllerTests : BaseODataControllerTest<Portal.Queries.Entities.SystemAlertReadEntity>
     {
         protected override IEdmModel EdmModel
         {
             get
             {
                 var modelBuilder = new ODataConventionModelBuilder(this.Provider);
-                var entitySet = modelBuilder.EntitySet<Portal.Queries.Entities.SystemAlert>("SystemAlert");
+                var entitySet = modelBuilder.EntitySet<Portal.Queries.Entities.SystemAlertReadEntity>("SystemAlert");
                 entitySet.EntityType.HasKey(entity => entity.Id);
                 return modelBuilder.GetEdmModel();
             }
@@ -51,28 +51,28 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.SystemAlert
             });
 
             using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            context.Add(new Portal.Queries.Entities.SystemAlert
+            context.Add(new Portal.Queries.Entities.SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name-1",
                 Type = SystemAlertType.Critical,
                 Message = "message-1",
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.SystemAlert
+            context.Add(new Portal.Queries.Entities.SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name-2",
                 Type = SystemAlertType.Critical,
                 Message = "message-2",
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.SystemAlert
+            context.Add(new Portal.Queries.Entities.SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name-3",
                 Type = SystemAlertType.Critical,
                 Message = "message-3",
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.SystemAlert
+            context.Add(new Portal.Queries.Entities.SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name-4",
@@ -86,7 +86,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.SystemAlert
             var systemAlertController = new SystemAlertODataController(systemAlertQueryService.Object);
             var result =
                 Assert.IsType<OkObjectResult>(systemAlertController.Filtered(this.GenerateEmptyQueryOptions(), null));
-            var data = Assert.IsType<InternalDbSet<Portal.Queries.Entities.SystemAlert>>(result.Value);
+            var data = Assert.IsType<InternalDbSet<Portal.Queries.Entities.SystemAlertReadEntity>>(result.Value);
             Assert.Equal(4, data.AsQueryable().Count());
         }
     }

@@ -5,14 +5,14 @@ using System;
 
 namespace Initium.Portal.Queries.Entities
 {
-    public class RoleResource
+    public class UserRoleReadEntity
     {
         public Guid RoleId { get; set; }
 
-        public Guid ResourceId { get; set; }
+        public Guid UserId { get; set; }
 
-        public Role Role { get; set; }
+        public RoleReadEntity Role { get; set; }
 
-        public Resource Resource { get; set; }
+        public UserReadEntity User { get; set; }
     }
 }

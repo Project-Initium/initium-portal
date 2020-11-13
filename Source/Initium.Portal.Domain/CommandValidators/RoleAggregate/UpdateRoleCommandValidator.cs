@@ -13,8 +13,10 @@ namespace Initium.Portal.Domain.CommandValidators.RoleAggregate
         public UpdateRoleCommandValidator()
         {
             this.RuleFor(x => x.Name)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
             this.RuleFor(x => x.RoleId)
+                .Cascade(CascadeMode.Stop)
                 .NotEqual(Guid.Empty).WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

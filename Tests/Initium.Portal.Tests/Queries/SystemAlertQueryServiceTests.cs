@@ -35,28 +35,28 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            context.Add(new SystemAlert
+            context.Add(new SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name-1",
                 Message = "message-1",
                 IsActive = false,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlert
+            context.Add(new SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name-2",
                 Message = "message-2",
                 IsActive = false,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlert
+            context.Add(new SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name-3",
                 Message = "message-3",
                 IsActive = false,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlert
+            context.Add(new SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name-4",
@@ -88,28 +88,28 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            context.Add(new SystemAlert
+            context.Add(new SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name-1",
                 Message = "message-1",
                 IsActive = true,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlert
+            context.Add(new SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name-2",
                 Message = "message-2",
                 IsActive = false,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlert
+            context.Add(new SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name-3",
                 Message = "message-3",
                 IsActive = false,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlert
+            context.Add(new SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name-4",
@@ -142,7 +142,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            context.Add(new SystemAlert
+            context.Add(new SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "name",
@@ -178,7 +178,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            context.Add(new SystemAlert
+            context.Add(new SystemAlertReadEntity
             {
                 Id = TestVariables.SystemAlertId,
                 Name = "name",

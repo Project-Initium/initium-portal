@@ -7,7 +7,7 @@ using Initium.Portal.Core.Infrastructure;
 
 namespace Initium.Portal.Queries.Entities
 {
-    public class SystemAlert : ReadEntity
+    public class SystemAlertReadEntity : ReadEntity
     {
         public Guid Id { get; set; }
 

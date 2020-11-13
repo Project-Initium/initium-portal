@@ -28,7 +28,7 @@ namespace Initium.Portal.Queries
             this._context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public IQueryable<User> QueryableEntity => this._context.Users;
+        public IQueryable<UserReadEntity> QueryableEntity => this._context.Users;
 
         public async Task<StatusCheckModel> CheckForPresenceOfAnyUser()
         {

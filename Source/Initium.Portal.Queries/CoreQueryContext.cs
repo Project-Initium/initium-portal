@@ -40,19 +40,19 @@ namespace Initium.Portal.Queries
             this._multiTenantSettings = multiTenantSettings.Value;
         }
 
-        public DbSet<User> Users { get; set; }
+        public DbSet<UserReadEntity> Users { get; set; }
 
-        public DbSet<Role> Roles { get; set; }
+        public DbSet<RoleReadEntity> Roles { get; set; }
 
         public DbSet<UserNotification> UserNotifications { get; set; }
 
-        public DbSet<SystemAlert> SystemAlerts { get; set; }
+        public DbSet<SystemAlertReadEntity> SystemAlerts { get; set; }
 
-        public DbSet<Resource> Resources { get; set; }
+        public DbSet<ResourceReadEntity> Resources { get; set; }
 
-        public DbSet<RoleResource> RoleResources { get; set; }
+        public DbSet<RoleResourceReadEntity> RoleResources { get; set; }
 
-        public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<UserRoleReadEntity> UserRoles { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -67,12 +67,12 @@ namespace Initium.Portal.Queries
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<Resource>(this.ConfigureResource);
-            modelBuilder.Entity<Role>(this.ConfigureRole);
-            modelBuilder.Entity<RoleResource>(this.ConfigureRoleResource);
-            modelBuilder.Entity<SystemAlert>(this.ConfigureSystemAlert);
-            modelBuilder.Entity<User>(this.ConfigureUser);
-            modelBuilder.Entity<UserRole>(this.ConfigureUserRole);
+            modelBuilder.Entity<ResourceReadEntity>(this.ConfigureResource);
+            modelBuilder.Entity<RoleReadEntity>(this.ConfigureRole);
+            modelBuilder.Entity<RoleResourceReadEntity>(this.ConfigureRoleResource);
+            modelBuilder.Entity<SystemAlertReadEntity>(this.ConfigureSystemAlert);
+            modelBuilder.Entity<UserReadEntity>(this.ConfigureUser);
+            modelBuilder.Entity<UserRoleReadEntity>(this.ConfigureUserRole);
             modelBuilder.Entity<UserNotification>(this.ConfigureUserNotification);
         }
 
@@ -86,7 +86,7 @@ namespace Initium.Portal.Queries
             userNotifications.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
         }
 
-        private void ConfigureRoleResource(EntityTypeBuilder<RoleResource> roleResources)
+        private void ConfigureRoleResource(EntityTypeBuilder<RoleResourceReadEntity> roleResources)
         {
             roleResources.ToTable("vwRoleResource", "Portal");
             roleResources.HasKey(roleResource => new { roleResource.RoleId, roleResource.ResourceId });
@@ -104,13 +104,13 @@ namespace Initium.Portal.Queries
                 .HasForeignKey(roleResource => roleResource.RoleId);
         }
 
-        private void ConfigureResource(EntityTypeBuilder<Resource> resources)
+        private void ConfigureResource(EntityTypeBuilder<ResourceReadEntity> resources)
         {
             resources.ToTable("vwResource", "Portal");
             resources.HasKey(resource => resource.Id);
         }
 
-        private void ConfigureSystemAlert(EntityTypeBuilder<SystemAlert> systemAlerts)
+        private void ConfigureSystemAlert(EntityTypeBuilder<SystemAlertReadEntity> systemAlerts)
         {
             systemAlerts.ToTable("vwSystemAlert", "Portal");
             systemAlerts.HasKey(systemAlert => systemAlert.Id);
@@ -119,7 +119,7 @@ namespace Initium.Portal.Queries
             systemAlerts.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
         }
 
-        private void ConfigureRole(EntityTypeBuilder<Role> roles)
+        private void ConfigureRole(EntityTypeBuilder<RoleReadEntity> roles)
         {
             roles.ToTable("vwRole", "Portal");
             roles.HasKey(role => role.Id);
@@ -127,7 +127,7 @@ namespace Initium.Portal.Queries
             roles.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
         }
 
-        private void ConfigureUser(EntityTypeBuilder<User> users)
+        private void ConfigureUser(EntityTypeBuilder<UserReadEntity> users)
         {
             users.ToTable("vwUser", "portal");
             users.HasKey(x => x.Id);
@@ -149,7 +149,7 @@ namespace Initium.Portal.Queries
             users.HasMany<UserNotification>().WithOne(x => x.User).HasForeignKey(x => x.UserId);
         }
 
-        private void ConfigureUserRole(EntityTypeBuilder<UserRole> userRoles)
+        private void ConfigureUserRole(EntityTypeBuilder<UserRoleReadEntity> userRoles)
         {
             userRoles.ToTable("vwUserRole", "Portal");
             userRoles.HasKey(userRole => new { userRole.RoleId, userRole.UserId });

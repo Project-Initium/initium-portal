@@ -39,11 +39,16 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Source\Initium.Portal.Core\Initium.Portal.Core.csproj" />
     <ProjectReference Include="..\..\Source\Initium.Portal.Domain.Management\Initium.Portal.Domain.Management.csproj" />
+    <ProjectReference Include="..\..\Source\Initium.Portal.Domain.Tenant\Initium.Portal.Domain.Tenant.csproj" />
     <ProjectReference Include="..\..\Source\Initium.Portal.Domain\Initium.Portal.Domain.csproj" />
     <ProjectReference Include="..\..\Source\Initium.Portal.Infrastructure.Management\Initium.Portal.Infrastructure.Management.csproj" />
+    <ProjectReference Include="..\..\Source\Initium.Portal.Infrastructure.Tenant\Initium.Portal.Infrastructure.Tenant.csproj" />
     <ProjectReference Include="..\..\Source\Initium.Portal.Infrastructure\Initium.Portal.Infrastructure.csproj" />
+    <ProjectReference Include="..\..\Source\Initium.Portal.Queries.Management\Initium.Portal.Queries.Management.csproj" />
+    <ProjectReference Include="..\..\Source\Initium.Portal.Queries.Tenant\Initium.Portal.Queries.Tenant.csproj" />
     <ProjectReference Include="..\..\Source\Initium.Portal.Queries\Initium.Portal.Queries.csproj" />
     <ProjectReference Include="..\..\Source\Initium.Portal.Web.Management\Initium.Portal.Web.Management.csproj" />
+    <ProjectReference Include="..\..\Source\Initium.Portal.Web.Tenant\Initium.Portal.Web.Tenant.csproj" />
     <ProjectReference Include="..\..\Source\Initium.Portal.Web\Initium.Portal.Web.csproj" />
   </ItemGroup>
 

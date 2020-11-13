@@ -28,6 +28,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
 
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors, x => x.ErrorCode == ValidationCodes.FieldIsRequired && x.PropertyName == "NotificationId");
         }
@@ -39,6 +40,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new MarkNotificationAsViewedCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors, x => x.ErrorCode == ValidationCodes.FieldIsRequired && x.PropertyName == "UserId");
         }

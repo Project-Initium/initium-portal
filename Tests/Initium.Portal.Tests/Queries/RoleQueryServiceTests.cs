@@ -58,7 +58,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var role = context.Add(new Role
+            var role = context.Add(new RoleReadEntity
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
@@ -94,7 +94,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var role = context.Add(new Role
+            var role = context.Add(new RoleReadEntity
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
@@ -130,7 +130,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var role = context.Add(new Role
+            var role = context.Add(new RoleReadEntity
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
@@ -186,20 +186,20 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var roleResource = await context.RoleResources.AddAsync(new RoleResource
+            var roleResource = await context.RoleResources.AddAsync(new RoleResourceReadEntity
             {
-                Resource = new Resource
+                Resource = new ResourceReadEntity
                 {
                     Id = TestVariables.ResourceId,
                 },
             });
             roleResource.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var role = await context.Roles.AddAsync(new Role
+            var role = await context.Roles.AddAsync(new RoleReadEntity
             {
                 Id = TestVariables.RoleId,
                 Name = "name",
-                RoleResources = new List<RoleResource>
+                RoleResources = new List<RoleResourceReadEntity>
                 {
                     roleResource.Entity,
                 },
@@ -257,7 +257,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var role = context.Add(new Role
+            var role = context.Add(new RoleReadEntity
             {
                 DefaultTenantId = TestVariables.TenantId,
             });

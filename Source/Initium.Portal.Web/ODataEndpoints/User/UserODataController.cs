@@ -16,7 +16,7 @@ namespace Initium.Portal.Web.ODataEndpoints.User
 {
     [ODataRoutePrefix("User")]
     [ResourceBasedAuthorize("user-list")]
-    public class UserODataController : BaseODataController<Queries.Entities.User, UserFilter>
+    public class UserODataController : BaseODataController<Queries.Entities.UserReadEntity, UserFilter>
     {
         private readonly IUserQueryService _userQueryService;
 
@@ -26,7 +26,7 @@ namespace Initium.Portal.Web.ODataEndpoints.User
         }
 
         [ODataRoute("User.Filtered")]
-        public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.User> options, [FromBody] UserFilter filter)
+        public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.UserReadEntity> options, [FromBody] UserFilter filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -44,7 +44,7 @@ namespace Initium.Portal.Web.ODataEndpoints.User
 
         [ODataRoute("User.FilteredExport")]
         public override IActionResult FilteredExport(
-            ODataQueryOptions<Queries.Entities.User> options, [FromBody]ExportableFilter<UserFilter> filter)
+            ODataQueryOptions<Queries.Entities.UserReadEntity> options, [FromBody]ExportableFilter<UserFilter> filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -68,9 +68,9 @@ namespace Initium.Portal.Web.ODataEndpoints.User
             return this.File(this.GenerateCsvStream(query, options, mappings), "application/csv");
         }
 
-        protected override ExpressionStarter<Queries.Entities.User> GeneratePredicate([FromBody]UserFilter filter)
+        protected override ExpressionStarter<Queries.Entities.UserReadEntity> GeneratePredicate([FromBody]UserFilter filter)
         {
-            var predicate = PredicateBuilder.New<Queries.Entities.User>(true);
+            var predicate = PredicateBuilder.New<Queries.Entities.UserReadEntity>(true);
             if (filter.Verified && !filter.Unverified)
             {
                 predicate.And(x => x.IsVerified);

@@ -34,18 +34,18 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            context.Add(new Resource
+            context.Add(new ResourceReadEntity
             {
                 Id = TestVariables.ResourceId,
                 Name = "parent-1",
             });
-            context.Add(new Resource
+            context.Add(new ResourceReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "parent-2",
             });
             var childId = Guid.NewGuid();
-            context.Add(new Resource
+            context.Add(new ResourceReadEntity
             {
                 Id = childId,
                 Name = "child-1",

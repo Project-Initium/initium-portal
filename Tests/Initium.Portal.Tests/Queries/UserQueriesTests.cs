@@ -39,7 +39,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new User
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
@@ -103,7 +103,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new User
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
@@ -196,7 +196,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new User
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
@@ -278,28 +278,28 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var roleResource = await context.RoleResources.AddAsync(new RoleResource
+            var roleResource = await context.RoleResources.AddAsync(new RoleResourceReadEntity
             {
                 ResourceId = TestVariables.ResourceId,
             });
             roleResource.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var role = await context.Roles.AddAsync(new Role
+            var role = await context.Roles.AddAsync(new RoleReadEntity
             {
-                RoleResources = new List<RoleResource>
+                RoleResources = new List<RoleResourceReadEntity>
                 {
                     roleResource.Entity,
                 },
             });
             role.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var userRole = await context.UserRoles.AddAsync(new UserRole
+            var userRole = await context.UserRoles.AddAsync(new UserRoleReadEntity
             {
                 Role = role.Entity,
             });
             userRole.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var user = await context.Users.AddAsync(new User
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
                 EmailAddress = "email-address",
@@ -311,7 +311,7 @@ namespace Initium.Portal.Tests.Queries
                 WhenLocked = null,
                 IsAdmin = false,
                 WhenDisabled = TestVariables.Now,
-                UserRoles = new List<UserRole>
+                UserRoles = new List<UserRoleReadEntity>
                 {
                     userRole.Entity,
                 },
@@ -381,37 +381,37 @@ namespace Initium.Portal.Tests.Queries
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
 
-            var roleResource = await context.RoleResources.AddAsync(new RoleResource
+            var roleResource = await context.RoleResources.AddAsync(new RoleResourceReadEntity
             {
-                Resource = new Resource
+                Resource = new ResourceReadEntity
                 {
                     NormalizedName = "normalized-name",
                 },
             });
             roleResource.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var role = await context.Roles.AddAsync(new Role
+            var role = await context.Roles.AddAsync(new RoleReadEntity
             {
-                RoleResources = new List<RoleResource>
+                RoleResources = new List<RoleResourceReadEntity>
                 {
                     roleResource.Entity,
                 },
             });
             role.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var userRole = await context.UserRoles.AddAsync(new UserRole
+            var userRole = await context.UserRoles.AddAsync(new UserRoleReadEntity
             {
                 Role = role.Entity,
             });
             userRole.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var user = await context.Users.AddAsync(new User
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
                 EmailAddress = "email-address",
                 FirstName = "first-name",
                 LastName = "last-name",
-                UserRoles = new List<UserRole>
+                UserRoles = new List<UserRoleReadEntity>
                 {
                     userRole.Entity,
                 },
@@ -448,7 +448,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            await context.Users.AddAsync(new User
+            await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
             });
@@ -507,7 +507,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            await context.Users.AddAsync(new User
+            await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
             });
@@ -539,7 +539,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new User
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
@@ -548,9 +548,9 @@ namespace Initium.Portal.Tests.Queries
             var user = await context.Users.AddAsync(new User
             {
                 Id = TestVariables.UserId,
-                AuthenticatorApps = new List<AuthenticatorApp>
+                AuthenticatorApps = new List<AuthenticatorAppReadEntity>
                 {
-                    new AuthenticatorApp
+                    new AuthenticatorAppReadEntity
                     {
                         Id = TestVariables.AuthenticatorAppId,
                     },
@@ -639,7 +639,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            await context.Users.AddAsync(new User
+            await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
             });
@@ -673,7 +673,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new User
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
@@ -682,9 +682,9 @@ namespace Initium.Portal.Tests.Queries
             var user = await context.Users.AddAsync(new User
             {
                 Id = TestVariables.UserId,
-                AuthenticatorDevices = new List<AuthenticatorDevice>
+                AuthenticatorDevices = new List<AuthenticatorDeviceReadEntity>
                 {
-                    new AuthenticatorDevice
+                    new AuthenticatorDeviceReadEntity
                     {
                         Id = TestVariables.AuthenticatorDeviceId,
                         Name = "name",

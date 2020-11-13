@@ -25,6 +25,6 @@ namespace Initium.Portal.Queries.Entities
 
         public DateTime? WhenViewed { get; set; }
 
-        public User User { get; set; }
+        public UserReadEntity User { get; set; }
     }
 }

@@ -12,8 +12,11 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public EnrollAuthenticatorAppCommandValidator()
         {
             this.RuleFor(x => x.Key)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
+
             this.RuleFor(x => x.Code)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

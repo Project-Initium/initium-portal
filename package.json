@@ -1,36 +1,27 @@
 {
-  "name": "web",
+  "name": "initium-portal",
   "version": "1.0.0",
-  "description": "",
+  "description": "This is part of Project Initium, a collection of opiated  starter templates aimed at bootstrapping .net core development.",
   "main": "index.js",
   "scripts": {
-    "release:build": "webpack --config webpack.prod.js",
-    "dev:build": "webpack --config webpack.dev.js",
-    "dev:watch": "webpack --config webpack.dev.js --watch",
-    "test": "mocha -r ts-node/register Resources/Scripts/**/*.spec.ts",
-    "test:watch": "mocha -r ts-node/register --reporter=min --watch Resources/Scripts/**/*.spec.ts",
-    "test:coverage": "nyc mocha Resources/Scripts/**/*.spec.ts --reporter mocha-junit-reporter --reporter-options mochaFile=./coverage/junit-report.xml Resources/Scripts/**/*.spec.ts"
+    "management:dev:build": "webpack --config ./Source/Initium.Portal.Web.Management/webpack.dev.js",
+    "management:dev:watch": "webpack --config ./Source/Initium.Portal.Web.Management/webpack.dev.js --watch",
+    "management:release:build": "webpack --config ./Source/Initium.Portal.Web.Management/webpack.prod.js",
+    "tenant:dev:build": "webpack --config ./Source/Initium.Portal.Web.Tenant/webpack.dev.js",
+    "tenant:dev:watch": "webpack --config ./Source/Initium.Portal.Web.Tenant/webpack.dev.js --watch",
+    "tenant:release:build": "webpack --config ./Source/Initium.Portal.Web.Tenant/webpack.prod.js"
   },
-  "nyc": {
-    "include": [
-      "Resources/Scripts/**/*.ts"
-    ],
-    "extension": [
-      ".ts"
-    ],
-    "require": [
-      "ts-node/register"
-    ],
-    "reporter": [
-      "cobertura",
-      "lcov"
-    ],
-    "sourceMap": true,
-    "instrument": true
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Project-Initium/initium-portal.git"
   },
   "keywords": [],
   "author": "",
-  "license": "MIT",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Project-Initium/initium-portal/issues"
+  },
+  "homepage": "https://github.com/Project-Initium/initium-portal#readme",
   "dependencies": {
     "@types/bootstrap": "^4.5.0",
     "@types/datatables.net": "^1.10.19",

@@ -1,5 +1,5 @@
-﻿import { ToastHelper, XhrHelper } from '../../helpers';
-import { IBasicApiResponse } from '../../types/IBasicApiResponse';
+﻿import { ToastHelper, XhrHelper } from '../../../../../Initium.Portal.Web/Resources/Scripts/helpers';
+import { IBasicApiResponse } from '../../../../../Initium.Portal.Web/Resources/Scripts/types/IBasicApiResponse';
 
 export class UserView {
     private enableTenantToggles: NodeListOf<HTMLButtonElement>;

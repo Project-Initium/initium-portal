@@ -22,7 +22,7 @@ namespace Initium.Portal.Queries
             this._context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public IQueryable<SystemAlert> QueryableEntity => this._context.SystemAlerts;
+        public IQueryable<SystemAlertReadEntity> QueryableEntity => this._context.SystemAlerts;
 
         public async Task<Maybe<IReadOnlyList<ActiveSystemAlert>>> GetActiveSystemAlerts()
         {

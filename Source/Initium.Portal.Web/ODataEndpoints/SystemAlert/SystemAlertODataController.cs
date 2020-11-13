@@ -15,7 +15,7 @@ namespace Initium.Portal.Web.ODataEndpoints.SystemAlert
 {
     [ODataRoutePrefix("SystemAlert")]
     [ResourceBasedAuthorize("system-alert-list")]
-    public class SystemAlertODataController : BaseODataController<Queries.Entities.SystemAlert, SystemAlertFilter>
+    public class SystemAlertODataController : BaseODataController<Queries.Entities.SystemAlertReadEntity, SystemAlertFilter>
     {
         private readonly ISystemAlertQueryService _systemAlertQueryService;
 
@@ -25,7 +25,7 @@ namespace Initium.Portal.Web.ODataEndpoints.SystemAlert
         }
 
         [ODataRoute("SystemAlert.Filtered")]
-        public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.SystemAlert> options, [FromBody]SystemAlertFilter filter)
+        public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.SystemAlertReadEntity> options, [FromBody]SystemAlertFilter filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -43,7 +43,7 @@ namespace Initium.Portal.Web.ODataEndpoints.SystemAlert
 
         [ODataRoute("SystemAlert.FilteredExport")]
         public override IActionResult FilteredExport(
-            ODataQueryOptions<Queries.Entities.SystemAlert> options,
+            ODataQueryOptions<Queries.Entities.SystemAlertReadEntity> options,
             [FromBody]ExportableFilter<SystemAlertFilter> filter)
         {
             if (!this.AreOptionsValid(options))
@@ -68,10 +68,10 @@ namespace Initium.Portal.Web.ODataEndpoints.SystemAlert
             return this.File(this.GenerateCsvStream(query, options, mappings), "application/csv");
         }
 
-        protected override ExpressionStarter<Queries.Entities.SystemAlert> GeneratePredicate(
+        protected override ExpressionStarter<Queries.Entities.SystemAlertReadEntity> GeneratePredicate(
             SystemAlertFilter filter)
         {
-            var predicate = PredicateBuilder.New<Queries.Entities.SystemAlert>(true);
+            var predicate = PredicateBuilder.New<Queries.Entities.SystemAlertReadEntity>(true);
             return predicate;
         }
     }

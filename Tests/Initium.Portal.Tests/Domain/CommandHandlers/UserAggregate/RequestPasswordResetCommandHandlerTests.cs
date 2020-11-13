@@ -117,7 +117,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             Assert.True(result.IsSuccess);
             user.Verify(x => x.GenerateNewPasswordResetToken(It.IsAny<DateTime>(), It.IsAny<TimeSpan>()), Times.Once);
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
-            user.Verify(x => x.AddDomainEvent(It.IsAny<PasswordResetTokenGeneratedIntegrationEvent>()));
+            user.Verify(x => x.AddIntegrationEvent(It.IsAny<PasswordResetTokenGeneratedIntegrationEvent>()));
         }
 
         [Fact]

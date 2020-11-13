@@ -11,7 +11,7 @@ using MaybeMonad;
 
 namespace Initium.Portal.Queries.Contracts
 {
-    public interface ISystemAlertQueryService : IQueryService<SystemAlert>
+    public interface ISystemAlertQueryService : IQueryService<SystemAlertReadEntity>
     {
         Task<Maybe<IReadOnlyList<ActiveSystemAlert>>> GetActiveSystemAlerts();
 

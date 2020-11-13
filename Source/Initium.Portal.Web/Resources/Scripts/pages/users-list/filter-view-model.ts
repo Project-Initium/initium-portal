@@ -1,5 +1,5 @@
 ﻿import ko from 'knockout';
-import { BaseFilterViewModel } from '../base-list';
+import { BaseFilterViewModel } from '../base-filter-view-model';
 import { ICustomQuery, ISimpleStateData, IStateData } from '../../providers';
 
 interface IRequest {

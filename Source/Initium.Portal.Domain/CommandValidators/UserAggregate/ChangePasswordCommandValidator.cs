@@ -12,8 +12,11 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public ChangePasswordCommandValidator()
         {
             this.RuleFor(x => x.CurrentPassword)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
+
             this.RuleFor(x => x.NewPassword)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

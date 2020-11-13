@@ -8,21 +8,21 @@ const
 
 module.exports = {
     entry: {
-        theme: ['./Resources/Styles/theme.scss'],
-        'vendors-styles': './Resources/Styles/vendors.scss',
-        app: ['./Resources/Scripts/app.ts', './Resources/Styles/app.scss'],
-        'users-list': './Resources/Scripts/core/pages/users-list/users-list.ts',
-        'user-view': './Resources/Scripts/core/pages/user-view/user-view.ts',
-        'role-create': './Resources/Scripts/core/pages/role-create/role-create.ts',
-        'role-edit': './Resources/Scripts/core/pages/role-edit/role-edit.ts',
-        'role-listing': './Resources/Scripts/core/pages/role-list/role-list.ts',
-        'role-view': './Resources/Scripts/core/pages/role-view/role-view.ts',
-        'profile-device': './Resources/Scripts/core/pages/profile-device/profile-device.ts',
-        'profile-app': './Resources/Scripts/core/pages/profile-app/profile-app.ts',
-        'validate-device-mfa': './Resources/Scripts/core/pages/validate-device-mfa/validate-device-mfa.ts',
-        'validate-email-mfa': './Resources/Scripts/core/pages/validate-email-mfa/validate-email-mfa.ts',    
-        'notification-list': './Resources/Scripts/core/pages/notification-list/notification-list.ts',    
-        'system-alert-list': './Resources/Scripts/core/pages/system-alert-list/system-alert-list.ts',
+        theme: path.resolve(__dirname, './Resources/Styles/theme.scss'),
+         'vendors-styles': path.resolve(__dirname, './Resources/Styles/vendors.scss'),
+        app: [path.resolve(__dirname, './Resources/Scripts/app.ts'), path.resolve(__dirname, './Resources/Styles/app.scss')],
+        'users-list': path.resolve(__dirname, '../Initium.Portal.Web/Resources/Scripts/pages/users-list/users-list.ts'),
+        'user-view': path.resolve(__dirname, '../Initium.Portal.Web/Resources/Scripts/pages/user-view/user-view.ts'),
+        'role-create': path.resolve(__dirname, '../Initium.Portal.Web/Resources/Scripts/pages/role-create/role-create.ts'),
+        'role-edit': path.resolve(__dirname, '../Initium.Portal.Web/Resources/Scripts/pages/role-edit/role-edit.ts'),
+        'role-listing': path.resolve(__dirname, '../Initium.Portal.Web/Resources/Scripts/pages/role-list/role-list.ts'),
+        'role-view': path.resolve(__dirname, '../Initium.Portal.Web/Resources/Scripts/pages/role-view/role-view.ts'),
+        'profile-device': path.resolve(__dirname, '../Initium.Portal.Web/Resources/Scripts/pages/profile-device/profile-device.ts'),
+        'profile-app': path.resolve(__dirname, '../Initium.Portal.Web/Resources/Scripts/pages/profile-app/profile-app.ts'),
+        'validate-device-mfa': path.resolve(__dirname, '../Initium.Portal.Web/Resources/Scripts/pages/validate-device-mfa/validate-device-mfa.ts'),
+        'validate-email-mfa': path.resolve(__dirname, '../Initium.Portal.Web/Resources/Scripts/pages/validate-email-mfa/validate-email-mfa.ts'),  
+        'notification-list': path.resolve(__dirname, '../Initium.Portal.Web/Resources/Scripts/pages/notification-list/notification-list.ts'),
+        'system-alert-list': path.resolve(__dirname, '../Initium.Portal.Web/Resources/Scripts/pages/system-alert-list/system-alert-list.ts'),
             
     },
     output: {
@@ -48,16 +48,7 @@ module.exports = {
                  use: 'file-loader'                
             },
             {
-                test: /theme\.s[ac]ss$/i,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader',                    
-                    'sass-loader'
-                ]
-            }, 
-            {
                 test: /\.s[ac]ss$/i,
-                exclude: /theme\.s[ac]ss$/i,
                 use: [
                     MiniCssExtractPlugin.loader,
                     'css-loader', 
@@ -104,15 +95,15 @@ module.exports = {
         }),
         new CopyWebpackPlugin({
             patterns: [
-            './Resources/Assets/core/logo.png',
-            './Resources/Assets/core/logo-text.png',
-            './Resources/Assets/core/logo-icon.png',
-            './Resources/Assets/core/android-chrome-192x192.png',
-            './Resources/Assets/core/android-chrome-512x512.png',
-            './Resources/Assets/core/apple-touch-icon.png',
-            './Resources/Assets/core/favicon.ico',
-            './Resources/Assets/core/favicon-16x16.png',
-            './Resources/Assets/core/favicon-32x32.png'
+                path.resolve(__dirname, '../Initium.Portal.Web/Resources/Assets/logo.png'),
+                path.resolve(__dirname, '../Initium.Portal.Web/Resources/Assets/logo-text.png'),
+                path.resolve(__dirname, '../Initium.Portal.Web/Resources/Assets/logo-icon.png'),
+                path.resolve(__dirname, '../Initium.Portal.Web/Resources/Assets/android-chrome-192x192.png'),
+                path.resolve(__dirname, '../Initium.Portal.Web/Resources/Assets/android-chrome-512x512.png'),
+                path.resolve(__dirname, '../Initium.Portal.Web/Resources/Assets/apple-touch-icon.png'),
+                path.resolve(__dirname, '../Initium.Portal.Web/Resources/Assets/favicon.ico'),
+                path.resolve(__dirname, '../Initium.Portal.Web/Resources/Assets/favicon-16x16.png'),
+                path.resolve(__dirname, '../Initium.Portal.Web/Resources/Assets/favicon-32x32.png')
         ]}),
         new webpack.ProvidePlugin({
             $: "jquery",

@@ -13,8 +13,11 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public MarkNotificationAsViewedCommandValidator()
         {
             this.RuleFor(x => x.UserId)
+                .Cascade(CascadeMode.Stop)
                 .NotEqual(Guid.Empty).WithErrorCode(ValidationCodes.FieldIsRequired);
+
             this.RuleFor(x => x.NotificationId)
+                .Cascade(CascadeMode.Stop)
                 .NotEqual(Guid.Empty).WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

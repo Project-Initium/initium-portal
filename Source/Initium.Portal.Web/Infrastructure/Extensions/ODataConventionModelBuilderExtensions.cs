@@ -11,10 +11,10 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
     {
         public static ODataConventionModelBuilder SetupUserEntity(this ODataConventionModelBuilder builder)
         {
-            var user = builder.EntitySet<User>("User");
+            var user = builder.EntitySet<UserReadEntity>("User");
 
             var function = user.EntityType.Collection.Function("Filtered");
-            function.ReturnsCollectionFromEntitySet<User>("User");
+            function.ReturnsCollectionFromEntitySet<UserReadEntity>("User");
             function.Namespace = "User";
 
             function = user.EntityType.Collection.Function("FilteredExport");
@@ -25,9 +25,9 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
 
         public static ODataConventionModelBuilder SetupRoleEntity(this ODataConventionModelBuilder builder)
         {
-            var role = builder.EntitySet<Role>("Role");
+            var role = builder.EntitySet<RoleReadEntity>("Role");
             var function = role.EntityType.Collection.Function("Filtered");
-            function.ReturnsCollectionFromEntitySet<Role>("Role");
+            function.ReturnsCollectionFromEntitySet<RoleReadEntity>("Role");
             function.Namespace = "Role";
 
             function = role.EntityType.Collection.Function("FilteredExport");
@@ -57,9 +57,9 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
 
         public static ODataConventionModelBuilder SetupSystemAlertEntity(this ODataConventionModelBuilder builder)
         {
-            var systemAlert = builder.EntitySet<SystemAlert>("SystemAlert");
+            var systemAlert = builder.EntitySet<SystemAlertReadEntity>("SystemAlert");
             var function = systemAlert.EntityType.Collection.Function("Filtered");
-            function.ReturnsCollectionFromEntitySet<SystemAlert>("SystemAlert");
+            function.ReturnsCollectionFromEntitySet<SystemAlertReadEntity>("SystemAlert");
             function.Namespace = "SystemAlert";
 
             function = systemAlert.EntityType.Collection.Function("FilteredExport");

@@ -6,7 +6,7 @@ using Initium.Portal.Core.Infrastructure;
 
 namespace Initium.Portal.Queries.Entities
 {
-    public class AuthenticatorDevice : ReadEntity
+    public class AuthenticatorDeviceReadEntity : ReadEntity
     {
         public Guid Id { get; set; }
 
@@ -28,6 +28,6 @@ namespace Initium.Portal.Queries.Entities
 
         public string CredType { get; set; }
 
-        public User User { get; set; }
+        public UserReadEntity User { get; set; }
     }
 }
