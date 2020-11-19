@@ -4,7 +4,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Entities;
@@ -25,7 +25,7 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -73,7 +73,7 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings

@@ -16,7 +16,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
-namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
+namespace Initium.Portal.Tests.Domain_Management.CommandHandlers.TenantAggregate
 {
     public class EnableTenantCommandHandlerTests
     {

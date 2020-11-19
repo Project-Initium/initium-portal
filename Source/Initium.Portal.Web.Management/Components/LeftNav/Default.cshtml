@@ -1,4 +1,6 @@
-﻿@using Initium.Portal.Web.Infrastructure.Constants
+﻿@addTagHelper *, Microsoft.FeatureManagement.AspNetCore
+@using Initium.Portal.Core.Constants
+@using Initium.Portal.Web.Infrastructure.Constants
 @using Initium.Portal.Web.Infrastructure.Extensions
 @using Initium.Portal.Web.Management.Infrastructure.Constants
 <aside class="left-sidebar">
@@ -26,9 +28,12 @@
                 {
                     <li class="nav-small-cap">SYSTEM CONFIGURATION</li>
                     <li>
+                        
                         @if (User.HasPermissions("system-alert-view"))
                         {
-                            <a class="waves-effect waves-dark" href="@Url.Page(CorePageLocations.SystemAlertListing)" aria-expanded="false"><i class="fa fa-users"></i>&nbsp;<span class="hide-menu">System Alerts</span></a>
+                            <feature name=@nameof(SystemFeatures.SystemAlerts)>
+                                <a class="waves-effect waves-dark" href="@Url.Page(CorePageLocations.SystemAlertListing)" aria-expanded="false"><i class="fa fa-users"></i>&nbsp;<span class="hide-menu">System Alerts</span></a>
+                            </feature>
                         }
                         @if (User.HasPermissions("tenant-view"))
                         {

@@ -3,6 +3,7 @@
 
 using System;
 using System.Collections.Generic;
+using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Contracts.Domain;
 
 namespace Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate
@@ -17,11 +18,11 @@ namespace Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate
 
         DateTime? WhenDisabled { get; }
 
-        IReadOnlyList<TenantFeature> TenantFeatures { get; }
+        IReadOnlyList<SystemFeatures> SystemFeatures { get; }
 
         void UpdateDetails(string identifier, string name, string connectionString);
 
-        void SetTenantFeatures(IReadOnlyList<Guid> tenantFeatures);
+        void SetSystemFeatures(IReadOnlyList<SystemFeatures> tenantFeatures);
 
         void Enable();
 

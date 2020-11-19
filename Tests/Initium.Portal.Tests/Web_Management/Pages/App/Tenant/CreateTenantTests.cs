@@ -4,9 +4,7 @@
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
 using Initium.Portal.Common.Domain.Commands.TenantAggregate;
-using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Web.Infrastructure.PageModels;
@@ -15,6 +13,7 @@ using Initium.Portal.Web.Management.Pages.App.Tenants;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using Microsoft.FeatureManagement;
 using Moq;
 using ResultMonad;
 using Xunit;
@@ -27,10 +26,10 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
         public async Task OnPostAsync_GivenInvalidModelState_ExpectRedirectToPageResult()
         {
             var mediator = new Mock<IMediator>();
-            var multiTenantStore = new Mock<IMultiTenantStore<TenantInfo>>();
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
+            var featureManager = new Mock<IFeatureManager>();
 
-            var page = new CreateTenant(mediator.Object, multiTenantStore.Object, multiTenantSettings.Object);
+            var page = new CreateTenant(mediator.Object, multiTenantSettings.Object, featureManager.Object);
             page.ModelState.AddModelError("Error", "Error");
 
             var result = await page.OnPostAsync();
@@ -45,15 +44,15 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
                 .ReturnsAsync(
                     ResultWithError.Ok<ErrorData>());
 
-            var multiTenantStore = new Mock<IMultiTenantStore<TenantInfo>>();
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
-                MultiTenantType = MultiTenantType.TableSplit,
                 DefaultTenantConnectionString = "Server=.,1434;Database=initium;User Id=sa;Password=mIOub5n3nG8LEpaa;",
             });
 
-            var page = new CreateTenant(mediator.Object, multiTenantStore.Object, multiTenantSettings.Object)
+            var featureManager = new Mock<IFeatureManager>();
+
+            var page = new CreateTenant(mediator.Object, multiTenantSettings.Object, featureManager.Object)
             {
                 PageModel = new CreateTenant.Model(),
             };
@@ -73,46 +72,21 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
                 .ReturnsAsync(
                     ResultWithError.Ok<ErrorData>());
 
-            var multiTenantStore = new Mock<IMultiTenantStore<TenantInfo>>();
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
-                MultiTenantType = MultiTenantType.TableSplit,
                 DefaultTenantConnectionString = "Server=.,1434;Database=initium;User Id=sa;Password=mIOub5n3nG8LEpaa;",
             });
 
-            var page = new CreateTenant(mediator.Object, multiTenantStore.Object, multiTenantSettings.Object)
+            var featureManager = new Mock<IFeatureManager>();
+
+            var page = new CreateTenant(mediator.Object, multiTenantSettings.Object, featureManager.Object)
             {
                 PageModel = new CreateTenant.Model(),
             };
 
             await page.OnPostAsync();
             mediator.Verify(x => x.Send(It.Is<CreateTenantCommand>(y => y.ConnectionString == "Server=.,1434;Database=initium;User Id=sa;Password=mIOub5n3nG8LEpaa;"), It.IsAny<CancellationToken>()), Times.Once);
-        }
-
-        [Fact]
-        public async Task OnPostAsync_GivenMultiTenantTypeIsNotTableSplit_ExpectDatabaseChangedInConnectionStringUsed()
-        {
-            var mediator = new Mock<IMediator>();
-            mediator.Setup(x => x.Send(It.IsAny<CreateTenantCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(
-                    ResultWithError.Ok<ErrorData>());
-
-            var multiTenantStore = new Mock<IMultiTenantStore<TenantInfo>>();
-            var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
-            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
-            {
-                MultiTenantType = MultiTenantType.DatabaseSplit,
-                DefaultTenantConnectionString = "Server=.,1434;Database=initium;User Id=sa;Password=mIOub5n3nG8LEpaa;",
-            });
-
-            var page = new CreateTenant(mediator.Object, multiTenantStore.Object, multiTenantSettings.Object)
-            {
-                PageModel = new CreateTenant.Model(),
-            };
-
-            await page.OnPostAsync();
-            mediator.Verify(x => x.Send(It.Is<CreateTenantCommand>(y => Regex.IsMatch(y.ConnectionString, @"^Data Source=\.,1434;Initial Catalog=[0-9a-fA-F]{8}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{4}\-[0-9a-fA-F]{12};User Id=sa;Password=mIOub5n3nG8LEpaa$", RegexOptions.IgnoreCase)), It.IsAny<CancellationToken>()), Times.Once);
         }
 
         [Fact]
@@ -123,14 +97,12 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
                 .ReturnsAsync(
                     ResultWithError.Fail(new ErrorData(ErrorCodes.AuthenticationFailed)));
 
-            var multiTenantStore = new Mock<IMultiTenantStore<TenantInfo>>();
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
-            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
-            {
-                MultiTenantType = MultiTenantType.TableSplit,
-            });
+            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings());
 
-            var page = new CreateTenant(mediator.Object, multiTenantStore.Object, multiTenantSettings.Object)
+            var featureManager = new Mock<IFeatureManager>();
+
+            var page = new CreateTenant(mediator.Object, multiTenantSettings.Object, featureManager.Object)
             {
                 PageModel = new CreateTenant.Model(),
             };

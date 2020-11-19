@@ -6,8 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Contracts.Queries;
 using Initium.Portal.Queries.Management.Entities;
+using Initium.Portal.Queries.Management.Tenant;
 using Initium.Portal.Queries.Models;
-using Initium.Portal.Queries.Models.Tenant;
 using MaybeMonad;
 
 namespace Initium.Portal.Queries.Management.Contracts

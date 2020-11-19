@@ -1,6 +1,8 @@
 // Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Infrastructure.Extensions;
@@ -12,11 +14,14 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
 {
     public static class MediatrConfig
     {
-        public static IServiceCollection AddCustomizedMediatR(this IServiceCollection serviceCollection)
+        public static IServiceCollection AddCoreCustomizedMediatR(
+            this IServiceCollection serviceCollection,
+            IEnumerable<Assembly> assembliesToAdd)
         {
             var assembly = typeof(CreateInitialUserCommandHandler).GetTypeInfo().Assembly;
-            serviceCollection.AddMediatR(typeof(CreateInitialUserCommandHandler));
-            serviceCollection.AddFluentValidation(new[] { assembly }, ServiceLifetime.Transient);
+            var completeList = assembliesToAdd.Append(assembly).ToArray();
+            serviceCollection.AddMediatR(completeList);
+            serviceCollection.AddFluentValidation(completeList, ServiceLifetime.Transient);
             serviceCollection.AddDomainAuditLogging();
             return serviceCollection;
         }

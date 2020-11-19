@@ -3,7 +3,7 @@
 
 using System;
 using System.Runtime.CompilerServices;
-using Finbuckle.MultiTenant;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -16,10 +16,10 @@ namespace Initium.Portal.Queries
 {
     public abstract class CoreQueryContext : DbContext, ICoreQueryContext
     {
-        private readonly ITenantInfo _tenantInfo;
+        private readonly FeatureBasedTenantInfo _tenantInfo;
         private readonly MultiTenantSettings _multiTenantSettings;
 
-        protected CoreQueryContext(ITenantInfo tenantInfo, IOptions<MultiTenantSettings> multiTenantSettings)
+        protected CoreQueryContext(FeatureBasedTenantInfo tenantInfo, IOptions<MultiTenantSettings> multiTenantSettings)
         {
             if (multiTenantSettings == null)
             {
@@ -32,7 +32,7 @@ namespace Initium.Portal.Queries
             this._multiTenantSettings = multiTenantSettings.Value;
         }
 
-        protected CoreQueryContext(DbContextOptions<CoreQueryContext> options, ITenantInfo tenantInfo, IOptions<MultiTenantSettings> multiTenantSettings)
+        protected CoreQueryContext(DbContextOptions<CoreQueryContext> options, FeatureBasedTenantInfo tenantInfo, IOptions<MultiTenantSettings> multiTenantSettings)
             : base(options)
         {
             this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));

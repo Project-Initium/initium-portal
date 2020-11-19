@@ -1,4 +1,5 @@
 ﻿@page "/app/tenants/view/{id}"
+@using Initium.Portal.Core.Constants
 @using Initium.Portal.Web.Infrastructure.Constants
 @using Initium.Portal.Web.Infrastructure.Extensions
 @using Initium.Portal.Web.Management.Infrastructure.Constants
@@ -35,9 +36,8 @@
             <a class="btn btn-sm btn-info text-white"  asp-page="@PageLocations.TenantEdit" asp-route-id="@Model.Tenant.Id" >Edit</a>        
         </div>
 </div>
-
 <div  class="form-material row">
-    <div class="col-md-12">
+    <div class="col-md-7">
         <div class="card card-outline-info">
             <div class="card-body">
                 <h4 class="card-title">Details</h4>
@@ -56,6 +56,28 @@
             </div>
         </div>
     </div>
+    
+    <div class="col-md-5">
+            <div class="card card-outline-info">
+                <div class="card-body">
+                    <h4 class="card-title">Tenant Activity</h4>
+                    
+                    <h5 class="card-subtitle">Logins</h5>
+                    @if (Model.Tenant.HasLoggingInfo)
+                    {
+                        <span class="text-muted">Authentication Date</span>
+                        <h6 class="mb-3">@Model.Tenant.WhenLoggedIn</h6>
+
+                        <span class="text-muted">Authenticated User</span>
+                        <h6 class="mb-3">Model.Tenant.LastLoggedInUser</h6>
+                    }
+                    else
+                    {
+                        <h6 class="mb-3">No logins recorded</h6>
+                    }
+                </div>
+            </div>
+        </div>
 
     
 </div>

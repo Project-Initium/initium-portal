@@ -2,8 +2,8 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
 using FluentValidation;
 using Initium.Portal.Common.Domain.Commands.TenantAggregate;
 using Initium.Portal.Core.Constants;
@@ -12,18 +12,18 @@ using Initium.Portal.Web.Infrastructure.PageModels;
 using Initium.Portal.Web.Management.Infrastructure.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Options;
+using Microsoft.FeatureManagement;
 
 namespace Initium.Portal.Web.Management.Pages.App.Tenants
 {
     public class CreateTenant : PrgPageModel<CreateTenant.Model>
     {
         private readonly IMediator _mediator;
-        private readonly IMultiTenantStore<TenantInfo> _multiTenantStore;
         private readonly MultiTenantSettings _multiTenantSettings;
+        private readonly IFeatureManager _featureManager;
 
-        public CreateTenant(IMediator mediator, IMultiTenantStore<TenantInfo> multiTenantStore, IOptions<MultiTenantSettings> multiTenantSettings)
+        public CreateTenant(IMediator mediator, IOptions<MultiTenantSettings> multiTenantSettings, IFeatureManager featureManager)
         {
             if (multiTenantSettings == null)
             {
@@ -31,8 +31,25 @@ namespace Initium.Portal.Web.Management.Pages.App.Tenants
             }
 
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._multiTenantStore = multiTenantStore ?? throw new ArgumentNullException(nameof(multiTenantStore));
+            this._featureManager = featureManager ?? throw new ArgumentNullException(nameof(featureManager));
             this._multiTenantSettings = multiTenantSettings.Value;
+        }
+
+        public List<SystemFeatures> Features { get; private set; } = new List<SystemFeatures>();
+
+        public async Task OnGetAsync()
+        {
+            var features = this._featureManager.GetFeatureNamesAsync();
+            await foreach (var feature in features)
+            {
+                if (!await this._featureManager.IsEnabledAsync(feature))
+                {
+                    continue;
+                }
+
+                var enumValue = Enum.Parse<SystemFeatures>(feature);
+                this.Features.Add(enumValue);
+            }
         }
 
         public async Task<IActionResult> OnPostAsync()
@@ -43,34 +60,14 @@ namespace Initium.Portal.Web.Management.Pages.App.Tenants
             }
 
             var tenantId = Guid.NewGuid();
-            string connStr;
-
-            if (this._multiTenantSettings.MultiTenantType == MultiTenantType.TableSplit)
-            {
-                connStr = this._multiTenantSettings.DefaultTenantConnectionString;
-            }
-            else
-            {
-                var builder = new SqlConnectionStringBuilder(this._multiTenantSettings.DefaultTenantConnectionString)
-                {
-                    InitialCatalog = tenantId.ToString(),
-                };
-                connStr = builder.ConnectionString;
-            }
+            var connStr = this._multiTenantSettings.DefaultTenantConnectionString;
 
             var result =
                 await this._mediator.Send(new CreateTenantCommand(tenantId, this.PageModel.Identifier, this.PageModel.Name,
-                    connStr));
+                    connStr, this.PageModel.SystemFeatures));
 
             if (result.IsSuccess)
             {
-                await this._multiTenantStore.TryAddAsync(new TenantInfo
-                {
-                    Id = tenantId.ToString(),
-                    Identifier = this.PageModel.Identifier,
-                    Name = this.PageModel.Name,
-                    ConnectionString = connStr,
-                });
                 this.PrgState = PrgState.Success;
                 this.AddPageNotification("The system alert was created successfully", PageNotification.Success);
                 return this.RedirectToPage(PageLocations.TenantView, new { id = tenantId });
@@ -83,9 +80,16 @@ namespace Initium.Portal.Web.Management.Pages.App.Tenants
 
         public class Model
         {
+            public Model()
+            {
+                this.SystemFeatures = new List<SystemFeatures>();
+            }
+
             public string Identifier { get; set; }
 
             public string Name { get; set; }
+
+            public List<SystemFeatures> SystemFeatures { get; set; }
         }
 
         public class Validator : AbstractValidator<Model>

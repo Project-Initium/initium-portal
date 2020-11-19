@@ -81,16 +81,14 @@
     <Folder Include="Schema\Portal\Views" />
     <Folder Include="Schema\Security" />
     <Folder Include="Schema\Security\Schemas" />
-    <Folder Include="Schema\Preference" />
-    <Folder Include="Schema\Preference\Tables" />
     <Folder Include="_DeploymentScripts\" />
+    <Folder Include="Schema\Admin\Views" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Schema\AccessProtection\Tables\Resource.sql" />
     <Build Include="Schema\AccessProtection\Tables\Role.sql" />
     <Build Include="Schema\AccessProtection\Tables\RoleResource.sql" />
     <Build Include="Schema\Admin\Tables\Tenant.sql" />
-    <Build Include="Schema\Admin\Tables\TenantFeature.sql" />
     <Build Include="Schema\Identity\Tables\AuthenticationHistory.sql" />
     <Build Include="Schema\Identity\Tables\AuthenticatorApp.sql" />
     <Build Include="Schema\Identity\Tables\AuthenticatorDevice.sql" />
@@ -100,9 +98,6 @@
     <Build Include="Schema\Identity\Tables\User.sql" />
     <Build Include="Schema\Identity\Tables\UserRole.sql" />
     <Build Include="Schema\Messaging\Tables\SystemAlert.sql" />
-    <Build Include="Schema\Messaging\Tables\SystemNotification.sql" />
-    <Build Include="Schema\Messaging\Tables\SystemNotificationType.sql" />
-    <Build Include="Schema\Messaging\Tables\UserSystemNotification.sql" />
     <Build Include="Schema\Messaging\Views\vwUserNotification.sql" />
     <Build Include="Schema\Portal\Stored Procedures\uspGetTenantInfoById.sql" />
     <Build Include="Schema\Portal\Stored Procedures\uspGetTenantInfoByIdentifier.sql" />
@@ -112,7 +107,6 @@
     <Build Include="Schema\Portal\Views\vwRole.sql" />
     <Build Include="Schema\Portal\Views\vwRoleResource.sql" />
     <Build Include="Schema\Portal\Views\vwSystemAlert.sql" />
-    <Build Include="Schema\Portal\Views\vwTenant.sql" />
     <Build Include="Schema\Portal\Views\vwUser.sql" />
     <Build Include="Schema\Portal\Views\vwUserNotification.sql" />
     <Build Include="Schema\Portal\Views\vwUserRole.sql" />
@@ -121,9 +115,9 @@
     <Build Include="Schema\Security\Schemas\Identity.sql" />
     <Build Include="Schema\Security\Schemas\Messaging.sql" />
     <Build Include="Schema\Security\Schemas\Portal.sql" />
-    <Build Include="Schema\Security\Schemas\Preference.sql" />
-    <Build Include="Schema\Preference\Tables\CoreUserPreference.sql" />
-    <Build Include="Schema\Preference\Tables\SystemNotificationSubscription.sql" />
+    <Build Include="Schema\Admin\Views\vwTenant.sql" />
+    <Build Include="Schema\Messaging\Tables\Notification.sql" />
+    <Build Include="Schema\Messaging\Tables\UserNotification.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Initium.Portal.Data.refactorlog" />

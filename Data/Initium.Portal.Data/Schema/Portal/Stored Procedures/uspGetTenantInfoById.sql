@@ -7,6 +7,7 @@ BEGIN
 		,	t.Identifier
 		,	t.Name
 		,	t.ConnectionString
+		,	t.SystemFeaturesJson
 	FROM [Admin].[Tenant] t
 	WHERE t.Id = @id
 END

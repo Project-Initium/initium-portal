@@ -7,7 +7,7 @@ using Initium.Portal.Common.Domain.CommandValidators.TenantAggregate;
 using Initium.Portal.Core.Contracts.Domain;
 using Xunit;
 
-namespace Initium.Portal.Tests.DomainManagement.CommandValidators.TenantAggregate
+namespace Initium.Portal.Tests.Domain_Management.CommandValidators.TenantAggregate
 {
     public class DisableTenantCommandValidatorTests
     {

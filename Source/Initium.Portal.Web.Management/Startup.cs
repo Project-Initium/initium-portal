@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.FeatureManagement;
 
 namespace Initium.Portal.Web.Management
 {
@@ -35,6 +36,7 @@ namespace Initium.Portal.Web.Management
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddFeatureManagement();
             services
                 .AddCustomizedMultiTenant()
                 .AddDataStores(this.Configuration)

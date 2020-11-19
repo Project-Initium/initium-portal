@@ -14,8 +14,14 @@ namespace Initium.Portal.Queries.Management.Entities
 
         public string Name { get; set; }
 
-        public string ConnectionString { get; set; }
-
         public DateTime? WhenDisabled { get; set; }
+
+        public Guid? LastLoggedInUserId { get; set; }
+
+        public string LastLoggedInUser { get; set; }
+
+        public DateTime? WhenLoggedIn { get; set; }
+
+        public string SystemFeaturesJson { get; set; }
     }
 }

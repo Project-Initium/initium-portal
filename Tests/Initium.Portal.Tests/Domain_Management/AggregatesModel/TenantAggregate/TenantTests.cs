@@ -5,9 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
+using Initium.Portal.Core.Constants;
 using Xunit;
 
-namespace Initium.Portal.Tests.DomainManagement.AggregatesModel.TenantAggregate
+namespace Initium.Portal.Tests.Domain_Management.AggregatesModel.TenantAggregate
 {
     public class TenantTests
     {
@@ -55,28 +56,26 @@ namespace Initium.Portal.Tests.DomainManagement.AggregatesModel.TenantAggregate
         [Fact]
         public void SetTenantFeatures_GiveValidArguments_ExpectRolesToBeUpdated()
         {
-            var permTenantFeature = Guid.NewGuid();
-            var tempTenantFeature = Guid.NewGuid();
-            var newTenantFeature = Guid.NewGuid();
-            var dupeTenantFeature = permTenantFeature;
-
             var tenant = new Tenant(TestVariables.TenantId, "identifier", "name", "connection-string");
 
-            tenant.SetTenantFeatures(new List<Guid>
+            tenant.SetSystemFeatures(new List<SystemFeatures>
             {
-                tempTenantFeature,
+                SystemFeatures.MfaApp,
+                SystemFeatures.SystemAlerts,
             });
 
-            tenant.SetTenantFeatures(new List<Guid>
+            tenant.SetSystemFeatures(new List<SystemFeatures>
             {
-                permTenantFeature,
-                newTenantFeature,
-                dupeTenantFeature,
+                SystemFeatures.MfaApp,
+                SystemFeatures.MfaDevice,
+                SystemFeatures.MfaDevice,
+                SystemFeatures.UserNotifications,
             });
 
-            Assert.Single(tenant.TenantFeatures, x => x.Id == permTenantFeature);
-            Assert.Single(tenant.TenantFeatures, x => x.Id == newTenantFeature);
-            Assert.DoesNotContain(tenant.TenantFeatures, role => role.Id == tempTenantFeature);
+            Assert.Single(tenant.SystemFeatures, x => x == SystemFeatures.MfaApp);
+            Assert.Single(tenant.SystemFeatures, x => x == SystemFeatures.MfaDevice);
+            Assert.Single(tenant.SystemFeatures, x => x == SystemFeatures.UserNotifications);
+            Assert.DoesNotContain(tenant.SystemFeatures, x => x == SystemFeatures.SystemAlerts);
         }
 
         [Fact]

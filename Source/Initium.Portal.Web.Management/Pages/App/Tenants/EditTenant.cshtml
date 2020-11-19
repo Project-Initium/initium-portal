@@ -1,11 +1,13 @@
 ﻿@page "/app/tenants/edit/{id}"
+@using Initium.Portal.Core.Extensions
 @using Initium.Portal.Web.Infrastructure.Constants
 @using Initium.Portal.Web.Management.Infrastructure.Constants
+@using Microsoft.AspNetCore.Mvc.RazorPages
 @model Initium.Portal.Web.Management.Pages.App.Tenants.EditTenant
 
 @{
     Layout = "Shared/_AppLayout";
-    ViewData["Title"] = $"Tenants | Editing {Model.Name}";
+    ViewData["Title"] = $"Tenants | Editing {Model.Tenant.Name}";
 }
 
 <div class="row page-titles">
@@ -13,7 +15,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a asp-page="@CorePageLocations.AppDashboard">Home</a></li>
             <li class="breadcrumb-item"><a asp-page="@PageLocations.TenantListing">Tenants</a></li>
-            <li class="breadcrumb-item active">Editing Tenant @Model.Name</li>
+            <li class="breadcrumb-item active">Editing Tenant @Model.Tenant.Name</li>
         </ol>
     </div>
     <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0 pr-0">
@@ -42,6 +44,41 @@
                 </div>
 
 
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-5">
+        <div class="card card-outline-info">
+            <div class="card-body">
+                <h4 class="card-title">Tenant Activity</h4>
+                
+                <h5 class="card-subtitle">Logins</h5>
+                @if (Model.Tenant.HasLoggingInfo)
+                {
+                    <span class="text-muted">Authentication Date</span>
+                    <h6 class="mb-3">@Model.Tenant.WhenLoggedIn</h6>
+
+                    <span class="text-muted">Authenticated User</span>
+                    <h6 class="mb-3">Model.Tenant.LastLoggedInUser</h6>
+                }
+                else
+                {
+                    <h6 class="mb-3">No logins recorded</h6>
+                }
+            </div>
+        </div>
+        
+        <div class="card card-outline-info">
+            <div class="card-body">
+                <h4 class="card-title">Features</h4>
+                @foreach (var feature in Model.Features)
+                {
+                    <div>
+                        <input type="checkbox" id="feature-@(feature)" name="PageModel.SystemFeatures" value="@feature" class="material-inputs filled-in" @(Model.PageModel.SystemFeatures.Contains(feature) ? "checked" : "")>
+                        <label for="feature-@(feature)">@feature.GetDisplay()</label>
+                    </div>    
+                }
             </div>
         </div>
     </div>

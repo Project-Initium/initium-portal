@@ -1,4 +1,6 @@
-﻿@using Initium.Portal.Web.Infrastructure.Constants
+﻿@addTagHelper *, Microsoft.FeatureManagement.AspNetCore
+@using Initium.Portal.Core.Constants
+@using Initium.Portal.Web.Infrastructure.Constants
 @using Initium.Portal.Web.Infrastructure.Extensions
 <aside class="left-sidebar">
     <div class="scroll-sidebar">
@@ -27,7 +29,9 @@
                     <li>
                         @if (User.HasPermissions("system-alert-view"))
                         {
-                            <a class="waves-effect waves-dark" href="@Url.Page(CorePageLocations.SystemAlertListing)" aria-expanded="false"><i class="fa fa-users"></i>&nbsp;<span class="hide-menu">System Alerts</span></a>
+                            <feature name=@nameof(SystemFeatures.SystemAlerts)>
+                                <a class="waves-effect waves-dark" href="@Url.Page(CorePageLocations.SystemAlertListing)" aria-expanded="false"><i class="fa fa-users"></i>&nbsp;<span class="hide-menu">System Alerts</span></a>
+                            </feature>
                         }
                     </li>
                 }

@@ -2,12 +2,13 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Common.Domain.Commands.TenantAggregate;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Queries.Management.Contracts;
-using Initium.Portal.Queries.Models.Tenant;
+using Initium.Portal.Queries.Management.Tenant;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Initium.Portal.Web.Management.Infrastructure.Constants;
 using Initium.Portal.Web.Management.Pages.App.Tenants;
@@ -16,6 +17,7 @@ using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using Microsoft.FeatureManagement;
 using Moq;
 using ResultMonad;
 using Xunit;
@@ -24,6 +26,14 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
 {
     public class EditTenantTests
     {
+        private static async IAsyncEnumerable<string> GetTestFeatures()
+        {
+            yield return "feature-1";
+            yield return "feature-2";
+
+            await Task.CompletedTask; // to make the compiler warning go away
+        }
+        
         [Fact]
         public async Task OnGetAsync_GivenNoSystemAlertFound_ExpectNotFoundResult()
         {
@@ -32,7 +42,9 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
                 .ReturnsAsync(Maybe<TenantMetadata>.Nothing);
             var mediator = new Mock<IMediator>();
 
-            var page = new EditTenant(tenantQueryService.Object, mediator.Object);
+            var featureManager = new Mock<IFeatureManager>();
+
+            var page = new EditTenant(tenantQueryService.Object, mediator.Object, featureManager.Object);
             var result = await page.OnGetAsync();
             Assert.IsType<NotFoundResult>(result);
         }
@@ -40,17 +52,21 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
         [Fact]
         public async Task OnGetAsync_GivenPageModelIsNull_ExpectPageModelToBeSetFromDatabaseAndPageResultReturned()
         {
+            var tenantMetadata = new TenantMetadata(
+                TestVariables.TenantId,
+                "identifier",
+                "name",
+                null);
+            tenantMetadata.SetSystemFeatures("[0]");
             var tenantQueryService = new Mock<ITenantQueryService>();
             tenantQueryService.Setup(x => x.GetTenantMetadataById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From(new TenantMetadata(
-                    TestVariables.TenantId,
-                    "identifier",
-                    "name",
-                    "connection-string",
-                    null)));
+                .ReturnsAsync(Maybe.From(tenantMetadata));
             var mediator = new Mock<IMediator>();
 
-            var page = new EditTenant(tenantQueryService.Object, mediator.Object);
+            var featureManager = new Mock<IFeatureManager>();
+            featureManager.Setup(x => x.GetFeatureNamesAsync()).Returns(GetTestFeatures);
+
+            var page = new EditTenant(tenantQueryService.Object, mediator.Object, featureManager.Object);
             var tempDataDictionary = new Mock<ITempDataDictionary>();
             page.TempData = tempDataDictionary.Object;
 
@@ -58,23 +74,26 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
             Assert.Equal(TestVariables.TenantId, page.PageModel.TenantId);
             Assert.Equal("name", page.PageModel.Name);
             Assert.Equal("identifier", page.PageModel.Identifier);
-            Assert.Equal("name", page.Name);
+            Assert.Equal(tenantMetadata, page.Tenant);
         }
 
         [Fact]
         public async Task OnGetAsync_GivenPageModelIsNotNull_ExpectPageModelNotToBeOverridenAndPageResultReturned()
         {
+            var tenantMetadata = new TenantMetadata(
+                TestVariables.TenantId,
+                "identifier",
+                "name",
+                null);
             var tenantQueryService = new Mock<ITenantQueryService>();
             tenantQueryService.Setup(x => x.GetTenantMetadataById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From(new TenantMetadata(
-                    TestVariables.TenantId,
-                    "identifier",
-                    "name",
-                    "connection-string",
-                    null)));
+                .ReturnsAsync(Maybe.From(tenantMetadata));
             var mediator = new Mock<IMediator>();
 
-            var page = new EditTenant(tenantQueryService.Object, mediator.Object)
+            var featureManager = new Mock<IFeatureManager>();
+            featureManager.Setup(x => x.GetFeatureNamesAsync()).Returns(GetTestFeatures);
+
+            var page = new EditTenant(tenantQueryService.Object, mediator.Object, featureManager.Object)
             {
                 PageModel = new EditTenant.Model
                 {
@@ -90,7 +109,7 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
             Assert.Equal(TestVariables.TenantId, page.PageModel.TenantId);
             Assert.Equal("name-1", page.PageModel.Name);
             Assert.Equal("identifier-1", page.PageModel.Identifier);
-            Assert.Equal("name", page.Name);
+            Assert.Equal(tenantMetadata, page.Tenant);
         }
 
         [Fact]
@@ -99,7 +118,9 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
             var tenantQueryService = new Mock<ITenantQueryService>();
             var mediator = new Mock<IMediator>();
 
-            var page = new EditTenant(tenantQueryService.Object, mediator.Object);
+            var featureManager = new Mock<IFeatureManager>();
+
+            var page = new EditTenant(tenantQueryService.Object, mediator.Object, featureManager.Object);
             page.ModelState.AddModelError("Error", "Error");
 
             var result = await page.OnPostAsync();
@@ -115,7 +136,9 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
                 .ReturnsAsync(
                     ResultWithError.Ok<ErrorData>());
 
-            var page = new EditTenant(tenantQueryService.Object, mediator.Object)
+            var featureManager = new Mock<IFeatureManager>();
+
+            var page = new EditTenant(tenantQueryService.Object, mediator.Object, featureManager.Object)
             {
                 PageModel = new EditTenant.Model(),
             };
@@ -136,7 +159,9 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
                 .ReturnsAsync(
                     ResultWithError.Fail(new ErrorData(ErrorCodes.AuthenticationFailed)));
 
-            var page = new EditTenant(tenantQueryService.Object, mediator.Object)
+            var featureManager = new Mock<IFeatureManager>();
+
+            var page = new EditTenant(tenantQueryService.Object, mediator.Object, featureManager.Object)
             {
                 PageModel = new EditTenant.Model(),
             };

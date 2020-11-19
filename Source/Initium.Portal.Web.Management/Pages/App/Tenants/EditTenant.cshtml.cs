@@ -2,14 +2,19 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentValidation;
 using Initium.Portal.Common.Domain.Commands.TenantAggregate;
+using Initium.Portal.Core.Constants;
 using Initium.Portal.Queries.Management.Contracts;
+using Initium.Portal.Queries.Management.Tenant;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Initium.Portal.Web.Management.Infrastructure.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.FeatureManagement;
 
 namespace Initium.Portal.Web.Management.Pages.App.Tenants
 {
@@ -17,17 +22,21 @@ namespace Initium.Portal.Web.Management.Pages.App.Tenants
     {
         private readonly ITenantQueryService _tenantQueryService;
         private readonly IMediator _mediator;
+        private readonly IFeatureManager _featureManager;
 
-        public EditTenant(ITenantQueryService tenantQueryService, IMediator mediator)
+        public EditTenant(ITenantQueryService tenantQueryService, IMediator mediator, IFeatureManager featureManager)
         {
             this._tenantQueryService = tenantQueryService ?? throw new ArgumentNullException(nameof(tenantQueryService));
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._featureManager = featureManager ?? throw new ArgumentNullException(nameof(featureManager));
         }
 
         [BindProperty(SupportsGet = true)]
         public Guid Id { get; set; }
 
-        public string Name { get; private set; }
+        public TenantMetadata Tenant { get; private set; }
+
+        public List<SystemFeatures> Features { get; private set; } = new List<SystemFeatures>();
 
         public async Task<IActionResult> OnGetAsync()
         {
@@ -37,16 +46,27 @@ namespace Initium.Portal.Web.Management.Pages.App.Tenants
                 return this.NotFound();
             }
 
-            var tenant = tenantMaybe.Value;
+            this.Tenant = tenantMaybe.Value;
+
+            var features = this._featureManager.GetFeatureNamesAsync();
+            await foreach (var feature in features)
+            {
+                if (!await this._featureManager.IsEnabledAsync(feature))
+                {
+                    continue;
+                }
+
+                var enumValue = Enum.Parse<SystemFeatures>(feature);
+                this.Features.Add(enumValue);
+            }
 
             this.PageModel ??= new Model
             {
-                Identifier = tenant.Identifier,
-                Name = tenant.Name,
-                TenantId = tenant.Id,
+                Identifier = this.Tenant.Identifier,
+                Name = this.Tenant.Name,
+                TenantId = this.Tenant.Id,
+                SystemFeatures = this.Tenant.SystemFeatures.ToList(),
             };
-
-            this.Name = tenant.Name;
 
             return this.Page();
         }
@@ -61,7 +81,8 @@ namespace Initium.Portal.Web.Management.Pages.App.Tenants
             var result = await this._mediator.Send(new UpdateTenantCommand(
                 this.PageModel.TenantId,
                 this.PageModel.Identifier,
-                this.PageModel.Name));
+                this.PageModel.Name,
+                this.PageModel.SystemFeatures));
 
             if (result.IsSuccess)
             {
@@ -82,6 +103,8 @@ namespace Initium.Portal.Web.Management.Pages.App.Tenants
             public string Identifier { get; set; }
 
             public string Name { get; set; }
+
+            public List<SystemFeatures> SystemFeatures { get; set; }
         }
 
         public class Validator : AbstractValidator<Model>

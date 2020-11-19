@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
-using Initium.Portal.Core.Constants;
 
 namespace Initium.Portal.Core.Settings
 {
@@ -12,6 +11,8 @@ namespace Initium.Portal.Core.Settings
 
         public Guid DefaultTenantId { get; set; }
 
-        public MultiTenantType MultiTenantType { get; set; }
+        public string DefaultIdentifier { get; set; }
+
+        public string DefaultName { get; set; }
     }
 }

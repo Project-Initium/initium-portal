@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Initium.Portal.Queries.Management.Contracts;
@@ -22,7 +23,7 @@ namespace Initium.Portal.Web.Management.ODataEndpoints.Tenant
 
         public TenantODataController(ITenantQueryService tenantQueryService)
         {
-            this._tenantQueryService = tenantQueryService;
+            this._tenantQueryService = tenantQueryService ?? throw new ArgumentNullException(nameof(tenantQueryService));
         }
 
         [ODataRoute("Tenant.Filtered")]

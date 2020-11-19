@@ -7,8 +7,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Queries.Management.Contracts;
 using Initium.Portal.Queries.Management.Entities;
+using Initium.Portal.Queries.Management.Tenant;
 using Initium.Portal.Queries.Models;
-using Initium.Portal.Queries.Models.Tenant;
 using MaybeMonad;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +20,7 @@ namespace Initium.Portal.Queries.Management
 
         public TenantQueryService(IManagementQueryContext queryContext)
         {
-            this._queryContext = queryContext;
+            this._queryContext = queryContext ?? throw new ArgumentNullException(nameof(queryContext));
         }
 
         public IQueryable<TenantReadEntity> QueryableEntity => this._queryContext.Tenants;
@@ -33,7 +33,22 @@ namespace Initium.Portal.Queries.Management
         public async Task<Maybe<TenantMetadata>> GetTenantMetadataById(Guid id, CancellationToken cancellationToken = default)
         {
             var data = await this._queryContext.Tenants.FirstOrDefaultAsync(x => x.Id == id, cancellationToken: cancellationToken);
-            return data == null ? Maybe<TenantMetadata>.Nothing : new TenantMetadata(data.Id, data.Identifier, data.Name, data.ConnectionString, data.WhenDisabled);
+            if (data == null)
+            {
+                return Maybe<TenantMetadata>.Nothing;
+            }
+
+            var tenantMetadata = new TenantMetadata(data.Id, data.Identifier, data.Name, data.WhenDisabled);
+
+            if (data.WhenLoggedIn.HasValue && data.LastLoggedInUserId.HasValue)
+            {
+                tenantMetadata.SetLoggingInfo(data.LastLoggedInUserId.Value, data.LastLoggedInUser,
+                    data.WhenLoggedIn.Value);
+            }
+
+            tenantMetadata.SetSystemFeatures(data.SystemFeaturesJson);
+
+            return tenantMetadata;
         }
     }
 }

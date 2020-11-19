@@ -4,26 +4,24 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Domain;
+using Newtonsoft.Json;
 
 namespace Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate
 {
     public sealed class Tenant : Entity, ITenant
     {
-        private readonly List<TenantFeature> _tenantFeatures;
-
         public Tenant(Guid id, string identifier, string name, string connectionString)
         {
             this.Id = id;
             this.Identifier = identifier;
             this.Name = name;
             this.ConnectionString = connectionString;
-            this._tenantFeatures = new List<TenantFeature>();
         }
 
         private Tenant()
         {
-            this._tenantFeatures = new List<TenantFeature>();
         }
 
         public string Identifier { get; private set; }
@@ -34,7 +32,21 @@ namespace Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate
 
         public DateTime? WhenDisabled { get; private set; }
 
-        public IReadOnlyList<TenantFeature> TenantFeatures => this._tenantFeatures;
+        public string SystemFeaturesJson { get; private set; }
+
+        public IReadOnlyList<SystemFeatures> SystemFeatures
+        {
+            get
+            {
+                if (string.IsNullOrWhiteSpace(this.SystemFeaturesJson))
+                {
+                    return new List<SystemFeatures>();
+                }
+
+                var data = JsonConvert.DeserializeObject<List<SystemFeatures>>(this.SystemFeaturesJson);
+                return data ?? new List<SystemFeatures>();
+            }
+        }
 
         public void UpdateDetails(string identifier, string name, string connectionString)
         {
@@ -43,19 +55,22 @@ namespace Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate
             this.ConnectionString = connectionString;
         }
 
-        public void SetTenantFeatures(IReadOnlyList<Guid> tenantFeatures)
+        public void SetSystemFeatures(IReadOnlyList<SystemFeatures> tenantFeatures)
         {
+            var currentTenantFeatures = this.SystemFeatures.ToList();
             var distinct = tenantFeatures.Distinct().ToList();
-            var current = this._tenantFeatures.Select(x => x.Id).ToList();
+            var current = currentTenantFeatures.Select(x => x).ToList();
             var toAdd = distinct.Except(current);
             var toRemove = current.Except(distinct);
 
             foreach (var item in toRemove)
             {
-                this._tenantFeatures.Remove(this._tenantFeatures.Single(x => x.Id == item));
+                currentTenantFeatures.Remove(item);
             }
 
-            this._tenantFeatures.AddRange(toAdd.Select(x => new TenantFeature(x)));
+            currentTenantFeatures.AddRange(toAdd);
+
+            this.SystemFeaturesJson = JsonConvert.SerializeObject(currentTenantFeatures);
         }
 
         public void Enable()

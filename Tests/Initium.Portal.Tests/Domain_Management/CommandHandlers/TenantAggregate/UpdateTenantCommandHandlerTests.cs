@@ -2,11 +2,13 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
 using Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate;
 using Initium.Portal.Common.Domain.Commands.TenantAggregate;
+using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Contracts.Domain;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Queries.Management.Contracts;
@@ -16,7 +18,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
-namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
+namespace Initium.Portal.Tests.Domain_Management.CommandHandlers.TenantAggregate
 {
     public class UpdateTenantCommandHandlerTests
     {
@@ -40,7 +42,11 @@ namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
             var logger = new Mock<ILogger<UpdateTenantCommandHandler>>();
 
             var handler = new UpdateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
-            var cmd = new UpdateTenantCommand(TestVariables.TenantId, "identifier", "name");
+            var cmd = new UpdateTenantCommand(
+                TestVariables.TenantId,
+                "identifier",
+                "name",
+                new List<SystemFeatures>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -62,11 +68,15 @@ namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
             var tenant = new Mock<ITenant>();
             tenant.Setup(x => x.Identifier).Returns("identifier");
             tenantRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From<ITenant>(tenant.Object));
+                .ReturnsAsync(Maybe.From(tenant.Object));
             var logger = new Mock<ILogger<UpdateTenantCommandHandler>>();
 
             var handler = new UpdateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
-            var cmd = new UpdateTenantCommand(TestVariables.TenantId, "identifier", "name");
+            var cmd = new UpdateTenantCommand(
+                TestVariables.TenantId,
+                "identifier",
+                "name",
+                new List<SystemFeatures>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -90,7 +100,11 @@ namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
             var logger = new Mock<ILogger<UpdateTenantCommandHandler>>();
 
             var handler = new UpdateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
-            var cmd = new UpdateTenantCommand(TestVariables.TenantId, "identifier", "name");
+            var cmd = new UpdateTenantCommand(
+                TestVariables.TenantId,
+                "identifier",
+                "name",
+                new List<SystemFeatures>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -113,11 +127,15 @@ namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
             var tenant = new Mock<ITenant>();
             tenant.Setup(x => x.Identifier).Returns("identifier");
             tenantRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From<ITenant>(tenant.Object));
+                .ReturnsAsync(Maybe.From(tenant.Object));
             var logger = new Mock<ILogger<UpdateTenantCommandHandler>>();
 
             var handler = new UpdateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
-            var cmd = new UpdateTenantCommand(TestVariables.TenantId, "identifier-new", "name");
+            var cmd = new UpdateTenantCommand(
+                TestVariables.TenantId,
+                "identifier-new",
+                "name",
+                new List<SystemFeatures>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -140,11 +158,15 @@ namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
             var tenant = new Mock<ITenant>();
             tenant.Setup(x => x.Identifier).Returns("identifier");
             tenantRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(Maybe.From<ITenant>(tenant.Object));
+                .ReturnsAsync(Maybe.From(tenant.Object));
             var logger = new Mock<ILogger<UpdateTenantCommandHandler>>();
 
             var handler = new UpdateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
-            var cmd = new UpdateTenantCommand(TestVariables.TenantId, "identifier-new", "name");
+            var cmd = new UpdateTenantCommand(
+                TestVariables.TenantId,
+                "identifier-new",
+                "name",
+                new List<SystemFeatures>());
 
             await handler.Handle(cmd, CancellationToken.None);
 
@@ -171,7 +193,11 @@ namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
             var logger = new Mock<ILogger<UpdateTenantCommandHandler>>();
 
             var handler = new UpdateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
-            var cmd = new UpdateTenantCommand(TestVariables.TenantId, "identifier", "name");
+            var cmd = new UpdateTenantCommand(
+                TestVariables.TenantId,
+                "identifier",
+                "name",
+                new List<SystemFeatures>());
 
             await handler.Handle(cmd, CancellationToken.None);
 

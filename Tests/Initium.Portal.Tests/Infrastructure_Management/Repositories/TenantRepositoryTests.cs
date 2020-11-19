@@ -4,8 +4,8 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
 using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Infrastructure;
 using Initium.Portal.Infrastructure.Admin;
 using Initium.Portal.Infrastructure.Admin.Repositories;
@@ -26,7 +26,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .Options;
 
             var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new TenantRepository(context);
@@ -42,7 +42,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .Options;
 
             var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new TenantRepository(context);
@@ -61,7 +61,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .Options;
 
             var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new TenantRepository(context);
@@ -82,7 +82,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .Options;
 
             var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new TenantRepository(context);
@@ -98,7 +98,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .Options;
 
             var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new TenantRepository(context);
@@ -118,7 +118,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .Options;
 
             var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             await context.Tenants.AddAsync(
@@ -137,7 +137,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .Options;
 
             var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new TenantRepository(context);

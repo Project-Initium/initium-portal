@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Infrastructure;
 using Initium.Portal.Infrastructure.Admin;
@@ -26,11 +26,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-
-            var tenantInfo = new Mock<ITenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Add(new Mock<IRole>().Object));
             Assert.Equal("role", exception.Message);
@@ -43,11 +39,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-
-            var tenantInfo = new Mock<ITenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             roleRepository.Add(role);
@@ -63,11 +55,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-
-            var tenantInfo = new Mock<ITenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Delete(new Mock<IRole>().Object));
             Assert.Equal("role", exception.Message);
@@ -80,11 +68,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-
-            var tenantInfo = new Mock<ITenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "nane", new List<Guid>());
             roleRepository.Delete(role);
@@ -100,12 +84,12 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
-
-            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            await using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), tenantInfo);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             await context.Roles.AddAsync(role);
             await context.SaveEntitiesAsync();
@@ -121,12 +105,12 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
-
-            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            await using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), tenantInfo);
             var roleRepository = new RoleRepository(context);
             var maybe = await roleRepository.Find(TestVariables.RoleId);
             Assert.True(maybe.HasNoValue);
@@ -139,11 +123,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-
-            var tenantInfo = new Mock<ITenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Update(new Mock<IRole>().Object));
             Assert.Equal("role", exception.Message);
@@ -156,11 +136,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-
-            var tenantInfo = new Mock<ITenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             roleRepository.Update(role);

@@ -67,6 +67,8 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
 
             tenant.UpdateDetails(request.Identifier, tenant.Name, tenant.ConnectionString);
 
+            tenant.SetSystemFeatures(request.SystemFeatures);
+
             this._tenantRepository.Update(tenant);
             return ResultWithError.Ok<ErrorData>();
         }

@@ -1,7 +1,7 @@
-CREATE VIEW [Messaging].[vwUserSystemNotification]
+CREATE VIEW [Messaging].[vwUserNotification]
 AS
 SELECT 
 		uN.NotificationId
 	,	uN.UserId as Id
 	,	uN.TenantId
-FROM [Messaging].[UserSystemNotification] uN
+FROM [Messaging].[UserNotification] uN

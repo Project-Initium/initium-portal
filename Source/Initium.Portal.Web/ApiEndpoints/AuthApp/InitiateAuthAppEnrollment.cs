@@ -8,9 +8,9 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
-using Finbuckle.MultiTenant;
 using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -26,9 +26,9 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IMediator _mediator;
         private readonly UrlEncoder _urlEncoder;
-        private readonly ITenantInfo _tenantInfo;
+        private readonly FeatureBasedTenantInfo _tenantInfo;
 
-        public InitiateAuthAppEnrollment(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IMediator mediator, UrlEncoder urlEncoder, ITenantInfo tenantInfo)
+        public InitiateAuthAppEnrollment(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IMediator mediator, UrlEncoder urlEncoder, FeatureBasedTenantInfo tenantInfo)
         {
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));

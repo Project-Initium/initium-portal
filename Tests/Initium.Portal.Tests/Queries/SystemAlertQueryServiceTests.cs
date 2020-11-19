@@ -3,8 +3,8 @@
 
 using System;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
 using Initium.Portal.Core.Constants;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Entities;
@@ -25,8 +25,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -34,7 +36,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             context.Add(new SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
@@ -78,8 +80,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -87,7 +91,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             context.Add(new SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
@@ -132,8 +136,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -141,7 +147,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             context.Add(new SystemAlertReadEntity
             {
                 Id = Guid.NewGuid(),
@@ -168,8 +174,10 @@ namespace Initium.Portal.Tests.Queries
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -177,7 +185,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             context.Add(new SystemAlertReadEntity
             {
                 Id = TestVariables.SystemAlertId,

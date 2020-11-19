@@ -2,7 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.Runtime.CompilerServices;
-using Finbuckle.MultiTenant;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries.Management.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -17,12 +17,13 @@ namespace Initium.Portal.Queries.Management
     {
         private readonly MultiTenantSettings _multiTenantSettings;
 
-        public ManagementQueryContext(ITenantInfo tenantInfo, IOptions<MultiTenantSettings> multiTenantSettings)
+        public ManagementQueryContext(FeatureBasedTenantInfo tenantInfo, IOptions<MultiTenantSettings> multiTenantSettings)
             : base(tenantInfo, multiTenantSettings)
         {
+            this._multiTenantSettings = multiTenantSettings.Value;
         }
 
-        internal ManagementQueryContext(DbContextOptions<CoreQueryContext> options, ITenantInfo tenantInfo, IOptions<MultiTenantSettings> multiTenantSettings)
+        internal ManagementQueryContext(DbContextOptions<CoreQueryContext> options, FeatureBasedTenantInfo tenantInfo, IOptions<MultiTenantSettings> multiTenantSettings)
             : base(options, tenantInfo, multiTenantSettings)
         {
             this._multiTenantSettings = multiTenantSettings.Value;
@@ -38,7 +39,7 @@ namespace Initium.Portal.Queries.Management
 
         private void ConfigureTenant(EntityTypeBuilder<TenantReadEntity> tenants)
         {
-            tenants.ToTable("vwTenant", "Portal");
+            tenants.ToTable("vwTenant", "Admin");
             tenants.HasKey(tenant => tenant.Id);
             tenants.HasQueryFilter(tenant => tenant.Id != this._multiTenantSettings.DefaultTenantId);
         }

@@ -2,7 +2,9 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
-using Finbuckle.MultiTenant;
+using System.Collections.Generic;
+using Initium.Portal.Core.Constants;
+using Initium.Portal.Core.MultiTenant;
 
 namespace Initium.Portal.Web.Infrastructure.MultiTenant
 {
@@ -13,13 +15,16 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
         {
         }
 
-        public CacheableTenantData(ITenantInfo tenantInfo)
+        public CacheableTenantData(FeatureBasedTenantInfo tenantInfo)
         {
             this.Id = tenantInfo.Id;
             this.Identifier = tenantInfo.Identifier;
             this.Name = tenantInfo.Name;
             this.ConnectionString = tenantInfo.ConnectionString;
+            this.Features = tenantInfo.Features;
         }
+
+        public IReadOnlyList<SystemFeatures> Features { get; }
 
         public string Id { get; }
 

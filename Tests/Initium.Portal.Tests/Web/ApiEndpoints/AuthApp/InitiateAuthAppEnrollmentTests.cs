@@ -4,10 +4,10 @@
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
 using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Domain;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.CommandResults.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
@@ -40,7 +40,7 @@ namespace Initium.Portal.Tests.Web.ApiEndpoints.AuthApp
                 Maybe.From(
                     new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as
                         ISystemUser));
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             var endpoint = new InitiateAuthAppEnrollment(currentAuthenticatedUserProvider.Object, mediator.Object, urlEncoder.Object, tenantInfo.Object);
 
@@ -70,7 +70,7 @@ namespace Initium.Portal.Tests.Web.ApiEndpoints.AuthApp
                     new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as
                         ISystemUser));
 
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             var endpoint = new InitiateAuthAppEnrollment(currentAuthenticatedUserProvider.Object, mediator.Object, urlEncoder.Object, tenantInfo.Object);
 
@@ -91,7 +91,7 @@ namespace Initium.Portal.Tests.Web.ApiEndpoints.AuthApp
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe<ISystemUser>.Nothing);
 
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             var endpoint = new InitiateAuthAppEnrollment(currentAuthenticatedUserProvider.Object, mediator.Object, urlEncoder.Object, tenantInfo.Object);
 
@@ -110,7 +110,7 @@ namespace Initium.Portal.Tests.Web.ApiEndpoints.AuthApp
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new Mock<ISystemUser>().Object));
 
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             var endpoint = new InitiateAuthAppEnrollment(currentAuthenticatedUserProvider.Object, mediator.Object, urlEncoder.Object, tenantInfo.Object);
 

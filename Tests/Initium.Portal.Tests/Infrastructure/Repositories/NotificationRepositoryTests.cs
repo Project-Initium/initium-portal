@@ -3,8 +3,8 @@
 
 using System;
 using System.Linq;
-using Finbuckle.MultiTenant;
 using Initium.Portal.Core.Constants;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Infrastructure;
 using Initium.Portal.Infrastructure.Admin;
@@ -26,7 +26,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .Options;
 
             var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new NotificationRepository(context);
@@ -42,7 +42,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .Options;
 
             var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new NotificationRepository(context);
@@ -61,7 +61,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .Options;
 
             var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var repository = new NotificationRepository(context);

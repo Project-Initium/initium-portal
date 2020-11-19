@@ -2,12 +2,16 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
+using System.Reflection;
 using Initium.Portal.Web.Infrastructure.ServiceConfiguration;
+using Initium.Portal.Web.Tenant.Infrastructure.FeatureManagement;
 using Initium.Portal.Web.Tenant.Infrastructure.ServiceConfiguration;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.FeatureManagement;
 
 namespace Initium.Portal.Web.Tenant
 {
@@ -35,11 +39,13 @@ namespace Initium.Portal.Web.Tenant
 
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddFeatureManagement()
+                .AddFeatureFilter<TenantFeatureFilter>();
             services
                 .AddCustomizedMultiTenant()
                 .AddDataStores()
                 .AddConfigurationRoot()
-                .AddCustomizedMediatR()
+                .AddCoreCustomizedMediatR(new List<Assembly>())
                 .AddSettings(this.Configuration)
                 .AddHttpContextAccessor()
                 .AddCustomizedMvc()

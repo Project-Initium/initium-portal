@@ -5,7 +5,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
@@ -21,16 +21,16 @@ namespace Initium.Portal.Infrastructure
 {
     public abstract class CoreDataContext : DbContext, ICoreDataContext
     {
-        private readonly ITenantInfo _tenantInfo;
+        private readonly FeatureBasedTenantInfo _tenantInfo;
         private readonly IMediator _mediator;
 
-        protected CoreDataContext(ITenantInfo tenantInfo, IMediator mediator)
+        protected CoreDataContext(FeatureBasedTenantInfo tenantInfo, IMediator mediator)
         {
             this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        protected CoreDataContext(DbContextOptions<CoreDataContext> options, IMediator mediator, ITenantInfo tenantInfo)
+        protected CoreDataContext(DbContextOptions<CoreDataContext> options, IMediator mediator, FeatureBasedTenantInfo tenantInfo)
             : base(options)
         {
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));

@@ -3,7 +3,7 @@
 
 using System;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Management;
@@ -24,8 +24,10 @@ namespace Initium.Portal.Tests.Queries_Management
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -33,7 +35,7 @@ namespace Initium.Portal.Tests.Queries_Management
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             var tenantQueryService = new TenantQueryService(context);
             var result = await tenantQueryService.CheckForPresenceOfTenantByIdentifier("identifier");
             Assert.False(result.IsPresent);
@@ -46,8 +48,10 @@ namespace Initium.Portal.Tests.Queries_Management
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -55,7 +59,7 @@ namespace Initium.Portal.Tests.Queries_Management
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             await context.AddAsync(new TenantReadEntity
             {
                 Id = TestVariables.TenantId,
@@ -75,8 +79,10 @@ namespace Initium.Portal.Tests.Queries_Management
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -84,7 +90,7 @@ namespace Initium.Portal.Tests.Queries_Management
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             var tenantQueryService = new TenantQueryService(context);
             var maybe = await tenantQueryService.GetTenantMetadataById(TestVariables.TenantId);
             Assert.True(maybe.HasNoValue);
@@ -97,8 +103,10 @@ namespace Initium.Portal.Tests.Queries_Management
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -106,7 +114,7 @@ namespace Initium.Portal.Tests.Queries_Management
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             await context.AddAsync(new TenantReadEntity
             {
                 Id = TestVariables.TenantId,

@@ -9,6 +9,7 @@
   <Import Project="..\..\Shared\Initium.Portal.Shared\Initium.Portal.Shared.projitems" Label="Shared" />
 
   <ItemGroup>
+    <PackageReference Include="Finbuckle.MultiTenant" Version="6.0.0" />
     <PackageReference Include="FluentValidation" Version="9.3.0" />
     <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
     <PackageReference Include="MediatR" Version="8.1.0" />
@@ -21,6 +22,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.ComponentModel.Annotations" Version="4.7.0" />
   </ItemGroup>
 
 </Project>

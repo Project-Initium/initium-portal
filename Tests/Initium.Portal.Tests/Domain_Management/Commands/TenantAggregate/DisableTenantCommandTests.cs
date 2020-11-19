@@ -4,7 +4,7 @@
 using Initium.Portal.Common.Domain.Commands.TenantAggregate;
 using Xunit;
 
-namespace Initium.Portal.Tests.DomainManagement.Commands.TenantAggregate
+namespace Initium.Portal.Tests.Domain_Management.Commands.TenantAggregate
 {
     public class DisableTenantCommandTests
     {

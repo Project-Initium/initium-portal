@@ -1,11 +1,13 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
 using Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate;
 using Initium.Portal.Common.Domain.Commands.TenantAggregate;
+using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Contracts.Domain;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Queries.Management.Contracts;
@@ -14,7 +16,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using Xunit;
 
-namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
+namespace Initium.Portal.Tests.Domain_Management.CommandHandlers.TenantAggregate
 {
     public class CreateTenantCommandHandlerTests
     {
@@ -32,7 +34,12 @@ namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
             var logger = new Mock<ILogger<CreateTenantCommandHandler>>();
 
             var handler = new CreateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
-            var cmd = new CreateTenantCommand(TestVariables.TenantId, "identifier", "name", "connection-string");
+            var cmd = new CreateTenantCommand(
+                TestVariables.TenantId,
+                "identifier",
+                "name",
+                "connection-string",
+                new List<SystemFeatures>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -54,7 +61,12 @@ namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
             var logger = new Mock<ILogger<CreateTenantCommandHandler>>();
 
             var handler = new CreateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
-            var cmd = new CreateTenantCommand(TestVariables.TenantId, "identifier", "name", "connection-string");
+            var cmd = new CreateTenantCommand(
+                TestVariables.TenantId,
+                "identifier",
+                "name",
+                "connection-string",
+                new List<SystemFeatures>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -75,7 +87,12 @@ namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
             var logger = new Mock<ILogger<CreateTenantCommandHandler>>();
 
             var handler = new CreateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
-            var cmd = new CreateTenantCommand(TestVariables.TenantId, "identifier", "name", "connection-string");
+            var cmd = new CreateTenantCommand(
+                TestVariables.TenantId,
+                "identifier",
+                "name",
+                "connection-string",
+                new List<SystemFeatures>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -97,7 +114,12 @@ namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
             var logger = new Mock<ILogger<CreateTenantCommandHandler>>();
 
             var handler = new CreateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
-            var cmd = new CreateTenantCommand(TestVariables.TenantId, "identifier", "name", "connection-string");
+            var cmd = new CreateTenantCommand(
+                TestVariables.TenantId,
+                "identifier",
+                "name",
+                "connection-string",
+                new List<SystemFeatures>());
 
             await handler.Handle(cmd, CancellationToken.None);
 

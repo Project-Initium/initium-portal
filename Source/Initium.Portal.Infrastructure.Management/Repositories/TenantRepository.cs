@@ -47,7 +47,6 @@ namespace Initium.Portal.Infrastructure.Admin.Repositories
         public async Task<Maybe<ITenant>> Find(Guid tenantId, CancellationToken cancellationToken = default)
         {
             var tenant = await this._context.Tenants
-                .Include(x => x.TenantFeatures)
                 .SingleOrDefaultAsync(x => x.Id == tenantId, cancellationToken);
             await this.Refresh(tenant);
             return Maybe.From<ITenant>(tenant);

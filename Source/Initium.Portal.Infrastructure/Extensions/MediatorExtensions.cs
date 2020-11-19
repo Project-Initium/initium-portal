@@ -37,11 +37,11 @@ namespace Initium.Portal.Infrastructure.Extensions
                 .Where(x => x.Entity.IntegrationEvents != null && x.Entity.IntegrationEvents.Any()).ToList();
 
             var integrationEvents = domainEntities
-                .SelectMany(x => x.Entity.DomainEvents)
+                .SelectMany(x => x.Entity.IntegrationEvents)
                 .ToList();
 
             domainEntities.ToList()
-                .ForEach(entity => entity.Entity.DomainEvents.Clear());
+                .ForEach(entity => entity.Entity.IntegrationEvents.Clear());
 
             var tasks = integrationEvents
                 .Select(async integrationEvent => { await mediator.Publish(integrationEvent); });

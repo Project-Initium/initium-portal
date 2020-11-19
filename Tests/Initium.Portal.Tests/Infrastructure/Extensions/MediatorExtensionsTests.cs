@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Infrastructure;
 using Initium.Portal.Infrastructure.Admin;
@@ -29,7 +29,7 @@ namespace Initium.Portal.Tests.Infrastructure.Extensions
 
             var mediator = new Mock<IMediator>();
 
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
             await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());

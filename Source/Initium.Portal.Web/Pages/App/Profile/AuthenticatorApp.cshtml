@@ -1,5 +1,6 @@
 ﻿@page "/app/profile/authentictor-app"
 @model Initium.Portal.Web.Pages.App.Profile.AuthenticatorApp
+@using Initium.Portal.Core.Constants
 @using Initium.Portal.Web.Infrastructure.Constants
 @using Microsoft.AspNetCore.Antiforgery
 @inject IAntiforgery Antiforgery
@@ -31,8 +32,12 @@
                 <ul class="nav nav-tabs profile-tab" role="tablist" id="profileTabs">
                     <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@CorePageLocations.AppProfileDetails">My Details</a> </li>
                     <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@CorePageLocations.ChangePassword">Password</a> </li>
-                    <li class="nav-item"> <a class="nav-link active" role="tab" asp-page="@CorePageLocations.EnrollAuthenticatorApp">Authenticator App</a> </li>
-                    <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@CorePageLocations.SecurityKeys">Security Keys</a> </li>
+                    <feature name=@nameof(SystemFeatures.MfaApp)>
+                        <li class="nav-item"> <a class="nav-link active" role="tab" asp-page="@CorePageLocations.EnrollAuthenticatorApp">Authenticator App</a> </li>
+                    </feature>
+                    <feature name=@nameof(SystemFeatures.MfaDevice)>
+                        <li class="nav-item"> <a class="nav-link" role="tab" asp-page="@CorePageLocations.SecurityKeys">Security Keys</a> </li>
+                    </feature>
                 </ul>
                 <!-- Tab panes -->
                 <div class="tab-content">

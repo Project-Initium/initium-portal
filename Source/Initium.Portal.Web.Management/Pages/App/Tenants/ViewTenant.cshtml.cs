@@ -4,7 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using Initium.Portal.Queries.Management.Contracts;
-using Initium.Portal.Queries.Models.Tenant;
+using Initium.Portal.Queries.Management.Tenant;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using Microsoft.AspNetCore.Mvc;
 

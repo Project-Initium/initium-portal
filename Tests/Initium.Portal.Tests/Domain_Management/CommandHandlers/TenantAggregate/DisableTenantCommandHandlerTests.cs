@@ -15,7 +15,7 @@ using Moq;
 using NodaTime;
 using Xunit;
 
-namespace Initium.Portal.Tests.DomainManagement.CommandHandlers.TenantAggregate
+namespace Initium.Portal.Tests.Domain_Management.CommandHandlers.TenantAggregate
 {
     public class DisableTenantCommandHandlerTests
     {

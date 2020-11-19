@@ -5,7 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Queries.Management.Contracts;
-using Initium.Portal.Queries.Models.Tenant;
+using Initium.Portal.Queries.Management.Tenant;
 using Initium.Portal.Web.Management.Pages.App.Tenants;
 using MaybeMonad;
 using Microsoft.AspNetCore.Mvc;
@@ -36,7 +36,6 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
                 TestVariables.TenantId,
                 "identifier",
                 "name",
-                "connection-string",
                 null);
             var tenantQueries = new Mock<ITenantQueryService>();
             tenantQueries.Setup(x => x.GetTenantMetadataById(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))

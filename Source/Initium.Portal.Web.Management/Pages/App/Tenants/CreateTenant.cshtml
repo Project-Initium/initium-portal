@@ -1,5 +1,6 @@
 ﻿@page "/app/tenants/create"
 @using Initium.Portal.Core.Constants
+@using Initium.Portal.Core.Extensions
 @using Initium.Portal.Web.Infrastructure.Constants
 @using Initium.Portal.Web.Management.Infrastructure.Constants
 @model Initium.Portal.Web.Management.Pages.App.Tenants.CreateTenant
@@ -45,6 +46,21 @@
             </div>
         </div>
     </div>
+    
+    <div class="col-md-5">
+            <div class="card card-outline-info">
+                <div class="card-body">
+                    <h4 class="card-title">Features</h4>
+                    @foreach (var feature in Model.Features)
+                    {
+                        <div>
+                            <input type="checkbox" id="feature-@(feature)" name="PageModel.SystemFeatures" value="@feature" class="material-inputs filled-in" @(Model.PageModel.SystemFeatures.Contains(feature) ? "checked" : "")>
+                            <label for="feature-@(feature)">@feature.GetDisplay()</label>
+                        </div>    
+                    }
+                </div>
+            </div>
+        </div>
 
     
 </form>

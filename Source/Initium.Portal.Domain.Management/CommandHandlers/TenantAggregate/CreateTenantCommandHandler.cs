@@ -52,8 +52,9 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.TenantAlreadyExists));
             }
 
-            var role = new Tenant(request.TenantId, request.Identifier, request.Name, request.ConnectionString);
-            this._tenantRepository.Add(role);
+            var tenant = new Tenant(request.TenantId, request.Identifier, request.Name, request.ConnectionString);
+            tenant.SetSystemFeatures(request.SystemFeatures);
+            this._tenantRepository.Add(tenant);
 
             return ResultWithError.Ok<ErrorData>();
         }
