@@ -6,7 +6,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Initium.Portal.Core.Extensions
 {
-    public static class EnumHelper
+    public static class EnumExtensions
     {
         public static string GetDisplay(this Enum value)
         {

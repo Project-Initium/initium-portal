@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Fido2NetLib;
 using Fido2NetLib.Objects;
-using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Contracts.Domain;
 using Initium.Portal.Core.Domain;

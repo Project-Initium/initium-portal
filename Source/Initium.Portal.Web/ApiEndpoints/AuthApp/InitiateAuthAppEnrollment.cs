@@ -8,7 +8,7 @@ using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
-using Initium.Portal.Core;
+using Initium.Portal.Core.Authentication;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.Commands.UserAggregate;

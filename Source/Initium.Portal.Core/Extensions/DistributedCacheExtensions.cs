@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using MaybeMonad;
 using Microsoft.Extensions.Caching.Distributed;
@@ -13,11 +14,11 @@ namespace Initium.Portal.Core.Extensions
 {
     public static class DistributedCacheExtensions
     {
-        public static async Task<Maybe<T>> TryGetValue<T>(this IDistributedCache memoryCache, object key)
+        public static async Task<Maybe<T>> TryGetValue<T>(this IDistributedCache memoryCache, object key, CancellationToken cancellationToken = default)
         {
             var keyHash = ConvertToString(key);
             IFormatter formatter = new BinaryFormatter();
-            var bytes = await memoryCache.GetAsync(keyHash);
+            var bytes = await memoryCache.GetAsync(keyHash, cancellationToken);
             if (bytes == null)
             {
                 return Maybe<T>.Nothing;
@@ -36,7 +37,7 @@ namespace Initium.Portal.Core.Extensions
         }
 
         public static async Task AddValue<T>(this IDistributedCache memoryCache, object key, T value,
-            DistributedCacheEntryOptions options)
+            DistributedCacheEntryOptions options, CancellationToken cancellationToken = default)
         {
             var keyHash = ConvertToString(key);
             IFormatter formatter = new BinaryFormatter();
@@ -44,7 +45,7 @@ namespace Initium.Portal.Core.Extensions
             {
                 formatter.Serialize(stream, value);
                 var bytes = stream.ToArray();
-                await memoryCache.SetAsync(keyHash, bytes, options);
+                await memoryCache.SetAsync(keyHash, bytes, options, cancellationToken);
             }
         }
 

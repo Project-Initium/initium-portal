@@ -26,14 +26,6 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
 {
     public class EditTenantTests
     {
-        private static async IAsyncEnumerable<string> GetTestFeatures()
-        {
-            yield return "feature-1";
-            yield return "feature-2";
-
-            await Task.CompletedTask; // to make the compiler warning go away
-        }
-        
         [Fact]
         public async Task OnGetAsync_GivenNoSystemAlertFound_ExpectNotFoundResult()
         {
@@ -171,6 +163,14 @@ namespace Initium.Portal.Tests.Web_Management.Pages.App.Tenant
             Assert.Equal(PrgState.Failed, page.PrgState);
             Assert.Single(page.PageNotifications, x => x.PageNotificationType == NotificationPageModel.PageNotification.Error);
             Assert.Null(pageResult.PageName);
+        }
+
+        private static async IAsyncEnumerable<string> GetTestFeatures()
+        {
+            yield return "feature-1";
+            yield return "feature-2";
+
+            await Task.CompletedTask; // to make the compiler warning go away
         }
 
         public class ValidatorTests

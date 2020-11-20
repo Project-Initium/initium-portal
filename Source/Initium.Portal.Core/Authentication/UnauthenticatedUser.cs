@@ -3,8 +3,9 @@
 
 using System;
 using Initium.Portal.Core.Constants;
+using Initium.Portal.Core.Contracts;
 
-namespace Initium.Portal.Core
+namespace Initium.Portal.Core.Authentication
 {
     public class UnauthenticatedUser : ISystemUser
     {

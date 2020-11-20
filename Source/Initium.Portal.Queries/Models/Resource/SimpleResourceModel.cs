@@ -10,17 +10,20 @@ namespace Initium.Portal.Queries.Models.Resource
     {
         private readonly List<SimpleResourceModel> _simpleResources;
 
-        public SimpleResourceModel(Guid id, string name, Guid? parentId)
+        public SimpleResourceModel(Guid id, string name, Guid? parentId, string featureCode)
         {
             this.Id = id;
             this.Name = name;
             this.ParentId = parentId;
             this._simpleResources = new List<SimpleResourceModel>();
+            this.FeatureCode = featureCode;
         }
 
         public Guid Id { get; }
 
         public string Name { get; }
+
+        public string FeatureCode { get; }
 
         public IReadOnlyList<SimpleResourceModel> SimpleResources => this._simpleResources.AsReadOnly();
 

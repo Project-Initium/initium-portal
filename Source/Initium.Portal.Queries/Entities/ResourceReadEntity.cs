@@ -22,6 +22,8 @@ namespace Initium.Portal.Queries.Entities
 
         public Guid? ParentResourceId { get; set; }
 
+        public string FeatureCode { get; set; }
+
         public List<RoleResourceReadEntity> RoleResources { get; set; }
 
         public ResourceReadEntity ParentResource { get; set; }

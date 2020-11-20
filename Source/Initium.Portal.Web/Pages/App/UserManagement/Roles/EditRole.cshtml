@@ -16,10 +16,10 @@
     </div>
     <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0 pr-0">
         <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@CorePageLocations.RoleView" asp-route-id="@Model.PageModel.RoleId">Cancel</a>
-        <button class="btn btn-sm btn-info text-white" type="submit" form="role-create">Save</button>        
+        <button class="btn btn-sm btn-info text-white" type="submit" form="page-form">Save</button>        
     </div>
 </div>
-<form method="post" data-no-auto-validation id="role-create" class="form-material row pl-0 pr-0">
+<form method="post" data-no-auto-validation id="page-form" class="form-material row pl-0 pr-0">
     <input type="hidden" asp-for="PageModel.RoleId" />
     @foreach (var resource in Model.PageModel.Resources)
     {

@@ -38,7 +38,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
 
             var logger = new Mock<ILogger<UpdateRoleCommandHandler>>();
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object, Mock.Of<IResourceQueryService>());
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -64,7 +64,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
 
             var logger = new Mock<ILogger<UpdateRoleCommandHandler>>();
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object, Mock.Of<IResourceQueryService>());
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -90,7 +90,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
 
             var logger = new Mock<ILogger<UpdateRoleCommandHandler>>();
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object, Mock.Of<IResourceQueryService>());
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -114,7 +114,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
 
             var logger = new Mock<ILogger<UpdateRoleCommandHandler>>();
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object, Mock.Of<IResourceQueryService>());
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -139,7 +139,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
 
             var logger = new Mock<ILogger<UpdateRoleCommandHandler>>();
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object, Mock.Of<IResourceQueryService>());
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -164,7 +164,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
 
             var logger = new Mock<ILogger<UpdateRoleCommandHandler>>();
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object, Mock.Of<IResourceQueryService>());
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);

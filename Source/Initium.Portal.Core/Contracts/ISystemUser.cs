@@ -3,7 +3,7 @@
 
 using System;
 
-namespace Initium.Portal.Core
+namespace Initium.Portal.Core.Contracts
 {
     public interface ISystemUser
     {

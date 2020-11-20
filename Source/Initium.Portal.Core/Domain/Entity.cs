@@ -86,17 +86,17 @@ namespace Initium.Portal.Core.Domain
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Minor Bug", "S2328:\"GetHashCode\" should not reference mutable fields", Justification = "Initially suppressing everything before evaluating what's wanted and what's appropriate.")]
         public override int GetHashCode()
         {
-            if (!this.IsTransient())
+            if (this.IsTransient())
             {
-                if (!this._requestedHashCode.HasValue)
-                {
-                    this._requestedHashCode = this.Id.GetHashCode() ^ 31;
-                }
-
-                return this._requestedHashCode.Value;
+                return base.GetHashCode();
             }
 
-            return base.GetHashCode();
+            if (!this._requestedHashCode.HasValue)
+            {
+                this._requestedHashCode = this.Id.GetHashCode() ^ 31;
+            }
+
+            return this._requestedHashCode.Value;
         }
     }
 }

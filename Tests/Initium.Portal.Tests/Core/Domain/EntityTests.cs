@@ -3,6 +3,7 @@
 
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.Reflection;
 using Initium.Portal.Core.Domain;
 using MediatR;
 using Moq;
@@ -126,6 +127,85 @@ namespace Initium.Portal.Tests.Core.Domain
             var entity = new DummyEntity(Guid.NewGuid());
 
             Assert.False(entity.IsTransient());
+        }
+
+        [Fact]
+        public void Equals_GivenObjectIsNotAnEntity_ExpectFalse()
+        {
+            var dummy = new DummyEntity();
+            Assert.False(dummy.Equals(1));
+        }
+
+        [Fact]
+        public void Equals_GivenObjectHasTheSameReference_ExpectTrue()
+        {
+            var dummy = new DummyEntity();
+            Assert.True(dummy.Equals(dummy));
+        }
+
+        [Fact]
+        public void Equals_GivenObjectIsNotTheSameType_ExpectFalse()
+        {
+            var dummy = new DummyEntity();
+            Assert.False(dummy.Equals(Mock.Of<Entity>()));
+        }
+
+        [Fact]
+        public void Equals_GivenPrimaryObjectIsTransient_ExpectFalse()
+        {
+            var dummy = new DummyEntity();
+            var dummyCheck = new DummyEntity(TestVariables.TenantId);
+            Assert.False(dummy.Equals(dummyCheck));
+        }
+
+        [Fact]
+        public void Equals_GivenCheckObjectIsTransient_ExpectFalse()
+        {
+            var dummy = new DummyEntity(TestVariables.TenantId);
+            var dummyCheck = new DummyEntity();
+            Assert.False(dummy.Equals(dummyCheck));
+        }
+
+        [Fact]
+        public void Equals_GivenObjectsHaveDifferentIds_ExpectFalse()
+        {
+            var dummy = new DummyEntity(TestVariables.TenantId);
+            var dummyCheck = new DummyEntity(TestVariables.NotificationId);
+            Assert.False(dummy.Equals(dummyCheck));
+        }
+
+        [Fact]
+        public void Equals_GivenObjectsHaveMatchingIds_ExpectTrue()
+        {
+            var dummy = new DummyEntity(TestVariables.TenantId);
+            var dummyCheck = new DummyEntity(TestVariables.TenantId);
+            Assert.True(dummy.Equals(dummyCheck));
+        }
+
+        [Fact]
+        public void GetHashCode_GivenObjectIsTransient_ExpectRequestedHashCodeToBeNull()
+        {
+            var dummy = new DummyEntity();
+            dummy.GetHashCode();
+
+            var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+                            | BindingFlags.Static;
+            var field = typeof(Entity).GetField("_requestedHashCode", bindingFlags);
+            Assert.NotNull(field);
+            Assert.Null(field.GetValue(dummy));
+        }
+
+        [Fact]
+        public void GetHashCode_GivenObjectIsNotTransient_ExpectCalculatedHashCodeAndRequestedHashCodeToBeSet()
+        {
+            var dummy = new DummyEntity(TestVariables.TenantId);
+            var bindingFlags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+                               | BindingFlags.Static;
+            var field = typeof(Entity).GetField("_requestedHashCode", bindingFlags);
+
+            Assert.Equal(731245440, dummy.GetHashCode());
+            Assert.NotNull(field);
+            Assert.Equal(731245440, field.GetValue(dummy));
         }
 
         private sealed class DummyEntity : Entity

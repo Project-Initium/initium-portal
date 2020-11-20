@@ -4,43 +4,84 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Entities;
 using Initium.Portal.Queries.Models.Resource;
-using MaybeMonad;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.FeatureManagement;
 
 namespace Initium.Portal.Queries
 {
     public class ResourceQueryService : IResourceQueryService
     {
         private readonly ICoreQueryContext _context;
+        private readonly IFeatureManager _featureManager;
 
-        public ResourceQueryService(ICoreQueryContext context)
+        public ResourceQueryService(ICoreQueryContext context, IFeatureManager featureManager)
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
+            this._featureManager = featureManager ?? throw new ArgumentNullException(nameof(featureManager));
         }
 
         public IQueryable<ResourceReadEntity> QueryableEntity => this._context.Resources;
 
-        public async Task<Maybe<List<SimpleResourceModel>>> GetNestedSimpleResources()
+        public async Task<IReadOnlyList<SimpleResourceModel>> GetFeatureBasedNestedSimpleResources(CancellationToken cancellationToken = default)
         {
-            var data = await this._context.Resources.ToListAsync();
+            var data = await this._context.Resources.ToListAsync(cancellationToken: cancellationToken);
             if (data == null || data.Count == 0)
             {
-                return Maybe<List<SimpleResourceModel>>.Nothing;
+                return new List<SimpleResourceModel>();
             }
 
-            var items = data.Select(
-                i => new SimpleResourceModel(i.Id, i.Name, i.ParentResourceId)).ToList();
-
-            foreach (var i in items)
+            var filteredPermissions = new List<SimpleResourceModel>();
+            foreach (var resourceReadEntity in data)
             {
-                i.SetSimpleResources(items.Where(n => n.ParentId == i.Id).ToList());
+                if (
+                    string.IsNullOrWhiteSpace(resourceReadEntity.FeatureCode)
+                    || await this._featureManager.IsEnabledAsync(resourceReadEntity.FeatureCode))
+                {
+                    filteredPermissions.Add(new SimpleResourceModel(
+                        resourceReadEntity.Id,
+                        resourceReadEntity.Name,
+                        resourceReadEntity.ParentResourceId,
+                        resourceReadEntity.FeatureCode));
+                }
             }
 
-            return Maybe.From(new List<SimpleResourceModel>(items.Where(n => n.ParentId == null)));
+            foreach (var i in filteredPermissions)
+            {
+                i.SetSimpleResources(filteredPermissions.Where(n => n.ParentId == i.Id).ToList());
+            }
+
+            return new List<SimpleResourceModel>(filteredPermissions.Where(n => n.ParentId == null));
+        }
+
+        public async Task<IReadOnlyList<FeatureStatusBasedResource>> GetFeatureStatusBasedResources(CancellationToken cancellationToken = default)
+        {
+            var data = await this._context.Resources
+                .Select(x => new
+                {
+                    x.Id,
+                    x.FeatureCode,
+                }).ToListAsync(cancellationToken: cancellationToken);
+
+            if (data == null || data.Count == 0)
+            {
+                return new List<FeatureStatusBasedResource>();
+            }
+
+            var filteredPermissions = new List<FeatureStatusBasedResource>();
+            foreach (var resourceReadEntity in data)
+            {
+                filteredPermissions.Add(new FeatureStatusBasedResource(
+                    resourceReadEntity.Id,
+                    string.IsNullOrWhiteSpace(resourceReadEntity.FeatureCode)
+                    || await this._featureManager.IsEnabledAsync(resourceReadEntity.FeatureCode)));
+            }
+
+            return filteredPermissions;
         }
     }
 }

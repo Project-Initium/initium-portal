@@ -3,6 +3,7 @@
 
 using System;
 using Initium.Portal.Core;
+using Initium.Portal.Core.Authentication;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Web.Components.ProfilePanel;
 using MaybeMonad;

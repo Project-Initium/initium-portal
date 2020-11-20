@@ -2,8 +2,9 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using Initium.Portal.Core.Contracts;
 
-namespace Initium.Portal.Core
+namespace Initium.Portal.Core.Authentication
 {
     public sealed class AuthenticatedUser : ISystemUser
     {

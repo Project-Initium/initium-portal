@@ -10,7 +10,12 @@ namespace Initium.Portal.Core.MultiTenant
     public class FeatureBasedTenantInfo :
         ITenantInfo
     {
-        public List<SystemFeatures> Features { get; set; } = new List<SystemFeatures>();
+        public FeatureBasedTenantInfo()
+        {
+            this.Features = new List<SystemFeatures>();
+        }
+
+        public List<SystemFeatures> Features { get; set; }
 
         public string Id { get; set; }
 

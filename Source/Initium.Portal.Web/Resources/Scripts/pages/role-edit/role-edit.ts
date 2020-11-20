@@ -34,7 +34,7 @@ export class RoleEdit {
     }
 
      private formSubmit(event: Event): void {
-        if (!this.validator.validate()) {
+        if (this.validator.validate().isValid) {
             this.tree.find('input[type=checkbox]:checked').each((index, value) => {
                 const checkbox = $(value);
                 checkbox.attr('name', 'pagemodel.resources');
