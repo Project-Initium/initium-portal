@@ -17,12 +17,12 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
     public class EnableAccountCommandHandler : IRequestHandler<EnableAccountCommand, ResultWithError<ErrorData>>
     {
         private readonly IUserRepository _userRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<EnableAccountCommandHandler> _logger;
 
         public EnableAccountCommandHandler(IUserRepository userRepository, ILogger<EnableAccountCommandHandler> logger)
         {
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._logger = logger;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(EnableAccountCommand request, CancellationToken cancellationToken)

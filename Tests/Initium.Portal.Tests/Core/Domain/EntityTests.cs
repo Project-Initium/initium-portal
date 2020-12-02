@@ -114,6 +114,28 @@ namespace Initium.Portal.Tests.Core.Domain
         }
 
         [Fact]
+        public void ClearDomainEvents_GivenListIsPopulated_ExpectEmptyCollection()
+        {
+            var entity = new DummyEntity();
+            entity.AddDomainEvent(Mock.Of<INotification>());
+
+            entity.ClearDomainEvents();
+
+            Assert.Empty(entity.DomainEvents);
+        }
+
+        [Fact]
+        public void ClearIntegrationEvents_GivenListIsPopulated_ExpectEmptyCollection()
+        {
+            var entity = new DummyEntity();
+            entity.AddIntegrationEvent(Mock.Of<INotification>());
+
+            entity.ClearIntegrationEvents();
+
+            Assert.Empty(entity.IntegrationEvents);
+        }
+
+        [Fact]
         public void IsTransient_GivenIdIsNotSet_ExpectTrue()
         {
             var entity = new DummyEntity();

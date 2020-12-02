@@ -35,15 +35,12 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
-            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
-
-            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object, logger.Object);
+            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, Mock.Of<IClock>(),
+                currentAuthenticatedUserProvider.Object, Mock.Of<ILogger<EnrollAuthenticatorAppCommandHandler>>());
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
@@ -70,15 +67,12 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
-            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
-
-            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object, logger.Object);
+            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, Mock.Of<IClock>(),
+                currentAuthenticatedUserProvider.Object, Mock.Of<ILogger<EnrollAuthenticatorAppCommandHandler>>());
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
@@ -106,15 +100,12 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe<ISystemUser>.Nothing);
 
-            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
-
-            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object, logger.Object);
+            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, Mock.Of<IClock>(),
+                currentAuthenticatedUserProvider.Object, Mock.Of<ILogger<EnrollAuthenticatorAppCommandHandler>>());
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
@@ -144,15 +135,12 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
-            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
-
-            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object, logger.Object);
+            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, Mock.Of<IClock>(),
+                currentAuthenticatedUserProvider.Object, Mock.Of<ILogger<EnrollAuthenticatorAppCommandHandler>>());
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
@@ -178,15 +166,12 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
-            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
-
-            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object, logger.Object);
+            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, Mock.Of<IClock>(),
+                currentAuthenticatedUserProvider.Object, Mock.Of<ILogger<EnrollAuthenticatorAppCommandHandler>>());
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
@@ -214,15 +199,12 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
-            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
-
-            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object, logger.Object);
+            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, Mock.Of<IClock>(),
+                currentAuthenticatedUserProvider.Object, Mock.Of<ILogger<EnrollAuthenticatorAppCommandHandler>>());
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);
@@ -252,15 +234,12 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe<IUser>.Nothing);
 
-            var clock = new Mock<IClock>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as ISystemUser));
 
-            var logger = new Mock<ILogger<EnrollAuthenticatorAppCommandHandler>>();
-
-            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, clock.Object,
-                currentAuthenticatedUserProvider.Object, logger.Object);
+            var commandHandler = new EnrollAuthenticatorAppCommandHandler(userRepository.Object, Mock.Of<IClock>(),
+                currentAuthenticatedUserProvider.Object, Mock.Of<ILogger<EnrollAuthenticatorAppCommandHandler>>());
 
             var key = KeyGeneration.GenerateRandomKey();
             var keyAsBase32String = Base32Encoding.ToString(key);

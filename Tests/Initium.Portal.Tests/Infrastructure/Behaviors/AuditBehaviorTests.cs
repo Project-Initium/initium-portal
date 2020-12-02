@@ -28,7 +28,7 @@ namespace Initium.Portal.Tests.Infrastructure.Behaviors
             var auditLogger = new Mock<ILogger>();
             var authenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             authenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(
-                Maybe.From<ISystemUser>(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None)));
+                Maybe<ISystemUser>.Nothing);
             var request = new ValidateAppMfaCodeAgainstCurrentUserCommand("code");
 
             var auditBehavior =
@@ -47,7 +47,7 @@ namespace Initium.Portal.Tests.Infrastructure.Behaviors
 
             auditLogger.Verify(x => x.Error(It.IsAny<string>(), It.IsAny<string>(),
                 It.IsAny<ValidateAppMfaCodeAgainstCurrentUserCommand>(),
-                It.Is<string>(prop2 => prop2 == TestVariables.UserId.ToString())));
+                It.Is<string>(prop2 => prop2 == "Unknown")));
         }
 
         [Fact]

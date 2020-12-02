@@ -23,18 +23,13 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly IUserRepository _userRepository;
         private readonly SecuritySettings _securitySettings;
         private readonly IClock _clock;
-        private readonly ILogger _logger;
+        private readonly ILogger<PasswordResetCommandHandler> _logger;
 
         public PasswordResetCommandHandler(IUserRepository userRepository, IClock clock, IOptions<SecuritySettings> securitySettings, ILogger<PasswordResetCommandHandler> logger)
         {
-            if (securitySettings == null)
-            {
-                throw new ArgumentNullException(nameof(securitySettings));
-            }
-
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._clock = clock;
+            this._logger = logger;
             this._securitySettings = securitySettings.Value;
         }
 

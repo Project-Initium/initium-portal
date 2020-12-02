@@ -33,9 +33,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe<IRole>.Nothing);
 
-            var logger = new Mock<ILogger<DeleteRoleCommandHandler>>();
-
-            var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
+            var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object, Mock.Of<ILogger<DeleteRoleCommandHandler>>());
             var cmd = new DeleteRoleCommand(TestVariables.RoleId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -47,7 +45,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         [Fact]
         public async Task Handle_GivenRoleExistsAndIsInUse_ExpectSuccessfulResultAndRoleDeleted()
         {
-            var role = new Mock<IRole>();
             var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.CheckForRoleUsageById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
@@ -56,11 +53,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => Maybe.From(role.Object));
+                .ReturnsAsync(() => Maybe.From(Mock.Of<IRole>()));
 
-            var logger = new Mock<ILogger<DeleteRoleCommandHandler>>();
-
-            var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
+            var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object, Mock.Of<ILogger<DeleteRoleCommandHandler>>());
             var cmd = new DeleteRoleCommand(TestVariables.RoleId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -72,7 +67,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         [Fact]
         public async Task Handle_GivenRoleExistsButIsInUse_ExpectFailedResult()
         {
-            var role = new Mock<IRole>();
             var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.CheckForRoleUsageById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => new StatusCheckModel(true));
@@ -81,11 +75,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => Maybe.From(role.Object));
+                .ReturnsAsync(() => Maybe.From(Mock.Of<IRole>()));
 
-            var logger = new Mock<ILogger<DeleteRoleCommandHandler>>();
-
-            var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
+            var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object, Mock.Of<ILogger<DeleteRoleCommandHandler>>());
             var cmd = new DeleteRoleCommand(TestVariables.RoleId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -97,7 +89,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         [Fact]
         public async Task Handle_GivenSavingFails_ExpectFailedResult()
         {
-            var role = new Mock<IRole>();
             var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.CheckForRoleUsageById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
@@ -106,11 +97,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => Maybe.From(role.Object));
+                .ReturnsAsync(() => Maybe.From(Mock.Of<IRole>()));
 
-            var logger = new Mock<ILogger<DeleteRoleCommandHandler>>();
-
-            var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
+            var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object, Mock.Of<ILogger<DeleteRoleCommandHandler>>());
             var cmd = new DeleteRoleCommand(TestVariables.RoleId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -122,7 +111,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         [Fact]
         public async Task Handle_GivenSavingSucceeds_ExpectSuccessfulResult()
         {
-            var role = new Mock<IRole>();
             var roleQueries = new Mock<IRoleQueryService>();
             roleQueries.Setup(x => x.CheckForRoleUsageById(It.IsAny<Guid>()))
                 .ReturnsAsync(() => new StatusCheckModel(false));
@@ -131,11 +119,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => Maybe.From(role.Object));
+                .ReturnsAsync(() => Maybe.From(Mock.Of<IRole>()));
 
-            var logger = new Mock<ILogger<DeleteRoleCommandHandler>>();
-
-            var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object, logger.Object);
+            var handler = new DeleteRoleCommandHandler(roleRepository.Object, roleQueries.Object, Mock.Of<ILogger<DeleteRoleCommandHandler>>());
             var cmd = new DeleteRoleCommand(TestVariables.RoleId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);

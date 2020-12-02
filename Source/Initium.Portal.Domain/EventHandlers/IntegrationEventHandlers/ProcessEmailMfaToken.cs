@@ -3,25 +3,27 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.Events.IntegrationEvents;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Initium.Portal.Domain.EventHandlers.IntegrationEventHandlers
 {
-    public class LogEmailMfaToken : INotificationHandler<EmailMfaTokenGeneratedIntegrationEvent>
+    public class ProcessEmailMfaToken : INotificationHandler<EmailMfaTokenGeneratedIntegrationEvent>
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<ProcessEmailMfaToken> _logger;
+        private readonly FeatureBasedTenantInfo _tenantInfo;
 
-        public LogEmailMfaToken(ILogger<LogEmailMfaToken> logger)
+        public ProcessEmailMfaToken(ILogger<ProcessEmailMfaToken> logger, FeatureBasedTenantInfo tenantInfo)
         {
             this._logger = logger;
+            this._tenantInfo = tenantInfo;
         }
 
         public Task Handle(EmailMfaTokenGeneratedIntegrationEvent notification, CancellationToken cancellationToken)
         {
-            this._logger.LogInformation("MFA Token for email {EmailAddress} is {Token}", notification.EmailAddress,
-                notification.Token);
+            this._logger.LogInformation($"MFA Token for Tenant {this._tenantInfo.Name} with email {notification.EmailAddress} is {notification.Token}");
 
             return Task.FromResult(0);
         }

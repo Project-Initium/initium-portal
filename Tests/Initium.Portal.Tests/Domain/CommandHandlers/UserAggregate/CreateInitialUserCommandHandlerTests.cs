@@ -32,9 +32,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userQueries.Setup(x => x.CheckForPresenceOfAnyUser())
                 .ReturnsAsync(() => new StatusCheckModel(true));
 
-            var logger = new Mock<ILogger<CreateInitialUserCommandHandler>>();
-
-            var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, logger.Object);
+            var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, Mock.Of<ILogger<CreateInitialUserCommandHandler>>());
             var cmd = new CreateInitialUserCommand("email-address", "password", "first-name", "last-name");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -55,9 +53,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userQueries.Setup(x => x.CheckForPresenceOfAnyUser())
                 .ReturnsAsync(() => new StatusCheckModel(false));
 
-            var logger = new Mock<ILogger<CreateInitialUserCommandHandler>>();
-
-            var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, logger.Object);
+            var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, Mock.Of<ILogger<CreateInitialUserCommandHandler>>());
             var cmd = new CreateInitialUserCommand("email-address", "password", "first-name", "last-name");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -77,9 +73,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userQueries.Setup(x => x.CheckForPresenceOfAnyUser())
                 .ReturnsAsync(() => new StatusCheckModel(true));
 
-            var logger = new Mock<ILogger<CreateInitialUserCommandHandler>>();
-
-            var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, logger.Object);
+            var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, Mock.Of<ILogger<CreateInitialUserCommandHandler>>());
             var cmd = new CreateInitialUserCommand("email-address", "password", "first-name", "last-name");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -102,9 +96,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userQueries.Setup(x => x.CheckForPresenceOfAnyUser())
                 .ReturnsAsync(() => new StatusCheckModel(false));
 
-            var logger = new Mock<ILogger<CreateInitialUserCommandHandler>>();
-
-            var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, logger.Object);
+            var handler = new CreateInitialUserCommandHandler(userRepository.Object, clock.Object, userQueries.Object, Mock.Of<ILogger<CreateInitialUserCommandHandler>>());
             var cmd = new CreateInitialUserCommand("email-address", "password", "first-name", "last-name");
             await handler.Handle(cmd, CancellationToken.None);
         }

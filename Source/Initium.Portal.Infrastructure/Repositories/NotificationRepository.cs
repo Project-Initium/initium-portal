@@ -13,7 +13,7 @@ namespace Initium.Portal.Infrastructure.Repositories
 
         public NotificationRepository(ICoreDataContext dataContext)
         {
-            this._dataContext = dataContext ?? throw new ArgumentNullException(nameof(dataContext));
+            this._dataContext = dataContext;
         }
 
         public IUnitOfWork UnitOfWork => this._dataContext;

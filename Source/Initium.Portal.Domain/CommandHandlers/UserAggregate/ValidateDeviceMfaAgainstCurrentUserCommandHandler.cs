@@ -25,19 +25,17 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IFido2 _fido2;
         private readonly IUserRepository _userRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<ValidateDeviceMfaAgainstCurrentUserCommandHandler> _logger;
 
         public ValidateDeviceMfaAgainstCurrentUserCommandHandler(IUserRepository userRepository, IFido2 fido2,
             ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IClock clock,
             ILogger<ValidateDeviceMfaAgainstCurrentUserCommandHandler> logger)
         {
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._fido2 = fido2 ?? throw new ArgumentNullException(nameof(fido2));
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ??
-                                                     throw new ArgumentNullException(
-                                                         nameof(currentAuthenticatedUserProvider));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._fido2 = fido2;
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._clock = clock;
+            this._logger = logger;
         }
 
         public async Task<Result<ValidateDeviceMfaAgainstCurrentUserCommandResult, ErrorData>> Handle(

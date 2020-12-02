@@ -23,9 +23,9 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
 
         public CreateTenantCommandHandler(ITenantRepository tenantRepository, ILogger<CreateTenantCommandHandler> logger, ITenantQueryService tenantQueryService)
         {
-            this._tenantRepository = tenantRepository ?? throw new ArgumentNullException(nameof(tenantRepository));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this._tenantQueryService = tenantQueryService ?? throw new ArgumentNullException(nameof(tenantQueryService));
+            this._tenantRepository = tenantRepository;
+            this._logger = logger;
+            this._tenantQueryService = tenantQueryService;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(CreateTenantCommand request, CancellationToken cancellationToken)

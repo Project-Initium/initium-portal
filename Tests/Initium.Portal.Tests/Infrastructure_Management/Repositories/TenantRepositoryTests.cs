@@ -19,16 +19,25 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
     public class TenantRepositoryTests
     {
         [Fact]
+        public void UnitOfWork_GivenDataContextSetInConstructor_ExpectSameValud()
+        {
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .Options;
+
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            var repository = new TenantRepository(context);
+            Assert.Equal(context, repository.UnitOfWork);
+        }
+
+        [Fact]
         public void Add_GivenArgumentIsNotTenantType_ExpectException()
         {
             var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Add(new Mock<ITenant>().Object));
             Assert.Equal("tenant", exception.Message);
@@ -41,10 +50,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
 
             var tenant = new Tenant(TestVariables.TenantId, "identifier", "name", "connection-string");
@@ -60,10 +66,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
 
             var tenant = new Tenant(TestVariables.TenantId, "identifier", "name", "connection-string");
@@ -81,10 +84,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Update(new Mock<ITenant>().Object));
             Assert.Equal("tenant", exception.Message);
@@ -97,10 +97,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
             var tenant = new Tenant(TestVariables.TenantId, "identifier", "name", "connection-string");
             repository.Update(tenant);
@@ -117,10 +114,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
-
-            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            await using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             await context.Tenants.AddAsync(
                 new Tenant(TestVariables.TenantId, "identifier", "name", "connection-string"));
             await context.SaveChangesAsync();
@@ -136,10 +130,7 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
-
-            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            await using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
             var maybe = await repository.Find(Guid.Empty);
             Assert.True(maybe.HasNoValue);

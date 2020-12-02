@@ -47,18 +47,11 @@ namespace Initium.Portal.Infrastructure.Behaviors
             }
 
             var propToCheck = resultType.GetProperty("IsSuccess");
-            if (propToCheck == null)
-            {
-                return response;
-            }
 
             var propValue = propToCheck.GetValue(response);
 
-            if (propValue == null)
-            {
-                return response;
-            }
-
+            var userRef = currentUser.HasValue ? currentUser.Value.UserId.ToString() : "Unknown";
+            
             var commandSuccess = (bool)propValue;
             if (commandSuccess)
             {
@@ -66,14 +59,14 @@ namespace Initium.Portal.Infrastructure.Behaviors
                     "The action {CommandName} was executed successfully. It's data was {@CommandData}. The user was {User}",
                     request.GetGenericTypeName(),
                     request,
-                    currentUser.HasValue ? currentUser.Value.UserId.ToString() : "Unknown");
+                    userRef);
             }
             else
             {
                 this._auditLogger.Error(
                     "The action {CommandName} failed to execute. It's data was {@CommandData}. The user was {User}",
                     request.GetGenericTypeName(), request,
-                    currentUser.HasValue ? currentUser.Value.UserId.ToString() : "Unknown");
+                    userRef);
             }
 
             return response;

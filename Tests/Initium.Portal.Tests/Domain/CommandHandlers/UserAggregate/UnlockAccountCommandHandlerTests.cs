@@ -31,14 +31,11 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Maybe.From(user.Object));
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            var clock = new Mock<IClock>();
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var logger = new Mock<ILogger<UnlockAccountCommandHandler>>();
-
             var handler =
-                new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+                new UnlockAccountCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<UnlockAccountCommandHandler>>());
 
             var cmd = new UnlockAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -55,14 +52,11 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Maybe.From(user.Object));
-            var clock = new Mock<IClock>();
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var logger = new Mock<ILogger<UnlockAccountCommandHandler>>();
-
             var handler =
-                new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+                new UnlockAccountCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<UnlockAccountCommandHandler>>());
 
             var cmd = new UnlockAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -77,14 +71,11 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Maybe<IUser>.Nothing);
-            var clock = new Mock<IClock>();
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var logger = new Mock<ILogger<UnlockAccountCommandHandler>>();
-
             var handler =
-                new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+                new UnlockAccountCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<UnlockAccountCommandHandler>>());
 
             var cmd = new UnlockAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -101,14 +92,11 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => Maybe.From(user.Object));
-            var clock = new Mock<IClock>();
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var logger = new Mock<ILogger<UnlockAccountCommandHandler>>();
-
             var handler =
-                new UnlockAccountCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+                new UnlockAccountCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<UnlockAccountCommandHandler>>());
 
             var cmd = new UnlockAccountCommand(TestVariables.UserId);
             await handler.Handle(cmd, CancellationToken.None);

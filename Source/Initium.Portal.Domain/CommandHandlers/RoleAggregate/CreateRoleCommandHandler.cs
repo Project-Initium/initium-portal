@@ -15,18 +15,18 @@ using ResultMonad;
 
 namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
 {
-    public class
-        CreateRoleCommandHandler : IRequestHandler<CreateRoleCommand, Result<CreateRoleCommandResult, ErrorData>>
+    public class CreateRoleCommandHandler
+        : IRequestHandler<CreateRoleCommand, Result<CreateRoleCommandResult, ErrorData>>
     {
         private readonly IRoleQueryService _roleQueryService;
         private readonly IRoleRepository _roleRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateRoleCommandHandler> _logger;
 
         public CreateRoleCommandHandler(IRoleRepository roleRepository, IRoleQueryService roleQueryService, ILogger<CreateRoleCommandHandler> logger)
         {
-            this._roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
-            this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._roleRepository = roleRepository;
+            this._roleQueryService = roleQueryService;
+            this._logger = logger;
         }
 
         public async Task<Result<CreateRoleCommandResult, ErrorData>> Handle(

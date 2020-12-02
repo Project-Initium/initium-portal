@@ -22,7 +22,7 @@ namespace Initium.Portal.Infrastructure.Extensions
                 .ToList();
 
             domainEntities.ToList()
-                .ForEach(entity => entity.Entity.DomainEvents.Clear());
+                .ForEach(entity => entity.Entity.ClearDomainEvents());
 
             var tasks = domainEvents
                 .Select(async domainEvent => { await mediator.Publish(domainEvent); });
@@ -41,7 +41,7 @@ namespace Initium.Portal.Infrastructure.Extensions
                 .ToList();
 
             domainEntities.ToList()
-                .ForEach(entity => entity.Entity.IntegrationEvents.Clear());
+                .ForEach(entity => entity.Entity.ClearIntegrationEvents());
 
             var tasks = integrationEvents
                 .Select(async integrationEvent => { await mediator.Publish(integrationEvent); });

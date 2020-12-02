@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -31,20 +30,15 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly SecuritySettings _securitySettings;
         private readonly IUserRepository _userRepository;
         private readonly IFido2 _fido2;
-        private readonly ILogger _logger;
+        private readonly ILogger<AuthenticateUserCommandHandler> _logger;
 
         public AuthenticateUserCommandHandler(IUserRepository userRepository, IClock clock,
             IOptions<SecuritySettings> securitySettings, IFido2 fido2, ILogger<AuthenticateUserCommandHandler> logger)
         {
-            if (securitySettings == null)
-            {
-                throw new ArgumentNullException(nameof(securitySettings));
-            }
-
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._fido2 = fido2 ?? throw new ArgumentNullException(nameof(fido2));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._clock = clock;
+            this._fido2 = fido2;
+            this._logger = logger;
             this._securitySettings = securitySettings.Value;
         }
 
@@ -54,14 +48,14 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                this._logger.LogDebug("Failed saving changes.");
-                return Result.Fail<AuthenticateUserCommandResult, ErrorData>(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return Result.Fail<AuthenticateUserCommandResult, ErrorData>(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
         private async Task<Result<AuthenticateUserCommandResult, ErrorData>> Process(
@@ -111,11 +105,11 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var authenticationState = BaseAuthenticationProcessCommandResult.AuthenticationState.Unknown;
             var mfaProvider = MfaProvider.None;
 
-            var optionsMaybe = Maybe<AssertionOptions>.Nothing;
+            AssertionOptions assertionOptions = null;
             if (user.AuthenticatorDevices.Any(x => x.WhenRevoked == null))
             {
-                optionsMaybe = this._fido2.GenerateAssertionOptionsForUser(user);
-                if (optionsMaybe.HasValue)
+                var assertionResult = this._fido2.GenerateAssertionOptionsForUser(user);
+                if (assertionResult.IsSuccess)
                 {
                     user.ProcessPartialSuccessfulAuthenticationAttempt(
                         this._clock.GetCurrentInstant().ToDateTimeUtc(),
@@ -123,6 +117,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
                     authenticationState =
                         BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaDeviceCode;
                     mfaProvider |= MfaProvider.Device;
+                    assertionOptions = assertionResult.Value;
                 }
             }
 
@@ -158,11 +153,11 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
 
             mfaProvider |= MfaProvider.Email;
 
-            if (optionsMaybe.HasValue)
+            if (assertionOptions != null)
             {
                 return Result.Ok<AuthenticateUserCommandResult, ErrorData>(new AuthenticateUserCommandResult(
                     user.Id,
-                    mfaProvider, optionsMaybe.Value));
+                    mfaProvider, assertionOptions));
             }
 
             return Result.Ok<AuthenticateUserCommandResult, ErrorData>(new AuthenticateUserCommandResult(

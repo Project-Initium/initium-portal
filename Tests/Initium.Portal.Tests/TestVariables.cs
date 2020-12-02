@@ -23,7 +23,7 @@ namespace Initium.Portal.Tests
 
         public static readonly Guid AuthenticationHistoryId = Guid.Parse("DE907A59-C87C-471B-9602-C9A9E2F0CC19");
 
-        public static readonly DateTime Now = DateTime.Now;
+        public static readonly DateTime Now = DateTime.UtcNow;
 
         public static readonly Guid AuthenticatorAppId = Guid.Parse("1E25C5AC-7099-4B5D-9B18-691804D43E61");
 

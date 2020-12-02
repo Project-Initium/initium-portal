@@ -50,6 +50,8 @@ namespace Initium.Portal.Web.Management.Pages.App.Tenants
                 var enumValue = Enum.Parse<SystemFeatures>(feature);
                 this.Features.Add(enumValue);
             }
+
+            this.PageModel ??= new Model();
         }
 
         public async Task<IActionResult> OnPostAsync()

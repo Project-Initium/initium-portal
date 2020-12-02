@@ -25,22 +25,17 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly IUserRepository _userRepository;
         private readonly SecuritySettings _securitySettings;
         private readonly IClock _clock;
-        private readonly ILogger _logger;
+        private readonly ILogger<ChangePasswordCommandHandler> _logger;
 
         public ChangePasswordCommandHandler(
             ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IUserRepository userRepository,
             IOptions<SecuritySettings> securitySettings, IClock clock, ILogger<ChangePasswordCommandHandler> logger)
         {
-            if (securitySettings == null)
-            {
-                throw new ArgumentNullException(nameof(securitySettings));
-            }
-
             this._currentAuthenticatedUserProvider =
-                currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+                currentAuthenticatedUserProvider;
+            this._userRepository = userRepository;
+            this._clock = clock;
+            this._logger = logger;
             this._securitySettings = securitySettings.Value;
         }
 
@@ -50,14 +45,14 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                this._logger.LogDebug("Failed saving changes.");
-                return ResultWithError.Fail(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return ResultWithError.Fail(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
         private async Task<ResultWithError<ErrorData>> Process(

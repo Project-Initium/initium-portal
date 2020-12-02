@@ -29,10 +29,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.NotificationAggregate
             notificationRepository.Setup(x => x.Add(It.IsAny<INotification>()))
                 .Returns((INotification notification) => notification);
 
-            var logger = new Mock<ILogger<CreateNotificationCommandHandler>>();
-
             var commandHandler =
-                new CreateNotificationCommandHandler(notificationRepository.Object, logger.Object);
+                new CreateNotificationCommandHandler(notificationRepository.Object, Mock.Of<ILogger<CreateNotificationCommandHandler>>());
 
             var command = new CreateNotificationCommand(
                 "subject",
@@ -66,10 +64,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.NotificationAggregate
                     return n;
                 });
 
-            var logger = new Mock<ILogger<CreateNotificationCommandHandler>>();
-
             var commandHandler =
-                new CreateNotificationCommandHandler(notificationRepository.Object, logger.Object);
+                new CreateNotificationCommandHandler(notificationRepository.Object, Mock.Of<ILogger<CreateNotificationCommandHandler>>());
 
             var command = new CreateNotificationCommand(
                 "subject",

@@ -26,21 +26,16 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly IUserQueryService _userQueryService;
         private readonly IUserRepository _userRepository;
         private readonly SecuritySettings _securitySettings;
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateUserCommandHandler> _logger;
 
         public CreateUserCommandHandler(IUserRepository userRepository, IClock clock,
             IUserQueryService userQueryService, IOptions<SecuritySettings> securitySettings,
             ILogger<CreateUserCommandHandler> logger)
         {
-            if (securitySettings == null)
-            {
-                throw new ArgumentNullException(nameof(securitySettings));
-            }
-
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._clock = clock;
+            this._userQueryService = userQueryService;
+            this._logger = logger;
             this._securitySettings = securitySettings.Value;
         }
 

@@ -44,12 +44,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(systemUser.Object));
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<RevokeAuthenticatorDeviceCommandHandler>>();
-
             var handler =
-                new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<RevokeAuthenticatorDeviceCommandHandler>>());
 
             var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
 
@@ -81,12 +77,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(systemUser.Object));
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<RevokeAuthenticatorDeviceCommandHandler>>();
-
             var handler =
-                new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<RevokeAuthenticatorDeviceCommandHandler>>());
 
             var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
 
@@ -110,12 +102,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(systemUser.Object));
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<RevokeAuthenticatorDeviceCommandHandler>>();
-
             var handler =
-                new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<RevokeAuthenticatorDeviceCommandHandler>>());
 
             var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
 
@@ -143,12 +131,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(systemUser.Object));
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<RevokeAuthenticatorDeviceCommandHandler>>();
-
             var handler =
-                new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<RevokeAuthenticatorDeviceCommandHandler>>());
 
             var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
 
@@ -169,12 +153,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe<ISystemUser>.Nothing);
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<RevokeAuthenticatorDeviceCommandHandler>>();
-
             var handler =
-                new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<RevokeAuthenticatorDeviceCommandHandler>>());
 
             var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
 
@@ -206,12 +186,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(systemUser.Object));
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<RevokeAuthenticatorDeviceCommandHandler>>();
-
             var handler =
-                new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                new RevokeAuthenticatorDeviceCommandHandler(userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<RevokeAuthenticatorDeviceCommandHandler>>());
 
             var cmd = new RevokeAuthenticatorDeviceCommand(TestVariables.AuthenticatorDeviceId, "password");
 

@@ -16,12 +16,12 @@ namespace Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate
     public class DeleteSystemAlertCommandHandler : IRequestHandler<DeleteSystemAlertCommand, ResultWithError<ErrorData>>
     {
         private readonly ISystemAlertRepository _systemAlertRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<DeleteSystemAlertCommandHandler> _logger;
 
         public DeleteSystemAlertCommandHandler(ISystemAlertRepository systemAlertRepository, ILogger<DeleteSystemAlertCommandHandler> logger)
         {
-            this._systemAlertRepository = systemAlertRepository ?? throw new ArgumentNullException(nameof(systemAlertRepository));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._systemAlertRepository = systemAlertRepository;
+            this._logger = logger;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(DeleteSystemAlertCommand request, CancellationToken cancellationToken)
@@ -29,14 +29,14 @@ namespace Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._systemAlertRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                this._logger.LogDebug("Failed saving changes.");
-                return ResultWithError.Fail(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return ResultWithError.Fail(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
         private async Task<ResultWithError<ErrorData>> Process(

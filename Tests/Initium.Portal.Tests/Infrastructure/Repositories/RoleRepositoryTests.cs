@@ -20,6 +20,18 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
     public class RoleRepositoryTests
     {
         [Fact]
+        public void UnitOfWork_GivenDataContextSetInConstructor_ExpectSameValud()
+        {
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .Options;
+
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            var repository = new RoleRepository(context);
+            Assert.Equal(context, repository.UnitOfWork);
+        }
+
+        [Fact]
         public void Add_GivenArgumentIsNotRole_ExpectArgumentException()
         {
             var options = new DbContextOptionsBuilder<CoreDataContext>()

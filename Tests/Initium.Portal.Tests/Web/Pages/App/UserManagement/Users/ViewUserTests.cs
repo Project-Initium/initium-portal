@@ -4,7 +4,6 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Models.User;

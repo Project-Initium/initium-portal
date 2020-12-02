@@ -31,10 +31,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe.From(user.Object));
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
-            var logger = new Mock<ILogger<EnableAccountCommandHandler>>();
-
             var handler =
-                new EnableAccountCommandHandler(userRepository.Object, logger.Object);
+                new EnableAccountCommandHandler(userRepository.Object, Mock.Of<ILogger<EnableAccountCommandHandler>>());
 
             var cmd = new EnableAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -54,10 +52,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var logger = new Mock<ILogger<EnableAccountCommandHandler>>();
-
             var handler =
-                new EnableAccountCommandHandler(userRepository.Object, logger.Object);
+                new EnableAccountCommandHandler(userRepository.Object, Mock.Of<ILogger<EnableAccountCommandHandler>>());
 
             var cmd = new EnableAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -74,10 +70,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe<IUser>.Nothing);
 
-            var logger = new Mock<ILogger<EnableAccountCommandHandler>>();
-
             var handler =
-                new EnableAccountCommandHandler(userRepository.Object, logger.Object);
+                new EnableAccountCommandHandler(userRepository.Object, Mock.Of<ILogger<EnableAccountCommandHandler>>());
 
             var cmd = new EnableAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -97,10 +91,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var logger = new Mock<ILogger<EnableAccountCommandHandler>>();
-
             var handler =
-                new EnableAccountCommandHandler(userRepository.Object, logger.Object);
+                new EnableAccountCommandHandler(userRepository.Object, Mock.Of<ILogger<EnableAccountCommandHandler>>());
 
             var cmd = new EnableAccountCommand(TestVariables.UserId);
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -121,10 +113,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var logger = new Mock<ILogger<EnableAccountCommandHandler>>();
-
             var handler =
-                new EnableAccountCommandHandler(userRepository.Object, logger.Object);
+                new EnableAccountCommandHandler(userRepository.Object, Mock.Of<ILogger<EnableAccountCommandHandler>>());
 
             var cmd = new EnableAccountCommand(TestVariables.UserId);
             await handler.Handle(cmd, CancellationToken.None);

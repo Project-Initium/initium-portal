@@ -18,7 +18,7 @@ namespace Initium.Portal.Infrastructure.Repositories
 
         public UserRepository(ICoreDataContext context)
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
+            this._context = context;
         }
 
         public IUnitOfWork UnitOfWork => this._context;

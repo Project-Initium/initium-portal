@@ -22,18 +22,16 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
     {
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IUserRepository _userRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<ValidateAppMfaCodeAgainstCurrentUserCommandHandler> _logger;
 
         public ValidateAppMfaCodeAgainstCurrentUserCommandHandler(
             IUserRepository userRepository,
             ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider,
             ILogger<ValidateAppMfaCodeAgainstCurrentUserCommandHandler> logger)
         {
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ??
-                                                     throw new ArgumentNullException(
-                                                         nameof(currentAuthenticatedUserProvider));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._logger = logger;
         }
 
         public async Task<Result<ValidateAppMfaCodeAgainstCurrentUserCommandResult, ErrorData>> Handle(

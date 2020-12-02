@@ -34,7 +34,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                     TestVariables.Now.AddMonths(-1)),
             });
 
-            var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
@@ -45,9 +44,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var logger = new Mock<ILogger<PasswordResetCommandHandler>>();
-
-            var handler = new PasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+            var handler = new PasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<PasswordResetCommandHandler>>());
             var cmd = new PasswordResetCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 new string('*', 6));
@@ -68,7 +65,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                     TestVariables.Now.AddMonths(-1)),
             });
 
-            var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -79,9 +75,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var logger = new Mock<ILogger<PasswordResetCommandHandler>>();
-
-            var handler = new PasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+            var handler = new PasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<PasswordResetCommandHandler>>());
             var cmd = new PasswordResetCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");
@@ -101,7 +95,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                     TestVariables.Now.AddMonths(-1)),
             });
 
-            var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -112,9 +105,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var logger = new Mock<ILogger<PasswordResetCommandHandler>>();
-
-            var handler = new PasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+            var handler = new PasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<PasswordResetCommandHandler>>());
             var cmd = new PasswordResetCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");
@@ -130,7 +121,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
         [Fact]
         public async Task Handle_GivenUserIsNotFound_ExpectFailedResult()
         {
-            var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -140,9 +130,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 .ReturnsAsync(() => Maybe<IUser>.Nothing);
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
 
-            var logger = new Mock<ILogger<PasswordResetCommandHandler>>();
-
-            var handler = new PasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+            var handler = new PasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<PasswordResetCommandHandler>>());
             var cmd = new PasswordResetCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");
@@ -163,7 +151,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                     TestVariables.Now.AddMonths(-1)),
             });
 
-            var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -177,9 +164,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 HistoricalLimit = 1,
             });
 
-            var logger = new Mock<ILogger<PasswordResetCommandHandler>>();
-
-            var handler = new PasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+            var handler = new PasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<PasswordResetCommandHandler>>());
             var cmd = new PasswordResetCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");

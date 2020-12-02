@@ -20,8 +20,8 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
 
         public EnableTenantCommandHandler(ITenantRepository tenantRepository, ILogger<EnableTenantCommandHandler> logger)
         {
-            this._tenantRepository = tenantRepository ?? throw new ArgumentNullException(nameof(tenantRepository));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._tenantRepository = tenantRepository;
+            this._logger = logger;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(EnableTenantCommand request, CancellationToken cancellationToken)

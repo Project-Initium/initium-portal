@@ -30,11 +30,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByUserBySecurityToken(It.IsAny<Guid>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<VerifyAccountAndSetPasswordCommandHandler>>();
-
-            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object, logger.Object);
+            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<VerifyAccountAndSetPasswordCommandHandler>>());
             var cmd = new VerifyAccountAndSetPasswordCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");
@@ -55,11 +51,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByUserBySecurityToken(It.IsAny<Guid>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<VerifyAccountAndSetPasswordCommandHandler>>();
-
-            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object, logger.Object);
+            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<VerifyAccountAndSetPasswordCommandHandler>>());
             var cmd = new VerifyAccountAndSetPasswordCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");
@@ -78,10 +70,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByUserBySecurityToken(It.IsAny<Guid>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe<IUser>.Nothing);
 
-            var clock = new Mock<IClock>();
-            var logger = new Mock<ILogger<VerifyAccountAndSetPasswordCommandHandler>>();
-
-            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object, logger.Object);
+            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<VerifyAccountAndSetPasswordCommandHandler>>());
             var cmd = new VerifyAccountAndSetPasswordCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");
@@ -103,10 +92,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByUserBySecurityToken(It.IsAny<Guid>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-            var logger = new Mock<ILogger<VerifyAccountAndSetPasswordCommandHandler>>();
-
-            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object, logger.Object);
+            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<VerifyAccountAndSetPasswordCommandHandler>>());
             var cmd = new VerifyAccountAndSetPasswordCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");
@@ -127,10 +113,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByUserBySecurityToken(It.IsAny<Guid>(), It.IsAny<DateTime>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-            var logger = new Mock<ILogger<VerifyAccountAndSetPasswordCommandHandler>>();
-
-            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, clock.Object, logger.Object);
+            var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<VerifyAccountAndSetPasswordCommandHandler>>());
             var cmd = new VerifyAccountAndSetPasswordCommand(
                 Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
                 "new-password");

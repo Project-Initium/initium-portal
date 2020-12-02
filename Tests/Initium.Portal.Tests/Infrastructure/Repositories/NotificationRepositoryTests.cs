@@ -19,16 +19,25 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
     public class NotificationRepositoryTests
     {
         [Fact]
+        public void UnitOfWork_GivenDataContextSetInConstructor_ExpectSameValud()
+        {
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .Options;
+
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            var repository = new NotificationRepository(context);
+            Assert.Equal(context, repository.UnitOfWork);
+        }
+
+        [Fact]
         public void Add_GivenArgumentIsNotNotificationType_ExpectException()
         {
             var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var repository = new NotificationRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Add(new Mock<Initium.Portal.Domain.AggregatesModel.NotificationAggregate.INotification>().Object));
             Assert.Equal("notification", exception.Message);
@@ -41,10 +50,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var repository = new NotificationRepository(context);
 
             var notification = new Notification(TestVariables.NotificationId, "subject", "message", NotificationType.AlphaNotification, "serialized-event-data", TestVariables.Now);
@@ -60,10 +66,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
-            var mediator = new Mock<IMediator>();
-            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
-
-            using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
             var repository = new NotificationRepository(context);
 
             var notification = new Notification(TestVariables.NotificationId, "subject", "message", NotificationType.AlphaNotification, "serialized-event-data", TestVariables.Now);

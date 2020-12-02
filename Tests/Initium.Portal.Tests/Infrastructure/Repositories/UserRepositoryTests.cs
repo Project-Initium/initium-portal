@@ -20,6 +20,18 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
     public sealed class UserRepositoryTests
     {
         [Fact]
+        public void UnitOfWork_GivenDataContextSetInConstructor_ExpectSameValud()
+        {
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .Options;
+
+            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            var repository = new UserRepository(context);
+            Assert.Equal(context, repository.UnitOfWork);
+        }
+
+        [Fact]
         public void Add_GivenArgumentIsNotUserType_ExpectException()
         {
             var options = new DbContextOptionsBuilder<CoreDataContext>()

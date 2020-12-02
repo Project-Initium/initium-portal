@@ -2,7 +2,6 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System.Threading.Tasks;
-using Initium.Portal.Core;
 using Initium.Portal.Core.Authentication;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Queries.Contracts;

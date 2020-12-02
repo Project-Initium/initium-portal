@@ -38,13 +38,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe<ISystemUser>.Nothing);
-            var securitySettings = new Mock<IOptions<SecuritySettings>>();
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<ChangePasswordCommandHandler>>();
 
             var handler =
-                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
+                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, Mock.Of<IOptions<SecuritySettings>>(), Mock.Of<IClock>(), Mock.Of<ILogger<ChangePasswordCommandHandler>>());
 
             var cmd = new ChangePasswordCommand("current-password", "new-password");
 
@@ -79,12 +75,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<ChangePasswordCommandHandler>>();
 
             var handler =
-                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
+                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, securitySettings.Object, Mock.Of<IClock>(), Mock.Of<ILogger<ChangePasswordCommandHandler>>());
 
             var cmd = new ChangePasswordCommand("current-password", "new-password");
 
@@ -119,12 +112,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<ChangePasswordCommandHandler>>();
 
             var handler =
-                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
+                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, securitySettings.Object, Mock.Of<IClock>(), Mock.Of<ILogger<ChangePasswordCommandHandler>>());
 
             var cmd = new ChangePasswordCommand("current-password", "new-password");
 
@@ -147,13 +137,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(systemUser.Object));
 
-            var securitySettings = new Mock<IOptions<SecuritySettings>>();
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<ChangePasswordCommandHandler>>();
-
             var handler =
-                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
+                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, Mock.Of<IOptions<SecuritySettings>>(), Mock.Of<IClock>(), Mock.Of<ILogger<ChangePasswordCommandHandler>>());
 
             var cmd = new ChangePasswordCommand("current-password", "new-password");
 
@@ -179,13 +164,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(systemUser.Object));
 
-            var securitySettings = new Mock<IOptions<SecuritySettings>>();
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<ChangePasswordCommandHandler>>();
-
             var handler =
-                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
+                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, Mock.Of<IOptions<SecuritySettings>>(), Mock.Of<IClock>(), Mock.Of<ILogger<ChangePasswordCommandHandler>>());
 
             var cmd = new ChangePasswordCommand("current-password", "new-password");
 
@@ -220,12 +200,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<ChangePasswordCommandHandler>>();
 
             var handler =
-                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
+                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, securitySettings.Object, Mock.Of<IClock>(), Mock.Of<ILogger<ChangePasswordCommandHandler>>());
 
             var cmd = new ChangePasswordCommand("current-password", "new-password");
 
@@ -264,12 +241,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             {
                 HistoricalLimit = 1,
             });
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<ChangePasswordCommandHandler>>();
 
             var handler =
-                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
+                new ChangePasswordCommandHandler(currentAuthenticatedUserProvider.Object, userRepository.Object, securitySettings.Object, Mock.Of<IClock>(), Mock.Of<ILogger<ChangePasswordCommandHandler>>());
 
             var cmd = new ChangePasswordCommand("current-password", "new-password");
 

@@ -5,6 +5,7 @@ using System;
 using Fido2NetLib;
 using Finbuckle.MultiTenant;
 using Initium.Portal.Core.Contracts;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Web.Infrastructure.Contracts;
 using Initium.Portal.Web.Infrastructure.Services;
 using Microsoft.AspNetCore.Http;
@@ -30,7 +31,7 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
         private static IFido2 ConfigureFido(IServiceProvider arg)
         {
             var httpContextAccessor = arg.GetRequiredService<IHttpContextAccessor>();
-            var tenantInfo = httpContextAccessor.HttpContext.GetMultiTenantContext<TenantInfo>();
+            var tenantInfo = httpContextAccessor.HttpContext.GetMultiTenantContext<FeatureBasedTenantInfo>();
 
             return new Fido2(new Fido2Configuration
             {

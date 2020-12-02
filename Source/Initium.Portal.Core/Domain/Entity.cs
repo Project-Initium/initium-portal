@@ -10,13 +10,15 @@ namespace Initium.Portal.Core.Domain
 {
     public abstract class Entity : IEntity
     {
+        private List<INotification> _integrationEvents;
+        private List<INotification> _domainEvents;
         private int? _requestedHashCode;
 
         public virtual Guid Id { get; protected set; }
 
-        public List<INotification> IntegrationEvents { get;  private set; }
+        public IReadOnlyCollection<INotification> IntegrationEvents => this._integrationEvents?.AsReadOnly();
 
-        public List<INotification> DomainEvents { get; private set; }
+        public IReadOnlyCollection<INotification> DomainEvents => this._domainEvents?.AsReadOnly();
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Blocker Code Smell", "S3875:\"operator==\" should not be overloaded on reference types", Justification = "Initially suppressing everything before evaluating what's wanted and what's appropriate.")]
         public static bool operator ==(Entity left, Entity right)
@@ -31,24 +33,34 @@ namespace Initium.Portal.Core.Domain
 
         public void AddDomainEvent(INotification eventItem)
         {
-            this.DomainEvents = this.DomainEvents ?? new List<INotification>();
-            this.DomainEvents.Add(eventItem);
+            this._domainEvents = this._domainEvents ?? new List<INotification>();
+            this._domainEvents.Add(eventItem);
         }
 
         public void AddIntegrationEvent(INotification eventItem)
         {
-            this.IntegrationEvents = this.IntegrationEvents ?? new List<INotification>();
-            this.IntegrationEvents.Add(eventItem);
+            this._integrationEvents = this._integrationEvents ?? new List<INotification>();
+            this._integrationEvents.Add(eventItem);
         }
 
         public void RemoveDomainEvent(INotification eventItem)
         {
-            this.DomainEvents?.Remove(eventItem);
+            this._domainEvents?.Remove(eventItem);
         }
 
         public void RemoveIntegrationEvent(INotification eventItem)
         {
-            this.IntegrationEvents?.Remove(eventItem);
+            this._integrationEvents?.Remove(eventItem);
+        }
+
+        public void ClearDomainEvents()
+        {
+            this._domainEvents?.Clear();
+        }
+
+        public void ClearIntegrationEvents()
+        {
+            this._integrationEvents?.Clear();
         }
 
         public bool IsTransient()

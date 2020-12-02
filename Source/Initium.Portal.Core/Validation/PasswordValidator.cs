@@ -21,7 +21,7 @@ namespace Initium.Portal.Core.Validation
         {
             if (!(context.PropertyValue is string password))
             {
-                return true;
+                return false;
             }
 
             if (string.IsNullOrWhiteSpace(password) || password.Length < this._securitySettings.PasswordRequirements.RequiredLength)

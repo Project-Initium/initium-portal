@@ -14,18 +14,16 @@ namespace Initium.Portal.Core.Extensions
             var name = Enum.GetName(type, value);
             if (name == null)
             {
-                return null;
+                return string.Empty;
             }
 
             var field = type.GetField(name);
-            if (field != null && Attribute.GetCustomAttribute(
-                field,
-                typeof(DisplayAttribute)) is DisplayAttribute attr)
+            if (Attribute.GetCustomAttribute(field, typeof(DisplayAttribute)) is DisplayAttribute attr)
             {
                 return attr.Name;
             }
 
-            return null;
+            return string.Empty;
         }
     }
 }

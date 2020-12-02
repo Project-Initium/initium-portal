@@ -17,7 +17,7 @@ namespace Initium.Portal.Infrastructure.Admin.Repositories
 
         public TenantRepository(IManagementDataContext context)
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
+            this._context = context;
         }
 
         public IUnitOfWork UnitOfWork => this._context;

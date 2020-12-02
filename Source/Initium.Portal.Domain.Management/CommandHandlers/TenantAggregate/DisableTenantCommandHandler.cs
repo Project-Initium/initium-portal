@@ -22,9 +22,9 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
 
         public DisableTenantCommandHandler(ITenantRepository tenantRepository, ILogger<DisableTenantCommandHandler> logger, IClock clock)
         {
-            this._tenantRepository = tenantRepository ?? throw new ArgumentNullException(nameof(tenantRepository));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
+            this._tenantRepository = tenantRepository;
+            this._logger = logger;
+            this._clock = clock;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(DisableTenantCommand request, CancellationToken cancellationToken)

@@ -3,25 +3,27 @@
 
 using System.Threading;
 using System.Threading.Tasks;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.Events.IntegrationEvents;
 using MediatR;
 using Microsoft.Extensions.Logging;
 
 namespace Initium.Portal.Domain.EventHandlers.IntegrationEventHandlers
 {
-    public class LogAccountConfirmationToken : INotificationHandler<AccountConfirmationTokenGeneratedIntegrationEvent>
+    public class ProcessAccountConfirmationToken : INotificationHandler<AccountConfirmationTokenGeneratedIntegrationEvent>
     {
-        private readonly ILogger _logger;
+        private readonly ILogger<ProcessAccountConfirmationToken> _logger;
+        private readonly FeatureBasedTenantInfo _tenantInfo;
 
-        public LogAccountConfirmationToken(ILogger<LogAccountConfirmationToken> logger)
+        public ProcessAccountConfirmationToken(ILogger<ProcessAccountConfirmationToken> logger, FeatureBasedTenantInfo tenantInfo)
         {
             this._logger = logger;
+            this._tenantInfo = tenantInfo;
         }
 
         public Task Handle(AccountConfirmationTokenGeneratedIntegrationEvent notification, CancellationToken cancellationToken)
         {
-            this._logger.LogInformation("Password Reset Token for email {EmailAddress} is {Token}", notification.EmailAddress,
-                notification.Token);
+            this._logger.LogInformation($"Account Confirmation Token for Tenant {this._tenantInfo.Name} with email {notification.EmailAddress} is {notification.Token}");
 
             return Task.FromResult(0);
         }

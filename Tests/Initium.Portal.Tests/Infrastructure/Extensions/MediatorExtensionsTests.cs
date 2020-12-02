@@ -42,5 +42,29 @@ namespace Initium.Portal.Tests.Infrastructure.Extensions
             Assert.Empty(role.DomainEvents);
             mediator.Verify(x => x.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()), Times.Once);
         }
+        
+        [Fact]
+        public async Task
+            DDispatchIntegrationEventsAsync_GivenEntitiesWithEvents_NotificationsArePublishedAndEventsAreCleared()
+        {
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .Options;
+
+            var mediator = new Mock<IMediator>();
+
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
+
+            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
+            var @event = new Mock<INotification>();
+            role.AddIntegrationEvent(@event.Object);
+            await context.Roles.AddAsync(role);
+
+            await mediator.Object.DispatchIntegrationEventsAsync(context);
+
+            Assert.Empty(role.IntegrationEvents);
+            mediator.Verify(x => x.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
     }
 }

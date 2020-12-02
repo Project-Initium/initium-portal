@@ -6,15 +6,15 @@ using System.Runtime.CompilerServices;
 using Fido2NetLib;
 using Fido2NetLib.Objects;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
-using MaybeMonad;
+using ResultMonad;
 
 [assembly: InternalsVisibleTo("Initium.Portal.Tests")]
 
 namespace Initium.Portal.Domain.Helpers
 {
-    public static class FidoHelpers
+    public static class FidoHelper
     {
-        public static Maybe<AssertionOptions> GenerateAssertionOptionsForUser(this IFido2 fido2, IUser user)
+        public static Result<AssertionOptions, Fido2VerificationException> GenerateAssertionOptionsForUser(this IFido2 fido2, IUser user)
         {
             var existingCredentials =
                 user.AuthenticatorDevices.Select(x => new PublicKeyCredentialDescriptor(x.CredentialId));
@@ -39,11 +39,11 @@ namespace Initium.Portal.Domain.Helpers
                     uv,
                     exts);
 
-                return Maybe.From(options);
+                return Result.Ok<AssertionOptions, Fido2VerificationException>(options);
             }
-            catch (Fido2VerificationException)
+            catch (Fido2VerificationException exception)
             {
-                return Maybe<AssertionOptions>.Nothing;
+                return Result.Fail<AssertionOptions, Fido2VerificationException>(exception);
             }
         }
     }
