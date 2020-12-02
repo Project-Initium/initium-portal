@@ -11,5 +11,6 @@
     ,   [Aaguid] UNIQUEIDENTIFIER NOT NULL
     ,   [Counter] INT NOT NULL
     ,   [CredType] NVARCHAR(200) NOT NULL
+    ,   [TenantId] UNIQUEIDENTIFIER NOT NULL
     ,   CONSTRAINT [FK_AuthenticatorDevice_User] FOREIGN KEY ([UserId]) REFERENCES [Identity].[User]([Id])
 )

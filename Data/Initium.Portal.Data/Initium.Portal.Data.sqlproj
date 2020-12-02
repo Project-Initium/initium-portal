@@ -77,6 +77,9 @@
     <Folder Include="Messaging\Views" />
     <Folder Include="Portal" />
     <Folder Include="Portal\Views" />
+    <Folder Include="Admin" />
+    <Folder Include="Admin\Tables" />
+    <Folder Include="Portal\Stored Procedures" />
   </ItemGroup>
   <ItemGroup>
     <Build Include="Security\Schemas\Identity.sql" />
@@ -107,6 +110,12 @@
     <Build Include="Portal\Views\vwAuthenticatorDevice.sql" />
     <Build Include="Portal\Views\vwResource.sql" />
     <Build Include="Portal\Views\vwRoleResource.sql" />
+    <Build Include="Security\Schemas\Admin.sql" />
+    <Build Include="Admin\Tables\Tenant.sql" />
+    <Build Include="Admin\Tables\TenantFeature.sql" />
+    <Build Include="Portal\Views\vwTenant.sql" />
+    <Build Include="Portal\Stored Procedures\uspGetTenantInfoByIdentifier.sql" />
+    <Build Include="Portal\Stored Procedures\uspGetTenantInfoById.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Initium.Portal.Data.refactorlog" />

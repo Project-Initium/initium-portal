@@ -5,10 +5,12 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Finbuckle.MultiTenant;
 using Initium.Portal.Core.Contracts.Domain;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
+using Initium.Portal.Domain.AggregatesModel.TenantAggregate;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Infrastructure.Extensions;
 using MediatR;
@@ -21,12 +23,20 @@ namespace Initium.Portal.Infrastructure
 {
     public sealed class DataContext : DbContext, IUnitOfWork
     {
+        private readonly ITenantInfo _tenantInfo;
         private readonly IMediator _mediator;
 
-        public DataContext(DbContextOptions<DataContext> options, IMediator mediator)
+        public DataContext(ITenantInfo tenantInfo, IMediator mediator)
+        {
+            this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
+            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        }
+
+        internal DataContext(DbContextOptions<DataContext> options, IMediator mediator, ITenantInfo tenantInfo)
             : base(options)
         {
             this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
         }
 
         public DbSet<User> Users { get; set; }
@@ -37,11 +47,35 @@ namespace Initium.Portal.Infrastructure
 
         public DbSet<SystemAlert> SystemAlerts { get; set; }
 
+        public DbSet<Tenant> Tenants { get; set; }
+
         public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
             await this.SaveChangesAsync(cancellationToken);
             await this._mediator.DispatchDomainEventsAsync(this);
             return true;
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            foreach (var entry in this.ChangeTracker.Entries())
+            {
+                if (entry.State == EntityState.Added && entry.Metadata.FindAnnotation("MULTI_TENANT") != null)
+                {
+                    entry.Property("TenantId").CurrentValue = Guid.Parse(this._tenantInfo.Id);
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(this._tenantInfo.ConnectionString);
+            }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -52,6 +86,27 @@ namespace Initium.Portal.Infrastructure
             modelBuilder.Entity<Role>(this.ConfigureRole);
             modelBuilder.Entity<Notification>(this.ConfigureNotification);
             modelBuilder.Entity<SystemAlert>(this.ConfigureSystemAlert);
+            modelBuilder.Entity<Tenant>(this.ConfigureTenant);
+        }
+
+        private void ConfigureTenant(EntityTypeBuilder<Tenant> tenants)
+        {
+            tenants.ToTable("Tenant", "Admin");
+            tenants.HasKey(tenant => tenant.Id);
+            tenants.Ignore(tenant => tenant.DomainEvents);
+            tenants.Property(tenant => tenant.Id).ValueGeneratedNever();
+
+            var navigation = tenants.Metadata.FindNavigation(nameof(Tenant.TenantFeatures));
+            navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            tenants.OwnsMany(tenant => tenant.TenantFeatures, tenantFeatures =>
+            {
+                tenantFeatures.ToTable("TenantFeature", "Admin");
+                tenantFeatures.HasKey(tenantFeature => tenantFeature.Id);
+                tenantFeatures.Property(tenantFeature => tenantFeature.Id).ValueGeneratedNever();
+                tenantFeatures.Property(tenantFeature => tenantFeature.Id).HasColumnName("FeatureId");
+                tenantFeatures.Ignore(tenantFeature => tenantFeature.DomainEvents);
+            });
         }
 
         private void ConfigureSystemAlert(EntityTypeBuilder<SystemAlert> systemAlerts)
@@ -60,6 +115,9 @@ namespace Initium.Portal.Infrastructure
             systemAlerts.HasKey(systemAlert => systemAlert.Id);
             systemAlerts.Ignore(systemAlert => systemAlert.DomainEvents);
             systemAlerts.Property(systemAlert => systemAlert.Id).ValueGeneratedNever();
+            systemAlerts.Metadata.AddAnnotation("MULTI_TENANT", null);
+            systemAlerts.Property<Guid>("TenantId");
+            systemAlerts.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
         }
 
         private void ConfigureNotification(EntityTypeBuilder<Notification> notifications)
@@ -68,6 +126,9 @@ namespace Initium.Portal.Infrastructure
             notifications.HasKey(notification => notification.Id);
             notifications.Ignore(notification => notification.DomainEvents);
             notifications.Property(notification => notification.Id).ValueGeneratedNever();
+            notifications.Metadata.AddAnnotation("MULTI_TENANT", null);
+            notifications.Property<Guid>("TenantId");
+            notifications.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
 
             var navigation = notifications.Metadata.FindNavigation(nameof(Notification.UserNotifications));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
@@ -78,6 +139,8 @@ namespace Initium.Portal.Infrastructure
                 userNotifications.HasKey(userNotification => userNotification.Id);
                 userNotifications.Property(userNotification => userNotification.Id).ValueGeneratedNever();
                 userNotifications.Ignore(userNotification => userNotification.DomainEvents);
+                userNotifications.Metadata.AddAnnotation("MULTI_TENANT", null);
+                userNotifications.Property<Guid>("TenantId");
             });
         }
 
@@ -87,6 +150,9 @@ namespace Initium.Portal.Infrastructure
             roles.HasKey(entity => entity.Id);
             roles.Ignore(b => b.DomainEvents);
             roles.Property(e => e.Id).ValueGeneratedNever();
+            roles.Metadata.AddAnnotation("MULTI_TENANT", null);
+            roles.Property<Guid>("TenantId");
+            roles.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
 
             var navigation = roles.Metadata.FindNavigation(nameof(Role.RoleResources));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
@@ -98,6 +164,8 @@ namespace Initium.Portal.Infrastructure
                 roleResources.Property(e => e.Id).ValueGeneratedNever();
                 roleResources.Property(x => x.Id).HasColumnName("ResourceId");
                 roleResources.Ignore(b => b.DomainEvents);
+                roleResources.Metadata.AddAnnotation("MULTI_TENANT", null);
+                roleResources.Property<Guid>("TenantId");
             });
         }
 
@@ -107,29 +175,36 @@ namespace Initium.Portal.Infrastructure
             users.HasKey(entity => entity.Id);
             users.Ignore(b => b.DomainEvents);
             users.Property(e => e.Id).ValueGeneratedNever();
+            users.Metadata.AddAnnotation("MULTI_TENANT", null);
+            users.Property<Guid>("TenantId");
+            users.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
 
             var navigation = users.Metadata.FindNavigation(nameof(User.AuthenticationHistories));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
-            users.OwnsMany<AuthenticationHistory>(user => user.AuthenticationHistories, authenticationHistories =>
+            users.OwnsMany(user => user.AuthenticationHistories, authenticationHistories =>
             {
                 authenticationHistories.ToTable("AuthenticationHistory", "Identity");
                 authenticationHistories.HasKey(authenticationHistory => authenticationHistory.Id);
                 authenticationHistories.Property(authenticationHistory => authenticationHistory.Id)
                     .ValueGeneratedNever();
                 authenticationHistories.Ignore(authenticationHistory => authenticationHistory.DomainEvents);
+                authenticationHistories.Metadata.AddAnnotation("MULTI_TENANT", null);
+                authenticationHistories.Property<Guid>("TenantId");
             });
 
             navigation = users.Metadata.FindNavigation(nameof(User.SecurityTokenMappings));
             navigation.SetPropertyAccessMode(PropertyAccessMode.Field);
 
-            users.OwnsMany<SecurityTokenMapping>(user => user.SecurityTokenMappings, securityTokenMappings =>
+            users.OwnsMany(user => user.SecurityTokenMappings, securityTokenMappings =>
             {
                 securityTokenMappings.ToTable("SecurityTokenMapping", "Identity");
                 securityTokenMappings.HasKey(securityTokenMapping => securityTokenMapping.Id);
                 securityTokenMappings.Property(securityTokenMapping => securityTokenMapping.Id)
                     .ValueGeneratedNever();
                 securityTokenMappings.Ignore(securityTokenMapping => securityTokenMapping.DomainEvents);
+                securityTokenMappings.Metadata.AddAnnotation("MULTI_TENANT", null);
+                securityTokenMappings.Property<Guid>("TenantId");
             });
 
             users.OwnsOne(user => user.Profile, profile =>
@@ -139,6 +214,8 @@ namespace Initium.Portal.Infrastructure
                 profile.HasKey(item => item.Id);
                 profile.Property(item => item.Id).HasColumnName("UserId");
                 profile.Ignore(item => item.DomainEvents);
+                profile.Metadata.AddAnnotation("MULTI_TENANT", null);
+                profile.Property<Guid>("TenantId");
             });
 
             navigation = users.Metadata.FindNavigation(nameof(User.UserRoles));
@@ -151,6 +228,8 @@ namespace Initium.Portal.Infrastructure
                 userRoles.Property(userRole => userRole.Id).ValueGeneratedNever();
                 userRoles.Property(userRole => userRole.Id).HasColumnName("RoleId");
                 userRoles.Ignore(userRole => userRole.DomainEvents);
+                userRoles.Metadata.AddAnnotation("MULTI_TENANT", null);
+                userRoles.Property<Guid>("TenantId");
             });
 
             navigation = users.Metadata.FindNavigation(nameof(User.AuthenticatorApps));
@@ -163,6 +242,8 @@ namespace Initium.Portal.Infrastructure
                 authenticatorApps.Property(authenticatorApp => authenticatorApp.Id)
                     .ValueGeneratedNever();
                 authenticatorApps.Ignore(authenticatorApp => authenticatorApp.DomainEvents);
+                authenticatorApps.Metadata.AddAnnotation("MULTI_TENANT", null);
+                authenticatorApps.Property<Guid>("TenantId");
             });
 
             navigation = users.Metadata.FindNavigation(nameof(User.AuthenticatorDevices));
@@ -175,6 +256,8 @@ namespace Initium.Portal.Infrastructure
                 authenticatorDevices.Property(authenticatorDevice => authenticatorDevice.Id)
                     .ValueGeneratedNever();
                 authenticatorDevices.Ignore(authenticatorDevice => authenticatorDevice.DomainEvents);
+                authenticatorDevices.Metadata.AddAnnotation("MULTI_TENANT", null);
+                authenticatorDevices.Property<Guid>("TenantId");
             });
 
             navigation = users.Metadata.FindNavigation(nameof(User.PasswordHistories));
@@ -187,6 +270,8 @@ namespace Initium.Portal.Infrastructure
                 passwordHistories.Property(passwordHistory => passwordHistory.Id)
                     .ValueGeneratedNever();
                 passwordHistories.Ignore(passwordHistory => passwordHistory.DomainEvents);
+                passwordHistories.Metadata.AddAnnotation("MULTI_TENANT", null);
+                passwordHistories.Property<Guid>("TenantId");
             });
 
             navigation = users.Metadata.FindNavigation(nameof(User.UserNotifications));
@@ -200,6 +285,8 @@ namespace Initium.Portal.Infrastructure
                     .ValueGeneratedNever();
                 userNotifications.Property(userNotification => userNotification.Id).HasColumnName("NotificationId");
                 userNotifications.Ignore(userNotification => userNotification.DomainEvents);
+                userNotifications.Metadata.AddAnnotation("MULTI_TENANT", null);
+                userNotifications.Property<Guid>("TenantId");
             });
         }
     }

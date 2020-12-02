@@ -12,4 +12,5 @@
     ,   [IsAdmin] BIT NOT NULL DEFAULT 0
     ,   [WhenVerified] DATETIME2 NULL
     ,   [WhenDisabled] DATETIME2 NULL
+    ,   [TenantId] UNIQUEIDENTIFIER NOT NULL
 )

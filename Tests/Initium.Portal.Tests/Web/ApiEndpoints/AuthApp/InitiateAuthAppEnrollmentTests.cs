@@ -4,6 +4,7 @@
 using System.Text.Encodings.Web;
 using System.Threading;
 using System.Threading.Tasks;
+using Finbuckle.MultiTenant;
 using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Domain;
@@ -32,15 +33,16 @@ namespace Initium.Portal.Tests.Web.ApiEndpoints.AuthApp
                 .ReturnsAsync(() =>
                     Result.Fail<InitiateAuthenticatorAppEnrollmentCommandResult, ErrorData>(
                         new ErrorData(ErrorCodes.AuthenticationFailed)));
-            var securitySettings = new Mock<IOptions<SecuritySettings>>();
+
             var urlEncoder = new Mock<UrlEncoder>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(
                 Maybe.From(
                     new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as
                         ISystemUser));
+            var tenantInfo = new Mock<ITenantInfo>();
 
-            var endpoint = new InitiateAuthAppEnrollment(currentAuthenticatedUserProvider.Object, mediator.Object, urlEncoder.Object, securitySettings.Object);
+            var endpoint = new InitiateAuthAppEnrollment(currentAuthenticatedUserProvider.Object, mediator.Object, urlEncoder.Object, tenantInfo.Object);
 
             var response = await endpoint.HandleAsync();
             var rawResult = Assert.IsType<OkObjectResult>(response.Result);
@@ -68,7 +70,9 @@ namespace Initium.Portal.Tests.Web.ApiEndpoints.AuthApp
                     new AuthenticatedUser(TestVariables.UserId, "email-address", "first-name", "last-name") as
                         ISystemUser));
 
-            var endpoint = new InitiateAuthAppEnrollment(currentAuthenticatedUserProvider.Object, mediator.Object, urlEncoder.Object, securitySettings.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            var endpoint = new InitiateAuthAppEnrollment(currentAuthenticatedUserProvider.Object, mediator.Object, urlEncoder.Object, tenantInfo.Object);
 
             var response = await endpoint.HandleAsync();
             var rawResult = Assert.IsType<OkObjectResult>(response.Result);
@@ -83,12 +87,13 @@ namespace Initium.Portal.Tests.Web.ApiEndpoints.AuthApp
         public async Task HandleAsync_GivenNoUserIsAuthenticated_ExpectFailedResult()
         {
             var mediator = new Mock<IMediator>();
-            var securitySettings = new Mock<IOptions<SecuritySettings>>();
             var urlEncoder = new Mock<UrlEncoder>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe<ISystemUser>.Nothing);
 
-            var endpoint = new InitiateAuthAppEnrollment(currentAuthenticatedUserProvider.Object, mediator.Object, urlEncoder.Object, securitySettings.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            var endpoint = new InitiateAuthAppEnrollment(currentAuthenticatedUserProvider.Object, mediator.Object, urlEncoder.Object, tenantInfo.Object);
 
             var response = await endpoint.HandleAsync();
             var rawResult = Assert.IsType<OkObjectResult>(response.Result);
@@ -100,13 +105,14 @@ namespace Initium.Portal.Tests.Web.ApiEndpoints.AuthApp
         public async Task HandleAsync_GivenUserIsNotAuthenticatedUser_ExpectFailedResult()
         {
             var mediator = new Mock<IMediator>();
-            var securitySettings = new Mock<IOptions<SecuritySettings>>();
             var urlEncoder = new Mock<UrlEncoder>();
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new Mock<ISystemUser>().Object));
 
-            var endpoint = new InitiateAuthAppEnrollment(currentAuthenticatedUserProvider.Object, mediator.Object, urlEncoder.Object, securitySettings.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            var endpoint = new InitiateAuthAppEnrollment(currentAuthenticatedUserProvider.Object, mediator.Object, urlEncoder.Object, tenantInfo.Object);
 
             var response = await endpoint.HandleAsync();
             var rawResult = Assert.IsType<OkObjectResult>(response.Result);

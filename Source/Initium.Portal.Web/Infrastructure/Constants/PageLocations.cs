@@ -44,5 +44,13 @@ namespace Initium.Portal.Web.Infrastructure.Constants
 
         public const string SystemAlertEdit = "/App/SystemAlerts/EditSystemAlert";
         public const string UserNotifications = "/App/Notifications/ListNotifications";
+
+        public const string TenantCreate = "/App/Tenants/CreateTenant";
+
+        public const string TenantView = "/App/Tenants/ViewTenant";
+
+        public const string TenantListing = "/App/Tenants/ListTenants";
+
+        public const string TenantEdit = "/App/Tenants/EditTenant";
     }
 }

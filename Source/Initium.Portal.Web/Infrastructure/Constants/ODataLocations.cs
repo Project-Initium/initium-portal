@@ -16,5 +16,9 @@ namespace Initium.Portal.Web.Infrastructure.Constants
         public const string SystemAlertFilteredExport = "/odata/systemAlert/systemAlert.filteredexport";
 
         public const string SystemAlertFilteredListing = "/odata/systemAlert/systemAlert.filtered";
+
+        public const string TenantFilteredExport = "/odata/tenant/tenant.filteredexport";
+
+        public const string TenantFilteredListing = "/odata/tenant/tenant.filtered";
     }
 }

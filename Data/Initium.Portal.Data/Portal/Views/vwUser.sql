@@ -13,6 +13,7 @@ SELECT
 	,	p.LastName
 	,   u.WhenLocked
 	,   u.WhenDisabled
+	,	u.TenantId
 FROM [Identity].[User] u
 LEFT JOIN [Identity].Profile p
 	ON u.Id = p.UserId

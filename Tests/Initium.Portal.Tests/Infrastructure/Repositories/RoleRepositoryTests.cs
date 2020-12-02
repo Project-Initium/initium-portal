@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Finbuckle.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Infrastructure;
 using Initium.Portal.Infrastructure.Repositories;
@@ -26,7 +27,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Add(new Mock<IRole>().Object));
             Assert.Equal("role", exception.Message);
@@ -41,7 +44,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             roleRepository.Add(role);
@@ -59,7 +64,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Delete(new Mock<IRole>().Object));
             Assert.Equal("role", exception.Message);
@@ -74,7 +81,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "nane", new List<Guid>());
             roleRepository.Delete(role);
@@ -92,7 +101,10 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            await using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             await context.Roles.AddAsync(role);
             await context.SaveEntitiesAsync();
@@ -110,7 +122,10 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            await using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+
+            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var maybe = await roleRepository.Find(TestVariables.RoleId);
             Assert.True(maybe.HasNoValue);
@@ -125,7 +140,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Update(new Mock<IRole>().Object));
             Assert.Equal("role", exception.Message);
@@ -140,7 +157,9 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
 
             var mediator = new Mock<IMediator>();
 
-            using var context = new DataContext(options, mediator.Object);
+            var tenantInfo = new Mock<ITenantInfo>();
+
+            using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             roleRepository.Update(role);

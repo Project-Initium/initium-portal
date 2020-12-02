@@ -21,4 +21,11 @@
     <Property Name="ParentElementType" Value="SqlTable" />
     <Property Name="NewName" Value="WhenToShow" />
   </Operation>
+  <Operation Name="Rename Refactor" Key="2e9fd443-d8a5-4f7f-b541-8c93a40e4fc1" ChangeDateTime="09/16/2020 11:55:14">
+    <Property Name="ElementName" Value="[Admin].[TenantFeature].[Id]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[Admin].[TenantFeature]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="TenantId" />
+  </Operation>
 </Operations>

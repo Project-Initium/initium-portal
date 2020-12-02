@@ -35,6 +35,7 @@ namespace Initium.Portal.Web
         public void ConfigureServices(IServiceCollection services)
         {
             services
+                .AddCustomizedMultiTenant()
                 .AddDataStores(this.Configuration)
                 .AddConfigurationRoot()
                 .AddCustomizedMediatR()
@@ -48,6 +49,7 @@ namespace Initium.Portal.Web
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app
+                .UseMultiTenant()
                 .AddCustomizedErrorResponse(env)
                 .UseXContentTypeOptions()
                 .UseReferrerPolicy(opts => opts.NoReferrer())
