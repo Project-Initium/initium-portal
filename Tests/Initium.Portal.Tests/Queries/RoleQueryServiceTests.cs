@@ -64,12 +64,6 @@ namespace Initium.Portal.Tests.Queries
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             var role = context.Add(new RoleReadEntity
             {
-                DefaultTenantId = TestVariables.TenantId,
-            });
-
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var role = context.Add(new Role
-            {
                 Id = TestVariables.RoleId,
                 Name = "name",
             });
@@ -102,12 +96,6 @@ namespace Initium.Portal.Tests.Queries
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             var role = context.Add(new RoleReadEntity
             {
-                DefaultTenantId = TestVariables.TenantId,
-            });
-
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var role = context.Add(new Role
-            {
                 Id = TestVariables.RoleId,
                 ResourceCount = 1,
             });
@@ -139,12 +127,6 @@ namespace Initium.Portal.Tests.Queries
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             var role = context.Add(new RoleReadEntity
-            {
-                DefaultTenantId = TestVariables.TenantId,
-            });
-
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var role = context.Add(new Role
             {
                 Id = TestVariables.RoleId,
             });
@@ -274,12 +256,6 @@ namespace Initium.Portal.Tests.Queries
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             var role = context.Add(new RoleReadEntity
-            {
-                DefaultTenantId = TestVariables.TenantId,
-            });
-
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var role = context.Add(new Role
             {
                 Id = TestVariables.RoleId,
                 Name = "name",

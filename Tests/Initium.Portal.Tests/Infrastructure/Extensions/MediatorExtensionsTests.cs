@@ -42,7 +42,7 @@ namespace Initium.Portal.Tests.Infrastructure.Extensions
             Assert.Empty(role.DomainEvents);
             mediator.Verify(x => x.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()), Times.Once);
         }
-        
+
         [Fact]
         public async Task
             DDispatchIntegrationEventsAsync_GivenEntitiesWithEvents_NotificationsArePublishedAndEventsAreCleared()
