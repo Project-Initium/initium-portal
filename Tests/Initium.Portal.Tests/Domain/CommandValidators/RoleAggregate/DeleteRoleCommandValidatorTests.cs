@@ -27,6 +27,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.RoleAggregate
             var validator = new DeleteRoleCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&

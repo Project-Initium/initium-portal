@@ -1,0 +1,16 @@
+<Project Sdk="MSBuild.Sdk.SqlProj/1.1.0">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <SqlServerVersion>SqlAzure</SqlServerVersion>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Content Include="..\Initium.Portal.Data\Schema\**\*.sql" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <PostDeploy Include="..\Initium.Portal.Data\_DeploymentScripts\Script.PostDeployment.sql" />
+    </ItemGroup>
+    
+</Project>

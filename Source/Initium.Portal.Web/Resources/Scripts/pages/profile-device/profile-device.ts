@@ -1,9 +1,41 @@
-﻿import {ArrayHelpers} from '../../helpers'
-import {ValidationProvider} from '../../providers';
+﻿import { ArrayHelpers, XhrHelper } from '../../helpers';
+import { ValidationProvider } from '../../providers';
 import 'bootstrap';
 import moment from 'moment';
-import {IBasicApiResponse} from '../../types/IBasicApiResponse';
-import {ToastHelper} from '../../helpers';
+import { IBasicApiResponse } from '../../types/IBasicApiResponse';
+import { ToastHelper } from '../../helpers';
+
+interface ICredentialCreateOptionsResult {
+    rp: PublicKeyCredentialRpEntity;
+    user: {
+        name: string;
+        id: string;
+        displayName: string;
+    };
+    challenge: string;
+    pubKeyCredParams: PublicKeyCredentialParameters[];
+    timeout: number;
+    attestation: AttestationConveyancePreference;
+    authenticatorSelection: AuthenticatorSelectionCriteria;
+    excludeCredentials: {
+        type: PublicKeyCredentialType;
+        id: string;
+        transports: AuthenticatorTransport[]
+    }[];
+    extensions: AuthenticationExtensionsClientInputs;
+    status: string;
+    errorMessage: string;
+}
+
+interface IRegisterNewCredentialResult {
+    deviceId: string;
+    name: string;
+    credentialMakeResult: {
+        status: string;
+        errorMessage: string;
+    };
+}
+
 
 export class ProfileDevice {
     private enrollmentForm: HTMLFormElement;
@@ -13,6 +45,7 @@ export class ProfileDevice {
 
     private revokeForm: HTMLFormElement;
     private revokeFormSlideOut: JQuery<any>;
+    private revokeFormButtons: NodeListOf<HTMLButtonElement>;
     private revokeValidator: ValidationProvider;
     private deviceToRevoke: string;
 
@@ -22,7 +55,7 @@ export class ProfileDevice {
         if (document.readyState !== 'loading') {
             this.init();
         } else {
-            document.addEventListener('DOMContentLoaded', e => this.init());
+            document.addEventListener('DOMContentLoaded', _ => this.init());
         }
     }
 
@@ -36,7 +69,7 @@ export class ProfileDevice {
         this.enrollmentValidator = new ValidationProvider(this.enrollmentForm, false);
         this.enrollmentForm.addEventListener('submit', (event: Event) => contextThis.completeEnrollment(event));
         document.querySelectorAll('[data-type]').forEach(value => {
-            value.addEventListener('click', (event)=> contextThis.displayEnrollment(event))
+            value.addEventListener('click', (event)=> contextThis.displayEnrollment(event));
         });
 
         this.revokeForm = document.querySelector<HTMLFormElement>('#revoke-device-modal');
@@ -46,6 +79,7 @@ export class ProfileDevice {
         });
         this.revokeValidator = new ValidationProvider(this.revokeForm, false);
         this.revokeForm.addEventListener('submit', (event: Event) => contextThis.revokeDevice(event));
+        this.revokeFormButtons = this.revokeForm.querySelectorAll('button');
 
         this.registeredDevices = document.getElementById('registered-devices') as HTMLFormElement;
         this.registeredDevices.addEventListener('click', (event) => contextThis.displayRevoke(event));
@@ -55,129 +89,86 @@ export class ProfileDevice {
     private async completeEnrollment(event: Event) {
         event.preventDefault();
         if (this.enrollmentValidator.validate().isValid) {
-            let makeCredentialOptions;
             const name = this.enrollmentForm.querySelector<HTMLInputElement>('[data-device-name]').value;
-            try {
-                makeCredentialOptions = await this.startDeviceRegistration();
-            } catch (e) {
+
+            const credentialCreateOptionsResult = await XhrHelper.PostJsonInternalOfT<ICredentialCreateOptionsResult>(
+                this.enrollmentForm.dataset.initiateUrl,
+                {
+                    authenticatorAttachment: this.tokenType
+                },
+                this.enrollmentForm.dataset.afToken
+            );
+
+            if (credentialCreateOptionsResult.isFailure || credentialCreateOptionsResult.value.status !== 'ok') {
                 ToastHelper.showFailureToast('There was an issue setting up your device. Please try again');
                 return;
             }
 
-            if (makeCredentialOptions.status !== 'ok') {
-                ToastHelper.showFailureToast('There was an issue setting up your device. Please try again');
-                return;
-            }
+            const publicKeyCredentialCreationOptions: PublicKeyCredentialCreationOptions = {
+                attestation: credentialCreateOptionsResult.value.attestation,
+                authenticatorSelection: credentialCreateOptionsResult.value.authenticatorSelection ?? undefined,
+                challenge: ArrayHelpers.coerceToArrayBuffer(credentialCreateOptionsResult.value.challenge),
+                excludeCredentials: [],
+                extensions: credentialCreateOptionsResult.value.extensions,
+                pubKeyCredParams: credentialCreateOptionsResult.value.pubKeyCredParams,
+                rp: credentialCreateOptionsResult.value.rp,
+                timeout: credentialCreateOptionsResult.value.timeout,
+                user: {
+                    displayName: credentialCreateOptionsResult.value.user.displayName,
+                    name: credentialCreateOptionsResult.value.user.name,
+                    id: ArrayHelpers.coerceToArrayBuffer(credentialCreateOptionsResult.value.user.id)
+                }
+            };
 
-            makeCredentialOptions.challenge = ArrayHelpers.coerceToArrayBuffer(makeCredentialOptions.challenge);
-            makeCredentialOptions.user.id = ArrayHelpers.coerceToArrayBuffer(makeCredentialOptions.user.id);
-
-            makeCredentialOptions.excludeCredentials = makeCredentialOptions.excludeCredentials.map((c) => {
-                c.id = ArrayHelpers.coerceToArrayBuffer(c.id);
-                return c;
+            credentialCreateOptionsResult.value.excludeCredentials.forEach(excludeCredential => {
+                publicKeyCredentialCreationOptions.excludeCredentials.push({
+                    type: excludeCredential.type,
+                    transports: excludeCredential.transports,
+                    id: ArrayHelpers.coerceToArrayBuffer(excludeCredential.id)
+                });
             });
 
-            if (makeCredentialOptions.authenticatorSelection.authenticatorAttachment === null) {
-                makeCredentialOptions.authenticatorSelection.authenticatorAttachment = undefined;
-            }
+            const newCredential: any = await navigator.credentials.create({publicKey: publicKeyCredentialCreationOptions});
 
-            let newCredential;
-            try {
-                newCredential = await navigator.credentials.create({
-                    publicKey: makeCredentialOptions
-                });
-            } catch (e) {
-                ToastHelper.showFailureToast('There was an issue setting up your device. Please try again');
-                return
-            }
+            const attestationObject = new Uint8Array(newCredential.response.attestationObject);
+            const clientDataJSON = new Uint8Array(newCredential.response.clientDataJSON);
+            const rawId = new Uint8Array(newCredential.rawId);
 
-            try {
-                await this.registerNewCredential(name, newCredential);
-            } catch (e) {
+            const data = {
+                name,
+                attestationResponse: {
+                    id:  newCredential.id,
+                    rawId: ArrayHelpers.coerceToBase64Url(rawId),
+                    type: newCredential.type,
+                    extensions: newCredential.getClientExtensionResults(),
+                    response: {
+                        AttestationObject: ArrayHelpers.coerceToBase64Url(attestationObject),
+                        clientDataJson: ArrayHelpers.coerceToBase64Url(clientDataJSON)
+                    }
+                }
+            };
+
+            const registerNewCredentialResult = await XhrHelper.PostJsonInternalOfT<IRegisterNewCredentialResult>(
+                this.enrollmentForm.dataset.completeUrl,
+                data,
+                this.enrollmentForm.dataset.afToken);
+
+            if (registerNewCredentialResult.isFailure || registerNewCredentialResult.value.credentialMakeResult.status !== 'ok') {
                 ToastHelper.showFailureToast('There was an issue setting up your device. Please try again');
                 return;
             }
+
+            const d = document.createElement('div');
+            d.innerHTML = document.getElementById('device-template').innerText;
+            d.dataset.deviceId = registerNewCredentialResult.value.deviceId;
+            (d.querySelector('[data-device-name]') as HTMLElement).innerText = `${registerNewCredentialResult.value.name}`;
+            (d.querySelector('[data-device-remove]') as HTMLButtonElement).value =`${registerNewCredentialResult.value.deviceId}`;
+            (d.querySelector('[data-when-enrolled]') as HTMLElement).innerText = moment().format('DD/MM/YYYY');
+            document.getElementById('registered-devices').appendChild(d);
+            this.enrollmentFormSlideOut.modal('hide');
         }
     }
 
-    private async startDeviceRegistration(): Promise<PublicKeyCredentialCreationOptions> {
-        const response = await fetch(this.enrollmentForm.dataset.initiateUrl, {
-            method: 'POST',
-            mode: 'same-origin',
-            cache: 'no-cache',
-            body: JSON.stringify({
-                authenticatorAttachment: this.tokenType
-            }),
-            credentials: 'same-origin',
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': this.enrollmentForm.dataset.afToken
-            }
-        });
-        return await response.json();
-    }
-
-    private async registerNewCredential(name: string, newCredential) {
-        const attestationObject = new Uint8Array(newCredential.response.attestationObject);
-        const clientDataJSON = new Uint8Array(newCredential.response.clientDataJSON);
-        const rawId = new Uint8Array(newCredential.rawId);
-
-        const data = {
-            name,
-            attestationResponse: {
-               id:  newCredential.id,
-                rawId: ArrayHelpers.coerceToBase64Url(rawId),
-                type: newCredential.type,
-                extensions: newCredential.getClientExtensionResults(),
-                response: {
-                    AttestationObject: ArrayHelpers.coerceToBase64Url(attestationObject),
-                    clientDataJson: ArrayHelpers.coerceToBase64Url(clientDataJSON)
-                }
-            }
-        };
-
-        let response;
-        try {
-            response = await this.registerCredentialWithServer(data);
-        } catch (e) {
-            ToastHelper.showFailureToast('There was an issue setting up your device. Please try again');
-            return;
-        }
-
-        if (response.result.status !== 'ok') {
-            ToastHelper.showFailureToast('There was an issue setting up your device. Please try again');
-            return;
-        }
-
-        ToastHelper.showSuccessToast('The device has been registered.');
-
-        const d = document.createElement('div');
-        d.innerHTML = document.getElementById('device-template').innerText;
-        d.dataset.deviceId = response.deviceId;
-        (d.querySelector('[data-device-name]') as HTMLElement).innerText = `${response.name}`;
-        (d.querySelector('[data-device-remove]') as HTMLButtonElement).value =`${response.deviceId}`;
-        (d.querySelector('[data-when-enrolled]') as HTMLElement).innerText = moment().format('DD/MM/YYYY');
-        document.getElementById('registered-devices').appendChild(d);
-        this.enrollmentFormSlideOut.modal('hide');
-    }
-
-    private async registerCredentialWithServer(formData) {
-        const response = await fetch(this.enrollmentForm.dataset.completeUrl, {
-            method: 'POST',
-            mode: 'same-origin',
-            cache: 'no-cache',
-            credentials: 'same-origin',
-            body: JSON.stringify(formData),
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'RequestVerificationToken': this.enrollmentForm.dataset.afToken
-            }
-        });
-
-        return await response.json();
-    }
 
     private displayEnrollment(event: Event) {
         event.preventDefault();
@@ -198,36 +189,26 @@ export class ProfileDevice {
     private async revokeDevice(event) {
         event.preventDefault();
         if (this.revokeValidator.validate().isValid) {
-            try {
-                const response = await fetch(this.registeredDevices.dataset.endpointUrl, {
-                    method: 'POST',
-                    mode: 'same-origin',
-                    cache: 'no-cache',
-                    credentials: 'same-origin',
-                    body: JSON.stringify({
-                        deviceId: this.deviceToRevoke,
-                        password: this.revokeForm.querySelector<HTMLInputElement>('[data-device-password]').value
-                    }),
-                    headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'RequestVerificationToken': this.registeredDevices.dataset.afToken
-                    }
-                });
-                const data: any = await response.json() as IBasicApiResponse;
-                if (data.isSuccess) {
-                    this.registeredDevices.removeChild(this.registeredDevices.querySelector(`[data-device-id="${this.deviceToRevoke}"]`));
-                    ToastHelper.showSuccessToast('The device has been revoked.');
-                    this.revokeFormSlideOut.modal('hide');
-                    return;
-                }
+            this.revokeFormButtons.forEach(ele => ele.disabled = true);
+            const result = await XhrHelper.PostJsonInternalOfT<IBasicApiResponse>(
+                this.registeredDevices.dataset.endpointUrl,
+                {
+                    deviceId: this.deviceToRevoke,
+                    password: this.revokeForm.querySelector<HTMLInputElement>('[data-device-password]').value
+                },
+                this.registeredDevices.dataset.afToken);
 
-            } catch (e) {
+            if (result.isSuccess && result.value.isSuccess) {
+                this.registeredDevices.removeChild(this.registeredDevices.querySelector(`[data-device-id="${this.deviceToRevoke}"]`));
+                ToastHelper.showSuccessToast('The device has been revoked.');
+                this.revokeFormSlideOut.modal('hide');
+            } else {
+                ToastHelper.showFailureToast('Sorry, there was an issue revoking the device.  Please try again.');
             }
-
-            ToastHelper.showFailureToast('Sorry, there was an issue revoking the device.  Please try again.');
+            this.revokeFormButtons.forEach(ele => ele.disabled = false);
         }
     }
 }
 
-const p = new ProfileDevice();
+// tslint:disable-next-line:no-unused-expression
+new ProfileDevice();

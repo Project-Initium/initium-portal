@@ -13,6 +13,7 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public EnableAccountCommandValidator()
         {
             this.RuleFor(x => x.UserId)
+                .Cascade(CascadeMode.Stop)
                 .NotEqual(Guid.Empty).WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

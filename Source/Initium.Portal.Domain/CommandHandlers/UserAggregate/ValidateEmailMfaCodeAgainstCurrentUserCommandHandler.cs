@@ -4,7 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Initium.Portal.Core;
+using Initium.Portal.Core.Authentication;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Domain;
@@ -24,16 +24,16 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly IUserRepository _userRepository;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IClock _clock;
-        private readonly ILogger _logger;
+        private readonly ILogger<ValidateEmailMfaCodeAgainstCurrentUserCommandHandler> _logger;
 
         public ValidateEmailMfaCodeAgainstCurrentUserCommandHandler(
             IUserRepository userRepository, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider,
             IClock clock, ILogger<ValidateEmailMfaCodeAgainstCurrentUserCommandHandler> logger)
         {
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._clock = clock;
+            this._logger = logger;
         }
 
         public async Task<Result<ValidateEmailMfaCodeAgainstCurrentUserCommandResult, ErrorData>> Handle(ValidateEmailMfaCodeAgainstCurrentUserCommand request, CancellationToken cancellationToken)

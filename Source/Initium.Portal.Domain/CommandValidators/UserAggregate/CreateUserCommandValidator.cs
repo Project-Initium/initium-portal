@@ -12,11 +12,16 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public CreateUserCommandValidator()
         {
             this.RuleFor(x => x.EmailAddress)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired)
                 .EmailAddress().WithErrorCode(ValidationCodes.ValueMustBeAnEmailAddress);
+
             this.RuleFor(x => x.FirstName)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
+
             this.RuleFor(x => x.LastName)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

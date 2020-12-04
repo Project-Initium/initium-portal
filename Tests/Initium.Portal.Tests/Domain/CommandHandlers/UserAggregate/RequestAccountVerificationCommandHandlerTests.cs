@@ -10,7 +10,7 @@ using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MaybeMonad;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -37,11 +37,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<RequestAccountVerificationCommandHandler>>();
-
-            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
+            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, Mock.Of<IClock>(), Mock.Of<ILogger<RequestAccountVerificationCommandHandler>>());
             var cmd = new RequestAccountVerificationCommand("email-address");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -64,11 +60,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<RequestAccountVerificationCommandHandler>>();
-
-            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
+            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, Mock.Of<IClock>(), Mock.Of<ILogger<RequestAccountVerificationCommandHandler>>());
             var cmd = new RequestAccountVerificationCommand("email-address");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -89,11 +81,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<RequestAccountVerificationCommandHandler>>();
-
-            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
+            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, Mock.Of<IClock>(), Mock.Of<ILogger<RequestAccountVerificationCommandHandler>>());
             var cmd = new RequestAccountVerificationCommand("email-address");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -119,11 +107,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<RequestAccountVerificationCommandHandler>>();
-
-            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
+            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, Mock.Of<IClock>(), Mock.Of<ILogger<RequestAccountVerificationCommandHandler>>());
             var cmd = new RequestAccountVerificationCommand("email-address");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -147,18 +131,14 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<RequestAccountVerificationCommandHandler>>();
-
-            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, clock.Object, logger.Object);
+            var handler = new RequestAccountVerificationCommandHandler(userRepository.Object, securitySettings.Object, Mock.Of<IClock>(), Mock.Of<ILogger<RequestAccountVerificationCommandHandler>>());
             var cmd = new RequestAccountVerificationCommand("email-address");
 
             await handler.Handle(cmd, CancellationToken.None);
 
             user.Verify(x => x.GenerateNewAccountConfirmationToken(It.IsAny<DateTime>(), It.IsAny<TimeSpan>()), Times.Once);
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
-            user.Verify(x => x.AddDomainEvent(It.IsAny<AccountConfirmationTokenGeneratedEvent>()));
+            user.Verify(x => x.AddIntegrationEvent(It.IsAny<AccountConfirmationTokenGeneratedIntegrationEvent>()));
         }
     }
 }

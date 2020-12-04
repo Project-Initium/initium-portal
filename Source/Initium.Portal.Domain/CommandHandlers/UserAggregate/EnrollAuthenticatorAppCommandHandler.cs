@@ -5,7 +5,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Initium.Portal.Core;
+using Initium.Portal.Core.Authentication;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
@@ -24,17 +24,15 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly IClock _clock;
         private readonly IUserRepository _userRepository;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
-        private readonly ILogger _logger;
+        private readonly ILogger<EnrollAuthenticatorAppCommandHandler> _logger;
 
         public EnrollAuthenticatorAppCommandHandler(IUserRepository userRepository, IClock clock,
             ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, ILogger<EnrollAuthenticatorAppCommandHandler> logger)
         {
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ??
-                                                     throw new ArgumentNullException(
-                                                         nameof(currentAuthenticatedUserProvider));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._clock = clock;
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._logger = logger;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(

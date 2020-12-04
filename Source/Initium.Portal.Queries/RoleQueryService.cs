@@ -16,14 +16,14 @@ namespace Initium.Portal.Queries
 {
     public class RoleQueryService : IRoleQueryService
     {
-        private readonly QueryContext _context;
+        private readonly ICoreQueryContext _context;
 
-        public RoleQueryService(QueryContext context)
+        public RoleQueryService(ICoreQueryContext context)
         {
-            this._context = context;
+            this._context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public IQueryable<Role> QueryableEntity => this._context.Roles;
+        public IQueryable<RoleReadEntity> QueryableEntity => this._context.Roles;
 
         public async Task<StatusCheckModel> CheckForPresenceOfRoleByName(string name)
         {
@@ -38,7 +38,6 @@ namespace Initium.Portal.Queries
         public async Task<Maybe<DetailedRoleModel>> GetDetailsOfRoleById(Guid roleId)
         {
             var data = await this.QueryableEntity
-                .Include(x => x.RoleResources)
                 .Where(role => role.Id == roleId)
                 .Select(role => new
                 {

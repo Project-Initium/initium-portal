@@ -19,13 +19,13 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
     {
         private readonly IUserRepository _userRepository;
         private readonly IClock _clock;
-        private readonly ILogger _logger;
+        private readonly ILogger<MarkNotificationAsDismissedCommandHandler> _logger;
 
         public MarkNotificationAsDismissedCommandHandler(IUserRepository userNotificationRepository, IClock clock, ILogger<MarkNotificationAsDismissedCommandHandler> logger)
         {
-            this._userRepository = userNotificationRepository ?? throw new ArgumentNullException(nameof(userNotificationRepository));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userNotificationRepository;
+            this._clock = clock;
+            this._logger = logger;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(MarkNotificationAsDismissedCommand request, CancellationToken cancellationToken)

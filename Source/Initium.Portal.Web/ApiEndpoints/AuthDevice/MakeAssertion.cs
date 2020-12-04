@@ -52,7 +52,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
 
             return this.Ok(new
             {
-                url = string.IsNullOrWhiteSpace(url) ? this.Url.Page(PageLocations.AppDashboard) : this.LocalRedirect(url).Url,
+                url = string.IsNullOrWhiteSpace(url) ? this.Url.Page(CorePageLocations.AppDashboard) : this.LocalRedirect(url).Url,
                 assertionVerificationResult = result.Value.AssertionVerificationResult,
             });
         }

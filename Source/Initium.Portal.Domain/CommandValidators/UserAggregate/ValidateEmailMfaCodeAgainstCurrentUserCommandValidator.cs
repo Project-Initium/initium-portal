@@ -14,6 +14,7 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public ValidateEmailMfaCodeAgainstCurrentUserCommandValidator()
         {
             this.RuleFor(x => x.Code)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

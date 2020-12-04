@@ -4,7 +4,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentValidation;
-using Initium.Portal.Core;
+using Initium.Portal.Core.Authentication;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Domain.Commands.UserAggregate;
@@ -63,7 +63,7 @@ namespace Initium.Portal.Web.Pages.Auth
 
                 if (string.IsNullOrEmpty(returnUrl))
                 {
-                    return this.RedirectToPage(PageLocations.AppDashboard);
+                    return this.RedirectToPage(CorePageLocations.AppDashboard);
                 }
 
                 return this.LocalRedirect(returnUrl);
@@ -80,7 +80,7 @@ namespace Initium.Portal.Web.Pages.Auth
 
             if (result.IsSuccess)
             {
-                return this.RedirectToPage(PageLocations.AuthAppMfa);
+                return this.RedirectToPage(CorePageLocations.AuthAppMfa);
             }
 
             this.PrgState = PrgState.Failed;
@@ -95,7 +95,7 @@ namespace Initium.Portal.Web.Pages.Auth
             if (result.IsSuccess)
             {
                 this.TempData["fido2.assertionOptions"] = result.Value.AssertionOptions.ToJson();
-                return this.RedirectToPage(PageLocations.AuthDeviceMfa);
+                return this.RedirectToPage(CorePageLocations.AuthDeviceMfa);
             }
 
             this.PrgState = PrgState.Failed;

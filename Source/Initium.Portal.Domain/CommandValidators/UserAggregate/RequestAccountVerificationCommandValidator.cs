@@ -12,6 +12,7 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public RequestAccountVerificationCommandValidator()
         {
             this.RuleFor(x => x.EmailAddress)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired)
                 .EmailAddress().WithErrorCode(ValidationCodes.ValueMustBeAnEmailAddress);
         }

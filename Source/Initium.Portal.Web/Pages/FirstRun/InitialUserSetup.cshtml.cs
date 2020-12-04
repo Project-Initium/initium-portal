@@ -49,7 +49,7 @@ namespace Initium.Portal.Web.Pages.FirstRun
 
             if (!result.IsFailure)
             {
-                return this.RedirectToPage(PageLocations.FirstRunSetupCompleted);
+                return this.RedirectToPage(CorePageLocations.FirstRunSetupCompleted);
             }
 
             this.PrgState = PrgState.Failed;

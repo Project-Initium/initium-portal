@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
@@ -16,15 +17,18 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
 {
     public class UpdateRoleCommandHandler : IRequestHandler<UpdateRoleCommand, ResultWithError<ErrorData>>
     {
+        private readonly ILogger<UpdateRoleCommandHandler> _logger;
+        private readonly IResourceQueryService _resourceQueryService;
         private readonly IRoleQueryService _roleQueryService;
         private readonly IRoleRepository _roleRepository;
-        private readonly ILogger _logger;
 
-        public UpdateRoleCommandHandler(IRoleRepository roleRepository, IRoleQueryService roleQueryService, ILogger<UpdateRoleCommandHandler> logger)
+        public UpdateRoleCommandHandler(IRoleRepository roleRepository, IRoleQueryService roleQueryService,
+            ILogger<UpdateRoleCommandHandler> logger, IResourceQueryService resourceQueryService)
         {
-            this._roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
-            this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._roleRepository = roleRepository;
+            this._roleQueryService = roleQueryService;
+            this._logger = logger;
+            this._resourceQueryService = resourceQueryService;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(
@@ -33,14 +37,14 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._roleRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                this._logger.LogDebug("Failed saving changes.");
-                return ResultWithError.Fail(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return ResultWithError.Fail(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
         private async Task<ResultWithError<ErrorData>> Process(
@@ -66,8 +70,16 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
                 }
             }
 
+            var systemResources = await this._resourceQueryService.GetFeatureStatusBasedResources(cancellationToken);
+
+            var resources = request.Resources.ToList();
+
+            resources.AddRange(from roleResource in role.RoleResources
+                where systemResources.Any(x => !x.IsEnabled && x.Id == roleResource.Id)
+                select roleResource.Id);
+
             role.UpdateName(request.Name);
-            role.SetResources(request.Resources);
+            role.SetResources(resources);
 
             this._roleRepository.Update(role);
 

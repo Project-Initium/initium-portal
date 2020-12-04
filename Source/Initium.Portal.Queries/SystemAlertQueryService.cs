@@ -15,14 +15,14 @@ namespace Initium.Portal.Queries
 {
     public class SystemAlertQueryService : ISystemAlertQueryService
     {
-        private readonly QueryContext _context;
+        private readonly ICoreQueryContext _context;
 
-        public SystemAlertQueryService(QueryContext context)
+        public SystemAlertQueryService(ICoreQueryContext context)
         {
             this._context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public IQueryable<SystemAlert> QueryableEntity => this._context.SystemAlerts;
+        public IQueryable<SystemAlertReadEntity> QueryableEntity => this._context.SystemAlerts;
 
         public async Task<Maybe<IReadOnlyList<ActiveSystemAlert>>> GetActiveSystemAlerts()
         {

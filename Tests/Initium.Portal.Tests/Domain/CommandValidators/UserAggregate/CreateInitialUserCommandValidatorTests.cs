@@ -26,6 +26,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
@@ -39,6 +40,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.ValueMustBeAnEmailAddress) &&
@@ -52,6 +54,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
@@ -65,6 +68,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
@@ -78,6 +82,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
@@ -91,6 +96,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
@@ -104,6 +110,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
@@ -117,6 +124,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
@@ -130,6 +138,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new CreateInitialUserCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&

@@ -4,7 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Initium.Portal.Core;
+using Initium.Portal.Core.Authentication;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Contracts.Domain;
@@ -12,7 +12,7 @@ using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MaybeMonad;
 using Microsoft.Extensions.Logging;
 using Moq;
@@ -38,12 +38,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe<ISystemUser>.Nothing);
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<EmailMfaRequestedCommandHandler>>();
-
             var handler = new EmailMfaRequestedCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<EmailMfaRequestedCommandHandler>>());
             var cmd = new EmailMfaRequestedCommand();
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -71,12 +67,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.None) as ISystemUser));
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<EmailMfaRequestedCommandHandler>>();
-
             var handler = new EmailMfaRequestedCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<EmailMfaRequestedCommandHandler>>());
             var cmd = new EmailMfaRequestedCommand();
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -101,12 +93,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.Email) as ISystemUser));
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<EmailMfaRequestedCommandHandler>>();
-
             var handler = new EmailMfaRequestedCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<EmailMfaRequestedCommandHandler>>());
             var cmd = new EmailMfaRequestedCommand();
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -130,19 +118,15 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.Email) as ISystemUser));
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<EmailMfaRequestedCommandHandler>>();
-
             var handler = new EmailMfaRequestedCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<EmailMfaRequestedCommandHandler>>());
             var cmd = new EmailMfaRequestedCommand();
 
             await handler.Handle(cmd, CancellationToken.None);
             user.Verify(
                 x => x.ProcessPartialSuccessfulAuthenticationAttempt(
                     It.IsAny<DateTime>(), It.IsAny<AuthenticationHistoryType>()), Times.Once);
-            user.Verify(x => x.AddDomainEvent(It.IsAny<EmailMfaTokenGeneratedEvent>()));
+            user.Verify(x => x.AddIntegrationEvent(It.IsAny<EmailMfaTokenGeneratedIntegrationEvent>()));
         }
 
         [Fact]
@@ -160,12 +144,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(new UnauthenticatedUser(TestVariables.UserId, MfaProvider.Email) as ISystemUser));
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<EmailMfaRequestedCommandHandler>>();
-
             var handler = new EmailMfaRequestedCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<EmailMfaRequestedCommandHandler>>());
             var cmd = new EmailMfaRequestedCommand();
 
             var result = await handler.Handle(cmd, CancellationToken.None);

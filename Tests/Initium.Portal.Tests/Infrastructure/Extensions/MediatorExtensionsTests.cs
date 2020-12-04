@@ -5,9 +5,10 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Infrastructure;
+using Initium.Portal.Infrastructure.Admin;
 using Initium.Portal.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -22,15 +23,15 @@ namespace Initium.Portal.Tests.Infrastructure.Extensions
         public async Task
             DispatchDomainEventsAsync_GivenEntitiesWithEvents_NotificationsArePublishedAndEventsAreCleared()
         {
-            var options = new DbContextOptionsBuilder<DataContext>()
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .Options;
 
             var mediator = new Mock<IMediator>();
 
-            var tenantInfo = new Mock<ITenantInfo>();
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
 
-            await using var context = new DataContext(options, mediator.Object, tenantInfo.Object);
+            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             var @event = new Mock<INotification>();
             role.AddDomainEvent(@event.Object);
@@ -39,6 +40,30 @@ namespace Initium.Portal.Tests.Infrastructure.Extensions
             await mediator.Object.DispatchDomainEventsAsync(context);
 
             Assert.Empty(role.DomainEvents);
+            mediator.Verify(x => x.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task
+            DDispatchIntegrationEventsAsync_GivenEntitiesWithEvents_NotificationsArePublishedAndEventsAreCleared()
+        {
+            var options = new DbContextOptionsBuilder<CoreDataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .Options;
+
+            var mediator = new Mock<IMediator>();
+
+            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
+
+            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
+            var @event = new Mock<INotification>();
+            role.AddIntegrationEvent(@event.Object);
+            await context.Roles.AddAsync(role);
+
+            await mediator.Object.DispatchIntegrationEventsAsync(context);
+
+            Assert.Empty(role.IntegrationEvents);
             mediator.Verify(x => x.Publish(It.IsAny<INotification>(), It.IsAny<CancellationToken>()), Times.Once);
         }
     }

@@ -12,6 +12,7 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public RevokeAuthenticatorAppCommandValidator()
         {
             this.RuleFor(x => x.Password)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

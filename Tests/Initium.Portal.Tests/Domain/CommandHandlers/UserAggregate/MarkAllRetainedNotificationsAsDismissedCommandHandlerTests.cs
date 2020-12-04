@@ -34,11 +34,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            var clock = new Mock<IClock>();
 
-            var logger = new Mock<ILogger<MarkAllRetainedNotificationsAsDismissedCommandHandler>>();
-
-            var handler = new MarkAllRetainedNotificationsAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
+            var handler = new MarkAllRetainedNotificationsAsDismissedCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<MarkAllRetainedNotificationsAsDismissedCommandHandler>>());
             var cmd = new MarkAllRetainedNotificationsAsDismissedCommand(TestVariables.UserId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -61,11 +58,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            var clock = new Mock<IClock>();
 
-            var logger = new Mock<ILogger<MarkAllRetainedNotificationsAsDismissedCommandHandler>>();
-
-            var handler = new MarkAllRetainedNotificationsAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
+            var handler = new MarkAllRetainedNotificationsAsDismissedCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<MarkAllRetainedNotificationsAsDismissedCommandHandler>>());
             var cmd = new MarkAllRetainedNotificationsAsDismissedCommand(TestVariables.UserId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -82,11 +76,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            var clock = new Mock<IClock>();
 
-            var logger = new Mock<ILogger<MarkAllRetainedNotificationsAsDismissedCommandHandler>>();
-
-            var handler = new MarkAllRetainedNotificationsAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
+            var handler = new MarkAllRetainedNotificationsAsDismissedCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<MarkAllRetainedNotificationsAsDismissedCommandHandler>>());
             var cmd = new MarkAllRetainedNotificationsAsDismissedCommand(TestVariables.UserId);
 
             var result = await handler.Handle(cmd, CancellationToken.None);

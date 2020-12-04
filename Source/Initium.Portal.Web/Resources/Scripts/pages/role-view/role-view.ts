@@ -1,4 +1,4 @@
-import 'gijgo'
+import 'gijgo';
 
 export class RoleView {
     private tree: Types.Tree;
@@ -6,7 +6,7 @@ export class RoleView {
         if (document.readyState !== 'loading') {
             this.init();
         } else {
-            document.addEventListener('DOMContentLoaded', e => this.init());
+            document.addEventListener('DOMContentLoaded', _ => this.init());
         }
     }
 
@@ -20,11 +20,11 @@ export class RoleView {
             childrenField: 'simpleResources',
             textField: 'name',
             checkboxes: true,
-            dataBound: (e: any) => contextThis.treeOnDataBound(e)
+            dataBound: _ => contextThis.treeOnDataBound()
         });
     }
 
-    private treeOnDataBound(e: Event){
+    private treeOnDataBound(){
         const contextThis = this;
 
         const resources = document.querySelectorAll('input[type="hidden"][name="pagemodel.resources"]');
@@ -37,8 +37,9 @@ export class RoleView {
                 element.parentElement.removeChild(element);
             });
             this.tree.disableAll();
-            this.tree.expandAll()
+            this.tree.expandAll();
     }
 }
 
-const p = new RoleView();
+// tslint:disable-next-line:no-unused-expression
+new RoleView();

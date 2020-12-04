@@ -4,10 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Finbuckle.MultiTenant;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Management;
 using Initium.Portal.Web.ODataEndpoints.User;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ using Xunit;
 
 namespace Initium.Portal.Tests.Web.ODataEndpoints.User
 {
-    public class UserODataControllerTests : BaseODataControllerTest<Portal.Queries.Entities.User>
+    public class UserODataControllerTests : BaseODataControllerTest<Portal.Queries.Entities.UserReadEntity>
     {
         public static IEnumerable<object[]> FilterData
         {
@@ -47,7 +48,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.User
             get
             {
                 var modelBuilder = new ODataConventionModelBuilder(this.Provider);
-                var entitySet = modelBuilder.EntitySet<Portal.Queries.Entities.User>("User");
+                var entitySet = modelBuilder.EntitySet<Portal.Queries.Entities.UserReadEntity>("User");
                 entitySet.EntityType.HasKey(entity => entity.Id);
                 return modelBuilder.GetEdmModel();
             }
@@ -57,12 +58,14 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.User
         [MemberData(nameof(FilterData))]
         public void Filtered_GivenFilterIsNotNull_ExpectFilteredData(UserFilter filter, int count)
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -70,43 +73,43 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.User
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            context.Add(new Portal.Queries.Entities.User
+            using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            context.Add(new Portal.Queries.Entities.UserReadEntity
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = false,
                 IsLocked = true,
                 IsVerified = true,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.User
+            context.Add(new Portal.Queries.Entities.UserReadEntity
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = true,
                 IsLocked = false,
                 IsVerified = true,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.User
+            context.Add(new Portal.Queries.Entities.UserReadEntity
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = true,
                 IsLocked = true,
                 IsVerified = false,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.User
+            context.Add(new Portal.Queries.Entities.UserReadEntity
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = false,
                 IsLocked = true,
                 IsVerified = false,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.User
+            context.Add(new Portal.Queries.Entities.UserReadEntity
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = true,
                 IsLocked = true,
                 IsVerified = true,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.User
+            context.Add(new Portal.Queries.Entities.UserReadEntity
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = false,
@@ -118,18 +121,20 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.User
             userQueryService.Setup(x => x.QueryableEntity).Returns(context.Users);
             var userController = new UserODataController(userQueryService.Object);
             var result = Assert.IsType<OkObjectResult>(userController.Filtered(this.GenerateEmptyQueryOptions(), filter));
-            var data = Assert.IsType<EntityQueryable<Portal.Queries.Entities.User>>(result.Value);
+            var data = Assert.IsType<EntityQueryable<Portal.Queries.Entities.UserReadEntity>>(result.Value);
             Assert.Equal(count, data.Count());
         }
 
         [Fact]
         public void Filtered_GivenFilterIsNull_ExpectUnfiltered()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -137,43 +142,43 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.User
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            context.Add(new Portal.Queries.Entities.User
+            using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            context.Add(new Portal.Queries.Entities.UserReadEntity
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = false,
                 IsLocked = true,
                 IsVerified = true,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.User
+            context.Add(new Portal.Queries.Entities.UserReadEntity
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = true,
                 IsLocked = false,
                 IsVerified = true,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.User
+            context.Add(new Portal.Queries.Entities.UserReadEntity
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = true,
                 IsLocked = true,
                 IsVerified = false,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.User
+            context.Add(new Portal.Queries.Entities.UserReadEntity
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = false,
                 IsLocked = true,
                 IsVerified = false,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.User
+            context.Add(new Portal.Queries.Entities.UserReadEntity
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = true,
                 IsLocked = true,
                 IsVerified = true,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.User
+            context.Add(new Portal.Queries.Entities.UserReadEntity
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = false,
@@ -186,7 +191,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.User
             userQueryService.Setup(x => x.QueryableEntity).Returns(context.Users);
             var userController = new UserODataController(userQueryService.Object);
             var result = Assert.IsType<OkObjectResult>(userController.Filtered(this.GenerateEmptyQueryOptions(), null));
-            var data = Assert.IsType<InternalDbSet<Portal.Queries.Entities.User>>(result.Value);
+            var data = Assert.IsType<InternalDbSet<Portal.Queries.Entities.UserReadEntity>>(result.Value);
             Assert.Equal(6, data.AsQueryable().Count());
         }
     }

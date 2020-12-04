@@ -5,10 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Entities;
+using Initium.Portal.Queries.Management;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Moq;
@@ -21,12 +22,14 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task CheckForPresenceOfRoleByName_GivenRoleDoesNotExist_ExpectNotPresentStatus()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -34,7 +37,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             var roleQueries = new RoleQueryService(context);
             var result = await roleQueries.CheckForPresenceOfRoleByName("name");
             Assert.False(result.IsPresent);
@@ -43,12 +46,14 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task CheckForPresenceOfRoleByName_GivenRoleDoesExist_ExpectPresentStatus()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -56,8 +61,8 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var role = context.Add(new Role
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            var role = context.Add(new RoleReadEntity
             {
                 Id = TestVariables.RoleId,
                 Name = "name",
@@ -73,12 +78,14 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task CheckForRoleUsageById_GivenRoleIsInUse_ExpectPresentStatus()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -86,8 +93,8 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var role = context.Add(new Role
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            var role = context.Add(new RoleReadEntity
             {
                 Id = TestVariables.RoleId,
                 ResourceCount = 1,
@@ -103,12 +110,14 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task CheckForRoleUsageById_GivenRoleIsNotInUse_ExpectNotPresentStatus()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -116,8 +125,8 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var role = context.Add(new Role
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            var role = context.Add(new RoleReadEntity
             {
                 Id = TestVariables.RoleId,
             });
@@ -130,12 +139,14 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetDetailsOfRoleById_GivenDataIsFound_ExpectMaybeWithMappedData()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -143,7 +154,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
 
             var roleQueries = new RoleQueryService(context);
             var result = await roleQueries.GetDetailsOfRoleById(TestVariables.RoleId);
@@ -153,12 +164,14 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetDetailsOfRoleById_GivenNoDataIsFound_ExpectMaybeWithNothing()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -166,21 +179,21 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var roleResource = await context.RoleResources.AddAsync(new RoleResource
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            var roleResource = await context.RoleResources.AddAsync(new RoleResourceReadEntity
             {
-                Resource = new Resource
+                Resource = new ResourceReadEntity
                 {
                     Id = TestVariables.ResourceId,
                 },
             });
             roleResource.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var role = await context.Roles.AddAsync(new Role
+            var role = await context.Roles.AddAsync(new RoleReadEntity
             {
                 Id = TestVariables.RoleId,
                 Name = "name",
-                RoleResources = new List<RoleResource>
+                RoleResources = new List<RoleResourceReadEntity>
                 {
                     roleResource.Entity,
                 },
@@ -201,12 +214,14 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetSimpleRoles_GivenNoDataIsFound_ExpectMaybeWithNothing()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -214,7 +229,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
 
             var roleQueries = new RoleQueryService(context);
             var result = await roleQueries.GetSimpleRoles();
@@ -224,12 +239,14 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetSimpleRoles_GivenDataIsFound_ExpectMaybeWithMappedData()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -237,8 +254,8 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var role = context.Add(new Role
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            var role = context.Add(new RoleReadEntity
             {
                 Id = TestVariables.RoleId,
                 Name = "name",

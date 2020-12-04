@@ -12,9 +12,17 @@ namespace Initium.Portal.Tests
         [Theory]
         [InlineData("Initium.Portal.Core")]
         [InlineData("Initium.Portal.Domain")]
+        [InlineData("Initium.Portal.Domain.Management")]
+        [InlineData("Initium.Portal.Domain.Tenant")]
         [InlineData("Initium.Portal.Infrastructure")]
+        [InlineData("Initium.Portal.Infrastructure.Management")]
+        [InlineData("Initium.Portal.Infrastructure.Tenant")]
         [InlineData("Initium.Portal.Queries")]
+        [InlineData("Initium.Portal.Queries.Management")]
+        [InlineData("Initium.Portal.Queries.Tenant")]
         [InlineData("Initium.Portal.Web")]
+        [InlineData("Initium.Portal.Web.Management")]
+        [InlineData("Initium.Portal.Web.Tenant")]
         public void AssemblyLoad(string assemblyName)
         {
             var assemblyToTest = AppDomain.CurrentDomain.GetAssemblies()

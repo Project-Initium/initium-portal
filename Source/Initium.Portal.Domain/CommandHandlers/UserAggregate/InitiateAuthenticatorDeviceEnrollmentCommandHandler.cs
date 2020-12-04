@@ -25,16 +25,16 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IFido2 _fido2;
         private readonly IUserRepository _userRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<InitiateAuthenticatorDeviceEnrollmentCommandHandler> _logger;
 
         public InitiateAuthenticatorDeviceEnrollmentCommandHandler(
             ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IUserRepository userRepository,
             IFido2 fido2, ILogger<InitiateAuthenticatorDeviceEnrollmentCommandHandler> logger)
         {
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._fido2 = fido2 ?? throw new ArgumentNullException(nameof(fido2));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._userRepository = userRepository;
+            this._fido2 = fido2;
+            this._logger = logger;
         }
 
         public async Task<Result<InitiateAuthenticatorDeviceEnrollmentCommandResult, ErrorData>> Handle(

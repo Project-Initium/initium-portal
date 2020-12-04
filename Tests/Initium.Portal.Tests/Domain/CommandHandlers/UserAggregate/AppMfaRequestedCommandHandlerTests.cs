@@ -4,7 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Initium.Portal.Core;
+using Initium.Portal.Core.Authentication;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Contracts.Domain;
@@ -37,12 +37,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe<ISystemUser>.Nothing);
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<AppMfaRequestedCommandHandler>>();
-
             var handler = new AppMfaRequestedCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<AppMfaRequestedCommandHandler>>());
             var cmd = new AppMfaRequestedCommand();
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -73,12 +69,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                     return Maybe.From(systemUser);
                 });
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<AppMfaRequestedCommandHandler>>();
-
             var handler = new AppMfaRequestedCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<AppMfaRequestedCommandHandler>>());
             var cmd = new AppMfaRequestedCommand();
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -106,12 +98,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                     return Maybe.From(systemUser);
                 });
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<AppMfaRequestedCommandHandler>>();
-
             var handler = new AppMfaRequestedCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<AppMfaRequestedCommandHandler>>());
             var cmd = new AppMfaRequestedCommand();
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -138,12 +126,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                     return Maybe.From(systemUser);
                 });
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<AppMfaRequestedCommandHandler>>();
-
             var handler = new AppMfaRequestedCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<AppMfaRequestedCommandHandler>>());
             var cmd = new AppMfaRequestedCommand();
 
             await handler.Handle(cmd, CancellationToken.None);
@@ -171,12 +155,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                     return Maybe.From(systemUser);
                 });
 
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<AppMfaRequestedCommandHandler>>();
-
             var handler = new AppMfaRequestedCommandHandler(
-                userRepository.Object, currentAuthenticatedUserProvider.Object, clock.Object, logger.Object);
+                userRepository.Object, currentAuthenticatedUserProvider.Object, Mock.Of<IClock>(), Mock.Of<ILogger<AppMfaRequestedCommandHandler>>());
             var cmd = new AppMfaRequestedCommand();
 
             var result = await handler.Handle(cmd, CancellationToken.None);

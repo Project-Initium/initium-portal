@@ -18,13 +18,13 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
     {
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IUserRepository _userRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<UpdateProfileCommandHandler> _logger;
 
         public UpdateProfileCommandHandler(IUserRepository userRepository, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, ILogger<UpdateProfileCommandHandler> logger)
         {
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._logger = logger;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(

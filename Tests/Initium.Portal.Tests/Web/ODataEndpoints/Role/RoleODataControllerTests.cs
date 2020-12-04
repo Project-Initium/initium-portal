@@ -4,10 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Finbuckle.MultiTenant;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Management;
 using Initium.Portal.Web.ODataEndpoints.Role;
 using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -21,7 +22,7 @@ using Xunit;
 
 namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
 {
-    public class RoleODataControllerTests : BaseODataControllerTest<Portal.Queries.Entities.Role>
+    public class RoleODataControllerTests : BaseODataControllerTest<Portal.Queries.Entities.RoleReadEntity>
     {
         public static IEnumerable<object[]> FilterData
         {
@@ -44,7 +45,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
             get
             {
                 var modelBuilder = new ODataConventionModelBuilder(this.Provider);
-                var entitySet = modelBuilder.EntitySet<Portal.Queries.Entities.Role>("Role");
+                var entitySet = modelBuilder.EntitySet<Portal.Queries.Entities.RoleReadEntity>("Role");
                 entitySet.EntityType.HasKey(entity => entity.Id);
                 return modelBuilder.GetEdmModel();
             }
@@ -54,12 +55,14 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
         [MemberData(nameof(FilterData))]
         public void Filtered_GivenFilterIsNotNull_ExpectFilteredData(RoleFilter filter, int count)
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -67,29 +70,29 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            context.Add(new Portal.Queries.Entities.Role
+            using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            context.Add(new Portal.Queries.Entities.RoleReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-1",
                 ResourceCount = 0,
                 UserCount = 3,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.Role
+            context.Add(new Portal.Queries.Entities.RoleReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-2",
                 ResourceCount = 2,
                 UserCount = 0,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.Role
+            context.Add(new Portal.Queries.Entities.RoleReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-3",
                 ResourceCount = 4,
                 UserCount = 0,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.Role
+            context.Add(new Portal.Queries.Entities.RoleReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-4",
@@ -102,19 +105,21 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
 
             var roleController = new RoleODataController(roleQueryService.Object);
             var result = Assert.IsType<OkObjectResult>(roleController.Filtered(this.GenerateEmptyQueryOptions(), filter));
-            var data = Assert.IsType<EntityQueryable<Portal.Queries.Entities.Role>>(result.Value);
+            var data = Assert.IsType<EntityQueryable<Portal.Queries.Entities.RoleReadEntity>>(result.Value);
             Assert.Equal(count, data.Count());
         }
 
         [Fact]
         public void Filtered_GivenFilterIsNull_ExpectUnfiltered()
         {
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -122,29 +127,29 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            context.Add(new Portal.Queries.Entities.Role
+            using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            context.Add(new Portal.Queries.Entities.RoleReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-1",
                 ResourceCount = 0,
                 UserCount = 3,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.Role
+            context.Add(new Portal.Queries.Entities.RoleReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-2",
                 ResourceCount = 2,
                 UserCount = 0,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.Role
+            context.Add(new Portal.Queries.Entities.RoleReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-3",
                 ResourceCount = 4,
                 UserCount = 4,
             }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.Role
+            context.Add(new Portal.Queries.Entities.RoleReadEntity
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-4",
@@ -157,7 +162,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
             roleQueryService.Setup(x => x.QueryableEntity).Returns(context.Roles);
             var roleController = new RoleODataController(roleQueryService.Object);
             var result = Assert.IsType<OkObjectResult>(roleController.Filtered(this.GenerateEmptyQueryOptions(), null));
-            var data = Assert.IsType<InternalDbSet<Portal.Queries.Entities.Role>>(result.Value);
+            var data = Assert.IsType<InternalDbSet<Portal.Queries.Entities.RoleReadEntity>>(result.Value);
             Assert.Equal(4, data.AsQueryable().Count());
         }
     }

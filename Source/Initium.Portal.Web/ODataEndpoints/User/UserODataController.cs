@@ -2,10 +2,11 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Web.Infrastructure.Attributes;
-using Initium.Portal.Web.Infrastructure.Controllers;
+using Initium.Portal.Web.Infrastructure.ODataEndpoints;
 using LinqKit;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNet.OData.Routing;
@@ -15,7 +16,7 @@ namespace Initium.Portal.Web.ODataEndpoints.User
 {
     [ODataRoutePrefix("User")]
     [ResourceBasedAuthorize("user-list")]
-    public class UserODataController : BaseODataController<Queries.Entities.User, UserFilter>
+    public class UserODataController : BaseODataController<Queries.Entities.UserReadEntity, UserFilter>
     {
         private readonly IUserQueryService _userQueryService;
 
@@ -25,7 +26,7 @@ namespace Initium.Portal.Web.ODataEndpoints.User
         }
 
         [ODataRoute("User.Filtered")]
-        public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.User> options, [FromBody] UserFilter filter)
+        public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.UserReadEntity> options, [FromBody] UserFilter filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -42,7 +43,8 @@ namespace Initium.Portal.Web.ODataEndpoints.User
         }
 
         [ODataRoute("User.FilteredExport")]
-        public override IActionResult FilteredExport(ODataQueryOptions<Queries.Entities.User> options, [FromBody]UserFilter filter)
+        public override IActionResult FilteredExport(
+            ODataQueryOptions<Queries.Entities.UserReadEntity> options, [FromBody]ExportableFilter<UserFilter> filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -50,22 +52,25 @@ namespace Initium.Portal.Web.ODataEndpoints.User
             }
 
             IQueryable query;
+            IDictionary<string, string> mappings;
             if (filter == null)
             {
                 query = options.ApplyTo(this._userQueryService.QueryableEntity);
+                mappings = new Dictionary<string, string>();
             }
             else
             {
-                var predicate = this.GeneratePredicate(filter);
-                query = options.ApplyTo(this._userQueryService.QueryableEntity.Where(predicate));
+                var predicate = this.GeneratePredicate(filter.Filter);
+                query = this._userQueryService.QueryableEntity.Where(predicate);
+                mappings = filter.Mappings;
             }
 
-            return this.File(this.GenerateCsvStream(query, options), "application/csv");
+            return this.File(this.GenerateCsvStream(query, options, mappings), "application/csv");
         }
 
-        protected override ExpressionStarter<Queries.Entities.User> GeneratePredicate([FromBody]UserFilter filter)
+        protected override ExpressionStarter<Queries.Entities.UserReadEntity> GeneratePredicate([FromBody]UserFilter filter)
         {
-            var predicate = PredicateBuilder.New<Queries.Entities.User>(true);
+            var predicate = PredicateBuilder.New<Queries.Entities.UserReadEntity>(true);
             if (filter.Verified && !filter.Unverified)
             {
                 predicate.And(x => x.IsVerified);

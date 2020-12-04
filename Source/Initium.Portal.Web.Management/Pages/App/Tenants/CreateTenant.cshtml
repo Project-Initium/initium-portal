@@ -1,0 +1,70 @@
+﻿@page "/app/tenants/create"
+@using Initium.Portal.Core.Constants
+@using Initium.Portal.Core.Extensions
+@using Initium.Portal.Web.Infrastructure.Constants
+@using Initium.Portal.Web.Management.Infrastructure.Constants
+@model Initium.Portal.Web.Management.Pages.App.Tenants.CreateTenant
+@{
+    Layout = "Shared/_AppLayout";
+    ViewData["Title"] = "System Alerts | Create";
+}
+
+
+<div class="row page-titles">
+    <div class="align-self-center pl-0 col-md-7 col-12">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="@CorePageLocations.AppDashboard">Home</a></li>
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.TenantListing">Tenants</a></li>
+            <li class="breadcrumb-item active">Create Tenant</li>
+        </ol>
+    </div>
+    <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
+        <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@PageLocations.TenantListing">Back to Listing</a>
+        <button class="btn btn-sm btn-info text-white" type="submit" form="page-form">Save</button>        
+    </div>
+</div>
+
+<form method="post" id="page-form" class="form-material pl-0 pr-0 row">
+    <div class="col-md-7">
+        <div class="card card-outline-info">
+            <div class="card-body">
+                <h4 class="card-title">Details</h4>
+                    
+                <div class="form-group">
+                    <label asp-for="PageModel.Name"></label>
+                    <input class="form-control" type="text" asp-for="PageModel.Name" data-name />
+                    <span class="text-danger small" asp-validation-for="PageModel.Name"></span>
+                </div>
+                
+                <div class="form-group">
+                    <label asp-for="PageModel.Identifier"></label>
+                    <input class="form-control" readonly asp-for="PageModel.Identifier" data-identifier />
+                    <span class="text-danger small" asp-validation-for="PageModel.Identifier"></span>
+                </div>
+                
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-5">
+            <div class="card card-outline-info">
+                <div class="card-body">
+                    <h4 class="card-title">Features</h4>
+                    @foreach (var feature in Model.Features)
+                    {
+                        <div>
+                            <input type="checkbox" id="feature-@(feature)" name="PageModel.SystemFeatures" value="@feature" class="material-inputs filled-in" @(Model.PageModel.SystemFeatures.Contains(feature) ? "checked" : "")>
+                            <label for="feature-@(feature)">@feature.GetDisplay()</label>
+                        </div>    
+                    }
+                </div>
+            </div>
+        </div>
+
+    
+</form>
+
+@section Scripts{
+    <script src="~/tenant-create.js.gz" asp-append-version="true"></script> 
+}

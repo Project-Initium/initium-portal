@@ -580,5 +580,25 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.UserAggregate
             Assert.Null(user.WhenDisabled);
             Assert.False(user.IsDisabled);
         }
+
+        [Fact]
+        public void AddNewNotification_GivenValidArguments_ExpectNotificationAddedToList()
+        {
+            var user = new User(
+                TestVariables.UserId,
+                "email-address",
+                "password-hash",
+                true,
+                TestVariables.Now,
+                "first-name",
+                "last-name",
+                new List<Guid>(),
+                true);
+            user.AddNewNotification(TestVariables.UserNotificationId);
+
+            var notification = Assert.Single(user.UserNotifications);
+            Assert.NotNull(notification);
+            Assert.Equal(TestVariables.UserNotificationId, notification.NotificationId);
+        }
     }
 }

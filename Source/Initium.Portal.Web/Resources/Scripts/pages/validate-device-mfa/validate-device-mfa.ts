@@ -1,62 +1,97 @@
-import {ArrayHelpers} from '../../helpers'
-import {ToastHelper} from '../../helpers';
+import { ArrayHelpers, ToastHelper, XhrHelper } from '../../helpers';
+
+interface IAssertionOptionsResult {
+    challenge: string;
+    timeout: number;
+    rpId: string;
+    allowCredentials: {
+        id: string;
+        transports?: AuthenticatorTransport[];
+        type: PublicKeyCredentialType;
+    }[];
+    userVerification?: UserVerificationRequirement;
+    extensions: AuthenticationExtensionsClientInputs;
+    status: string;
+    errorMessage: string;
+}
+
+interface IAssertionVerificationResult {
+    url: string;
+    assertionVerificationResult: {
+        credentialId: string;
+        counter: number
+        status: string;
+        errorMessage: string;
+    };
+}
 
 export class ValidateDeviceMfa {
     private assertionOptionsUri: string;
     private makeAssertionUri: string;
     private form: HTMLFormElement;
+    private formButtons: NodeListOf<HTMLButtonElement>;
+
     async init() {
         const contextThis = this;
         this.form = document.getElementById('start-verification') as HTMLFormElement;
         this.assertionOptionsUri = this.form.dataset.assertionOptionsUri;
         this.makeAssertionUri = this.form.dataset.makeAssertionUri;
-        this.form.addEventListener('submit', (e) => contextThis.startVerification(e))
+        this.form.addEventListener('submit', (e) => contextThis.startVerification(e));
+        this.formButtons = this.form.querySelectorAll('button');
     }
 
     private async startVerification(e: Event) {
         e.preventDefault();
-        let makeAssertionOptions;
-        try {
-            const res = await fetch(this.assertionOptionsUri, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'RequestVerificationToken': this.form.dataset.afToken
-                }
-            });
-            makeAssertionOptions = await res.json();
-        } catch (e) {
+        this.formButtons.forEach(ele => ele.disabled = true);
+        const makeAssertionOptionsResult = await XhrHelper.PostInternalOfT<IAssertionOptionsResult>(this.assertionOptionsUri, this.form.dataset.afToken);
+
+        if (makeAssertionOptionsResult.isFailure) {
             ToastHelper.showFailureToast('Authentication failed, please try again.');
+            this.formButtons.forEach(ele => ele.disabled = false);
             return;
         }
 
+        const makeAssertionOptions = makeAssertionOptionsResult.value;
         if (makeAssertionOptions.status !== 'ok') {
             ToastHelper.showFailureToast('Authentication failed, please try again.');
-            return
+            this.formButtons.forEach(ele => ele.disabled = false);
+            return;
         }
 
+
         const challenge = makeAssertionOptions.challenge.replace(/-/g, '+').replace(/_/g, '/');
-        makeAssertionOptions.challenge = Uint8Array.from(atob(challenge), c => c.charCodeAt(0));
+
+        const publicKeyCredentialRequestOptions: PublicKeyCredentialRequestOptions = {
+            userVerification: makeAssertionOptions.userVerification,
+            rpId: makeAssertionOptions.rpId,
+            extensions: makeAssertionOptions.extensions,
+            timeout: makeAssertionOptions.timeout,
+            challenge: Uint8Array.from(atob(challenge), c => c.charCodeAt(0)),
+            allowCredentials: []
+        };
 
         makeAssertionOptions.allowCredentials.forEach((listItem) => {
-            const fixedId = listItem.id.replace(/\_/g, '/').replace(/\-/g, '+');
-             listItem.id = Uint8Array.from(atob(fixedId), c => c.charCodeAt(0));
+            const fixedId = (listItem.id as unknown as string).replace(/\_/g, '/').replace(/\-/g, '+');
+            const publicKeyCredentialDescriptor: PublicKeyCredentialDescriptor = {
+                transports: listItem.transports,
+                type: listItem.type,
+                id: Uint8Array.from(atob(fixedId), c => c.charCodeAt(0))
+            };
+
+            publicKeyCredentialRequestOptions.allowCredentials.push(publicKeyCredentialDescriptor);
         });
 
         let credential;
         try {
-            credential = await navigator.credentials.get({ publicKey: makeAssertionOptions })
+            credential = await navigator.credentials.get({ publicKey: publicKeyCredentialRequestOptions });
         } catch (err) {
             ToastHelper.showFailureToast('Authentication failed, please try again.');
-            return
+            this.formButtons.forEach(ele => ele.disabled = false);
+            return;
         }
 
-        try {
-            await this.verifyAssertionWithServer(credential);
-        } catch (e) {
-            ToastHelper.showFailureToast('Authentication failed, please try again.');
-            return
-        }
+        await this.verifyAssertionWithServer(credential);
+        this.formButtons.forEach(ele => ele.disabled = false);
     }
 
     private async verifyAssertionWithServer(assertedCredential) {
@@ -77,38 +112,30 @@ export class ValidateDeviceMfa {
             }
         };
 
-        let response;
-        try {
-            const res = await fetch(this.makeAssertionUri, {
-                method: 'POST',
-                body: JSON.stringify(data),
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': this.form.dataset.afToken
-                }
-            });
-            response = await res.json();
-        } catch (e) {
+        const result = await XhrHelper.PostJsonInternalOfT<IAssertionVerificationResult>(this.makeAssertionUri, data, this.form.dataset.afToken);
+
+        if (result.isFailure) {
             ToastHelper.showFailureToast('Authentication failed, please try again.');
-            return
+            return;
         }
 
-        if (response.assertionVerificationResult.status !== 'ok') {
+        if (result.value.assertionVerificationResult.status !== 'ok') {
             ToastHelper.showFailureToast('Authentication failed, please try again.');
-            return
+            return;
         }
 
-        window.location.href = response.url;
+        window.location.href = result.value.url;
     }
 
     constructor() {
         if (document.readyState !== 'loading') {
-            this.init();
+            this.init().then();
         } else {
-            document.addEventListener('DOMContentLoaded', e => this.init());
+            document.addEventListener('DOMContentLoaded', _ => this.init());
         }
     }
 }
 
-const p = new ValidateDeviceMfa();
+
+// tslint:disable-next-line:no-unused-expression
+new ValidateDeviceMfa();

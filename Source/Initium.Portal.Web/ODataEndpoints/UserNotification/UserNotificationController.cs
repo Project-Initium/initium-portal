@@ -2,9 +2,10 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Queries.Contracts;
-using Initium.Portal.Web.Infrastructure.Controllers;
+using Initium.Portal.Web.Infrastructure.ODataEndpoints;
 using LinqKit;
 using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNet.OData.Routing;
@@ -56,7 +57,8 @@ namespace Initium.Portal.Web.ODataEndpoints.UserNotification
         }
 
         [ODataRoute("UserNotification.FilteredExport")]
-        public override IActionResult FilteredExport(ODataQueryOptions<Queries.Entities.UserNotification> options, [FromBody]UserNotificationFilter filter)
+        public override IActionResult FilteredExport(
+            ODataQueryOptions<Queries.Entities.UserNotification> options, [FromBody]ExportableFilter<UserNotificationFilter> filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -69,8 +71,8 @@ namespace Initium.Portal.Web.ODataEndpoints.UserNotification
                 return this.NotFound();
             }
 
-            var query = options.ApplyTo(this._userNotificationQueryService.QueryableEntity);
-            return this.File(this.GenerateCsvStream(query, options), "application/csv");
+            var query = this._userNotificationQueryService.QueryableEntity;
+            return this.File(this.GenerateCsvStream(query, options, new Dictionary<string, string>()), "application/csv");
         }
 
         protected override ExpressionStarter<Queries.Entities.UserNotification> GeneratePredicate(UserNotificationFilter filter)

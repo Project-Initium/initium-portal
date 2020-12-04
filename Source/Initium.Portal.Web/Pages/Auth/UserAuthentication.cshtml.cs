@@ -49,11 +49,11 @@ namespace Initium.Portal.Web.Pages.Auth
                 {
                     case BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaDeviceCode:
                         this.TempData["fido2.assertionOptions"] = result.Value.AssertionOptions.ToJson();
-                        return this.RedirectToPage(PageLocations.AuthDeviceMfa);
+                        return this.RedirectToPage(CorePageLocations.AuthDeviceMfa);
                     case BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaAppCode:
-                        return this.RedirectToPage(PageLocations.AuthAppMfa);
+                        return this.RedirectToPage(CorePageLocations.AuthAppMfa);
                     default:
-                        return this.RedirectToPage(PageLocations.AuthEmailMfa);
+                        return this.RedirectToPage(CorePageLocations.AuthEmailMfa);
                 }
             }
 

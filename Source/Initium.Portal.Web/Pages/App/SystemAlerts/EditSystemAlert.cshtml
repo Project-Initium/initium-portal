@@ -10,13 +10,13 @@
 <div class="row page-titles">
     <div class="align-self-center pl-0 col-md-7 col-12">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
-            <li class="breadcrumb-item"><a asp-page="@PageLocations.SystemAlertListing">System Alerts</a></li>
+            <li class="breadcrumb-item"><a asp-page="@CorePageLocations.AppDashboard">Home</a></li>
+            <li class="breadcrumb-item"><a asp-page="@CorePageLocations.SystemAlertListing">System Alerts</a></li>
             <li class="breadcrumb-item active">Editing System Alert @Model.Name</li>
         </ol>
     </div>
     <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
-        <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@PageLocations.SystemAlertListing">Back to Listing</a>
+        <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@CorePageLocations.SystemAlertListing">Back to Listing</a>
         <button class="btn btn-sm btn-info text-white" type="submit" form="page-form">Save</button>        
     </div>
 </div>

@@ -14,11 +14,11 @@ namespace Initium.Portal.Infrastructure.Repositories
 {
     public sealed class UserRepository : IUserRepository
     {
-        private readonly DataContext _context;
+        private readonly ICoreDataContext _context;
 
-        public UserRepository(DataContext context)
+        public UserRepository(ICoreDataContext context)
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
+            this._context = context;
         }
 
         public IUnitOfWork UnitOfWork => this._context;

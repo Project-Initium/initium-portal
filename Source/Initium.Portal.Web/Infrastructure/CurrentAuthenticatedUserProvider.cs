@@ -4,7 +4,7 @@
 using System;
 using System.Linq;
 using System.Security.Claims;
-using Initium.Portal.Core;
+using Initium.Portal.Core.Authentication;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Web.Infrastructure.Services;
 using MaybeMonad;

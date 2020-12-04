@@ -56,7 +56,7 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
             {
                 this.PrgState = PrgState.Success;
                 this.AddPageNotification("The user was created successfully", PageNotification.Success);
-                return this.RedirectToPage(PageLocations.UserView, new { id = result.Value.UserId });
+                return this.RedirectToPage(CorePageLocations.UserView, new { id = result.Value.UserId });
             }
 
             this.AddPageNotification("There was an issue creating the user.", PageNotification.Error);

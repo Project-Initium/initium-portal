@@ -59,7 +59,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Roles
 
             var result = await page.OnPostAsync();
             var actualResult = Assert.IsType<RedirectToPageResult>(result);
-            Assert.Equal(PageLocations.RoleView, actualResult.PageName);
+            Assert.Equal(CorePageLocations.RoleView, actualResult.PageName);
             Assert.Equal(roleId, actualResult.RouteValues["id"]);
         }
 

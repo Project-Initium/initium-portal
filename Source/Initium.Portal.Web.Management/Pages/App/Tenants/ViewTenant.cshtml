@@ -1,0 +1,87 @@
+﻿@page "/app/tenants/view/{id}"
+@using Initium.Portal.Core.Constants
+@using Initium.Portal.Web.Infrastructure.Constants
+@using Initium.Portal.Web.Infrastructure.Extensions
+@using Initium.Portal.Web.Management.Infrastructure.Constants
+@using Microsoft.AspNetCore.Antiforgery
+@model Initium.Portal.Web.Management.Pages.App.Tenants.ViewTenant
+@inject IAntiforgery Antiforgery
+@{
+    Layout = "Shared/_AppLayout";
+    ViewData["Title"] = $"Tenants | Viewing {Model.Tenant.Name}";
+    var token = Antiforgery.GetAndStoreTokens(HttpContext).RequestToken;
+}
+
+
+<div class="row page-titles">
+    <div class="align-self-center pl-0 col-md-7 col-12">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a asp-page="@CorePageLocations.AppDashboard">Home</a></li>
+            <li class="breadcrumb-item"><a asp-page="@PageLocations.TenantListing">Tenants</a></li>
+            <li class="breadcrumb-item active">Viewing Tenant @Model.Tenant.Name</li>
+        </ol>
+    </div>
+    <div class="col-md-5 col-12 align-self-center d-flex justify-content-end pr-0 mt-2 mt-md-0">
+        <a class="btn btn-sm btn-secondary text-white mr-2" asp-page="@PageLocations.TenantListing">Back to Listing</a>
+        
+            @if (User.HasPermissions("tenant-disable"))
+            {
+                <button type="button" class="btn btn-sm btn-warning text-white mr-2 @(this.Model.Tenant.WhenDisabled.HasValue ? "d-none" : "")" data-af-token="@token" data-enable-toggle data-message="The tenant has been disabled" data-tenant-id="@Model.Id" data-endpoint="@Url.RouteUrl("DisableTenantEndpoint")">Disable</button>
+            }
+            @if (User.HasPermissions("tenant-enable"))
+            {
+                <button type="button" class="btn btn-sm btn-warning text-white mr-2 @(this.Model.Tenant.WhenDisabled.HasValue ? "" : "d-none")" data-af-token="@token" data-enable-toggle data-message="The tenant has been enabled" data-tenant-id="@Model.Id" data-endpoint="@Url.RouteUrl("EnableTenantEndpoint")">Enable</button>
+            }
+        
+            <a class="btn btn-sm btn-info text-white"  asp-page="@PageLocations.TenantEdit" asp-route-id="@Model.Tenant.Id" >Edit</a>        
+        </div>
+</div>
+<div  class="form-material row">
+    <div class="col-md-7">
+        <div class="card card-outline-info">
+            <div class="card-body">
+                <h4 class="card-title">Details</h4>
+                    
+                <div class="form-group">
+                    <span class="text-muted">Name</span>
+                    <h6>@Model.Tenant.Name</h6>
+                </div>
+                
+                <div class="form-group">
+                    <span class="text-muted">Identifier</span>
+                    <h6>@Model.Tenant.Identifier</h6>
+                </div>
+                
+                
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-5">
+            <div class="card card-outline-info">
+                <div class="card-body">
+                    <h4 class="card-title">Tenant Activity</h4>
+                    
+                    <h5 class="card-subtitle">Logins</h5>
+                    @if (Model.Tenant.HasLoggingInfo)
+                    {
+                        <span class="text-muted">Authentication Date</span>
+                        <h6 class="mb-3">@Model.Tenant.WhenLoggedIn</h6>
+
+                        <span class="text-muted">Authenticated User</span>
+                        <h6 class="mb-3">@Model.Tenant.LastLoggedInUser</h6>
+                    }
+                    else
+                    {
+                        <h6 class="mb-3">No logins recorded</h6>
+                    }
+                </div>
+            </div>
+        </div>
+
+    
+</div>
+
+@section Scripts{
+    <script src="~/tenant-view.js.gz" asp-append-version="true"></script> 
+}

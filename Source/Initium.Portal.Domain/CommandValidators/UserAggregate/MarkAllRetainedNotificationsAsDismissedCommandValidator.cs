@@ -14,7 +14,8 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public MarkAllRetainedNotificationsAsDismissedCommandValidator()
         {
             this.RuleFor(x => x.UserId)
-               .NotEqual(Guid.Empty).WithErrorCode(ValidationCodes.FieldIsRequired);
+                .Cascade(CascadeMode.Stop)
+                .NotEqual(Guid.Empty).WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }
 }

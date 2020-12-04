@@ -1,7 +1,6 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Fido2NetLib;
@@ -26,17 +25,17 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IFido2 _fido2;
         private readonly IUserRepository _userRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<DeviceMfaRequestCommandHandler> _logger;
 
         public DeviceMfaRequestCommandHandler(
             IUserRepository userRepository, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider,
             IClock clock, IFido2 fido2, ILogger<DeviceMfaRequestCommandHandler> logger)
         {
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._fido2 = fido2 ?? throw new ArgumentNullException(nameof(fido2));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._clock = clock;
+            this._fido2 = fido2;
+            this._logger = logger;
         }
 
         public async Task<Result<DeviceMfaRequestCommandResult, ErrorData>> Handle(
@@ -76,11 +75,11 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
 
             var user = userMaybe.Value;
 
-            var optionsMaybe = this._fido2.GenerateAssertionOptionsForUser(user);
+            var optionsResult = this._fido2.GenerateAssertionOptionsForUser(user);
 
-            if (!optionsMaybe.HasValue)
+            if (optionsResult.IsFailure)
             {
-                this._logger.LogDebug("No Fido options.");
+                this._logger.LogError(optionsResult.Error, "No Fido options.");
                 return Result.Fail<DeviceMfaRequestCommandResult, ErrorData>(
                     new ErrorData(ErrorCodes.FidoVerificationFailed));
             }
@@ -89,7 +88,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
                 this._clock.GetCurrentInstant().ToDateTimeUtc(),
                 AuthenticationHistoryType.AppMfaRequested);
             return Result.Ok<DeviceMfaRequestCommandResult, ErrorData>(
-                new DeviceMfaRequestCommandResult(optionsMaybe.Value));
+                new DeviceMfaRequestCommandResult(optionsResult.Value));
         }
     }
 }

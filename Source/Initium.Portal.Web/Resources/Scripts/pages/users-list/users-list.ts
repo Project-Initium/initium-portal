@@ -1,8 +1,8 @@
-import 'datatables.net'
-import 'datatables.net-bs4'
-import 'gijgo'
+import 'datatables.net';
+import 'datatables.net-bs4';
+import 'gijgo';
 import moment from 'moment';
-import { BaseList } from '../base-list'
+import { BaseList } from '../base-list';
 import { FilterViewModel } from './filter-view-model';
 
 export class UsersList extends BaseList<FilterViewModel>{
@@ -26,7 +26,7 @@ export class UsersList extends BaseList<FilterViewModel>{
             {
                 data: 'IsLocked',
                 type: 'boolean',
-                render: (data, type, full, meta) => {
+                render: (data) => {
                     if (data === true) {
                         return '<i class="fa fa-check" aria-hidden="true"></i>';
                     }
@@ -37,7 +37,7 @@ export class UsersList extends BaseList<FilterViewModel>{
             {
                 data: 'WhenLastAuthenticated',
                 type: 'date',
-                render: (data, type, full, meta) => {
+                render: (data) => {
                     const m = moment(data);
                     if(m.isValid)
                     {
@@ -68,7 +68,7 @@ export class UsersList extends BaseList<FilterViewModel>{
        if (document.readyState !== 'loading') {
             this.init();
         } else {
-            document.addEventListener('DOMContentLoaded', e => this.init());
+            document.addEventListener('DOMContentLoaded', _ => this.init());
         }
     }
 
@@ -76,4 +76,6 @@ export class UsersList extends BaseList<FilterViewModel>{
         this.baseInit('#users', new FilterViewModel());
     }
 }
-const p = new UsersList();
+
+// tslint:disable-next-line:no-unused-expression
+new UsersList();

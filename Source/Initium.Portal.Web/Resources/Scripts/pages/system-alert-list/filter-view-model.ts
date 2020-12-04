@@ -1,12 +1,6 @@
 ﻿import ko from 'knockout';
-import {ICustomQuery, ISimpleStateData, IStateData} from '../../providers';
-import {BaseFilterViewModel} from '../base-list';
-
-interface ISystemAlertSimpleStateData extends ISimpleStateData {
-}
-
-interface ISystemAlertStateData extends IStateData {
-}
+import { ICustomQuery, ISimpleStateData, IStateData } from '../../providers';
+import { BaseFilterViewModel } from '../';
 
 export class FilterViewModel extends BaseFilterViewModel {
     public searchTerm = ko.observable<string>('');
@@ -14,20 +8,20 @@ export class FilterViewModel extends BaseFilterViewModel {
 
 
     constructor() {
-        super()
+        super();
     }
 
     createInternalRequest() {
         this.customQuery = {
             requestData: null,
             searchParam: this.searchTerm()
-        }
+        };
     }
 
-    generateStateData(stateData: ISystemAlertStateData, simpleStateData: ISystemAlertSimpleStateData):
+    generateStateData(stateData: IStateData, simpleStateData: ISimpleStateData):
         { stateData: IStateData; simpleStateData: ISimpleStateData } {
         stateData.search = this.searchTerm();
-        return {stateData: stateData, simpleStateData: simpleStateData}
+        return {stateData, simpleStateData};
     }
 
     getFilter(): ICustomQuery {
@@ -35,9 +29,10 @@ export class FilterViewModel extends BaseFilterViewModel {
             searchParam: '',
             requestData: {
             }
-        }
+        };
     }
 
+    // tslint:disable-next-line:no-empty
     hydrateFromParams(params: URLSearchParams) {
     }
 

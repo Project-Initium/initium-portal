@@ -13,16 +13,20 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public UpdateUserCoreDetailsCommandValidator()
         {
             this.RuleFor(x => x.UserId)
+                .Cascade(CascadeMode.Stop)
                 .NotEqual(Guid.Empty).WithErrorCode(ValidationCodes.FieldIsRequired);
 
             this.RuleFor(x => x.EmailAddress)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired)
                 .EmailAddress().WithErrorCode(ValidationCodes.ValueMustBeAnEmailAddress);
 
             this.RuleFor(x => x.FirstName)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
 
             this.RuleFor(x => x.LastName)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

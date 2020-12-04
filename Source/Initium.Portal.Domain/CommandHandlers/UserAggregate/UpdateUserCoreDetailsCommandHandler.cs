@@ -18,13 +18,13 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
     {
         private readonly IUserRepository _userRepository;
         private readonly IUserQueryService _userQueryService;
-        private readonly ILogger _logger;
+        private readonly ILogger<UpdateUserCoreDetailsCommandHandler> _logger;
 
         public UpdateUserCoreDetailsCommandHandler(IUserRepository userRepository, IUserQueryService userQueryService, ILogger<UpdateUserCoreDetailsCommandHandler> logger)
         {
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._userQueryService = userQueryService;
+            this._logger = logger;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(

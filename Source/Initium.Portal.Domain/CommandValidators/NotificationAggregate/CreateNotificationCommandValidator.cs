@@ -11,7 +11,9 @@ namespace Initium.Portal.Domain.CommandValidators.NotificationAggregate
     {
         public CreateNotificationCommandValidator()
         {
-            this.RuleFor(x => x.UserIds).NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
+            this.RuleFor(x => x.UserIds)
+                .Cascade(CascadeMode.Stop)
+                .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }
 }

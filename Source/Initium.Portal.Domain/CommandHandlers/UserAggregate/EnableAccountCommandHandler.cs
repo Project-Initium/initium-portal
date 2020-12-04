@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using ResultMonad;
@@ -17,12 +17,12 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
     public class EnableAccountCommandHandler : IRequestHandler<EnableAccountCommand, ResultWithError<ErrorData>>
     {
         private readonly IUserRepository _userRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<EnableAccountCommandHandler> _logger;
 
         public EnableAccountCommandHandler(IUserRepository userRepository, ILogger<EnableAccountCommandHandler> logger)
         {
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._logger = logger;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(EnableAccountCommand request, CancellationToken cancellationToken)
@@ -58,7 +58,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
 
             user.EnableAccount();
 
-            user.AddDomainEvent(new UserEnabledEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName));
+            user.AddIntegrationEvent(new UserEnabledIntegrationEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName));
 
             this._userRepository.Update(user);
             return ResultWithError.Ok<ErrorData>();

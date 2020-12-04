@@ -12,7 +12,7 @@ using MaybeMonad;
 
 namespace Initium.Portal.Queries.Contracts
 {
-    public interface IUserQueryService : IQueryService<User>
+    public interface IUserQueryService : IQueryService<UserReadEntity>
     {
         Task<StatusCheckModel> CheckForPresenceOfAnyUser();
 

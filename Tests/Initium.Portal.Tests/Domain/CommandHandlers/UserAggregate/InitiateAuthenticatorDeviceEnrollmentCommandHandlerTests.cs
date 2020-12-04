@@ -7,7 +7,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Fido2NetLib;
 using Fido2NetLib.Objects;
-using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Contracts.Domain;
 using Initium.Portal.Core.Domain;
@@ -35,13 +34,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe<ISystemUser>.Nothing);
 
-            var fido2 = new Mock<IFido2>();
-
-            var logger = new Mock<ILogger<InitiateAuthenticatorDeviceEnrollmentCommandHandler>>();
-
             var handler =
                 new InitiateAuthenticatorDeviceEnrollmentCommandHandler(
-                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object, logger.Object);
+                    currentAuthenticatedUserProvider.Object, userRepository.Object, Mock.Of<IFido2>(), Mock.Of<ILogger<InitiateAuthenticatorDeviceEnrollmentCommandHandler>>());
 
             var cmd = new InitiateAuthenticatorDeviceEnrollmentCommand(AuthenticatorAttachment.CrossPlatform);
 
@@ -80,11 +75,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var fido2 = new Mock<IFido2>();
 
-            var logger = new Mock<ILogger<InitiateAuthenticatorDeviceEnrollmentCommandHandler>>();
-
             var handler =
                 new InitiateAuthenticatorDeviceEnrollmentCommandHandler(
-                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object, logger.Object);
+                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object, Mock.Of<ILogger<InitiateAuthenticatorDeviceEnrollmentCommandHandler>>());
 
             var cmd = new InitiateAuthenticatorDeviceEnrollmentCommand(AuthenticatorAttachment.CrossPlatform);
 
@@ -111,13 +104,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
                 .Returns(Maybe.From(systemUser.Object));
 
-            var fido2 = new Mock<IFido2>();
-
-            var logger = new Mock<ILogger<InitiateAuthenticatorDeviceEnrollmentCommandHandler>>();
-
             var handler =
                 new InitiateAuthenticatorDeviceEnrollmentCommandHandler(
-                    currentAuthenticatedUserProvider.Object, userRepository.Object, fido2.Object, logger.Object);
+                    currentAuthenticatedUserProvider.Object, userRepository.Object, Mock.Of<IFido2>(), Mock.Of<ILogger<InitiateAuthenticatorDeviceEnrollmentCommandHandler>>());
 
             var cmd = new InitiateAuthenticatorDeviceEnrollmentCommand(AuthenticatorAttachment.CrossPlatform);
 

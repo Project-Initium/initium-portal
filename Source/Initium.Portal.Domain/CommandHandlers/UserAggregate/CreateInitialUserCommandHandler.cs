@@ -22,14 +22,14 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly IClock _clock;
         private readonly IUserQueryService _userQueryService;
         private readonly IUserRepository _userRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateInitialUserCommandHandler> _logger;
 
         public CreateInitialUserCommandHandler(IUserRepository userRepository, IClock clock, IUserQueryService userQueryService, ILogger<CreateInitialUserCommandHandler> logger)
         {
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._clock = clock;
+            this._userQueryService = userQueryService;
+            this._logger = logger;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(

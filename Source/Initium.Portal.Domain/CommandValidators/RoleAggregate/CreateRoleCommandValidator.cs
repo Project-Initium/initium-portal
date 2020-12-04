@@ -12,6 +12,7 @@ namespace Initium.Portal.Domain.CommandValidators.RoleAggregate
         public CreateRoleCommandValidator()
         {
             this.RuleFor(x => x.Name)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

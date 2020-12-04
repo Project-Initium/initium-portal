@@ -9,11 +9,11 @@ namespace Initium.Portal.Infrastructure.Repositories
 {
     public class NotificationRepository : INotificationRepository
     {
-        private readonly DataContext _dataContext;
+        private readonly ICoreDataContext _dataContext;
 
-        public NotificationRepository(DataContext dataContext)
+        public NotificationRepository(ICoreDataContext dataContext)
         {
-            this._dataContext = dataContext ?? throw new ArgumentNullException(nameof(dataContext));
+            this._dataContext = dataContext;
         }
 
         public IUnitOfWork UnitOfWork => this._dataContext;

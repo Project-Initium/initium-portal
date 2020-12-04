@@ -18,12 +18,12 @@ namespace Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate
         Result<CreateNewSystemAlertCommandResult, ErrorData>>
     {
         private readonly ISystemAlertRepository _systemAlertRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateNewSystemAlertCommandHandler> _logger;
 
         public CreateNewSystemAlertCommandHandler(ISystemAlertRepository systemAlertRepository, ILogger<CreateNewSystemAlertCommandHandler> logger)
         {
             this._systemAlertRepository = systemAlertRepository;
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._logger = logger;
         }
 
         public async Task<Result<CreateNewSystemAlertCommandResult, ErrorData>> Handle(
@@ -32,14 +32,14 @@ namespace Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate
             var result = this.Process(request);
             var dbResult = await this._systemAlertRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                this._logger.LogDebug("Failed saving changes.");
-                return Result.Fail<CreateNewSystemAlertCommandResult, ErrorData>(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return Result.Fail<CreateNewSystemAlertCommandResult, ErrorData>(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
         private Result<CreateNewSystemAlertCommandResult, ErrorData> Process(

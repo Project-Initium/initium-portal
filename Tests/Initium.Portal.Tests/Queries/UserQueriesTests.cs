@@ -4,12 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using Finbuckle.MultiTenant;
-using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
+using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Entities;
+using Initium.Portal.Queries.Management;
 using MaybeMonad;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -24,12 +24,14 @@ namespace Initium.Portal.Tests.Queries
         public async Task CheckForPresenceOfAnyUser_GivenUserDoesExist_ExpectPresentStatus()
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -37,8 +39,8 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new User
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
             });
@@ -55,12 +57,14 @@ namespace Initium.Portal.Tests.Queries
         public async Task CheckForPresenceOfAnyUser_GivenUserDoesNotExist_ExpectNotPresentStatus()
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -68,7 +72,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.CheckForPresenceOfAnyUser();
@@ -81,13 +85,16 @@ namespace Initium.Portal.Tests.Queries
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             var systemUser = new Mock<ISystemUser>();
             systemUser.Setup(x => x.UserId).Returns(TestVariables.UserId);
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe.From(systemUser.Object));
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(systemUser.Object));
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -95,8 +102,8 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new User
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
                 FirstName = "first-name",
@@ -119,13 +126,16 @@ namespace Initium.Portal.Tests.Queries
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             var systemUser = new Mock<ISystemUser>();
             systemUser.Setup(x => x.UserId).Returns(TestVariables.UserId);
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe.From(systemUser.Object));
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(systemUser.Object));
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -133,7 +143,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.GetProfileForCurrentUser();
@@ -144,13 +154,12 @@ namespace Initium.Portal.Tests.Queries
         public async Task GetProfileForCurrentUser_GivenNoUserIsAuthenticated_ExpectMaybeWithNothing()
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe<ISystemUser>.Nothing);
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe<ISystemUser>.Nothing);
 
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
-
-            var tenantInfo = new Mock<ITenantInfo>();
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -158,7 +167,8 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, Mock.Of<FeatureBasedTenantInfo>(),
+                multiTenantSettings.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.GetProfileForCurrentUser();
@@ -169,12 +179,14 @@ namespace Initium.Portal.Tests.Queries
         public async Task CheckForPresenceOfUserByEmailAddress_GivenUserDoesExist_ExpectPresentStatus()
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -182,8 +194,8 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new User
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 EmailAddress = "email-address",
             });
@@ -199,12 +211,14 @@ namespace Initium.Portal.Tests.Queries
         public async Task CheckForPresenceOfUserByEmailAddress_GivenUserDoesNotExist_ExpectNotPresentStatus()
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -212,7 +226,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.CheckForPresenceOfUserByEmailAddress("email-address");
             Assert.False(result.IsPresent);
@@ -222,12 +236,14 @@ namespace Initium.Portal.Tests.Queries
         public async Task GetDetailsOfUserById_GivenNoDataIsFound_ExpectMaybeWithNothing()
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -235,7 +251,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.GetDetailsOfUserById(TestVariables.UserId);
             Assert.True(result.HasNoValue);
@@ -245,12 +261,14 @@ namespace Initium.Portal.Tests.Queries
         public async Task GetDetailsOfUserById_GivenDataIsFound_ExpectMaybeWithMappedData()
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -258,29 +276,29 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var roleResource = await context.RoleResources.AddAsync(new RoleResource
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            var roleResource = await context.RoleResources.AddAsync(new RoleResourceReadEntity
             {
                 ResourceId = TestVariables.ResourceId,
             });
             roleResource.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var role = await context.Roles.AddAsync(new Role
+            var role = await context.Roles.AddAsync(new RoleReadEntity
             {
-                RoleResources = new List<RoleResource>
+                RoleResources = new List<RoleResourceReadEntity>
                 {
                     roleResource.Entity,
                 },
             });
             role.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var userRole = await context.UserRoles.AddAsync(new UserRole
+            var userRole = await context.UserRoles.AddAsync(new UserRoleReadEntity
             {
                 Role = role.Entity,
             });
             userRole.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var user = await context.Users.AddAsync(new User
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
                 EmailAddress = "email-address",
@@ -292,7 +310,7 @@ namespace Initium.Portal.Tests.Queries
                 WhenLocked = null,
                 IsAdmin = false,
                 WhenDisabled = TestVariables.Now,
-                UserRoles = new List<UserRole>
+                UserRoles = new List<UserRoleReadEntity>
                 {
                     userRole.Entity,
                 },
@@ -322,12 +340,14 @@ namespace Initium.Portal.Tests.Queries
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
 
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -335,7 +355,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.GetSystemProfileByUserId(TestVariables.UserId);
@@ -347,12 +367,14 @@ namespace Initium.Portal.Tests.Queries
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
 
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -360,39 +382,39 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
 
-            var roleResource = await context.RoleResources.AddAsync(new RoleResource
+            var roleResource = await context.RoleResources.AddAsync(new RoleResourceReadEntity
             {
-                Resource = new Resource
+                Resource = new ResourceReadEntity
                 {
                     NormalizedName = "normalized-name",
                 },
             });
             roleResource.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var role = await context.Roles.AddAsync(new Role
+            var role = await context.Roles.AddAsync(new RoleReadEntity
             {
-                RoleResources = new List<RoleResource>
+                RoleResources = new List<RoleResourceReadEntity>
                 {
                     roleResource.Entity,
                 },
             });
             role.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var userRole = await context.UserRoles.AddAsync(new UserRole
+            var userRole = await context.UserRoles.AddAsync(new UserRoleReadEntity
             {
                 Role = role.Entity,
             });
             userRole.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var user = await context.Users.AddAsync(new User
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
                 EmailAddress = "email-address",
                 FirstName = "first-name",
                 LastName = "last-name",
-                UserRoles = new List<UserRole>
+                UserRoles = new List<UserRoleReadEntity>
                 {
                     userRole.Entity,
                 },
@@ -412,15 +434,15 @@ namespace Initium.Portal.Tests.Queries
         }
 
         [Fact]
-        public async Task CheckForPresenceOfAuthAppForCurrentUser_GivenNoUserIsAuthenticated_ExpectNotPresentStatus()
+        public async Task
+            CheckForPresenceOfAuthAppForCurrentUser_GivenNoUserIsAuthenticated_ExpectNotPresentStatus()
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe<ISystemUser>.Nothing);
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe<ISystemUser>.Nothing);
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
-
-            var tenantInfo = new Mock<ITenantInfo>();
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -428,8 +450,9 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            await context.Users.AddAsync(new User
+            await using var context = new ManagementQueryContext(options, Mock.Of<FeatureBasedTenantInfo>(),
+                multiTenantSettings.Object);
+            await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
             });
@@ -446,13 +469,16 @@ namespace Initium.Portal.Tests.Queries
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             var systemUser = new Mock<ISystemUser>();
             systemUser.Setup(x => x.UserId).Returns(TestVariables.UserId);
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe.From(systemUser.Object));
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(systemUser.Object));
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -460,7 +486,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.CheckForPresenceOfAuthAppForCurrentUser();
@@ -473,13 +499,16 @@ namespace Initium.Portal.Tests.Queries
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             var systemUser = new Mock<ISystemUser>();
             systemUser.Setup(x => x.UserId).Returns(TestVariables.UserId);
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe.From(systemUser.Object));
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(systemUser.Object));
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -487,8 +516,8 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            await context.Users.AddAsync(new User
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
             });
@@ -505,13 +534,16 @@ namespace Initium.Portal.Tests.Queries
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
             var systemUser = new Mock<ISystemUser>();
             systemUser.Setup(x => x.UserId).Returns(TestVariables.UserId);
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe.From(systemUser.Object));
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(systemUser.Object));
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -519,13 +551,13 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new User
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
-                AuthenticatorApps = new List<AuthenticatorApp>
+                AuthenticatorApps = new List<AuthenticatorAppReadEntity>
                 {
-                    new AuthenticatorApp
+                    new AuthenticatorAppReadEntity
                     {
                         Id = TestVariables.AuthenticatorAppId,
                     },
@@ -542,12 +574,11 @@ namespace Initium.Portal.Tests.Queries
         public async Task GetDeviceInfoForCurrentUser_GivenNoUserIsAuthenticated_ExpectMaybeWithNothing()
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe<ISystemUser>.Nothing);
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe<ISystemUser>.Nothing);
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
-
-            var tenantInfo = new Mock<ITenantInfo>();
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -555,7 +586,8 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, Mock.Of<FeatureBasedTenantInfo>(),
+                multiTenantSettings.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.GetDeviceInfoForCurrentUser();
@@ -566,17 +598,21 @@ namespace Initium.Portal.Tests.Queries
         public async Task GetDeviceInfoForCurrentUser_GivenUserDoesExist_ExpectMaybeWithNothing()
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe<ISystemUser>.Nothing);
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe<ISystemUser>.Nothing);
             var systemUser = new Mock<ISystemUser>();
             systemUser.Setup(x => x.UserId).Returns(TestVariables.UserId);
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe.From(systemUser.Object));
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(systemUser.Object));
 
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -584,7 +620,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
             var result = await userQueries.GetDeviceInfoForCurrentUser();
@@ -595,17 +631,21 @@ namespace Initium.Portal.Tests.Queries
         public async Task GetDeviceInfoForCurrentUser_GivenUserHasNoDevices_ExpectMaybeWithNothing()
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe<ISystemUser>.Nothing);
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe<ISystemUser>.Nothing);
             var systemUser = new Mock<ISystemUser>();
             systemUser.Setup(x => x.UserId).Returns(TestVariables.UserId);
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe.From(systemUser.Object));
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(systemUser.Object));
 
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -613,8 +653,8 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            await context.Users.AddAsync(new User
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
             });
@@ -629,17 +669,21 @@ namespace Initium.Portal.Tests.Queries
         public async Task GetDeviceInfoForCurrentUser_GivenUserHasDevices_ExpectMaybeWithMappedData()
         {
             var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe<ISystemUser>.Nothing);
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe<ISystemUser>.Nothing);
             var systemUser = new Mock<ISystemUser>();
             systemUser.Setup(x => x.UserId).Returns(TestVariables.UserId);
-            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser).Returns(Maybe.From(systemUser.Object));
+            currentAuthenticatedUserProvider.Setup(x => x.CurrentAuthenticatedUser)
+                .Returns(Maybe.From(systemUser.Object));
 
-            var options = new DbContextOptionsBuilder<QueryContext>()
+            var options = new DbContextOptionsBuilder<CoreQueryContext>()
                 .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
                 .Options;
 
-            var tenantInfo = new Mock<ITenantInfo>();
-            tenantInfo.Setup(x => x.Id).Returns(TestVariables.TenantId.ToString);
+            var tenantInfo = new FeatureBasedTenantInfo
+            {
+                Id = TestVariables.TenantId.ToString(),
+            };
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -647,13 +691,13 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new QueryContext(options, tenantInfo.Object, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new User
+            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            var user = await context.Users.AddAsync(new UserReadEntity
             {
                 Id = TestVariables.UserId,
-                AuthenticatorDevices = new List<AuthenticatorDevice>
+                AuthenticatorDevices = new List<AuthenticatorDeviceReadEntity>
                 {
-                    new AuthenticatorDevice
+                    new AuthenticatorDeviceReadEntity
                     {
                         Id = TestVariables.AuthenticatorDeviceId,
                         Name = "name",

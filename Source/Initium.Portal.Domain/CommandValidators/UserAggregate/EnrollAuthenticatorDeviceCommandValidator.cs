@@ -12,10 +12,15 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public EnrollAuthenticatorDeviceCommandValidator()
         {
             this.RuleFor(x => x.Name)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
+
             this.RuleFor(x => x.AuthenticatorAttestationRawResponse)
+                .Cascade(CascadeMode.Stop)
                 .NotNull().WithErrorCode(ValidationCodes.FieldIsRequired);
+
             this.RuleFor(x => x.CredentialCreateOptions)
+                .Cascade(CascadeMode.Stop)
                 .NotNull().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

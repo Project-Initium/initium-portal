@@ -13,7 +13,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenAllPropertiesAreValid_ExpectValidationSuccess()
         {
-            var cmd = new RequestPasswordResetCommand("a@b.com");
+            var cmd = new RequestPasswordResetCommand("valid@email.address");
             var validator = new RequestPasswordResetCommandValidator();
             var result = validator.Validate(cmd);
             Assert.True(result.IsValid);
@@ -26,6 +26,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new RequestPasswordResetCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
@@ -39,6 +40,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new RequestPasswordResetCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
@@ -52,6 +54,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new RequestPasswordResetCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.ValueMustBeAnEmailAddress) &&

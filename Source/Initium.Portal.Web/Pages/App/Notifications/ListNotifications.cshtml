@@ -9,7 +9,7 @@
 <div class="row page-titles">
     <div class="align-self-center pl-0 col-md-7 col-12">
         <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a asp-page="@PageLocations.AppDashboard">Home</a></li>
+            <li class="breadcrumb-item"><a asp-page="@CorePageLocations.AppDashboard">Home</a></li>
             <li class="breadcrumb-item">Notification Inbox</li>
         </ol>
     </div>
@@ -24,7 +24,7 @@
         <div class="card">
             <div class="card-body">
                 
-                <h3 class="card-title">Notification Inbox <button type="button" data-export="@ODataLocations.UserNotificationFilteredExport" class="btn btn-sm btn-primary pull-right">Export</button></h3>
+                <h3 class="card-title">Notification Inbox <button type="button" data-export="@CoreODataLocations.UserNotificationFilteredExport" class="btn btn-sm btn-primary pull-right">Export</button></h3>
                 <h6 class="card-subtitle" id="table-description">View all pending and viewed Notifications</h6>
                 <div class="position-relative">
                 <form id="filters" class="container form-material">
@@ -42,7 +42,7 @@
                     
                 </form>
                     <div class="table-responsive">
-                        <table class="table table-hover clickable" id="notifications" cellspacing="0" width="100%" aria-describedby="table-description" data-route-filtered="@ODataLocations.UserNotificationFilteredListing" data-read-item-uri="@Url.Action("HandleAsync", "ViewedNotification")"  data-dismiss-item-uri="@Url.Action("HandleAsync", "DismissedNotification")">
+                        <table class="table table-hover clickable" id="notifications" cellspacing="0" width="100%" aria-describedby="table-description" data-route-filtered="@CoreODataLocations.UserNotificationFilteredListing" data-read-item-uri="@Url.Action("HandleAsync", "ViewedNotification")"  data-dismiss-item-uri="@Url.Action("HandleAsync", "DismissedNotification")">
                        
                         </table>                    
                     </div>

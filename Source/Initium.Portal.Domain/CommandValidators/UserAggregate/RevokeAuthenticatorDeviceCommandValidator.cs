@@ -13,8 +13,11 @@ namespace Initium.Portal.Domain.CommandValidators.UserAggregate
         public RevokeAuthenticatorDeviceCommandValidator()
         {
             this.RuleFor(x => x.DeviceId)
+                .Cascade(CascadeMode.Stop)
                 .NotEqual(Guid.Empty).WithErrorCode(ValidationCodes.FieldIsRequired);
+
             this.RuleFor(x => x.Password)
+                .Cascade(CascadeMode.Stop)
                 .NotEmpty().WithErrorCode(ValidationCodes.FieldIsRequired);
         }
     }

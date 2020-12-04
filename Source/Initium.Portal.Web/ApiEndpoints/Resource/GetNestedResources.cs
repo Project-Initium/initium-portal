@@ -13,7 +13,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.Resource
 {
-    public class GetNestedResources : BaseAsyncEndpoint<List<SimpleResourceModel>>
+    public class GetNestedResources : BaseAsyncEndpoint<IReadOnlyList<SimpleResourceModel>>
     {
         private readonly IResourceQueryService _resourceQueryService;
 
@@ -25,10 +25,9 @@ namespace Initium.Portal.Web.ApiEndpoints.Resource
         [ResourceBasedAuthorize("resource-list")]
         [HttpGet("api/resources/list-nested", Name = "GetNestedResourcesEndpoint")]
 
-        public override async Task<ActionResult<List<SimpleResourceModel>>> HandleAsync(CancellationToken cancellationToken = default)
+        public override async Task<ActionResult<IReadOnlyList<SimpleResourceModel>>> HandleAsync(CancellationToken cancellationToken = default)
         {
-            var maybe = await this._resourceQueryService.GetNestedSimpleResources();
-            return maybe.HasNoValue ? this.Ok(new List<SimpleResourceModel>()) : this.Ok(maybe.Value);
+            return this.Ok(await this._resourceQueryService.GetFeatureBasedNestedSimpleResources(cancellationToken));
         }
     }
 }

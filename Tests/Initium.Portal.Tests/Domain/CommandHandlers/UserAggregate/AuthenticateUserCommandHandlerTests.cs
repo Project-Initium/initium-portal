@@ -15,7 +15,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.CommandResults.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MaybeMonad;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -44,16 +44,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var fido = new Mock<IFido2>();
-
-            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
-
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<IFido2>(), Mock.Of<ILogger<AuthenticateUserCommandHandler>>());
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -78,16 +72,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var fido = new Mock<IFido2>();
-
-            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
-
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<IFido2>(), Mock.Of<ILogger<AuthenticateUserCommandHandler>>());
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -104,14 +92,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe<IUser>.Nothing);
 
-            var clock = new Mock<IClock>();
-
-            var securitySettings = new Mock<IOptions<SecuritySettings>>();
-            var fido = new Mock<IFido2>();
-
-            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
-
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<IOptions<SecuritySettings>>(), Mock.Of<IFido2>(), Mock.Of<ILogger<AuthenticateUserCommandHandler>>());
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -135,14 +116,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-
-            var securitySettings = new Mock<IOptions<SecuritySettings>>();
-            var fido = new Mock<IFido2>();
-
-            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
-
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<IOptions<SecuritySettings>>(), Mock.Of<IFido2>(), Mock.Of<ILogger<AuthenticateUserCommandHandler>>());
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -167,15 +141,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
-            var fido = new Mock<IFido2>();
 
-            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
-
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<IFido2>(), Mock.Of<ILogger<AuthenticateUserCommandHandler>>());
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -197,16 +166,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(() => new SecuritySettings { AllowedAttempts = -1 });
 
-            var fido = new Mock<IFido2>();
-
-            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
-
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<IFido2>(), Mock.Of<ILogger<AuthenticateUserCommandHandler>>());
             var cmd = new AuthenticateUserCommand("email-address", "wrong-password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -229,16 +192,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(() => new SecuritySettings { AllowedAttempts = 1 });
 
-            var fido = new Mock<IFido2>();
-
-            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
-
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<IFido2>(), Mock.Of<ILogger<AuthenticateUserCommandHandler>>());
             var cmd = new AuthenticateUserCommand("email-address", "wrong-password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -261,16 +218,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(() => new SecuritySettings { AllowedAttempts = 0 });
 
-            var fido = new Mock<IFido2>();
-
-            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
-
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<IFido2>(), Mock.Of<ILogger<AuthenticateUserCommandHandler>>());
             var cmd = new AuthenticateUserCommand("email-address", "wrong-password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -299,16 +250,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var fido = new Mock<IFido2>();
-
-            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
-
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<IFido2>(), Mock.Of<ILogger<AuthenticateUserCommandHandler>>());
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -318,7 +263,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             Assert.True(result.Value.SetupMfaProviders.HasFlag(MfaProvider.Email));
             Assert.Equal(BaseAuthenticationProcessCommandResult.AuthenticationState.AwaitingMfaEmailCode, result.Value.AuthenticationStatus);
             user.Verify(x => x.ProcessPartialSuccessfulAuthenticationAttempt(It.IsAny<DateTime>(), AuthenticationHistoryType.EmailMfaRequested));
-            user.Verify(x => x.AddDomainEvent(It.IsAny<EmailMfaTokenGeneratedEvent>()));
+            user.Verify(x => x.AddIntegrationEvent(It.IsAny<EmailMfaTokenGeneratedIntegrationEvent>()));
         }
 
         [Fact]
@@ -343,16 +288,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
-            var fido = new Mock<IFido2>();
-
-            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
-
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<IFido2>(), Mock.Of<ILogger<AuthenticateUserCommandHandler>>());
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -394,8 +333,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
 
-            var clock = new Mock<IClock>();
-
             var securitySettings = new Mock<IOptions<SecuritySettings>>();
             securitySettings.Setup(x => x.Value).Returns(new SecuritySettings());
 
@@ -406,9 +343,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                     It.IsAny<UserVerificationRequirement>(), It.IsAny<AuthenticationExtensionsClientInputs>()))
                 .Returns(new AssertionOptions());
 
-            var logger = new Mock<ILogger<AuthenticateUserCommandHandler>>();
-
-            var handler = new AuthenticateUserCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, fido.Object, logger.Object);
+            var handler = new AuthenticateUserCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, fido.Object, Mock.Of<ILogger<AuthenticateUserCommandHandler>>());
             var cmd = new AuthenticateUserCommand("email-address", "password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 

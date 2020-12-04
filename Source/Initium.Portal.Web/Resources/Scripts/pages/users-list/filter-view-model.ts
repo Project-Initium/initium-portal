@@ -1,6 +1,6 @@
-﻿import ko from 'knockout'
-import {BaseFilterViewModel} from '../base-list';
-import {ICustomQuery, ISimpleStateData, IStateData} from '../../providers';
+﻿import ko from 'knockout';
+import { BaseFilterViewModel } from '../base-filter-view-model';
+import { ICustomQuery, ISimpleStateData, IStateData } from '../../providers';
 
 interface IRequest {
     verified: boolean;
@@ -8,7 +8,7 @@ interface IRequest {
     locked: boolean;
     unlocked: boolean;
     admin: boolean;
-    nonAdmin: boolean
+    nonAdmin: boolean;
 }
 
 interface IUserSimpleStateData extends ISimpleStateData{
@@ -26,7 +26,7 @@ interface IUserStateData extends IStateData {
     locked: boolean;
     unlocked: boolean;
     admin: boolean;
-    nonAdmin: boolean
+    nonAdmin: boolean;
 }
 
 export class FilterViewModel extends BaseFilterViewModel {
@@ -40,22 +40,22 @@ export class FilterViewModel extends BaseFilterViewModel {
     public filterCount = ko.computed<number>(() => {
         let count = 0;
         if(this.verified()) {
-            count ++
+            count ++;
         }
         if(this.unverified()) {
-            count ++
+            count ++;
         }
         if(this.locked()) {
-            count ++
+            count ++;
         }
         if(this.unlocked()) {
-            count ++
+            count ++;
         }
         if(this.admin()) {
-            count ++
+            count ++;
         }
         if(this.nonAdmin()) {
-            count ++
+            count ++;
         }
         return count;
     });
@@ -64,12 +64,12 @@ export class FilterViewModel extends BaseFilterViewModel {
 
     public getFilter(): ICustomQuery {
         if (!this.customQuery) {
-            this.createInternalRequest()
+            this.createInternalRequest();
         }
         return this.customQuery;
     }
     constructor() {
-        super()
+        super();
     }
 
     public hydrateFromParams(params: URLSearchParams) {
@@ -109,7 +109,7 @@ export class FilterViewModel extends BaseFilterViewModel {
             userSimpleStateData.fna = '1';
         }
         userStateData.search = this.searchTerm();
-        return {stateData: userStateData, simpleStateData: userSimpleStateData}
+        return {stateData: userStateData, simpleStateData: userSimpleStateData};
     }
 
     public hydrateFromState(userStateData: IUserStateData) {
@@ -144,8 +144,6 @@ export class FilterViewModel extends BaseFilterViewModel {
         this.customQuery = {
             requestData: request,
             searchParam: this.searchTerm()
-        }
+        };
     }
-
-
 }

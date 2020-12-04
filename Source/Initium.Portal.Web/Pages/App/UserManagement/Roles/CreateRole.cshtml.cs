@@ -42,7 +42,7 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Roles
             {
                 this.PrgState = PrgState.Success;
                 this.AddPageNotification("The role was created successfully", PageNotification.Success);
-                return this.RedirectToPage(PageLocations.RoleView, new { id = result.Value.RoleId });
+                return this.RedirectToPage(CorePageLocations.RoleView, new { id = result.Value.RoleId });
             }
 
             this.AddPageNotification("There was an issue creating the role.", PageNotification.Error);

@@ -13,11 +13,11 @@ namespace Initium.Portal.Infrastructure.Repositories
 {
     public class SystemAlertRepository : ISystemAlertRepository
     {
-        private readonly DataContext _dataContext;
+        private readonly ICoreDataContext _dataContext;
 
-        public SystemAlertRepository(DataContext dataContext)
+        public SystemAlertRepository(ICoreDataContext dataContext)
         {
-            this._dataContext = dataContext ?? throw new ArgumentNullException(nameof(dataContext));
+            this._dataContext = dataContext;
         }
 
         public IUnitOfWork UnitOfWork => this._dataContext;

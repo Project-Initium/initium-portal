@@ -22,15 +22,15 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly IClock _clock;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IUserRepository _userRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<RevokeAuthenticatorAppCommandHandler> _logger;
 
         public RevokeAuthenticatorAppCommandHandler(IUserRepository userRepository, IClock clock,
             ICurrentAuthenticatedUserProvider currentUserService, ILogger<RevokeAuthenticatorAppCommandHandler> logger)
         {
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._currentAuthenticatedUserProvider = currentUserService ?? throw new ArgumentNullException(nameof(currentUserService));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._clock = clock;
+            this._currentAuthenticatedUserProvider = currentUserService;
+            this._logger = logger;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(

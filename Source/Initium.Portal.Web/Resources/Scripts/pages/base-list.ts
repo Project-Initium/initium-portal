@@ -1,22 +1,7 @@
-﻿import {CustomizedDataTableProvider, ICustomQuery, ISimpleStateData, IStateData} from '../providers';
-import * as ko from 'knockout'
-import KnockoutSecureBinding from 'knockout-secure-binding'
-
-export abstract class BaseFilterViewModel {
-    abstract getFilter(): ICustomQuery;
-
-    abstract hydrateFromParams(params: URLSearchParams);
-
-    abstract generateStateData(stateData: IStateData, simpleStateData: ISimpleStateData)
-        : { stateData: IStateData, simpleStateData: ISimpleStateData };
-
-    abstract hydrateFromState(userStateData: IStateData);
-
-    abstract reset();
-
-    abstract createInternalRequest();
-}
-
+﻿import { CustomizedDataTableProvider, ICustomQuery, ISimpleStateData, IStateData } from '../providers';
+import * as ko from 'knockout';
+import KnockoutSecureBinding from 'knockout-secure-binding';
+import { BaseFilterViewModel } from './base-filter-view-model';
 
 export abstract class BaseList<TBaseFilterViewModel extends BaseFilterViewModel> {
     protected detailsUrl: string;
@@ -26,7 +11,7 @@ export abstract class BaseList<TBaseFilterViewModel extends BaseFilterViewModel>
     protected customizedDataTable: CustomizedDataTableProvider;
     private filterToggleIcon: HTMLSpanElement;
     private searchFacets: HTMLDivElement;
-    
+
     protected baseInit(tableSelector: string, filterVM: TBaseFilterViewModel) {
 
         const contextThis = this;
@@ -44,7 +29,7 @@ export abstract class BaseList<TBaseFilterViewModel extends BaseFilterViewModel>
         }, this.tableOptions);
 
         const filterForm = document.querySelector<HTMLFormElement>('#filters');
-        filterForm.addEventListener('reset', (event) => contextThis.filterVM.reset());
+        filterForm.addEventListener('reset', _ => contextThis.filterVM.reset());
         filterForm.addEventListener('submit', (event) => contextThis.search(event));
 
         const toggle = filterForm.querySelector('.filter-toggle');
@@ -52,7 +37,7 @@ export abstract class BaseList<TBaseFilterViewModel extends BaseFilterViewModel>
         this.filterToggleIcon = toggle.querySelector('i');
         this.searchFacets = filterForm.querySelector('#filter-options');
 
-        let exportBtn: HTMLButtonElement = document.querySelector('[data-export]');
+        const exportBtn: HTMLButtonElement = document.querySelector('[data-export]');
         this.exportUrl = exportBtn.dataset.export;
         exportBtn.addEventListener('click', (event) => contextThis.requestExport(event));
 
@@ -66,9 +51,9 @@ export abstract class BaseList<TBaseFilterViewModel extends BaseFilterViewModel>
         });
         ko.applyBindings(this.filterVM);
     }
-    
+
     protected rowClicked(event: JQuery.ClickEvent): void {
-        window.location.href = this.detailsUrl.replace('__ID__', (<any>this.customizedDataTable.tableApi.row(event.currentTarget).data()).Id);
+        window.location.href = this.detailsUrl.replace('__ID__', (this.customizedDataTable.tableApi.row(event.currentTarget).data() as any).Id);
     }
 
     search(event: Event): any {

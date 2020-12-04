@@ -10,7 +10,7 @@ using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandResults.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using Initium.Portal.Queries.Contracts;
 using MediatR;
 using Microsoft.Extensions.Logging;
@@ -26,21 +26,16 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private readonly IUserQueryService _userQueryService;
         private readonly IUserRepository _userRepository;
         private readonly SecuritySettings _securitySettings;
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateUserCommandHandler> _logger;
 
         public CreateUserCommandHandler(IUserRepository userRepository, IClock clock,
             IUserQueryService userQueryService, IOptions<SecuritySettings> securitySettings,
             ILogger<CreateUserCommandHandler> logger)
         {
-            if (securitySettings == null)
-            {
-                throw new ArgumentNullException(nameof(securitySettings));
-            }
-
-            this._userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._userRepository = userRepository;
+            this._clock = clock;
+            this._userQueryService = userQueryService;
+            this._logger = logger;
             this._securitySettings = securitySettings.Value;
         }
 
@@ -85,7 +80,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var user = new User(Guid.NewGuid(), request.EmailAddress, GenerateRandomPassword(), request.IsLockable,
                 whenHappened, request.FirstName, request.LastName, request.Roles, request.IsAdmin);
             var token = user.GenerateNewAccountConfirmationToken(whenHappened, TimeSpan.FromMinutes(this._securitySettings.AccountVerificationTokenLifetime));
-            user.AddDomainEvent(new AccountConfirmationTokenGeneratedEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token));
+            user.AddIntegrationEvent(new AccountConfirmationTokenGeneratedIntegrationEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token));
             this._userRepository.Add(user);
             return Result.Ok<CreateUserCommandResult, ErrorData>(new CreateUserCommandResult(user.Id));
         }

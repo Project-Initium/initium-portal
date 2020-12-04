@@ -10,7 +10,7 @@ using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandHandlers.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
-using Initium.Portal.Domain.Events;
+using Initium.Portal.Domain.Events.IntegrationEvents;
 using MaybeMonad;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -29,7 +29,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
             user.Setup(x => x.IsDisabled).Returns(false);
             user.Setup(x => x.IsVerified).Returns(true);
-            var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
@@ -43,10 +42,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 PasswordTokenLifetime = 3,
             });
 
-            var logger = new Mock<ILogger<RequestPasswordResetCommandHandler>>();
-
             var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+                new RequestPasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<RequestPasswordResetCommandHandler>>());
             var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -61,7 +58,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
             user.Setup(x => x.IsDisabled).Returns(false);
             user.Setup(x => x.IsVerified).Returns(true);
-            var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -75,10 +71,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 PasswordTokenLifetime = 3,
             });
 
-            var logger = new Mock<ILogger<RequestPasswordResetCommandHandler>>();
-
             var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+                new RequestPasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<RequestPasswordResetCommandHandler>>());
             var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -92,7 +86,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
             user.Setup(x => x.IsDisabled).Returns(false);
             user.Setup(x => x.IsVerified).Returns(true);
-            var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -107,23 +100,20 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 PasswordTokenLifetime = 3,
             });
 
-            var logger = new Mock<ILogger<RequestPasswordResetCommandHandler>>();
-
             var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+                new RequestPasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<RequestPasswordResetCommandHandler>>());
             var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsSuccess);
             user.Verify(x => x.GenerateNewPasswordResetToken(It.IsAny<DateTime>(), It.IsAny<TimeSpan>()), Times.Once);
             userRepository.Verify(x => x.Update(It.IsAny<IUser>()), Times.Once);
-            user.Verify(x => x.AddDomainEvent(It.IsAny<PasswordResetTokenGeneratedEvent>()));
+            user.Verify(x => x.AddIntegrationEvent(It.IsAny<PasswordResetTokenGeneratedIntegrationEvent>()));
         }
 
         [Fact]
         public async Task Handle_GivenUserIsNotFound_ExpectFailedResult()
         {
-            var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -137,10 +127,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 PasswordTokenLifetime = 3,
             });
 
-            var logger = new Mock<ILogger<RequestPasswordResetCommandHandler>>();
-
             var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+                new RequestPasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<RequestPasswordResetCommandHandler>>());
             var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -154,7 +142,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var user = new Mock<IUser>();
             user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
             user.Setup(x => x.IsVerified).Returns(false);
-            var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -168,10 +155,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 PasswordTokenLifetime = 3,
             });
 
-            var logger = new Mock<ILogger<RequestPasswordResetCommandHandler>>();
-
             var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+                new RequestPasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<RequestPasswordResetCommandHandler>>());
             var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -186,7 +171,6 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
             user.Setup(x => x.IsVerified).Returns(true);
             user.Setup(x => x.IsDisabled).Returns(true);
-            var clock = new Mock<IClock>();
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -200,10 +184,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
                 PasswordTokenLifetime = 3,
             });
 
-            var logger = new Mock<ILogger<RequestPasswordResetCommandHandler>>();
-
             var handler =
-                new RequestPasswordResetCommandHandler(userRepository.Object, clock.Object, securitySettings.Object, logger.Object);
+                new RequestPasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<RequestPasswordResetCommandHandler>>());
             var cmd = new RequestPasswordResetCommand("email-address");
             var result = await handler.Handle(cmd, CancellationToken.None);
 

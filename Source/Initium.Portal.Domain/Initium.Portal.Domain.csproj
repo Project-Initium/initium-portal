@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="BCrypt.Net-Next" Version="4.0.0" />
     <PackageReference Include="Fido2" Version="1.1.0" />
-    <PackageReference Include="FluentValidation" Version="8.6.2" />
+    <PackageReference Include="FluentValidation" Version="9.3.0" />
     <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.7" />
     <PackageReference Include="NodaTime" Version="3.0.0" />
@@ -30,6 +30,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Initium.Portal.Core\Initium.Portal.Core.csproj" />
     <ProjectReference Include="..\Initium.Portal.Queries\Initium.Portal.Queries.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="EventHandlers\DomainEventHandlers" />
   </ItemGroup>
 
 </Project>

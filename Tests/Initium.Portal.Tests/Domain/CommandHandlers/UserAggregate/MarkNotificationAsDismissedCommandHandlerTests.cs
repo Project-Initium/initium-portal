@@ -31,12 +31,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<MarkNotificationAsDismissedCommandHandler>>();
 
             var commandHandler =
-                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
+                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<MarkNotificationAsDismissedCommandHandler>>());
 
             var command = new MarkNotificationAsDismissedCommand(
                 TestVariables.UserId,
@@ -57,12 +54,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<MarkNotificationAsDismissedCommandHandler>>();
 
             var commandHandler =
-                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
+                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<MarkNotificationAsDismissedCommandHandler>>());
 
             var command = new MarkNotificationAsDismissedCommand(
                 TestVariables.UserId,
@@ -88,12 +82,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<MarkNotificationAsDismissedCommandHandler>>();
 
             var commandHandler =
-                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
+                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<MarkNotificationAsDismissedCommandHandler>>());
 
             var command = new MarkNotificationAsDismissedCommand(
                 TestVariables.UserId,
@@ -119,12 +110,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<MarkNotificationAsDismissedCommandHandler>>();
 
             var commandHandler =
-                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, clock.Object, logger.Object);
+                new MarkNotificationAsDismissedCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<MarkNotificationAsDismissedCommandHandler>>());
 
             var command = new MarkNotificationAsDismissedCommand(
                 TestVariables.UserId,

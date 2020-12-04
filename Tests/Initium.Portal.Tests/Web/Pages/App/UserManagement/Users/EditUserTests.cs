@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Threading;
 using System.Threading.Tasks;
-using Initium.Portal.Core;
 using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.Commands.UserAggregate;
@@ -306,7 +305,7 @@ namespace Initium.Portal.Tests.Web.Pages.App.UserManagement.Users
 
             var result = await page.OnPostAsync();
             var pageResult = Assert.IsType<RedirectToPageResult>(result);
-            Assert.Equal(PageLocations.UserView, pageResult.PageName);
+            Assert.Equal(CorePageLocations.UserView, pageResult.PageName);
         }
 
         [Fact]

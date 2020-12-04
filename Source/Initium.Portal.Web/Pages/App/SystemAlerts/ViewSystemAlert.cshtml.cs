@@ -5,12 +5,12 @@ using System;
 using System.Threading.Tasks;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Models.Messaging;
+using Initium.Portal.Web.Infrastructure.PageModels;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace Initium.Portal.Web.Pages.App.SystemAlerts
 {
-    public class ViewSystemAlert : PageModel
+    public class ViewSystemAlert : NotificationPageModel
     {
         private readonly ISystemAlertQueryService _systemAlertQueryService;
 

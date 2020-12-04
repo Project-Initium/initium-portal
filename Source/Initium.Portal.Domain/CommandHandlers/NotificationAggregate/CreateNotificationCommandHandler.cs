@@ -14,17 +14,16 @@ using ResultMonad;
 
 namespace Initium.Portal.Domain.CommandHandlers.NotificationAggregate
 {
-    public class
-        CreateNotificationCommandHandler : IRequestHandler<CreateNotificationCommand, Result<CreateNotificationCommandResult, ErrorData>>
+    public class CreateNotificationCommandHandler
+        : IRequestHandler<CreateNotificationCommand, Result<CreateNotificationCommandResult, ErrorData>>
     {
         private readonly INotificationRepository _notificationRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<CreateNotificationCommandHandler> _logger;
 
         public CreateNotificationCommandHandler(INotificationRepository notificationRepository, ILogger<CreateNotificationCommandHandler> logger)
         {
-            this._notificationRepository = notificationRepository ??
-                                           throw new ArgumentNullException(nameof(notificationRepository));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._notificationRepository = notificationRepository;
+            this._logger = logger;
         }
 
         public async Task<Result<CreateNotificationCommandResult, ErrorData>> Handle(CreateNotificationCommand request, CancellationToken cancellationToken)

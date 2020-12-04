@@ -1,0 +1,25 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>netstandard2.1</TargetFramework>
+        <RootNamespace>Initium.Portal.Infrastructure.Admin</RootNamespace>
+    </PropertyGroup>
+
+    <Import Project="..\..\Shared\Initium.Portal.Shared\Initium.Portal.Shared.projitems" Label="Shared" />
+
+    <ItemGroup>
+      <ProjectReference Include="..\Initium.Portal.Domain.Management\Initium.Portal.Domain.Management.csproj" />
+      <ProjectReference Include="..\Initium.Portal.Infrastructure\Initium.Portal.Infrastructure.csproj" />
+    </ItemGroup>
+
+<ItemGroup>
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.11.0.20529">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+    </ItemGroup>
+</Project>

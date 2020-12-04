@@ -16,12 +16,12 @@ namespace Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate
     public class UpdateSystemAlertCommandHandler : IRequestHandler<UpdateSystemAlertCommand, ResultWithError<ErrorData>>
     {
         private readonly ISystemAlertRepository _systemAlertRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<UpdateSystemAlertCommandHandler> _logger;
 
         public UpdateSystemAlertCommandHandler(ISystemAlertRepository systemAlertRepository, ILogger<UpdateSystemAlertCommandHandler> logger)
         {
-            this._systemAlertRepository = systemAlertRepository ?? throw new ArgumentNullException(nameof(systemAlertRepository));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._systemAlertRepository = systemAlertRepository;
+            this._logger = logger;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(UpdateSystemAlertCommand request, CancellationToken cancellationToken)

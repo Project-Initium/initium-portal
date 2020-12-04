@@ -18,13 +18,13 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
     {
         private readonly IRoleQueryService _roleQueryService;
         private readonly IRoleRepository _roleRepository;
-        private readonly ILogger _logger;
+        private readonly ILogger<DeleteRoleCommandHandler> _logger;
 
         public DeleteRoleCommandHandler(IRoleRepository roleRepository, IRoleQueryService roleQueryService, ILogger<DeleteRoleCommandHandler> logger)
         {
-            this._roleRepository = roleRepository ?? throw new ArgumentNullException(nameof(roleRepository));
-            this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._roleRepository = roleRepository;
+            this._roleQueryService = roleQueryService;
+            this._logger = logger;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(
@@ -33,17 +33,17 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._roleRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (!dbResult)
+            if (dbResult)
             {
-                this._logger.LogDebug("Failed saving changes.");
-                return ResultWithError.Fail(new ErrorData(
-                    ErrorCodes.SavingChanges, "Failed To Save Database"));
+                return result;
             }
 
-            return result;
+            this._logger.LogDebug("Failed saving changes.");
+            return ResultWithError.Fail(new ErrorData(
+                ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
-        public async Task<ResultWithError<ErrorData>> Process(
+        private async Task<ResultWithError<ErrorData>> Process(
             DeleteRoleCommand request, CancellationToken cancellationToken)
         {
             var roleMaybe = await this._roleRepository.Find(request.RoleId, cancellationToken);

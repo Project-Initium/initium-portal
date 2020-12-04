@@ -125,7 +125,7 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
             {
                 this.PrgState = PrgState.Success;
                 this.AddPageNotification("The user was updated successfully", PageNotification.Success);
-                return this.RedirectToPage(PageLocations.UserView, new { id = this.PageModel.UserId });
+                return this.RedirectToPage(CorePageLocations.UserView, new { id = this.PageModel.UserId });
             }
 
             this.AddPageNotification("There was an issue updating the user.", PageNotification.Error);

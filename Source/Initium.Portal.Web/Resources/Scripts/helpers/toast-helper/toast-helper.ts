@@ -9,7 +9,7 @@ export class ToastHelper {
             position: 'top-end',
             timer: 4500,
             showConfirmButton: false
-        });
+        }).then();
     }
 
     public static showFailureToast(message: string) {
@@ -20,6 +20,6 @@ export class ToastHelper {
             position: 'top-end',
             timer: 4500,
             showConfirmButton: false
-        });
+        }).then();
     }
 }

@@ -2,17 +2,13 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
-using System.Runtime.Serialization;
+using System.Diagnostics.CodeAnalysis;
 
 namespace Initium.Portal.Core.Exceptions
 {
-    [Serializable]
+    [SuppressMessage("ReSharper", "S3925", Justification = "Full serialization for this exception is not needed")]
     public class CustomException : Exception
     {
-        public CustomException()
-        {
-        }
-
         public CustomException(string message)
             : base(message)
         {
@@ -20,11 +16,6 @@ namespace Initium.Portal.Core.Exceptions
 
         public CustomException(string message, Exception innerException)
             : base(message, innerException)
-        {
-        }
-
-        protected CustomException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
         {
         }
     }

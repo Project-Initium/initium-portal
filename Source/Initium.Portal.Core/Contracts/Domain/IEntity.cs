@@ -9,11 +9,15 @@ namespace Initium.Portal.Core.Contracts.Domain
 {
     public interface IEntity
     {
-        List<INotification> DomainEvents { get; }
+        IReadOnlyCollection<INotification> IntegrationEvents { get; }
+
+        IReadOnlyCollection<INotification> DomainEvents { get; }
 
         Guid Id { get; }
 
         void AddDomainEvent(INotification eventItem);
+
+        void AddIntegrationEvent(INotification eventItem);
 
         bool Equals(object obj);
 
@@ -22,5 +26,11 @@ namespace Initium.Portal.Core.Contracts.Domain
         bool IsTransient();
 
         void RemoveDomainEvent(INotification eventItem);
+
+        void RemoveIntegrationEvent(INotification eventItem);
+
+        void ClearDomainEvents();
+
+        void ClearIntegrationEvents();
     }
 }

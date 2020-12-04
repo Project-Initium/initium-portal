@@ -22,10 +22,11 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
         [Fact]
         public void Validate_GivenEmailAddressIsNotValid_ExpectValidationFailure()
         {
-            var cmd = new RequestAccountVerificationCommand("email.address@com");
+            var cmd = new RequestAccountVerificationCommand("not an email");
             var validator = new RequestAccountVerificationCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.ValueMustBeAnEmailAddress) &&
@@ -39,6 +40,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new RequestAccountVerificationCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&
@@ -52,6 +54,7 @@ namespace Initium.Portal.Tests.Domain.CommandValidators.UserAggregate
             var validator = new RequestAccountVerificationCommandValidator();
             var result = validator.Validate(cmd);
             Assert.False(result.IsValid);
+            Assert.Single(result.Errors);
             Assert.Contains(
                 result.Errors,
                 failure => failure.ErrorCode.Equals(ValidationCodes.FieldIsRequired) &&

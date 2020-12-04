@@ -1,7 +1,7 @@
-import 'datatables.net'
-import 'datatables.net-bs4'
-import {BaseList} from '../base-list'
-import {FilterViewModel} from './filter-view-model';
+import 'datatables.net';
+import 'datatables.net-bs4';
+import { BaseList } from '../base-list';
+import { FilterViewModel } from './filter-view-model';
 
 export class RoleList extends BaseList<FilterViewModel> {
     constructor() {
@@ -9,7 +9,7 @@ export class RoleList extends BaseList<FilterViewModel> {
         if (document.readyState !== 'loading') {
             this.init();
         } else {
-            document.addEventListener('DOMContentLoaded', e => this.init());
+            document.addEventListener('DOMContentLoaded', _ => this.init());
         }
     }
 
@@ -40,8 +40,12 @@ export class RoleList extends BaseList<FilterViewModel> {
                 visible: false
             }
         ],
-        dom: 'rt<"table-information"lpi>'
+        dom: 'rt<"table-information"lpi>',
+        language: {
+            processing: '<div class="processing-inner">Processing...</div>'
+        }
     };
 
 }
-const p = new RoleList();
+// tslint:disable-next-line:no-unused-expression
+new RoleList();

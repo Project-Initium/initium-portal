@@ -31,12 +31,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<MarkNotificationAsViewedCommandHandler>>();
 
             var commandHandler =
-                new MarkNotificationAsViewedCommandHandler(userRepository.Object, clock.Object, logger.Object);
+                new MarkNotificationAsViewedCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<MarkNotificationAsViewedCommandHandler>>());
 
             var command = new MarkNotificationAsViewedCommand(
                 TestVariables.UserId,
@@ -57,12 +54,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<MarkNotificationAsViewedCommandHandler>>();
 
             var commandHandler =
-                new MarkNotificationAsViewedCommandHandler(userRepository.Object, clock.Object, logger.Object);
+                new MarkNotificationAsViewedCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<MarkNotificationAsViewedCommandHandler>>());
 
             var command = new MarkNotificationAsViewedCommand(
                 TestVariables.UserId,
@@ -88,12 +82,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<MarkNotificationAsViewedCommandHandler>>();
 
             var commandHandler =
-                new MarkNotificationAsViewedCommandHandler(userRepository.Object, clock.Object, logger.Object);
+                new MarkNotificationAsViewedCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<MarkNotificationAsViewedCommandHandler>>());
 
             var command = new MarkNotificationAsViewedCommand(
                 TestVariables.UserId,
@@ -119,12 +110,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
-            var clock = new Mock<IClock>();
-
-            var logger = new Mock<ILogger<MarkNotificationAsViewedCommandHandler>>();
 
             var commandHandler =
-                new MarkNotificationAsViewedCommandHandler(userRepository.Object, clock.Object, logger.Object);
+                new MarkNotificationAsViewedCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<MarkNotificationAsViewedCommandHandler>>());
 
             var command = new MarkNotificationAsViewedCommand(
                 TestVariables.UserId,

@@ -1,4 +1,4 @@
-import 'gijgo'
+import 'gijgo';
 import { ValidationProvider } from '../../providers';
 
 
@@ -10,7 +10,7 @@ export class RoleEdit {
         if (document.readyState !== 'loading') {
             this.init();
         } else {
-            document.addEventListener('DOMContentLoaded', e => this.init());
+            document.addEventListener('DOMContentLoaded', _ => this.init());
         }
     }
 
@@ -24,7 +24,7 @@ export class RoleEdit {
             childrenField: 'simpleResources',
             textField: 'name',
             checkboxes: true,
-            dataBound: (e: any) => contextThis.treeOnDataBound(e)
+            dataBound: _ => contextThis.treeOnDataBound()
         });
 
         this.form = document.querySelector('form#role-create') as HTMLFormElement;
@@ -34,20 +34,20 @@ export class RoleEdit {
     }
 
      private formSubmit(event: Event): void {
-        if (!this.validator.validate()) {
+        if (this.validator.validate().isValid) {
             this.tree.find('input[type=checkbox]:checked').each((index, value) => {
                 const checkbox = $(value);
                 checkbox.attr('name', 'pagemodel.resources');
 
                 const parentLi = checkbox.closest('li');
-                checkbox.val(parentLi.data('id'))
-            })
+                checkbox.val(parentLi.data('id'));
+            });
         } else {
             event.preventDefault();
          }
      }
 
-    private treeOnDataBound(e: Event){
+    private treeOnDataBound(){
         const contextThis = this;
 
         const resources = document.querySelectorAll('input[type="hidden"][name="pagemodel.resources"]');
@@ -63,4 +63,5 @@ export class RoleEdit {
     }
 }
 
-const p = new RoleEdit();
+// tslint:disable-next-line:no-unused-expression
+new RoleEdit();
