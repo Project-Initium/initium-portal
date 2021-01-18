@@ -7,14 +7,14 @@ using Initium.Portal.Web.Infrastructure.Extensions;
 using Initium.Portal.Web.Infrastructure.Formatters;
 using Initium.Portal.Web.Infrastructure.Middleware;
 using Initium.Portal.Web.Pages.FirstRun;
-using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 using NWebsec.AspNetCore.Mvc.Csp;
 
 namespace Initium.Portal.Web.Tenant.Infrastructure.ServiceConfiguration
@@ -25,7 +25,7 @@ namespace Initium.Portal.Web.Tenant.Infrastructure.ServiceConfiguration
         {
             var coreAssembly = Assembly.Load(new AssemblyName("Initium.Portal.Web"));
 
-            services.AddOData();
+            services.AddOData(opt => opt.AddModel("odata", GetEdmModel()));
             services
                 .AddMvc(opts =>
                 {
@@ -73,13 +73,15 @@ namespace Initium.Portal.Web.Tenant.Infrastructure.ServiceConfiguration
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
+                //endpoints.MapODataRoute("odata", "odata", GetEdmModel());
             });
 
-            app.UseMvc(routeBuilder =>
-            {
-                routeBuilder.MapODataServiceRoute("odata", "odata", GetEdmModel());
-                routeBuilder.Select().Expand().Filter().OrderBy().Count().MaxTop(int.MaxValue);
-            });
+            app.UseRouting();
+            // app.UseMvc(routeBuilder =>
+            // {
+            //     routeBuilder.MapODataServiceRoute("odata", "odata", GetEdmModel());
+            //     routeBuilder.Select().Expand().Filter().OrderBy().Count().MaxTop(int.MaxValue);
+            // });
 
             return app;
         }

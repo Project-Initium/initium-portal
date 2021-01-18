@@ -2,8 +2,8 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using Initium.Portal.Queries.Management.Entities;
-using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OData.ModelBuilder;
 
 namespace Initium.Portal.Web.Management.Infrastructure.Extensions
 {

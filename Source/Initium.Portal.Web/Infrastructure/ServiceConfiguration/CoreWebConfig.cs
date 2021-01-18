@@ -3,8 +3,8 @@ using System.Reflection;
 using FluentValidation.AspNetCore;
 using Initium.Portal.Web.Infrastructure.Formatters;
 using Initium.Portal.Web.Pages.FirstRun;
-using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection;
 using NWebsec.AspNetCore.Mvc.Csp;
 

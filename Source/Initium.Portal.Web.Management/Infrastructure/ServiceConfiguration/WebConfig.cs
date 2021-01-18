@@ -11,13 +11,12 @@ using Initium.Portal.Web.Infrastructure.ServiceConfiguration;
 using Initium.Portal.Web.Management.Infrastructure.Extensions;
 using Initium.Portal.Web.Management.Pages.App.Tenants;
 using Initium.Portal.Web.Pages.FirstRun;
-using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 
 namespace Initium.Portal.Web.Management.Infrastructure.ServiceConfiguration
 {
@@ -56,11 +55,11 @@ namespace Initium.Portal.Web.Management.Infrastructure.ServiceConfiguration
                 endpoints.MapControllers();
             });
 
-            app.UseMvc(routeBuilder =>
-            {
-                routeBuilder.MapODataServiceRoute("odata", "odata", GetEdmModel());
-                routeBuilder.Select().Expand().Filter().OrderBy().Count().MaxTop(int.MaxValue);
-            });
+            // app.UseMvc(routeBuilder =>
+            // {
+            //     routeBuilder.MapODataServiceRoute("odata", "odata", GetEdmModel());
+            //     routeBuilder.Select().Expand().Filter().OrderBy().Count().MaxTop(int.MaxValue);
+            // });
 
             return app;
         }
