@@ -5,22 +5,20 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Initium.Portal.Core.Infrastructure;
-using Microsoft.AspNet.OData;
-using Microsoft.AspNet.OData.Extensions;
-using Microsoft.AspNet.OData.Query;
-using Microsoft.AspNet.OData.Query.Validators;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Abstractions;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using Microsoft.AspNetCore.OData;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Query.Validator;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OData.Edm;
 using Microsoft.OData.UriParser;
 using Moq;
-using ODataPath = Microsoft.AspNet.OData.Routing.ODataPath;
 
 namespace Initium.Portal.Tests.Web.ODataEndpoints
 {
@@ -34,7 +32,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints
             var collection = new ServiceCollection();
 
             collection.AddOData();
-            collection.AddODataQueryFilter();
+            //collection.AddODataQueryFilter();
             collection.AddTransient<ODataUriResolver>();
             collection.AddTransient<ODataQueryValidator>();
             collection.AddTransient<TopQueryValidator>();
@@ -43,7 +41,7 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints
 
             var routeBuilder =
                 new RouteBuilder(Mock.Of<IApplicationBuilder>(x => x.ApplicationServices == this.Provider));
-            routeBuilder.EnableDependencyInjection();
+            //routeBuilder.EnableDependencyInjection();
         }
 
         protected abstract IEdmModel EdmModel { get; }

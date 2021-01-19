@@ -10,12 +10,12 @@ using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Management;
 using Initium.Portal.Web.ODataEndpoints.SystemAlert;
-using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.Extensions.Options;
 using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 using Moq;
 using Xunit;
 

@@ -10,7 +10,6 @@ using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Management;
 using Initium.Portal.Web.ODataEndpoints.Role;
-using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Internal;

@@ -1,29 +1,33 @@
-﻿// Copyright (c) Project Initium. All rights reserved.
-// Licensed under the MIT License. See LICENSE file in the project root for full license information.
-
-using Initium.Portal.Queries.Entities;
+﻿using Initium.Portal.Queries.Entities;
+using Initium.Portal.Web.Infrastructure.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.OData.ModelBuilder;
 
-namespace Initium.Portal.Web.Infrastructure.Extensions
+namespace Initium.Portal.Web.Infrastructure.OData.EntityBuilders
 {
-    public static class ODataConventionModelBuilderExtensions
+    public class UserODateEntityBuilder : IODataEntityBuilder
     {
-        public static ODataConventionModelBuilder SetupUserEntity(this ODataConventionModelBuilder builder)
+        public void Configure(ODataConventionModelBuilder builder)
         {
             var user = builder.EntitySet<UserReadEntity>("User");
+            user.EntityType.Name = "User";
 
-            var function = user.EntityType.Collection.Function("Filtered");
-            function.ReturnsCollectionFromEntitySet<UserReadEntity>("User");
-            function.Namespace = "User";
+            user.EntityType.HasKey(entity => entity.Id);
+            user.EntityType.Property(entity => entity.EmailAddress);
 
-            function = user.EntityType.Collection.Function("FilteredExport");
-            function.Returns<FileResult>();
-            function.Namespace = "User";
-            return builder;
+            // var function = user.EntityType.Collection.Function("Filtered");
+            // function.ReturnsCollectionFromEntitySet<UserReadEntity>("User");
+            // function.Namespace = "User";
+            //
+            // function = user.EntityType.Collection.Function("FilteredExport");
+            // function.Returns<FileResult>();
+            // function.Namespace = "User";
         }
+    }
 
-        public static ODataConventionModelBuilder SetupRoleEntity(this ODataConventionModelBuilder builder)
+    public class RoleODateEntityBuilder : IODataEntityBuilder
+    {
+        public void Configure(ODataConventionModelBuilder builder)
         {
             var role = builder.EntitySet<RoleReadEntity>("Role");
             var function = role.EntityType.Collection.Function("Filtered");
@@ -33,11 +37,12 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             function = role.EntityType.Collection.Function("FilteredExport");
             function.Returns<FileResult>();
             function.Namespace = "Role";
-            return builder;
         }
-
-        public static ODataConventionModelBuilder SetupUserNotificationEntity(
-            this ODataConventionModelBuilder builder)
+    }
+    
+    public class UserNotificationODateEntityBuilder : IODataEntityBuilder
+    {
+        public void Configure(ODataConventionModelBuilder builder)
         {
             var userNotification = builder.EntitySet<UserNotification>("UserNotification");
             userNotification.EntityType.HasKey(uN =>
@@ -52,10 +57,12 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             function = userNotification.EntityType.Collection.Function("FilteredExport");
             function.Returns<FileResult>();
             function.Namespace = "UserNotification";
-            return builder;
         }
-
-        public static ODataConventionModelBuilder SetupSystemAlertEntity(this ODataConventionModelBuilder builder)
+    }
+    
+    public class SystemAlertODateEntityBuilder : IODataEntityBuilder
+    {
+        public void Configure(ODataConventionModelBuilder builder)
         {
             var systemAlert = builder.EntitySet<SystemAlertReadEntity>("SystemAlert");
             var function = systemAlert.EntityType.Collection.Function("Filtered");
@@ -65,7 +72,8 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             function = systemAlert.EntityType.Collection.Function("FilteredExport");
             function.Returns<FileResult>();
             function.Namespace = "SystemAlert";
-            return builder;
         }
     }
+    
+
 }

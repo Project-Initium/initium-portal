@@ -1,9 +1,12 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using FluentValidation.AspNetCore;
+using Initium.Portal.Web.Infrastructure.Contracts;
 using Initium.Portal.Web.Infrastructure.Extensions;
 using Initium.Portal.Web.Infrastructure.Formatters;
 using Initium.Portal.Web.Infrastructure.Middleware;
@@ -24,10 +27,12 @@ namespace Initium.Portal.Web.Management.Infrastructure.ServiceConfiguration
     {
         public static IServiceCollection AddCustomizedMvc(this IServiceCollection services)
         {
-            services.AddCoreCustomizedMvc(new List<Assembly>
-            {
-                typeof(CreateTenant.Validator).Assembly,
-            });
+            services.AddCoreCustomizedMvc(
+                new List<Assembly>
+                {
+                    typeof(CreateTenant.Validator).Assembly,
+                },
+                GetEdmModel());
             return services;
         }
 
@@ -66,15 +71,27 @@ namespace Initium.Portal.Web.Management.Infrastructure.ServiceConfiguration
 
         private static IEdmModel GetEdmModel()
         {
-            var model = new ODataConventionModelBuilder()
-                .SetupUserEntity()
-                .SetupRoleEntity()
-                .SetupUserNotificationEntity()
-                .SetupSystemAlertEntity()
-                .SetupTenantEntity()
-                .GetEdmModel();
 
-            return model;
+            var builder = new ODataConventionModelBuilder();
+            
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => typeof(IODataEntityBuilder).IsAssignableFrom(p) && !p.IsInterface)
+                .ToList();
+            
+            foreach (var instance in types.Select(Activator.CreateInstance))
+            {
+                if (instance is IODataEntityBuilder odataEntityBuilder)
+                {
+                    odataEntityBuilder.Configure(builder);
+                }
+            }
+            
+            
+            
+                builder.SetupTenantEntity();
+
+            return builder.GetEdmModel();
         }
     }
 }

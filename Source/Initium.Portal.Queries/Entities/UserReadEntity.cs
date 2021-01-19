@@ -17,29 +17,29 @@ namespace Initium.Portal.Queries.Entities
             this.UserNotifications = new List<UserNotification>();
         }
 
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
-        public string EmailAddress { get; set; }
+        public string EmailAddress { get; private set; }
 
-        public bool IsLockable { get; set; }
+        public bool IsLockable { get; private set; }
 
-        public bool IsLocked { get; set; }
+        public bool IsLocked { get; private set; }
 
-        public DateTime? WhenLastAuthenticated { get; set; }
+        public DateTime? WhenLastAuthenticated { get; private set; }
 
-        public string FirstName { get; set; }
+        public string FirstName { get; private set; }
 
-        public string LastName { get; set; }
+        public string LastName { get; private set; }
 
-        public DateTime WhenCreated { get; set; }
+        public DateTime WhenCreated { get; private set; }
 
-        public bool IsVerified { get; set; }
+        public bool IsVerified { get; private set; }
 
-        public bool IsAdmin { get; set; }
+        public bool IsAdmin { get; private set; }
 
-        public DateTime? WhenLocked { get; set; }
+        public DateTime? WhenLocked { get; private set; }
 
-        public DateTime? WhenDisabled { get; set; }
+        public DateTime? WhenDisabled { get; private set; }
 
         public List<UserRoleReadEntity> UserRoles { get; set; }
 
