@@ -12,18 +12,36 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
     {
         public static IServiceCollection AddCustomizedStaticFiles(this IServiceCollection services)
         {
-            services.AddCompressedStaticFiles();
+            //services.AddCompressedStaticFiles();
             return services;
         }
 
         public static IApplicationBuilder UseCustomizedStaticFiles(this IApplicationBuilder app)
         {
-            var provider = new FileExtensionContentTypeProvider();
-            provider.Mappings[".webmanifest"] = "application/manifest+json";
-
-            app.UseCompressedStaticFiles(new StaticFileOptions()
+            //app.UseCompressedStaticFiles();
+            
+            var mimeTypeProvider = new FileExtensionContentTypeProvider();
+ 
+            app.UseStaticFiles(new StaticFileOptions
             {
-                ContentTypeProvider = provider,
+                OnPrepareResponse = context =>
+                {
+                    var headers = context.Context.Response.Headers;
+                    var contentType = headers["Content-Type"];
+ 
+                    if (contentType != "application/x-gzip" && !context.File.Name.EndsWith(".gz"))
+                    {
+                        return;
+                    }
+ 
+                    var fileNameToTry = context.File.Name.Substring(0, context.File.Name.Length - 3);
+ 
+                    if (mimeTypeProvider.TryGetContentType(fileNameToTry, out var mimeType))
+                    {
+                        headers.Add("Content-Encoding", "gzip");
+                        headers["Content-Type"] = mimeType;
+                    }
+                }
             });
 
             return app;
