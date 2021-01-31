@@ -9,6 +9,7 @@ using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Management;
+using Initium.Portal.Web.Management.ODataEndpoints;
 using Initium.Portal.Web.ODataEndpoints.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;

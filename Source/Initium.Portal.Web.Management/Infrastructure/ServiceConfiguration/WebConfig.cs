@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using FluentValidation.AspNetCore;
+using Initium.Portal.Queries.Entities;
 using Initium.Portal.Web.Infrastructure.Contracts;
 using Initium.Portal.Web.Infrastructure.Extensions;
 using Initium.Portal.Web.Infrastructure.Formatters;
@@ -13,6 +14,7 @@ using Initium.Portal.Web.Infrastructure.Middleware;
 using Initium.Portal.Web.Infrastructure.ServiceConfiguration;
 using Initium.Portal.Web.Management.Infrastructure.Extensions;
 using Initium.Portal.Web.Management.Pages.App.Tenants;
+using Initium.Portal.Web.ODataEndpoints.User;
 using Initium.Portal.Web.Pages.FirstRun;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -86,11 +88,18 @@ namespace Initium.Portal.Web.Management.Infrastructure.ServiceConfiguration
                     odataEntityBuilder.Configure(builder);
                 }
             }
-            
-            
-            
-                builder.SetupTenantEntity();
-
+            // //
+            // //
+            // //
+            // //     builder.SetupTenantEntity();
+            // var user = builder.EntitySet<UserReadEntity>("Users");
+            // //var user2 = builder.EntityType<UserReadEntity>();
+            // var function = user.EntityType.Collection.Function("Filtered");
+            //  function.ReturnsCollectionFromEntitySet<UserReadEntity>("Users");
+            //
+            // var role = builder.EntitySet<RoleReadEntity>("Roles");
+            // function = role.EntityType.Collection.Function("Filtered");
+            // function.ReturnsCollectionFromEntitySet<RoleReadEntity>("Roles");
             return builder.GetEdmModel();
         }
     }

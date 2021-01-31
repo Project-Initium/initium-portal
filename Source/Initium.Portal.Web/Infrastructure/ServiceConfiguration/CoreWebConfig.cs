@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Reflection;
 using FluentValidation.AspNetCore;
 using Initium.Portal.Web.Infrastructure.Formatters;
@@ -20,7 +21,10 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
 
             if (edmModel != null)
             {
-                services.AddOData(opt => opt.AddModel("odata", edmModel));
+                services.AddOData(opt =>
+                {
+                    opt.AddModel("odata", edmModel).Count().Expand().Filter().Select().OrderBy().SetMaxTop(Int32.MaxValue);
+                });
             }
 
             services
