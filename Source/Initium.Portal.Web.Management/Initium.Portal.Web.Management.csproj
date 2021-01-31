@@ -37,6 +37,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Infrastructure\Extensions" />
       <Folder Include="Resources\Scripts\pages" />
     </ItemGroup>
 

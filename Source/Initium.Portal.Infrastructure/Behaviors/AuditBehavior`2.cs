@@ -51,7 +51,7 @@ namespace Initium.Portal.Infrastructure.Behaviors
             var propValue = propToCheck.GetValue(response);
 
             var userRef = currentUser.HasValue ? currentUser.Value.UserId.ToString() : "Unknown";
-            
+
             var commandSuccess = (bool)propValue;
             if (commandSuccess)
             {

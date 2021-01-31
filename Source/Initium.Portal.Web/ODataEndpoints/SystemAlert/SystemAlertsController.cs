@@ -4,28 +4,27 @@
 using System.Collections.Generic;
 using System.Linq;
 using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Entities;
 using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.ODataEndpoints;
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.OData.Routing.Attributes;
 
 namespace Initium.Portal.Web.ODataEndpoints.SystemAlert
 {
-    [ODataRoutePrefix("SystemAlert")]
     [ResourceBasedAuthorize("system-alert-list")]
-    public class SystemAlertODataController : BaseODataController<Queries.Entities.SystemAlertReadEntity, SystemAlertFilter>
+    public class SystemAlertsController : BaseODataController<SystemAlertReadEntity, SystemAlertFilter>
     {
         private readonly ISystemAlertQueryService _systemAlertQueryService;
 
-        public SystemAlertODataController(ISystemAlertQueryService systemAlertQueryService)
+        public SystemAlertsController(ISystemAlertQueryService systemAlertQueryService)
         {
             this._systemAlertQueryService = systemAlertQueryService;
         }
 
-        [ODataRoute("SystemAlert.Filtered")]
-        public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.SystemAlertReadEntity> options, [FromBody]SystemAlertFilter filter)
+        [HttpPost]
+        public override IActionResult Filtered(ODataQueryOptions<SystemAlertReadEntity> options, [FromBody]SystemAlertFilter filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -41,9 +40,9 @@ namespace Initium.Portal.Web.ODataEndpoints.SystemAlert
             return this.Ok(options.ApplyTo(this._systemAlertQueryService.QueryableEntity.Where(predicate)));
         }
 
-        [ODataRoute("SystemAlert.FilteredExport")]
+        [HttpPost]
         public override IActionResult FilteredExport(
-            ODataQueryOptions<Queries.Entities.SystemAlertReadEntity> options,
+            ODataQueryOptions<SystemAlertReadEntity> options,
             [FromBody]ExportableFilter<SystemAlertFilter> filter)
         {
             if (!this.AreOptionsValid(options))
@@ -68,10 +67,10 @@ namespace Initium.Portal.Web.ODataEndpoints.SystemAlert
             return this.File(this.GenerateCsvStream(query, options, mappings), "application/csv");
         }
 
-        protected override ExpressionStarter<Queries.Entities.SystemAlertReadEntity> GeneratePredicate(
+        protected override ExpressionStarter<SystemAlertReadEntity> GeneratePredicate(
             SystemAlertFilter filter)
         {
-            var predicate = PredicateBuilder.New<Queries.Entities.SystemAlertReadEntity>(true);
+            var predicate = PredicateBuilder.New<SystemAlertReadEntity>(true);
             return predicate;
         }
     }

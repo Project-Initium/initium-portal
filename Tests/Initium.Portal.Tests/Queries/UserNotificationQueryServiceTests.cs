@@ -76,52 +76,52 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
@@ -218,19 +218,19 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
                 WhenViewed = TestVariables.Now,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
                 WhenViewed = TestVariables.Now,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
@@ -269,18 +269,18 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
                 WhenViewed = TestVariables.Now,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,
             })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.UserNotifications.AddAsync(new UserNotification
+            (await context.UserNotifications.AddAsync(new UserNotificationReadEntity
             {
                 NotificationId = Guid.NewGuid(),
                 UserId = TestVariables.UserId,

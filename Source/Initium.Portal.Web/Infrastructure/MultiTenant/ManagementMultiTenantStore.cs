@@ -35,7 +35,7 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
             throw new System.NotImplementedException();
         }
 
-        public Task<bool> TryRemoveAsync(string id)
+        public Task<bool> TryRemoveAsync(string identifier)
         {
             throw new System.NotImplementedException();
         }

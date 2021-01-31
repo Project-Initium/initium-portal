@@ -8,16 +8,15 @@ using Microsoft.OData.ModelBuilder;
 
 namespace Initium.Portal.Web.Infrastructure.OData.EntityBuilders
 {
-    public class UserODateEntityBuilder : IODataEntityBuilder
+    public class RoleODateEntityBuilder : IODataEntityBuilder
     {
         public void Configure(ODataConventionModelBuilder builder)
         {
-            var user = builder.EntitySet<UserReadEntity>("Users");
+            var role = builder.EntitySet<RoleReadEntity>("Roles");
+            var function = role.EntityType.Collection.Function("Filtered");
+            function.ReturnsCollectionFromEntitySet<RoleReadEntity>("Roles");
 
-            var function = user.EntityType.Collection.Function("Filtered");
-            function.ReturnsCollectionFromEntitySet<UserReadEntity>("Users");
-
-            function = user.EntityType.Collection.Function("FilteredExport");
+            function = role.EntityType.Collection.Function("FilteredExport");
             function.Returns<FileResult>();
         }
     }

@@ -10,14 +10,11 @@ using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.ODataEndpoints;
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.OData.Formatter;
 using Microsoft.AspNetCore.OData.Query;
-using Microsoft.AspNetCore.OData.Routing.Attributes;
-using Microsoft.AspNetCore.OData.Routing.Controllers;
 
 namespace Initium.Portal.Web.ODataEndpoints.User
 {
-    //[ResourceBasedAuthorize("user-list")]
+    [ResourceBasedAuthorize("user-list")]
     public class UsersController : BaseODataController<UserReadEntity, UserFilter>
     {
         private readonly IUserQueryService _userQueryService;
@@ -28,24 +25,22 @@ namespace Initium.Portal.Web.ODataEndpoints.User
         }
 
         [HttpPost]
-        //[EnableQuery]
         public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.UserReadEntity> options, [FromBody] UserFilter filter)
         {
             if (!this.AreOptionsValid(options))
             {
                 return this.BadRequest();
             }
-            
+
             if (filter == null)
             {
                 return this.Ok(options.ApplyTo(this._userQueryService.QueryableEntity));
             }
-            
+
             var predicate = this.GeneratePredicate(filter);
             return this.Ok(options.ApplyTo(this._userQueryService.QueryableEntity.Where(predicate)));
-            //return this.Ok(options.ApplyTo(this._userQueryService.QueryableEntity));
         }
-        
+
         [HttpPost]
         public override IActionResult FilteredExport(
             ODataQueryOptions<Queries.Entities.UserReadEntity> options, [FromBody]ExportableFilter<UserFilter> filter)
@@ -54,7 +49,7 @@ namespace Initium.Portal.Web.ODataEndpoints.User
             {
                 return this.BadRequest();
             }
-        
+
             IQueryable query;
             IDictionary<string, string> mappings;
             if (filter == null)
@@ -68,10 +63,10 @@ namespace Initium.Portal.Web.ODataEndpoints.User
                 query = this._userQueryService.QueryableEntity.Where(predicate);
                 mappings = filter.Mappings;
             }
-        
+
             return this.File(this.GenerateCsvStream(query, options, mappings), "application/csv");
         }
-        
+
         protected override ExpressionStarter<Queries.Entities.UserReadEntity> GeneratePredicate(UserFilter filter)
         {
             var predicate = PredicateBuilder.New<Queries.Entities.UserReadEntity>(true);
@@ -83,7 +78,7 @@ namespace Initium.Portal.Web.ODataEndpoints.User
             {
                 predicate.And(x => !x.IsVerified);
             }
-        
+
             if (filter.Locked && !filter.Unlocked)
             {
                 predicate.And(x => x.IsLocked);
@@ -92,7 +87,7 @@ namespace Initium.Portal.Web.ODataEndpoints.User
             {
                 predicate.And(x => !x.IsLocked);
             }
-        
+
             if (filter.Admin && !filter.NonAdmin)
             {
                 predicate.And(x => x.IsAdmin);
@@ -101,7 +96,7 @@ namespace Initium.Portal.Web.ODataEndpoints.User
             {
                 predicate.And(x => !x.IsAdmin);
             }
-        
+
             return predicate;
         }
     }

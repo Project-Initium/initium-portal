@@ -8,16 +8,15 @@ using Microsoft.OData.ModelBuilder;
 
 namespace Initium.Portal.Web.Infrastructure.OData.EntityBuilders
 {
-    public class UserODateEntityBuilder : IODataEntityBuilder
+    public class SystemAlertODateEntityBuilder : IODataEntityBuilder
     {
         public void Configure(ODataConventionModelBuilder builder)
         {
-            var user = builder.EntitySet<UserReadEntity>("Users");
+            var systemAlert = builder.EntitySet<SystemAlertReadEntity>("SystemAlerts");
+            var function = systemAlert.EntityType.Collection.Function("Filtered");
+            function.ReturnsCollectionFromEntitySet<SystemAlertReadEntity>("SystemAlerts");
 
-            var function = user.EntityType.Collection.Function("Filtered");
-            function.ReturnsCollectionFromEntitySet<UserReadEntity>("Users");
-
-            function = user.EntityType.Collection.Function("FilteredExport");
+            function = systemAlert.EntityType.Collection.Function("FilteredExport");
             function.Returns<FileResult>();
         }
     }

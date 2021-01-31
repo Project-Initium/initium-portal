@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Project Initium. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using FluentValidation.AspNetCore;
@@ -23,7 +26,7 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
             {
                 services.AddOData(opt =>
                 {
-                    opt.AddModel("odata", edmModel).Count().Expand().Filter().Select().OrderBy().SetMaxTop(Int32.MaxValue);
+                    opt.AddModel("odata", edmModel).Count().Expand().Filter().Select().OrderBy().SetMaxTop(int.MaxValue);
                 });
             }
 
