@@ -73,7 +73,9 @@ namespace Initium.Portal.Tests.Core.Extensions
         {
             var formatter = new BinaryFormatter();
             using var stream = new MemoryStream();
+#pragma warning disable 618
             formatter.Serialize(stream, value);
+#pragma warning restore 618
             return stream.ToArray();
         }
 

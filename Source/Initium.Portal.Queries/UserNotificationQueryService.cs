@@ -25,12 +25,12 @@ namespace Initium.Portal.Queries
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
         }
 
-        public IQueryable<UserNotification> QueryableEntity
+        public IQueryable<UserNotificationReadEntity> QueryableEntity
         {
             get
             {
                 var currentUser = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
-                return currentUser.HasNoValue ? new List<UserNotification>().AsQueryable() : this._context.UserNotifications.Where(x => x.UserId == currentUser.Value.UserId);
+                return currentUser.HasNoValue ? new List<UserNotificationReadEntity>().AsQueryable() : this._context.UserNotifications.Where(x => x.UserId == currentUser.Value.UserId);
             }
         }
 

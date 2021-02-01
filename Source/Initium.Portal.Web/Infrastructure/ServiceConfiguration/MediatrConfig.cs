@@ -21,7 +21,7 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
             var assembly = typeof(CreateInitialUserCommandHandler).GetTypeInfo().Assembly;
             var completeList = assembliesToAdd.Append(assembly).ToArray();
             serviceCollection.AddMediatR(completeList);
-            //serviceCollection.AddFluentValidation(completeList, ServiceLifetime.Transient);
+            serviceCollection.AddFluentValidation(completeList, ServiceLifetime.Transient);
             serviceCollection.AddDomainAuditLogging();
             return serviceCollection;
         }

@@ -10,7 +10,7 @@ using MaybeMonad;
 
 namespace Initium.Portal.Queries.Contracts
 {
-    public interface IUserNotificationQueryService : IQueryService<UserNotification>
+    public interface IUserNotificationQueryService : IQueryService<UserNotificationReadEntity>
     {
         Task<Maybe<List<SimpleNotification>>> GetLatestNotifications(int top);
 

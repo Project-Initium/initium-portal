@@ -5,28 +5,27 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Entities;
 using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.ODataEndpoints;
 using LinqKit;
-using Microsoft.AspNet.OData.Query;
-using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace Initium.Portal.Web.ODataEndpoints.Role
 {
     [ResourceBasedAuthorize("role-list")]
-    [ODataRoutePrefix("Role")]
-    public class RoleODataController : BaseODataController<Queries.Entities.RoleReadEntity, RoleFilter>
+    public class RolesController : BaseODataController<RoleReadEntity, RoleFilter>
     {
         private readonly IRoleQueryService _roleQueryService;
 
-        public RoleODataController(IRoleQueryService roleQueryService)
+        public RolesController(IRoleQueryService roleQueryService)
         {
             this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
         }
 
-        [ODataRoute("Role.Filtered")]
-        public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.RoleReadEntity> options, [FromBody]RoleFilter filter)
+        [HttpPost]
+        public override IActionResult Filtered(ODataQueryOptions<RoleReadEntity> options, [FromBody]RoleFilter filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -42,8 +41,8 @@ namespace Initium.Portal.Web.ODataEndpoints.Role
             return this.Ok(options.ApplyTo(this._roleQueryService.QueryableEntity.Where(predicate)));
         }
 
-        [ODataRoute("Role.FilteredExport")]
-        public override IActionResult FilteredExport(ODataQueryOptions<Queries.Entities.RoleReadEntity> options, [FromBody]ExportableFilter<RoleFilter> filter)
+        [HttpPost]
+        public override IActionResult FilteredExport(ODataQueryOptions<RoleReadEntity> options, [FromBody]ExportableFilter<RoleFilter> filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -67,9 +66,9 @@ namespace Initium.Portal.Web.ODataEndpoints.Role
             return this.File(this.GenerateCsvStream(query, options, mappings), "application/csv");
         }
 
-        protected override ExpressionStarter<Queries.Entities.RoleReadEntity> GeneratePredicate(RoleFilter filter)
+        protected override ExpressionStarter<RoleReadEntity> GeneratePredicate(RoleFilter filter)
         {
-            var predicate = PredicateBuilder.New<Queries.Entities.RoleReadEntity>(true);
+            var predicate = PredicateBuilder.New<RoleReadEntity>(true);
             if (filter.HasResources && !filter.HasNoResources)
             {
                 predicate.And(x => x.ResourceCount > 0);

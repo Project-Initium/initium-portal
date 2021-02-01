@@ -11,9 +11,11 @@ using Initium.Portal.Core.Exceptions;
 using Initium.Portal.Core.Infrastructure;
 using Initium.Portal.Web.Infrastructure.Extensions;
 using LinqKit;
-using Microsoft.AspNet.OData;
-using Microsoft.AspNet.OData.Query;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Query.Validator;
+using Microsoft.AspNetCore.OData.Query.Wrapper;
+using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.OData;
 
 namespace Initium.Portal.Web.Infrastructure.ODataEndpoints

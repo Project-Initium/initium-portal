@@ -108,9 +108,15 @@ Task("__Publish")
         
         pubSettings.OutputDirectory = tenantPublishPath;
         DotNetCorePublish("../source/Initium.Portal.Web.Tenant/Initium.Portal.Web.Tenant.csproj", pubSettings);
+        
+        var settings = new DotNetCoreBuildSettings {
+            Configuration = "Release",
+            OutputDirectory = databasePublishPath
+        };
+        DotNetCoreBuild("../data/Initium.Portal.Data.Build/Initium.Portal.Data.Build.csproj", settings);
 
-        pubSettings.OutputDirectory = databasePublishPath;
-        DotNetCorePublish("../data/Initium.Portal.Data.Build/Initium.Portal.Data.Build.csproj", pubSettings);
+//         pubSettings.OutputDirectory = databasePublishPath;
+//         DotNetCorePublish("../data/Initium.Portal.Data.Build/Initium.Portal.Data.Build.csproj", pubSettings);
     });
 Task("__Package")
     .Does(() => {

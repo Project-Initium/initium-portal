@@ -14,7 +14,7 @@ namespace Initium.Portal.Queries.Entities
             this.UserRoles = new List<UserRoleReadEntity>();
             this.AuthenticatorApps = new List<AuthenticatorAppReadEntity>();
             this.AuthenticatorDevices = new List<AuthenticatorDeviceReadEntity>();
-            this.UserNotifications = new List<UserNotification>();
+            this.UserNotifications = new List<UserNotificationReadEntity>();
         }
 
         public Guid Id { get; set; }
@@ -47,6 +47,6 @@ namespace Initium.Portal.Queries.Entities
 
         public List<AuthenticatorDeviceReadEntity> AuthenticatorDevices { get; set; }
 
-        public List<UserNotification> UserNotifications { get; set; }
+        public List<UserNotificationReadEntity> UserNotifications { get; set; }
     }
 }

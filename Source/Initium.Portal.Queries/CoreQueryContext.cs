@@ -44,7 +44,7 @@ namespace Initium.Portal.Queries
 
         public DbSet<RoleReadEntity> Roles { get; set; }
 
-        public DbSet<UserNotification> UserNotifications { get; set; }
+        public DbSet<UserNotificationReadEntity> UserNotifications { get; set; }
 
         public DbSet<SystemAlertReadEntity> SystemAlerts { get; set; }
 
@@ -73,10 +73,10 @@ namespace Initium.Portal.Queries
             modelBuilder.Entity<SystemAlertReadEntity>(this.ConfigureSystemAlert);
             modelBuilder.Entity<UserReadEntity>(this.ConfigureUser);
             modelBuilder.Entity<UserRoleReadEntity>(this.ConfigureUserRole);
-            modelBuilder.Entity<UserNotification>(this.ConfigureUserNotification);
+            modelBuilder.Entity<UserNotificationReadEntity>(this.ConfigureUserNotification);
         }
 
-        private void ConfigureUserNotification(EntityTypeBuilder<UserNotification> userNotifications)
+        private void ConfigureUserNotification(EntityTypeBuilder<UserNotificationReadEntity> userNotifications)
         {
             userNotifications.ToTable("vwUserNotification", "Portal");
             userNotifications.HasKey(userNotification =>
@@ -146,7 +146,7 @@ namespace Initium.Portal.Queries
                  authenticatorDevices.HasKey(authenticatorDevice => authenticatorDevice.Id);
              });
 
-            users.HasMany<UserNotification>().WithOne(x => x.User).HasForeignKey(x => x.UserId);
+            users.HasMany<UserNotificationReadEntity>().WithOne(x => x.User).HasForeignKey(x => x.UserId);
         }
 
         private void ConfigureUserRole(EntityTypeBuilder<UserRoleReadEntity> userRoles)

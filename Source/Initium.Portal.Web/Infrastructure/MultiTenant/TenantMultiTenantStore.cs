@@ -51,9 +51,9 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
             return await this.TryAddAsync(tenantInfo);
         }
 
-        public async Task<bool> TryRemoveAsync(string id)
+        public async Task<bool> TryRemoveAsync(string identifier)
         {
-            await this._distributedCache.RemoveAsync(id);
+            await this._distributedCache.RemoveAsync(identifier);
             return true;
         }
 
