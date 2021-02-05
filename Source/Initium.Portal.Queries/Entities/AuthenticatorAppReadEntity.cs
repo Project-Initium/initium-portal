@@ -8,14 +8,14 @@ namespace Initium.Portal.Queries.Entities
 {
     public class AuthenticatorAppReadEntity : ReadEntity
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
-        public Guid UserId { get; set; }
+        public Guid UserId { get; private set; }
 
-        public string Key { get; set; }
+        public string Key { get; private set; }
 
-        public DateTime WhenEnrolled { get; set; }
+        public DateTime WhenEnrolled { get; private set; }
 
-        public UserReadEntity User { get; set; }
+        public UserReadEntity User { get; private set; }
     }
 }

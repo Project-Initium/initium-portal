@@ -9,44 +9,50 @@ namespace Initium.Portal.Queries.Entities
 {
     public class UserReadEntity : ReadEntity
     {
+        private readonly List<UserRoleReadEntity> _userRoles;
+        private readonly List<AuthenticatorAppReadEntity> _authenticatorApps;
+        private readonly List<AuthenticatorDeviceReadEntity> _authenticatorDevices;
+        private readonly List<UserNotificationReadEntity> _userNotifications;
+        
         public UserReadEntity()
         {
-            this.UserRoles = new List<UserRoleReadEntity>();
-            this.AuthenticatorApps = new List<AuthenticatorAppReadEntity>();
-            this.AuthenticatorDevices = new List<AuthenticatorDeviceReadEntity>();
-            this.UserNotifications = new List<UserNotification>();
+            this._userRoles = new List<UserRoleReadEntity>();
+            this._authenticatorApps = new List<AuthenticatorAppReadEntity>();
+            this._authenticatorDevices = new List<AuthenticatorDeviceReadEntity>();
+            this._userNotifications = new List<UserNotificationReadEntity>();
         }
 
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
-        public string EmailAddress { get; set; }
+        public string EmailAddress { get; private set; }
 
-        public bool IsLockable { get; set; }
+        public bool IsLockable { get; private set; }
 
-        public bool IsLocked { get; set; }
+        public bool IsLocked { get; private set; }
 
-        public DateTime? WhenLastAuthenticated { get; set; }
+        public DateTime? WhenLastAuthenticated { get; private set; }
 
-        public string FirstName { get; set; }
+        public string FirstName { get; private set; }
 
-        public string LastName { get; set; }
+        public string LastName { get; private set; }
 
-        public DateTime WhenCreated { get; set; }
+        public DateTime WhenCreated { get; private set; }
 
-        public bool IsVerified { get; set; }
+        public bool IsVerified { get; private set; }
 
-        public bool IsAdmin { get; set; }
+        public bool IsAdmin { get; private set; }
 
-        public DateTime? WhenLocked { get; set; }
+        public DateTime? WhenLocked { get; private set; }
 
-        public DateTime? WhenDisabled { get; set; }
+        public DateTime? WhenDisabled { get; private set; }
 
-        public List<UserRoleReadEntity> UserRoles { get; set; }
+        public IReadOnlyList<UserRoleReadEntity> UserRoles => this._userRoles.AsReadOnly();
 
-        public List<AuthenticatorAppReadEntity> AuthenticatorApps { get; set; }
+        public IReadOnlyList<AuthenticatorAppReadEntity> AuthenticatorApps => this._authenticatorApps.AsReadOnly();
 
-        public List<AuthenticatorDeviceReadEntity> AuthenticatorDevices { get; set; }
+        public IReadOnlyList<AuthenticatorDeviceReadEntity> AuthenticatorDevices =>
+            this._authenticatorDevices.AsReadOnly();
 
-        public List<UserNotification> UserNotifications { get; set; }
+        public IReadOnlyList<UserNotificationReadEntity> UserNotifications => this._userNotifications.AsReadOnly();
     }
 }
