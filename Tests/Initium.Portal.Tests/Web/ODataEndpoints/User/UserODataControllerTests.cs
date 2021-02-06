@@ -8,6 +8,7 @@ using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Entities;
 using Initium.Portal.Queries.Management;
 using Initium.Portal.Web.ODataEndpoints.User;
 using Microsoft.AspNet.OData.Builder;
@@ -74,48 +75,48 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.User
             });
 
             using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new Portal.Queries.Entities.UserReadEntity
+            context.Add(Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = false,
                 IsLocked = true,
                 IsVerified = true,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.UserReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = true,
                 IsLocked = false,
                 IsVerified = true,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.UserReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = true,
                 IsLocked = true,
                 IsVerified = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.UserReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = false,
                 IsLocked = true,
                 IsVerified = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.UserReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = true,
                 IsLocked = true,
                 IsVerified = true,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.UserReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = false,
                 IsLocked = false,
                 IsVerified = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.SaveChanges();
             var userQueryService = new Mock<IUserQueryService>();
             userQueryService.Setup(x => x.QueryableEntity).Returns(context.Users);
@@ -143,48 +144,48 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.User
             });
 
             using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new Portal.Queries.Entities.UserReadEntity
+            context.Add(Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = false,
                 IsLocked = true,
                 IsVerified = true,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.UserReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = true,
                 IsLocked = false,
                 IsVerified = true,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.UserReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = true,
                 IsLocked = true,
                 IsVerified = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.UserReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = false,
                 IsLocked = true,
                 IsVerified = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.UserReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = true,
                 IsLocked = true,
                 IsVerified = true,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.UserReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 IsAdmin = false,
                 IsLocked = false,
                 IsVerified = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.SaveChanges();
 
             var userQueryService = new Mock<IUserQueryService>();

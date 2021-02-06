@@ -8,6 +8,7 @@ using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Entities;
 using Initium.Portal.Queries.Management;
 using Initium.Portal.Web.ODataEndpoints.SystemAlert;
 using Microsoft.AspNet.OData.Builder;
@@ -53,34 +54,34 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.SystemAlert
             });
 
             using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new Portal.Queries.Entities.SystemAlertReadEntity
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name-1",
                 Type = SystemAlertType.Critical,
                 Message = "message-1",
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.SystemAlertReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name-2",
                 Type = SystemAlertType.Critical,
                 Message = "message-2",
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.SystemAlertReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name-3",
                 Type = SystemAlertType.Critical,
                 Message = "message-3",
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.SystemAlertReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name-4",
                 Type = SystemAlertType.Critical,
                 Message = "message-4",
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.SaveChanges();
 
             var systemAlertQueryService = new Mock<ISystemAlertQueryService>();

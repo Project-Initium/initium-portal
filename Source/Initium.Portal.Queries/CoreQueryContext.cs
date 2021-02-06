@@ -44,7 +44,7 @@ namespace Initium.Portal.Queries
 
         public DbSet<RoleReadEntity> Roles { get; set; }
 
-        public DbSet<UserNotification> UserNotifications { get; set; }
+        public DbSet<UserNotificationReadEntity> UserNotifications { get; set; }
 
         public DbSet<SystemAlertReadEntity> SystemAlerts { get; set; }
 
@@ -73,15 +73,15 @@ namespace Initium.Portal.Queries
             modelBuilder.Entity<SystemAlertReadEntity>(this.ConfigureSystemAlert);
             modelBuilder.Entity<UserReadEntity>(this.ConfigureUser);
             modelBuilder.Entity<UserRoleReadEntity>(this.ConfigureUserRole);
-            modelBuilder.Entity<UserNotification>(this.ConfigureUserNotification);
+            modelBuilder.Entity<UserNotificationReadEntity>(this.ConfigureUserNotification);
         }
 
-        private void ConfigureUserNotification(EntityTypeBuilder<UserNotification> userNotifications)
+        private void ConfigureUserNotification(EntityTypeBuilder<UserNotificationReadEntity> userNotifications)
         {
             userNotifications.ToTable("vwUserNotification", "Portal");
             userNotifications.HasKey(userNotification =>
                 new { userNotification.NotificationId, userNotification.UserId });
-            userNotifications.HasOne(x => x.User).WithMany(x => x.UserNotifications).HasForeignKey(x => x.UserId);
+            
             userNotifications.Property<Guid>("TenantId");
             userNotifications.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
         }
@@ -138,15 +138,19 @@ namespace Initium.Portal.Queries
              {
                  authenticatorApps.ToTable("vwAuthenticatorApp", "Portal");
                  authenticatorApps.HasKey(authenticatorApp => authenticatorApp.Id);
-             });
+             }).UsePropertyAccessMode(PropertyAccessMode.Field);
 
             users.OwnsMany(user => user.AuthenticatorDevices, authenticatorDevices =>
              {
                  authenticatorDevices.ToTable("vwAuthenticatorDevice", "Portal");
                  authenticatorDevices.HasKey(authenticatorDevice => authenticatorDevice.Id);
-             });
+             }).UsePropertyAccessMode(PropertyAccessMode.Field);
 
-            users.HasMany<UserNotification>().WithOne(x => x.User).HasForeignKey(x => x.UserId);
+            users
+                .HasMany<UserNotificationReadEntity>()
+                .WithOne(x => x.User)
+                .HasForeignKey(x => x.UserId);
+            users.Metadata.FindNavigation(nameof(UserReadEntity.UserNotifications)).SetPropertyAccessMode(PropertyAccessMode.Field);
         }
 
         private void ConfigureUserRole(EntityTypeBuilder<UserRoleReadEntity> userRoles)

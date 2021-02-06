@@ -37,34 +37,34 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new SystemAlertReadEntity
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name-1",
                 Message = "message-1",
                 IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlertReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name-2",
                 Message = "message-2",
                 IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlertReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name-3",
                 Message = "message-3",
                 IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlertReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name-4",
                 Message = "message-4",
                 IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
             await context.SaveChangesAsync();
 
             var queries = new SystemAlertQueryService(context);
@@ -92,34 +92,34 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new SystemAlertReadEntity
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name-1",
                 Message = "message-1",
                 IsActive = true,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlertReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name-2",
                 Message = "message-2",
                 IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlertReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name-3",
                 Message = "message-3",
                 IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlertReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name-4",
                 Message = "message-4",
                 IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
             await context.SaveChangesAsync();
 
             var queries = new SystemAlertQueryService(context);
@@ -148,7 +148,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new SystemAlertReadEntity
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "name",
@@ -157,7 +157,7 @@ namespace Initium.Portal.Tests.Queries
                 Type = SystemAlertType.High,
                 WhenToHide = TestVariables.Now,
                 WhenToShow = TestVariables.Now.AddHours(5),
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
 
             await context.SaveChangesAsync();
 
@@ -186,7 +186,7 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new SystemAlertReadEntity
+            context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = TestVariables.SystemAlertId,
                 Name = "name",
@@ -195,7 +195,7 @@ namespace Initium.Portal.Tests.Queries
                 Type = SystemAlertType.High,
                 WhenToHide = TestVariables.Now,
                 WhenToShow = TestVariables.Now.AddHours(5),
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
 
             await context.SaveChangesAsync();
 

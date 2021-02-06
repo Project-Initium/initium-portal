@@ -12,7 +12,7 @@ namespace Initium.Portal.Queries
 
         DbSet<RoleReadEntity> Roles { get; set; }
 
-        DbSet<UserNotification> UserNotifications { get; set; }
+        DbSet<UserNotificationReadEntity> UserNotifications { get; set; }
 
         DbSet<SystemAlertReadEntity> SystemAlerts { get; set; }
 

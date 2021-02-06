@@ -8,6 +8,7 @@ using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Entities;
 using Initium.Portal.Queries.Management;
 using Initium.Portal.Web.ODataEndpoints.Role;
 using Microsoft.AspNet.OData.Builder;
@@ -71,34 +72,34 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
             });
 
             using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new Portal.Queries.Entities.RoleReadEntity
+            context.Add(Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-1",
                 ResourceCount = 0,
                 UserCount = 3,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.RoleReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-2",
                 ResourceCount = 2,
                 UserCount = 0,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.RoleReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-3",
                 ResourceCount = 4,
                 UserCount = 0,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.RoleReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-4",
                 ResourceCount = 0,
                 UserCount = 0,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.SaveChanges();
             var roleQueryService = new Mock<IRoleQueryService>();
             roleQueryService.Setup(x => x.QueryableEntity).Returns(context.Roles);
@@ -128,34 +129,34 @@ namespace Initium.Portal.Tests.Web.ODataEndpoints.Role
             });
 
             using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new Portal.Queries.Entities.RoleReadEntity
+            context.Add(Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-1",
                 ResourceCount = 0,
                 UserCount = 3,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.RoleReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-2",
                 ResourceCount = 2,
                 UserCount = 0,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.RoleReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-3",
                 ResourceCount = 4,
                 UserCount = 4,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new Portal.Queries.Entities.RoleReadEntity
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            context.Add(Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = Guid.NewGuid(),
                 Name = "Role-4",
                 ResourceCount = 0,
                 UserCount = 0,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
             context.SaveChanges();
 
             var roleQueryService = new Mock<IRoleQueryService>();

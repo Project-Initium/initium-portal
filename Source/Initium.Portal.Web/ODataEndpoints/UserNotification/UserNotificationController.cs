@@ -16,7 +16,7 @@ namespace Initium.Portal.Web.ODataEndpoints.UserNotification
 {
     [ODataRoutePrefix("UserNotification")]
     [Authorize]
-    public class UserNotificationController : BaseODataController<Queries.Entities.UserNotification, UserNotificationFilter>
+    public class UserNotificationController : BaseODataController<Queries.Entities.UserNotificationReadEntity, UserNotificationFilter>
     {
         private readonly IUserNotificationQueryService _userNotificationQueryService;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
@@ -28,7 +28,7 @@ namespace Initium.Portal.Web.ODataEndpoints.UserNotification
         }
 
         [ODataRoute("")]
-        public IActionResult Get(ODataQueryOptions<Queries.Entities.UserNotification> options)
+        public IActionResult Get(ODataQueryOptions<Queries.Entities.UserNotificationReadEntity> options)
         {
             var currentUser = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
             if (currentUser.HasNoValue)
@@ -40,7 +40,7 @@ namespace Initium.Portal.Web.ODataEndpoints.UserNotification
         }
 
         [ODataRoute("UserNotification.Filtered")]
-        public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.UserNotification> options, [FromBody]UserNotificationFilter filter)
+        public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.UserNotificationReadEntity> options, [FromBody]UserNotificationFilter filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -58,7 +58,7 @@ namespace Initium.Portal.Web.ODataEndpoints.UserNotification
 
         [ODataRoute("UserNotification.FilteredExport")]
         public override IActionResult FilteredExport(
-            ODataQueryOptions<Queries.Entities.UserNotification> options, [FromBody]ExportableFilter<UserNotificationFilter> filter)
+            ODataQueryOptions<Queries.Entities.UserNotificationReadEntity> options, [FromBody]ExportableFilter<UserNotificationFilter> filter)
         {
             if (!this.AreOptionsValid(options))
             {
@@ -75,7 +75,7 @@ namespace Initium.Portal.Web.ODataEndpoints.UserNotification
             return this.File(this.GenerateCsvStream(query, options, new Dictionary<string, string>()), "application/csv");
         }
 
-        protected override ExpressionStarter<Queries.Entities.UserNotification> GeneratePredicate(UserNotificationFilter filter)
+        protected override ExpressionStarter<Queries.Entities.UserNotificationReadEntity> GeneratePredicate(UserNotificationFilter filter)
         {
             throw new System.NotImplementedException();
         }

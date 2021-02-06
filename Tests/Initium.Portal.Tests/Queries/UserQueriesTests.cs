@@ -40,10 +40,11 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new UserReadEntity
-            {
-                Id = TestVariables.UserId,
-            });
+            var user = await context.Users.AddAsync(
+                Helpers.CreateEntity<UserReadEntity>(new
+                {
+                    Id = TestVariables.UserId,
+                }));
             user.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
             await context.SaveChangesAsync();
@@ -103,12 +104,13 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new UserReadEntity
-            {
-                Id = TestVariables.UserId,
-                FirstName = "first-name",
-                LastName = "last-name",
-            });
+            var user = await context.Users.AddAsync(
+                Helpers.CreateEntity<UserReadEntity>(new
+                {
+                    Id = TestVariables.UserId,
+                    FirstName = "first-name",
+                    LastName = "last-name",
+                }));
             user.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
             await context.SaveChangesAsync();
@@ -195,10 +197,11 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new UserReadEntity
-            {
-                EmailAddress = "email-address",
-            });
+            var user = await context.Users.AddAsync(
+                Helpers.CreateEntity<UserReadEntity>(new
+                {
+                    EmailAddress = "email-address",
+                }));
             user.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
             await context.SaveChangesAsync();
@@ -277,19 +280,21 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            var roleResource = await context.RoleResources.AddAsync(new RoleResourceReadEntity
+            var roleResource = await context.RoleResources.AddAsync(
+                Helpers.CreateEntity<RoleResourceReadEntity>(new
             {
                 ResourceId = TestVariables.ResourceId,
-            });
+            }));
             roleResource.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var role = await context.Roles.AddAsync(new RoleReadEntity
+            var role = await context.Roles.AddAsync(
+                Helpers.CreateEntity<RoleReadEntity>(new
             {
                 RoleResources = new List<RoleResourceReadEntity>
                 {
                     roleResource.Entity,
                 },
-            });
+            }));
             role.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
             var userRole = await context.UserRoles.AddAsync(new UserRoleReadEntity
@@ -298,7 +303,8 @@ namespace Initium.Portal.Tests.Queries
             });
             userRole.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var user = await context.Users.AddAsync(new UserReadEntity
+            var user = await context.Users.AddAsync(
+                Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = TestVariables.UserId,
                 EmailAddress = "email-address",
@@ -307,14 +313,14 @@ namespace Initium.Portal.Tests.Queries
                 IsLockable = true,
                 WhenCreated = TestVariables.Now.AddDays(-10),
                 WhenLastAuthenticated = TestVariables.Now.AddDays(-1),
-                WhenLocked = null,
+                WhenLocked = null as DateTime?,
                 IsAdmin = false,
                 WhenDisabled = TestVariables.Now,
                 UserRoles = new List<UserRoleReadEntity>
                 {
                     userRole.Entity,
                 },
-            });
+            }));
             user.Property("TenantId").CurrentValue = TestVariables.TenantId;
             await context.SaveChangesAsync();
 
@@ -384,22 +390,24 @@ namespace Initium.Portal.Tests.Queries
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
 
-            var roleResource = await context.RoleResources.AddAsync(new RoleResourceReadEntity
+            var roleResource = await context.RoleResources.AddAsync(
+                Helpers.CreateEntity<RoleResourceReadEntity>(new
             {
                 Resource = new ResourceReadEntity
                 {
                     NormalizedName = "normalized-name",
                 },
-            });
+            }));
             roleResource.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var role = await context.Roles.AddAsync(new RoleReadEntity
+            var role = await context.Roles.AddAsync(
+                Helpers.CreateEntity<RoleReadEntity>(new
             {
                 RoleResources = new List<RoleResourceReadEntity>
                 {
                     roleResource.Entity,
                 },
-            });
+            }));
             role.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
             var userRole = await context.UserRoles.AddAsync(new UserRoleReadEntity
@@ -408,7 +416,8 @@ namespace Initium.Portal.Tests.Queries
             });
             userRole.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var user = await context.Users.AddAsync(new UserReadEntity
+            var user = await context.Users.AddAsync(
+                Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = TestVariables.UserId,
                 EmailAddress = "email-address",
@@ -418,7 +427,7 @@ namespace Initium.Portal.Tests.Queries
                 {
                     userRole.Entity,
                 },
-            });
+            }));
             user.Property("TenantId").CurrentValue = TestVariables.TenantId;
             await context.SaveChangesAsync();
 
@@ -452,10 +461,11 @@ namespace Initium.Portal.Tests.Queries
 
             await using var context = new ManagementQueryContext(options, Mock.Of<FeatureBasedTenantInfo>(),
                 multiTenantSettings.Object);
-            await context.Users.AddAsync(new UserReadEntity
+            await context.Users.AddAsync(
+                Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = TestVariables.UserId,
-            });
+            }));
             await context.SaveChangesAsync();
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
@@ -517,10 +527,11 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            await context.Users.AddAsync(new UserReadEntity
+            await context.Users.AddAsync(
+                Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = TestVariables.UserId,
-            });
+            }));
             await context.SaveChangesAsync();
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
@@ -552,17 +563,18 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new UserReadEntity
+            var user = await context.Users.AddAsync(
+                Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = TestVariables.UserId,
                 AuthenticatorApps = new List<AuthenticatorAppReadEntity>
                 {
-                    new AuthenticatorAppReadEntity
+                    Helpers.CreateEntity<AuthenticatorAppReadEntity>(new
                     {
                         Id = TestVariables.AuthenticatorAppId,
-                    },
+                    }),
                 },
-            });
+            }));
             user.Property("TenantId").CurrentValue = TestVariables.TenantId;
             await context.SaveChangesAsync();
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
@@ -654,10 +666,11 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            await context.Users.AddAsync(new UserReadEntity
+            await context.Users.AddAsync(
+                Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = TestVariables.UserId,
-            });
+            }));
             await context.SaveChangesAsync();
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context);
@@ -692,20 +705,21 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            var user = await context.Users.AddAsync(new UserReadEntity
+            var user = await context.Users.AddAsync(
+                Helpers.CreateEntity<UserReadEntity>(new
             {
                 Id = TestVariables.UserId,
                 AuthenticatorDevices = new List<AuthenticatorDeviceReadEntity>
                 {
-                    new AuthenticatorDeviceReadEntity
+                    Helpers.CreateEntity<AuthenticatorDeviceReadEntity>(new
                     {
                         Id = TestVariables.AuthenticatorDeviceId,
                         Name = "name",
                         WhenEnrolled = TestVariables.Now.AddDays(-10),
                         WhenLastUsed = TestVariables.Now.AddDays(-3),
-                    },
+                    }),
                 },
-            });
+            }));
             user.Property("TenantId").CurrentValue = TestVariables.TenantId;
             await context.SaveChangesAsync();
 

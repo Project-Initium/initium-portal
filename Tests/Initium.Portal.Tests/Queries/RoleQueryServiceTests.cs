@@ -62,12 +62,11 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            var role = context.Add(new RoleReadEntity
+            context.Add(Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = TestVariables.RoleId,
                 Name = "name",
-            });
-            role.Property("TenantId").CurrentValue = TestVariables.TenantId;
+            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
             await context.SaveChangesAsync();
 
             var roleQueries = new RoleQueryService(context);
@@ -94,11 +93,11 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            var role = context.Add(new RoleReadEntity
+            var role = context.Add(Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = TestVariables.RoleId,
                 ResourceCount = 1,
-            });
+            }));
             role.Property("TenantId").CurrentValue = TestVariables.TenantId;
             await context.SaveChangesAsync();
 
@@ -126,10 +125,10 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            var role = context.Add(new RoleReadEntity
+            var role = context.Add(Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = TestVariables.RoleId,
-            });
+            }));
             role.Property("TenantId").CurrentValue = TestVariables.TenantId;
             var roleQueries = new RoleQueryService(context);
             var result = await roleQueries.CheckForRoleUsageById(TestVariables.RoleId);
@@ -180,16 +179,17 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            var roleResource = await context.RoleResources.AddAsync(new RoleResourceReadEntity
+            var roleResource = await context.RoleResources.AddAsync(
+                Helpers.CreateEntity<RoleResourceReadEntity>(new
             {
-                Resource = new ResourceReadEntity
+                Resource = Helpers.CreateEntity<ResourceReadEntity>(new
                 {
                     Id = TestVariables.ResourceId,
-                },
-            });
+                }),
+            }));
             roleResource.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
-            var role = await context.Roles.AddAsync(new RoleReadEntity
+            var role = await context.Roles.AddAsync(Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = TestVariables.RoleId,
                 Name = "name",
@@ -197,7 +197,7 @@ namespace Initium.Portal.Tests.Queries
                 {
                     roleResource.Entity,
                 },
-            });
+            }));
             role.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
             await context.SaveChangesAsync();
@@ -255,11 +255,13 @@ namespace Initium.Portal.Tests.Queries
             });
 
             await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            var role = context.Add(new RoleReadEntity
-            {
-                Id = TestVariables.RoleId,
-                Name = "name",
-            });
+            var role = context.Add(
+                Helpers.CreateEntity<RoleReadEntity>(new
+                {
+                    Id = TestVariables.RoleId,
+                    Name= "name",
+                }));
+
             role.Property("TenantId").CurrentValue = TestVariables.TenantId;
 
             await context.SaveChangesAsync();

@@ -5,6 +5,7 @@ using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
@@ -14,6 +15,7 @@ using Initium.Portal.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
+using Microsoft.Extensions.DependencyInjection;
 
 [assembly: InternalsVisibleTo("Initium.Portal.Tests")]
 
@@ -23,18 +25,21 @@ namespace Initium.Portal.Infrastructure
     {
         private readonly FeatureBasedTenantInfo _tenantInfo;
         private readonly IMediator _mediator;
+        private readonly IServiceProvider _serviceProvider;
 
-        protected CoreDataContext(FeatureBasedTenantInfo tenantInfo, IMediator mediator)
+        protected CoreDataContext(FeatureBasedTenantInfo tenantInfo, IMediator mediator, IServiceProvider serviceProvider)
         {
-            this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._tenantInfo = tenantInfo;
+            this._mediator = mediator;
+            this._serviceProvider = serviceProvider;
         }
 
-        protected CoreDataContext(DbContextOptions<CoreDataContext> options, IMediator mediator, FeatureBasedTenantInfo tenantInfo)
+        protected CoreDataContext(DbContextOptions<CoreDataContext> options, IMediator mediator, FeatureBasedTenantInfo tenantInfo, IServiceProvider serviceProvider)
             : base(options)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
+            this._mediator = mediator;
+            this._tenantInfo = tenantInfo;
+            this._serviceProvider = serviceProvider;
         }
 
         public DbSet<User> Users { get; set; }
@@ -78,6 +83,12 @@ namespace Initium.Portal.Infrastructure
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            
+            var providers = this._serviceProvider.GetServices<IEntityTypeConfigurationProvider>();
+            foreach (var entityTypeConfigurationProvider in providers)
+            {
+                entityTypeConfigurationProvider.ApplyConfigurations(modelBuilder);
+            }
 
             modelBuilder.Entity<User>(this.ConfigureUser);
             modelBuilder.Entity<Role>(this.ConfigureRole);
