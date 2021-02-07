@@ -9,12 +9,6 @@ namespace Initium.Portal.Queries.Tenant.Extensions
     {
         public static IServiceCollection AddCustomizedQueryEntityFramework(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddEntityFrameworkSqlServer()
-                .AddDbContext<TenantQueryContext>();
-
-            serviceCollection.AddScoped<ICoreQueryContext>(provider => provider.GetRequiredService<TenantQueryContext>());
-            serviceCollection.AddScoped<ITenantQueryContext>(provider => provider.GetRequiredService<TenantQueryContext>());
-
             return serviceCollection;
         }
 

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Entities;
 using Initium.Portal.Queries.Models.Resource;
@@ -16,20 +17,20 @@ namespace Initium.Portal.Queries
 {
     public class ResourceQueryService : IResourceQueryService
     {
-        private readonly ICoreQueryContext _context;
+        private readonly GenericDataContext _context;
         private readonly IFeatureManager _featureManager;
 
-        public ResourceQueryService(ICoreQueryContext context, IFeatureManager featureManager)
+        public ResourceQueryService(GenericDataContext context, IFeatureManager featureManager)
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
-            this._featureManager = featureManager ?? throw new ArgumentNullException(nameof(featureManager));
+            this._context = context;
+            this._featureManager = featureManager;
         }
 
-        public IQueryable<ResourceReadEntity> QueryableEntity => this._context.Resources;
+        public IQueryable<ResourceReadEntity> QueryableEntity => this._context.Set<ResourceReadEntity>();
 
         public async Task<IReadOnlyList<SimpleResourceModel>> GetFeatureBasedNestedSimpleResources(CancellationToken cancellationToken = default)
         {
-            var data = await this._context.Resources.ToListAsync(cancellationToken: cancellationToken);
+            var data = await this._context.Set<ResourceReadEntity>().ToListAsync(cancellationToken: cancellationToken);
             if (data == null || data.Count == 0)
             {
                 return new List<SimpleResourceModel>();
@@ -60,7 +61,7 @@ namespace Initium.Portal.Queries
 
         public async Task<IReadOnlyList<FeatureStatusBasedResource>> GetFeatureStatusBasedResources(CancellationToken cancellationToken = default)
         {
-            var data = await this._context.Resources
+            var data = await this._context.Set<ResourceReadEntity>()
                 .Select(x => new
                 {
                     x.Id,

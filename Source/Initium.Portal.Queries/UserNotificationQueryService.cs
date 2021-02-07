@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Contracts;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Entities;
 using Initium.Portal.Queries.Models.Notifications;
@@ -16,13 +17,13 @@ namespace Initium.Portal.Queries
 {
     public class UserNotificationQueryService : IUserNotificationQueryService
     {
-        private readonly ICoreQueryContext _context;
+        private readonly GenericDataContext _context;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
-        public UserNotificationQueryService(ICoreQueryContext context, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
+        public UserNotificationQueryService(GenericDataContext context, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
+            this._context = context;
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
         }
 
         public IQueryable<UserNotificationReadEntity> QueryableEntity
@@ -30,7 +31,7 @@ namespace Initium.Portal.Queries
             get
             {
                 var currentUser = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
-                return currentUser.HasNoValue ? new List<UserNotificationReadEntity>().AsQueryable() : this._context.UserNotifications.Where(x => x.UserId == currentUser.Value.UserId);
+                return currentUser.HasNoValue ? new List<UserNotificationReadEntity>().AsQueryable() : this._context.Set<UserNotificationReadEntity>().Where(x => x.UserId == currentUser.Value.UserId);
             }
         }
 
@@ -42,7 +43,7 @@ namespace Initium.Portal.Queries
                 return Maybe<List<SimpleNotification>>.Nothing;
             }
 
-            return Maybe.From(await this._context.UserNotifications
+            return Maybe.From(await this._context.Set<UserNotificationReadEntity>()
                 .Where(x => x.UserId == currentUser.Value.UserId)
                 .OrderBy(x => x.WhenNotified).Take(top)
                 .Select(x => new SimpleNotification(
@@ -61,7 +62,7 @@ namespace Initium.Portal.Queries
                 return false;
             }
 
-            return await this._context.UserNotifications
+            return await this._context.Set<UserNotificationReadEntity>()
                 .Where(x => x.UserId == currentUser.Value.UserId)
                 .AnyAsync(x => x.WhenViewed == null);
         }

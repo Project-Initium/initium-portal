@@ -73,35 +73,17 @@ namespace Initium.Portal.Queries
             modelBuilder.Entity<SystemAlertReadEntity>(this.ConfigureSystemAlert);
             modelBuilder.Entity<UserReadEntity>(this.ConfigureUser);
             modelBuilder.Entity<UserRoleReadEntity>(this.ConfigureUserRole);
-            modelBuilder.Entity<UserNotificationReadEntity>(this.ConfigureUserNotification);
+            modelBuilder.Entity<>(this.ConfigureUserNotification);
         }
 
         private void ConfigureUserNotification(EntityTypeBuilder<UserNotificationReadEntity> userNotifications)
         {
-            userNotifications.ToTable("vwUserNotification", "Portal");
-            userNotifications.HasKey(userNotification =>
-                new { userNotification.NotificationId, userNotification.UserId });
-
-            userNotifications.Property<Guid>("TenantId");
-            userNotifications.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
+            
         }
 
         private void ConfigureRoleResource(EntityTypeBuilder<RoleResourceReadEntity> roleResources)
         {
-            roleResources.ToTable("vwRoleResource", "Portal");
-            roleResources.HasKey(roleResource => new { roleResource.RoleId, roleResource.ResourceId });
-            roleResources.Property<Guid>("TenantId");
-            roleResources.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
-
-            roleResources
-                .HasOne(roleResource => roleResource.Resource)
-                .WithMany(resource => resource.RoleResources)
-                .HasForeignKey(roleResource => roleResource.ResourceId);
-
-            roleResources
-                .HasOne(roleResource => roleResource.Role)
-                .WithMany(role => role.RoleResources)
-                .HasForeignKey(roleResource => roleResource.RoleId);
+            
         }
 
         private void ConfigureResource(EntityTypeBuilder<ResourceReadEntity> resources)

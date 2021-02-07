@@ -23,7 +23,6 @@ namespace Initium.Portal.Web.Management.Infrastructure.ServiceConfiguration
             services.AddQueryServices();
 
             services.AddCustomizedDataEntityFramework();
-            services.AddCustomizedQueryEntityFramework();
 
             return services;
         }

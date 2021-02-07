@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Contracts;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Entities;
 using Initium.Portal.Queries.Models;
@@ -17,18 +18,16 @@ namespace Initium.Portal.Queries
 {
     public sealed class UserQueryService : IUserQueryService
     {
-        private readonly ICoreQueryContext _context;
+        private readonly GenericDataContext _context;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
-        public UserQueryService(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, ICoreQueryContext context)
+        public UserQueryService(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, GenericDataContext context)
         {
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ??
-                                                     throw new ArgumentNullException(
-                                                         nameof(currentAuthenticatedUserProvider));
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._context = context;
         }
 
-        public IQueryable<UserReadEntity> QueryableEntity => this._context.Users;
+        public IQueryable<UserReadEntity> QueryableEntity => this._context.Set<UserReadEntity>();
 
         public async Task<StatusCheckModel> CheckForPresenceOfAnyUser()
         {

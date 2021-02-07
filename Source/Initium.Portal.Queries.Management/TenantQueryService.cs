@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Queries.Management.Contracts;
 using Initium.Portal.Queries.Management.Entities;
 using Initium.Portal.Queries.Management.Tenant;
@@ -16,23 +17,23 @@ namespace Initium.Portal.Queries.Management
 {
     public class TenantQueryService : ITenantQueryService
     {
-        private readonly IManagementQueryContext _queryContext;
+        private readonly GenericDataContext _queryContext;
 
-        public TenantQueryService(IManagementQueryContext queryContext)
+        public TenantQueryService(GenericDataContext queryContext)
         {
-            this._queryContext = queryContext ?? throw new ArgumentNullException(nameof(queryContext));
+            this._queryContext = queryContext;
         }
 
-        public IQueryable<TenantReadEntity> QueryableEntity => this._queryContext.Tenants;
+        public IQueryable<TenantReadEntity> QueryableEntity => this._queryContext.Set<TenantReadEntity>();
 
         public async Task<StatusCheckModel> CheckForPresenceOfTenantByIdentifier(string identifier, CancellationToken cancellationToken = default)
         {
-            return new StatusCheckModel(await this._queryContext.Tenants.AnyAsync(x => x.Identifier == identifier, cancellationToken: cancellationToken));
+            return new StatusCheckModel(await this._queryContext.Set<TenantReadEntity>().AnyAsync(x => x.Identifier == identifier, cancellationToken: cancellationToken));
         }
 
         public async Task<Maybe<TenantMetadata>> GetTenantMetadataById(Guid id, CancellationToken cancellationToken = default)
         {
-            var data = await this._queryContext.Tenants.FirstOrDefaultAsync(x => x.Id == id, cancellationToken: cancellationToken);
+            var data = await this._queryContext.Set<TenantReadEntity>().FirstOrDefaultAsync(x => x.Id == id, cancellationToken: cancellationToken);
             if (data == null)
             {
                 return Maybe<TenantMetadata>.Nothing;

@@ -23,4 +23,9 @@
         </PackageReference>
     </ItemGroup>
 
+<ItemGroup>
+  <Compile Remove="IManagementQueryContext.cs" />
+  <Compile Remove="ManagementQueryContext.cs" />
+</ItemGroup>
+
 </Project>

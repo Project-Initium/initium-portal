@@ -33,4 +33,11 @@
     <ProjectReference Include="..\Initium.Portal.Core\Initium.Portal.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="CoreQueryContext.cs" />
+    <None Include="CoreQueryContext.cs" />
+    <Compile Remove="ICoreQueryContext.cs" />
+    <None Include="ICoreQueryContext.cs" />
+  </ItemGroup>
+
 </Project>
