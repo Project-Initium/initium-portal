@@ -81,7 +81,7 @@ namespace Initium.Portal.Queries
             userNotifications.ToTable("vwUserNotification", "Portal");
             userNotifications.HasKey(userNotification =>
                 new { userNotification.NotificationId, userNotification.UserId });
-            
+
             userNotifications.Property<Guid>("TenantId");
             userNotifications.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
         }

@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright (c) Project Initium. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +29,34 @@ namespace Initium.Portal.Core.Database
             this._serviceProvider = serviceProvider;
             this._tenantInfo = tenantInfo;
         }
-        
+
+        public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
+        {
+            var mediator = this.GetService<IMediator>();
+            await mediator.DispatchDomainEventsAsync(this);
+            await this.SaveChangesAsync(cancellationToken);
+            await mediator.DispatchIntegrationEventsAsync(this);
+            return true;
+        }
+
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+        {
+            if (this.ChangeTracker.Entries().Any(entityEntry => entityEntry.Entity is IReadOnlyEntity))
+            {
+                throw new CustomException("Trying to save read only entity");
+            }
+
+            foreach (var entry in this.ChangeTracker.Entries())
+            {
+                if (entry.State == EntityState.Added && entry.Metadata.FindAnnotation("MULTI_TENANT") != null)
+                {
+                    entry.Property("TenantId").CurrentValue = Guid.Parse(this._tenantInfo.Id);
+                }
+            }
+
+            return base.SaveChangesAsync(cancellationToken);
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             if (optionsBuilder.IsConfigured)
@@ -38,33 +68,6 @@ namespace Initium.Portal.Core.Database
             optionsBuilder.UseSqlServer(this._tenantInfo.ConnectionString);
         }
 
-        public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
-        {
-            var mediator = this.GetService<IMediator>();
-            await mediator.DispatchDomainEventsAsync(this);
-            await this.SaveChangesAsync(cancellationToken);
-            await mediator.DispatchIntegrationEventsAsync(this);
-            return true;
-        }
-        
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            if (this.ChangeTracker.Entries().Any(entityEntry => entityEntry.Entity is IReadOnlyEntity))
-            {
-                throw new CustomException("Trying to save read only entity");
-            }
-            
-            foreach (var entry in this.ChangeTracker.Entries())
-            {
-                if (entry.State == EntityState.Added && entry.Metadata.FindAnnotation("MULTI_TENANT") != null)
-                {
-                    entry.Property("TenantId").CurrentValue = Guid.Parse(this._tenantInfo.Id);
-                }
-            }
-
-            return base.SaveChangesAsync(cancellationToken);
-        }
-        
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             var providers = this._serviceProvider.GetServices<IEntityTypeConfigurationProvider>();

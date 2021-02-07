@@ -14,14 +14,14 @@ namespace Initium.Portal.Web.Infrastructure.OData.EntityBuilders
         public void Configure(ODataConventionModelBuilder builder)
         {
             builder.AddEnumType(typeof(NotificationType));
-            
+
             var userNotifications = builder.EntitySet<UserNotificationReadEntity>("UserNotifications");
             userNotifications.EntityType.HasKey(uN =>
                 new
                 {
                     uN.NotificationId, uN.UserId,
                 });
-            
+
             userNotifications.EntityType.Property(userNotification => userNotification.Message);
             userNotifications.EntityType.Property(userNotification => userNotification.Subject);
             userNotifications.EntityType.EnumProperty(userNotification => userNotification.Type);

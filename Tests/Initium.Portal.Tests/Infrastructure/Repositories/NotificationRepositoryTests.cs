@@ -4,10 +4,9 @@
 using System;
 using System.Linq;
 using Initium.Portal.Core.Constants;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
-using Initium.Portal.Infrastructure;
-using Initium.Portal.Infrastructure.Admin;
 using Initium.Portal.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -19,13 +18,19 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
     public class NotificationRepositoryTests
     {
         [Fact]
-        public void UnitOfWork_GivenDataContextSetInConstructor_ExpectSameValud()
+        public void UnitOfWork_GivenDataContextSetInConstructor_ExpectSameValue()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new NotificationRepository(context);
             Assert.Equal(context, repository.UnitOfWork);
         }
@@ -33,24 +38,36 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Add_GivenArgumentIsNotNotificationType_ExpectException()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new NotificationRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Add(new Mock<Initium.Portal.Domain.AggregatesModel.NotificationAggregate.INotification>().Object));
-            Assert.Equal("notification", exception.Message);
+            Assert.Equal("notification", exception.ParamName);
         }
 
         [Fact]
         public void Add_GivenArgumentIsNotificationType_ExpectReturnedNotificationToBeIdenticalAsArgument()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new NotificationRepository(context);
 
             var notification = new Notification(TestVariables.NotificationId, "subject", "message", NotificationType.AlphaNotification, "serialized-event-data", TestVariables.Now);
@@ -62,11 +79,17 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Add_GivenArgumentIsNotificationType_ExpectNotificationToBeAddedToContext()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new NotificationRepository(context);
 
             var notification = new Notification(TestVariables.NotificationId, "subject", "message", NotificationType.AlphaNotification, "serialized-event-data", TestVariables.Now);

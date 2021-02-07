@@ -14,9 +14,9 @@ namespace Initium.Portal.Web.Infrastructure.OData.EntityBuilders
         public void Configure(ODataConventionModelBuilder builder)
         {
             builder.AddEnumType(typeof(SystemAlertType));
-            
+
             var systemAlerts = builder.EntitySet<SystemAlertReadEntity>("SystemAlerts");
-            
+
             systemAlerts.EntityType.HasKey(systemAlert => systemAlert.Id);
             systemAlerts.EntityType.Property(systemAlert => systemAlert.Message);
             systemAlerts.EntityType.Property(systemAlert => systemAlert.Name);
@@ -24,7 +24,7 @@ namespace Initium.Portal.Web.Infrastructure.OData.EntityBuilders
             systemAlerts.EntityType.Property(systemAlert => systemAlert.IsActive);
             systemAlerts.EntityType.Property(systemAlert => systemAlert.WhenToHide);
             systemAlerts.EntityType.Property(systemAlert => systemAlert.WhenToShow);
-            
+
             var function = systemAlerts.EntityType.Collection.Function("Filtered");
             function.ReturnsCollectionFromEntitySet<SystemAlertReadEntity>("SystemAlerts");
 

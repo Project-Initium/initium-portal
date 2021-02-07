@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using Initium.Portal.Core.MultiTenant;
 
 namespace Initium.Portal.Tests
 {
@@ -48,5 +49,10 @@ namespace Initium.Portal.Tests
         public static readonly Guid FeatureId = Guid.Parse("a0793e10-91c7-41ee-be14-6ae99ded87da");
 
         public static readonly Guid DefaultTenantId = Guid.Parse("ed3facbd-5e80-45cb-a8db-63397bc36cee");
+
+        public static readonly FeatureBasedTenantInfo TenantInfo = new FeatureBasedTenantInfo
+        {
+            Id = TestVariables.TenantId.ToString(),
+        };
     }
 }

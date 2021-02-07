@@ -2,8 +2,15 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using Initium.Portal.Core.Database;
+using Initium.Portal.Core.MultiTenant;
+using Initium.Portal.Infrastructure.EntityTypeConfigurationProviders;
+using Initium.Portal.Infrastructure.Management.EntityTypeConfigurationProviders;
+using Microsoft.EntityFrameworkCore;
+using Moq;
 
 namespace Initium.Portal.Tests
 {
@@ -32,6 +39,37 @@ namespace Initium.Portal.Tests
             }
 
             return (TEntity)entity;
+        }
+
+        internal static Mock<IServiceProvider> AddCoreEntityTypeConfigurationProvider(this Mock<IServiceProvider> serviceProvider)
+        {
+            serviceProvider.Setup(x => x.GetService(typeof(IEnumerable<IEntityTypeConfigurationProvider>))).Returns(
+                new List<IEntityTypeConfigurationProvider>
+                {
+                    new NotificationEntityTypeConfigurationProvider(TestVariables.TenantInfo),
+                    new RoleEntityTypeConfigurationProvider(TestVariables.TenantInfo),
+                    new SystemAlertEntityTypeConfigurationProvider(TestVariables.TenantInfo),
+                    new UserEntityTypeConfigurationProvider(TestVariables.TenantInfo),
+                }.ToArray);
+            serviceProvider.Setup(x => x.GetService(typeof(FeatureBasedTenantInfo))).Returns(TestVariables.TenantInfo);
+
+            return serviceProvider;
+        }
+        
+        internal static Mock<IServiceProvider> AddManagementEntityTypeConfigurationProvider(this Mock<IServiceProvider> serviceProvider)
+        {
+            serviceProvider.Setup(x => x.GetService(typeof(IEnumerable<IEntityTypeConfigurationProvider>))).Returns(
+                new List<IEntityTypeConfigurationProvider>
+                {
+                    new NotificationEntityTypeConfigurationProvider(TestVariables.TenantInfo),
+                    new RoleEntityTypeConfigurationProvider(TestVariables.TenantInfo),
+                    new SystemAlertEntityTypeConfigurationProvider(TestVariables.TenantInfo),
+                    new UserEntityTypeConfigurationProvider(TestVariables.TenantInfo),
+                    new TenantEntityTypeConfigurationProvider(),
+                }.ToArray);
+            serviceProvider.Setup(x => x.GetService(typeof(FeatureBasedTenantInfo))).Returns(TestVariables.TenantInfo);
+
+            return serviceProvider;
         }
     }
 }

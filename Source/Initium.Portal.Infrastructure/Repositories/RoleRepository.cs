@@ -30,7 +30,7 @@ namespace Initium.Portal.Infrastructure.Repositories
             var entity = role as Role;
             if (entity == null)
             {
-                throw new ArgumentException(nameof(role));
+                throw new ArgumentException(null, nameof(role));
             }
 
             return this._context.Set<Role>().Add(entity).Entity;
@@ -48,7 +48,7 @@ namespace Initium.Portal.Infrastructure.Repositories
             var entity = role as Role;
             if (entity == null)
             {
-                throw new ArgumentException(nameof(role));
+                throw new ArgumentException(null, nameof(role));
             }
 
             this._context.Set<Role>().Update(entity);
@@ -59,7 +59,7 @@ namespace Initium.Portal.Infrastructure.Repositories
             var entity = role as Role;
             if (entity == null)
             {
-                throw new ArgumentException(nameof(role));
+                throw new ArgumentException(null, nameof(role));
             }
 
             this._context.Set<Role>().Remove(entity);

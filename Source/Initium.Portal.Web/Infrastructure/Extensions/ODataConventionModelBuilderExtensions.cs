@@ -12,10 +12,8 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
     {
         public static ODataConventionModelBuilder SetupUserEntity(this ODataConventionModelBuilder builder)
         {
-            //builder.
-
             builder.AddEnumType(typeof(NotificationType));
-            
+
             var users = builder.EntitySet<UserReadEntity>("User");
             users.EntityType.HasKey(user => user.Id);
             users.EntityType.Property(user => user.EmailAddress);
@@ -31,7 +29,7 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             users.EntityType.Property(user => user.WhenLastAuthenticated);
 
             var function = users.EntityType.Collection.Function("Filtered");
-            
+
             function.ReturnsCollectionFromEntitySet<UserReadEntity>("User");
             function.Namespace = "User";
 
@@ -48,7 +46,7 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             roles.EntityType.Property(role => role.Name);
             roles.EntityType.Property(role => role.ResourceCount);
             roles.EntityType.Property(role => role.UserCount);
-            
+
             var function = roles.EntityType.Collection.Function("Filtered");
             function.ReturnsCollectionFromEntitySet<RoleReadEntity>("Role");
             function.Namespace = "Role";
@@ -76,9 +74,7 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             userNotifications.EntityType.Property(userNotification => userNotification.WhenNotified);
             userNotifications.EntityType.Property(userNotification => userNotification.WhenViewed);
             userNotifications.EntityType.Property(userNotification => userNotification.SerializedEventData);
-            
-            
-            
+
             var function = userNotifications.EntityType.Collection.Function("Filtered");
             function.ReturnsCollectionFromEntitySet<UserNotificationReadEntity>("UserNotification");
             function.Namespace = "UserNotification";
@@ -100,7 +96,7 @@ namespace Initium.Portal.Web.Infrastructure.Extensions
             systemAlerts.EntityType.Property(systemAlert => systemAlert.IsActive);
             systemAlerts.EntityType.Property(systemAlert => systemAlert.WhenToHide);
             systemAlerts.EntityType.Property(systemAlert => systemAlert.WhenToShow);
-            
+
             var function = systemAlerts.EntityType.Collection.Function("Filtered");
             function.ReturnsCollectionFromEntitySet<SystemAlertReadEntity>("SystemAlert");
             function.Namespace = "SystemAlert";

@@ -3,12 +3,12 @@
 
 using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
 using Initium.Portal.Core.Database;
-using Initium.Portal.Infrastructure.Admin.EntityTypeConfigurationProviders;
-using Initium.Portal.Infrastructure.Admin.Repositories;
 using Initium.Portal.Infrastructure.Extensions;
+using Initium.Portal.Infrastructure.Management.EntityTypeConfigurationProviders;
+using Initium.Portal.Infrastructure.Management.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Initium.Portal.Infrastructure.Admin.Extensions
+namespace Initium.Portal.Infrastructure.Management.Extensions
 {
     public static class ServiceCollectionExtensions
     {

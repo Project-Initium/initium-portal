@@ -5,10 +5,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.MultiTenant;
-using Initium.Portal.Infrastructure;
-using Initium.Portal.Infrastructure.Admin;
-using Initium.Portal.Infrastructure.Admin.Repositories;
+using Initium.Portal.Infrastructure.Management.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Moq;
@@ -19,13 +18,19 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
     public class TenantRepositoryTests
     {
         [Fact]
-        public void UnitOfWork_GivenDataContextSetInConstructor_ExpectSameValud()
+        public void UnitOfWork_GivenDataContextSetInConstructor_ExpectSameValue()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddManagementEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
             Assert.Equal(context, repository.UnitOfWork);
         }
@@ -33,11 +38,17 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
         [Fact]
         public void Add_GivenArgumentIsNotTenantType_ExpectException()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddManagementEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Add(new Mock<ITenant>().Object));
             Assert.Equal("tenant", exception.Message);
@@ -46,11 +57,17 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
         [Fact]
         public void Add_GivenArgumentIsTenantType_ExpectReturnedTenantToBeIdenticalAsArgument()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddManagementEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
 
             var tenant = new Tenant(TestVariables.TenantId, "identifier", "name", "connection-string");
@@ -62,11 +79,17 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
         [Fact]
         public void Add_GivenArgumentIsTenantType_ExpectTenantToBeAddedToContext()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddManagementEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
 
             var tenant = new Tenant(TestVariables.TenantId, "identifier", "name", "connection-string");
@@ -80,11 +103,17 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
         [Fact]
         public void Update_GivenArgumentIsNotTenant_ExpectArgumentException()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddManagementEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Update(new Mock<ITenant>().Object));
             Assert.Equal("tenant", exception.Message);
@@ -93,11 +122,17 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
         [Fact]
         public void Update_GivenArgumentIsTenant_ExpectTenantToBeUpdatedInTheContext()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddManagementEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
             var tenant = new Tenant(TestVariables.TenantId, "identifier", "name", "connection-string");
             repository.Update(tenant);
@@ -110,12 +145,18 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
         [Fact]
         public async Task Find_GivenSystemAlertDoesExist_ExpectMaybeWithData()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddManagementEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
                 .Options;
 
-            await using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
-            await context.Tenants.AddAsync(
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            await context.Set<Tenant>().AddAsync(
                 new Tenant(TestVariables.TenantId, "identifier", "name", "connection-string"));
             await context.SaveChangesAsync();
             var repository = new TenantRepository(context);
@@ -126,11 +167,17 @@ namespace Initium.Portal.Tests.Infrastructure_Management.Repositories
         [Fact]
         public async Task Find_GivenSystemAlertDoesNotExist_ExpectMaybeWithNoValue()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddManagementEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
                 .Options;
 
-            await using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new TenantRepository(context);
             var maybe = await repository.Find(Guid.Empty);
             Assert.True(maybe.HasNoValue);

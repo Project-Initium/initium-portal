@@ -1,8 +1,11 @@
-﻿using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
+﻿// Copyright (c) Project Initium. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
 using Initium.Portal.Core.Database;
 using Microsoft.EntityFrameworkCore;
 
-namespace Initium.Portal.Infrastructure.Admin.EntityTypeConfigurationProviders
+namespace Initium.Portal.Infrastructure.Management.EntityTypeConfigurationProviders
 {
     public class TenantEntityTypeConfigurationProvider : IEntityTypeConfigurationProvider
     {

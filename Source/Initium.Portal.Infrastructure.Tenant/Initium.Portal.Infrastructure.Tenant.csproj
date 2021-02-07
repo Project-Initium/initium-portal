@@ -26,11 +26,7 @@
 
 <ItemGroup>
   <Compile Remove="ITenantDataContext.cs" />
-  <None Include="ITenantDataContext.cs" />
   <Compile Remove="TenantDataContext.cs" />
-  <None Include="TenantDataContext.cs" />
-  <Compile Remove="Extensions\ServiceCollectionExtensions.cs" />
-  <None Include="Extensions\ServiceCollectionExtensions.cs" />
 </ItemGroup>
 
 </Project>

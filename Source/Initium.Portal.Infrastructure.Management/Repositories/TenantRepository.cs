@@ -10,7 +10,7 @@ using Initium.Portal.Core.Database;
 using MaybeMonad;
 using Microsoft.EntityFrameworkCore;
 
-namespace Initium.Portal.Infrastructure.Admin.Repositories
+namespace Initium.Portal.Infrastructure.Management.Repositories
 {
     public class TenantRepository : ITenantRepository
     {
