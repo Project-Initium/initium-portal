@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFramework>net5.0</TargetFramework>
         <RootNamespace>Initium.Portal.Infrastructure.Admin</RootNamespace>
+        <LangVersion>9</LangVersion>
     </PropertyGroup>
 
     <Import Project="..\..\Shared\Initium.Portal.Shared\Initium.Portal.Shared.projitems" Label="Shared" />
@@ -13,7 +14,7 @@
     </ItemGroup>
 
 <ItemGroup>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.11.0.20529">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.16.0.25740">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -22,4 +23,11 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
+<ItemGroup>
+  <Compile Remove="IManagementDataContext.cs" />
+  <None Include="IManagementDataContext.cs" />
+  <Compile Remove="ManagementDataContext.cs" />
+  <None Include="ManagementDataContext.cs" />
+</ItemGroup>
 </Project>

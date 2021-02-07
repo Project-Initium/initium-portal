@@ -2,7 +2,10 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
+using Initium.Portal.Core.Database;
+using Initium.Portal.Infrastructure.Admin.EntityTypeConfigurationProviders;
 using Initium.Portal.Infrastructure.Admin.Repositories;
+using Initium.Portal.Infrastructure.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Initium.Portal.Infrastructure.Admin.Extensions
@@ -12,19 +15,20 @@ namespace Initium.Portal.Infrastructure.Admin.Extensions
         public static IServiceCollection AddCustomizedDataEntityFramework(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddEntityFrameworkSqlServer()
-                .AddDbContext<ManagementDataContext>();
+                .AddDbContext<GenericDataContext>();
 
-            serviceCollection.AddScoped<ICoreDataContext>(provider =>
-                provider.GetRequiredService<ManagementDataContext>());
-            serviceCollection.AddScoped<IManagementDataContext>(provider =>
-                provider.GetRequiredService<ManagementDataContext>());
+            serviceCollection
+                .AddCoreEntityTypeConfigurationProviders()
+                .AddScoped<IEntityTypeConfigurationProvider, TenantEntityTypeConfigurationProvider>();
 
             return serviceCollection;
         }
 
         public static IServiceCollection AddRepositories(this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddScoped<ITenantRepository, TenantRepository>();
+            serviceCollection
+                .AddCoreRepositories()
+                .AddScoped<ITenantRepository, TenantRepository>();
             return serviceCollection;
         }
     }

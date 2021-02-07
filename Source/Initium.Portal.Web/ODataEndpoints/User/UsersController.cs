@@ -5,27 +5,26 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Initium.Portal.Queries.Contracts;
+using Initium.Portal.Queries.Entities;
 using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.ODataEndpoints;
 using LinqKit;
-using Microsoft.AspNet.OData.Query;
-using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace Initium.Portal.Web.ODataEndpoints.User
 {
-    [ODataRoutePrefix("User")]
     [ResourceBasedAuthorize("user-list")]
-    public class UserODataController : BaseODataController<Queries.Entities.UserReadEntity, UserFilter>
+    public class UsersController : BaseODataController<UserReadEntity, UserFilter>
     {
         private readonly IUserQueryService _userQueryService;
 
-        public UserODataController(IUserQueryService userQueryService)
+        public UsersController(IUserQueryService userQueryService)
         {
             this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
         }
 
-        [ODataRoute("User.Filtered")]
+        [HttpPost]
         public override IActionResult Filtered(ODataQueryOptions<Queries.Entities.UserReadEntity> options, [FromBody] UserFilter filter)
         {
             if (!this.AreOptionsValid(options))
@@ -42,7 +41,7 @@ namespace Initium.Portal.Web.ODataEndpoints.User
             return this.Ok(options.ApplyTo(this._userQueryService.QueryableEntity.Where(predicate)));
         }
 
-        [ODataRoute("User.FilteredExport")]
+        [HttpPost]
         public override IActionResult FilteredExport(
             ODataQueryOptions<Queries.Entities.UserReadEntity> options, [FromBody]ExportableFilter<UserFilter> filter)
         {
@@ -68,7 +67,7 @@ namespace Initium.Portal.Web.ODataEndpoints.User
             return this.File(this.GenerateCsvStream(query, options, mappings), "application/csv");
         }
 
-        protected override ExpressionStarter<Queries.Entities.UserReadEntity> GeneratePredicate([FromBody]UserFilter filter)
+        protected override ExpressionStarter<Queries.Entities.UserReadEntity> GeneratePredicate(UserFilter filter)
         {
             var predicate = PredicateBuilder.New<Queries.Entities.UserReadEntity>(true);
             if (filter.Verified && !filter.Unverified)

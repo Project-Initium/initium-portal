@@ -17,14 +17,14 @@ namespace Initium.Portal.Infrastructure.Admin
     {
         private readonly FeatureBasedTenantInfo _tenantInfo;
 
-        public ManagementDataContext(FeatureBasedTenantInfo tenantInfo, IMediator mediator)
-            : base(tenantInfo, mediator)
+        public ManagementDataContext(FeatureBasedTenantInfo tenantInfo, IMediator mediator, IServiceProvider serviceProvider)
+            : base(tenantInfo, mediator, serviceProvider)
         {
             this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
         }
 
-        internal ManagementDataContext(DbContextOptions<CoreDataContext> options, IMediator mediator, FeatureBasedTenantInfo tenantInfo)
-            : base(options, mediator, tenantInfo)
+        internal ManagementDataContext(DbContextOptions<CoreDataContext> options, IMediator mediator, FeatureBasedTenantInfo tenantInfo, IServiceProvider serviceProvider)
+            : base(options, mediator, tenantInfo, serviceProvider)
         {
             this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
         }

@@ -3,8 +3,8 @@
 
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Queries.Entities;
-using Microsoft.AspNet.OData.Builder;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OData.ModelBuilder;
 
 namespace Initium.Portal.Web.Infrastructure.Extensions
 {

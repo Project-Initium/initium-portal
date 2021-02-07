@@ -30,8 +30,7 @@ namespace Initium.Portal.Queries
             get
             {
                 var currentUser = this._currentAuthenticatedUserProvider.CurrentAuthenticatedUser;
-                return currentUser.HasNoValue ? new List<UserNotificationReadEntity>().AsQueryable() : 
-                    this._context.UserNotifications.Where(x => x.UserId == currentUser.Value.UserId);
+                return currentUser.HasNoValue ? new List<UserNotificationReadEntity>().AsQueryable() : this._context.UserNotifications.Where(x => x.UserId == currentUser.Value.UserId);
             }
         }
 

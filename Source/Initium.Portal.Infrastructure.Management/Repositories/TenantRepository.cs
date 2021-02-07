@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
 using Initium.Portal.Core.Contracts.Domain;
+using Initium.Portal.Core.Database;
 using MaybeMonad;
 using Microsoft.EntityFrameworkCore;
 
@@ -13,9 +14,9 @@ namespace Initium.Portal.Infrastructure.Admin.Repositories
 {
     public class TenantRepository : ITenantRepository
     {
-        private readonly IManagementDataContext _context;
+        private readonly GenericDataContext _context;
 
-        public TenantRepository(IManagementDataContext context)
+        public TenantRepository(GenericDataContext context)
         {
             this._context = context;
         }
@@ -30,7 +31,7 @@ namespace Initium.Portal.Infrastructure.Admin.Repositories
                 throw new ArgumentException(nameof(tenant));
             }
 
-            return this._context.Tenants.Add(entity).Entity;
+            return this._context.Set<Tenant>().Add(entity).Entity;
         }
 
         public void Update(ITenant tenant)
@@ -41,12 +42,12 @@ namespace Initium.Portal.Infrastructure.Admin.Repositories
                 throw new ArgumentException(nameof(tenant));
             }
 
-            this._context.Tenants.Update(entity);
+            this._context.Set<Tenant>().Update(entity);
         }
 
         public async Task<Maybe<ITenant>> Find(Guid tenantId, CancellationToken cancellationToken = default)
         {
-            var tenant = await this._context.Tenants
+            var tenant = await this._context.Set<Tenant>()
                 .SingleOrDefaultAsync(x => x.Id == tenantId, cancellationToken);
             await this.Refresh(tenant);
             return Maybe.From<ITenant>(tenant);

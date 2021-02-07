@@ -1,23 +1,35 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) Project Initium. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using System;
+using System.Collections.Generic;
 using System.Reflection;
 using FluentValidation.AspNetCore;
 using Initium.Portal.Web.Infrastructure.Formatters;
 using Initium.Portal.Web.Pages.FirstRun;
-using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.OData.Edm;
 using NWebsec.AspNetCore.Mvc.Csp;
 
 namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
 {
     public static class CoreWebConfig
     {
-        public static IServiceCollection AddCoreCustomizedMvc(this IServiceCollection services, List<Assembly> assemblies = null)
+        public static IServiceCollection AddCoreCustomizedMvc(this IServiceCollection services, List<Assembly> assemblies = null, IEdmModel edmModel = null)
         {
             assemblies ??= new List<Assembly>();
             assemblies.Add(typeof(InitialUserSetup.Validator).Assembly);
 
-            services.AddOData();
+            if (edmModel != null)
+            {
+                services.AddOData(opt =>
+                {
+                    opt.AddModel("odata", edmModel).Count().Expand().Filter().Select().OrderBy().SetMaxTop(int.MaxValue);
+                });
+            }
+
             services
                 .AddMvc(opts =>
                 {

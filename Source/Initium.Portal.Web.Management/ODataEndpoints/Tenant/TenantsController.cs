@@ -9,24 +9,23 @@ using Initium.Portal.Queries.Management.Entities;
 using Initium.Portal.Web.Infrastructure.Attributes;
 using Initium.Portal.Web.Infrastructure.ODataEndpoints;
 using LinqKit;
-using Microsoft.AspNet.OData.Query;
-using Microsoft.AspNet.OData.Routing;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
+using Microsoft.AspNetCore.OData.Routing.Attributes;
 
 namespace Initium.Portal.Web.Management.ODataEndpoints.Tenant
 {
-    [ODataRoutePrefix("Tenant")]
     [ResourceBasedAuthorize("tenant-list")]
-    public class TenantODataController : BaseODataController<TenantReadEntity, TenantFilter>
+    public class TenantsController : BaseODataController<TenantReadEntity, TenantFilter>
     {
         private readonly ITenantQueryService _tenantQueryService;
 
-        public TenantODataController(ITenantQueryService tenantQueryService)
+        public TenantsController(ITenantQueryService tenantQueryService)
         {
             this._tenantQueryService = tenantQueryService ?? throw new ArgumentNullException(nameof(tenantQueryService));
         }
 
-        [ODataRoute("Tenant.Filtered")]
+        [HttpPost]
         public override IActionResult Filtered(ODataQueryOptions<TenantReadEntity> options, [FromBody]TenantFilter filter)
         {
             if (!this.AreOptionsValid(options))
@@ -43,7 +42,7 @@ namespace Initium.Portal.Web.Management.ODataEndpoints.Tenant
             return this.Ok(options.ApplyTo(this._tenantQueryService.QueryableEntity.Where(predicate)));
         }
 
-        [ODataRoute("Tenant.FilteredExport")]
+        [HttpPost]
         public override IActionResult FilteredExport(
             ODataQueryOptions<TenantReadEntity> options,
             [FromBody]ExportableFilter<TenantFilter> filter)

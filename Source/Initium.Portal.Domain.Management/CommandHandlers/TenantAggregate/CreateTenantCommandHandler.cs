@@ -1,8 +1,6 @@
-using Microsoft.Extensions.Logging;
-﻿// Copyright (c) Project Initium. All rights reserved.
+// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
@@ -38,7 +36,7 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
                 return result;
             }
 
-            this._logger.LogDebug("Failed saving changes.");
+            this._logger.LogDebug("Failed saving changes");
             return ResultWithError.Fail(new ErrorData(
                 ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
@@ -48,7 +46,7 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
             var presenceResult = await this._tenantQueryService.CheckForPresenceOfTenantByIdentifier(request.Identifier);
             if (presenceResult.IsPresent)
             {
-                this._logger.LogDebug("Failed presence check.");
+                this._logger.LogDebug("Failed presence check");
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.TenantAlreadyExists));
             }
 

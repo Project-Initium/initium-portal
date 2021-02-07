@@ -17,7 +17,6 @@ namespace Initium.Portal.Web.Management.Infrastructure.ServiceConfiguration
         {
             services.AddDistributedMemoryCache();
 
-            services.AddCoreRepositories();
             services.AddRepositories();
 
             services.AddCoreQueryServices();

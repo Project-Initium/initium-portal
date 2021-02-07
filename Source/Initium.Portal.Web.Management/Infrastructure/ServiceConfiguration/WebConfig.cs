@@ -1,23 +1,20 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
-using FluentValidation.AspNetCore;
-using Initium.Portal.Web.Infrastructure.Extensions;
-using Initium.Portal.Web.Infrastructure.Formatters;
+using Initium.Portal.Web.Infrastructure.Contracts;
 using Initium.Portal.Web.Infrastructure.Middleware;
 using Initium.Portal.Web.Infrastructure.ServiceConfiguration;
-using Initium.Portal.Web.Management.Infrastructure.Extensions;
 using Initium.Portal.Web.Management.Pages.App.Tenants;
-using Initium.Portal.Web.Pages.FirstRun;
-using Microsoft.AspNet.OData.Builder;
-using Microsoft.AspNet.OData.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OData.Edm;
+using Microsoft.OData.ModelBuilder;
 
 namespace Initium.Portal.Web.Management.Infrastructure.ServiceConfiguration
 {
@@ -25,10 +22,12 @@ namespace Initium.Portal.Web.Management.Infrastructure.ServiceConfiguration
     {
         public static IServiceCollection AddCustomizedMvc(this IServiceCollection services)
         {
-            services.AddCoreCustomizedMvc(new List<Assembly>
-            {
-                typeof(CreateTenant.Validator).Assembly,
-            });
+            services.AddCoreCustomizedMvc(
+                new List<Assembly>
+                {
+                    typeof(CreateTenant.Validator).Assembly,
+                },
+                GetEdmModel());
             return services;
         }
 
@@ -56,26 +55,27 @@ namespace Initium.Portal.Web.Management.Infrastructure.ServiceConfiguration
                 endpoints.MapControllers();
             });
 
-            app.UseMvc(routeBuilder =>
-            {
-                routeBuilder.MapODataServiceRoute("odata", "odata", GetEdmModel());
-                routeBuilder.Select().Expand().Filter().OrderBy().Count().MaxTop(int.MaxValue);
-            });
-
             return app;
         }
 
         private static IEdmModel GetEdmModel()
         {
-            var model = new ODataConventionModelBuilder()
-                .SetupUserEntity()
-                .SetupRoleEntity()
-                .SetupUserNotificationEntity()
-                .SetupSystemAlertEntity()
-                .SetupTenantEntity()
-                .GetEdmModel();
+            var builder = new ODataConventionModelBuilder();
 
-            return model;
+            var types = AppDomain.CurrentDomain.GetAssemblies()
+                .SelectMany(s => s.GetTypes())
+                .Where(p => typeof(IODataEntityBuilder).IsAssignableFrom(p) && !p.IsInterface)
+                .ToList();
+
+            foreach (var instance in types.Select(Activator.CreateInstance))
+            {
+                if (instance is IODataEntityBuilder odataEntityBuilder)
+                {
+                    odataEntityBuilder.Configure(builder);
+                }
+            }
+
+            return builder.GetEdmModel();
         }
     }
 }

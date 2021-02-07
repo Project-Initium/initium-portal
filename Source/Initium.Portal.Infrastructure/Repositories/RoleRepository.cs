@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Contracts.Domain;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using MaybeMonad;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +16,9 @@ namespace Initium.Portal.Infrastructure.Repositories
 {
     public class RoleRepository : IRoleRepository
     {
-        private readonly ICoreDataContext _context;
+        private readonly GenericDataContext _context;
 
-        public RoleRepository(ICoreDataContext context)
+        public RoleRepository(GenericDataContext context)
         {
             this._context = context;
         }
@@ -32,7 +33,7 @@ namespace Initium.Portal.Infrastructure.Repositories
                 throw new ArgumentException(nameof(role));
             }
 
-            return this._context.Roles.Add(entity).Entity;
+            return this._context.Set<Role>().Add(entity).Entity;
         }
 
         public async Task<Maybe<IRole>> Find(Guid id, CancellationToken cancellationToken = default)
@@ -50,7 +51,7 @@ namespace Initium.Portal.Infrastructure.Repositories
                 throw new ArgumentException(nameof(role));
             }
 
-            this._context.Roles.Update(entity);
+            this._context.Set<Role>().Update(entity);
         }
 
         public void Delete(IRole role)
@@ -61,7 +62,7 @@ namespace Initium.Portal.Infrastructure.Repositories
                 throw new ArgumentException(nameof(role));
             }
 
-            this._context.Roles.Remove(entity);
+            this._context.Set<Role>().Remove(entity);
         }
 
         private async Task Refresh(IRole role)
@@ -74,7 +75,7 @@ namespace Initium.Portal.Infrastructure.Repositories
 
         private IIncludableQueryable<Role, IReadOnlyList<RoleResource>> WithRelatedData()
         {
-            return this._context.Roles.Include(x => x.RoleResources);
+            return this._context.Set<Role>().Include(x => x.RoleResources);
         }
     }
 }

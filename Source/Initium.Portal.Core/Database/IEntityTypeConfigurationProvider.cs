@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace Initium.Portal.Core.Contracts
+namespace Initium.Portal.Core.Database
 {
     public interface IEntityTypeConfigurationProvider
     {

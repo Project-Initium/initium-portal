@@ -7,7 +7,7 @@ using Initium.Portal.Core.Domain;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 
-namespace Initium.Portal.Infrastructure.Extensions
+namespace Initium.Portal.Core.Extensions
 {
     public static class MediatorExtensions
     {
