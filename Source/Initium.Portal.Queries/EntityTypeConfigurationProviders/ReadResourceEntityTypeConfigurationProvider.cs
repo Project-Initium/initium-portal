@@ -1,10 +1,13 @@
-﻿using Initium.Portal.Core.Database;
+﻿// Copyright (c) Project Initium. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using Initium.Portal.Core.Database;
 using Initium.Portal.Queries.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Initium.Portal.Queries.EntityTypeConfigurationProviders
 {
-    public class ResourceEntityTypeConfigurationProvider : IEntityTypeConfigurationProvider
+    public class ReadResourceEntityTypeConfigurationProvider : IEntityTypeConfigurationProvider
     {
         public void ApplyConfigurations(ModelBuilder modelBuilder)
         {

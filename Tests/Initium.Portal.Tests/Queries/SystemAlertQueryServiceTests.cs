@@ -4,12 +4,15 @@
 using System;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Constants;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Entities;
 using Initium.Portal.Queries.Management;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 using Moq;
 using Xunit;
@@ -21,14 +24,16 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetActiveSystemAlerts_GivenNoActiveSystemAlerts_ExpectMaybeWithNoData()
         {
-            var options = new DbContextOptionsBuilder<CoreQueryContext>()
-                .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
-                .Options;
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
 
-            var tenantInfo = new FeatureBasedTenantInfo
-            {
-                Id = TestVariables.TenantId.ToString(),
-            };
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
+                .Options;
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -36,7 +41,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
@@ -76,14 +81,16 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetActiveSystemAlerts_GivenActiveSystemAlerts_ExpectMaybeWithData()
         {
-            var options = new DbContextOptionsBuilder<CoreQueryContext>()
-                .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
-                .Options;
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
 
-            var tenantInfo = new FeatureBasedTenantInfo
-            {
-                Id = TestVariables.TenantId.ToString(),
-            };
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
+                .Options;
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -91,7 +98,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
@@ -132,14 +139,16 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetDetailedSystemAlertById__GivenNoSystemAlertFound_ExpectMaybeWithNoData()
         {
-            var options = new DbContextOptionsBuilder<CoreQueryContext>()
-                .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
-                .Options;
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
 
-            var tenantInfo = new FeatureBasedTenantInfo
-            {
-                Id = TestVariables.TenantId.ToString(),
-            };
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
+                .Options;
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -147,7 +156,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = Guid.NewGuid(),
@@ -170,14 +179,16 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetDetailedSystemAlertById__GivenSystemAlertFound_ExpectMaybeWithCorrectlyMappedData()
         {
-            var options = new DbContextOptionsBuilder<CoreQueryContext>()
-                .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
-                .Options;
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
 
-            var tenantInfo = new FeatureBasedTenantInfo
-            {
-                Id = TestVariables.TenantId.ToString(),
-            };
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
+                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
+                .Options;
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -185,7 +196,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             context.Add(Helpers.CreateEntity<SystemAlertReadEntity>(new
             {
                 Id = TestVariables.SystemAlertId,

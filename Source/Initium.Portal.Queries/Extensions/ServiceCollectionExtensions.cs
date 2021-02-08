@@ -20,17 +20,17 @@ namespace Initium.Portal.Queries.Extensions
 
             return serviceCollection;
         }
-        
+
         public static IServiceCollection AddCoreEntityTypeConfigurationProviders(
             this IServiceCollection serviceCollection)
         {
-            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, ResourceEntityTypeConfigurationProvider>();
-            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, RoleEntityTypeConfigurationProvider>();
-            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, RoleResourceEntityTypeConfigurationProvider>();
-            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, SystemAlertEntityTypeConfigurationProvider>();
-            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, UserEntityTypeConfigurationProvider>();
-            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, UserNotificationEntityTypeConfigurationProvider>();
-            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, UserRoleEntityTypeConfigurationProvider>();
+            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, ReadResourceEntityTypeConfigurationProvider>();
+            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, ReadRoleEntityTypeConfigurationProvider>();
+            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, ReadRoleResourceEntityTypeConfigurationProvider>();
+            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, ReadSystemAlertEntityTypeConfigurationProvider>();
+            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, ReadUserEntityTypeConfigurationProvider>();
+            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, ReadUserNotificationEntityTypeConfigurationProvider>();
+            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, ReadUserRoleEntityTypeConfigurationProvider>();
             return serviceCollection;
         }
     }

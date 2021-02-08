@@ -1,4 +1,7 @@
-﻿using Initium.Portal.Core.Database;
+﻿// Copyright (c) Project Initium. All rights reserved.
+// Licensed under the MIT License. See LICENSE file in the project root for full license information.
+
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries.Management.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -6,11 +9,11 @@ using Microsoft.Extensions.Options;
 
 namespace Initium.Portal.Queries.Management.EntityTypeConfigurationProviders
 {
-    public class TenantEntityTypeConfigurationProvider : IEntityTypeConfigurationProvider
+    public class ReadTenantEntityTypeConfigurationProvider : IEntityTypeConfigurationProvider
     {
         private readonly MultiTenantSettings _multiTenantSettings;
 
-        public TenantEntityTypeConfigurationProvider(IOptions<MultiTenantSettings> multiTenantSettings)
+        public ReadTenantEntityTypeConfigurationProvider(IOptions<MultiTenantSettings> multiTenantSettings)
         {
             this._multiTenantSettings = multiTenantSettings.Value;
         }

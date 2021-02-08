@@ -11,6 +11,7 @@ using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
 using Initium.Portal.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Moq;
 using Xunit;
 
@@ -29,6 +30,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
             using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
@@ -47,6 +49,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
             using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
@@ -66,6 +69,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
             using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
@@ -93,6 +97,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
             using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
@@ -122,6 +127,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
             using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
@@ -141,6 +147,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
             using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
@@ -170,6 +177,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
             await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo);
@@ -198,6 +206,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
             await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
@@ -217,6 +226,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
             using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
@@ -236,6 +246,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
                 .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
             using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());

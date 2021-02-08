@@ -14,10 +14,10 @@ namespace Initium.Portal.Queries.Management.Extensions
         public static IServiceCollection AddQueryServices(this IServiceCollection serviceCollection)
         {
             serviceCollection.AddScoped<ITenantQueryService, TenantQueryService>();
-            
+
             serviceCollection
                 .AddCoreEntityTypeConfigurationProviders()
-                .AddScoped<IEntityTypeConfigurationProvider, TenantEntityTypeConfigurationProvider>();
+                .AddScoped<IEntityTypeConfigurationProvider, ReadTenantEntityTypeConfigurationProvider>();
 
             return serviceCollection;
         }

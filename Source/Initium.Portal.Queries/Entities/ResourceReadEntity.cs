@@ -10,6 +10,7 @@ namespace Initium.Portal.Queries.Entities
     public class ResourceReadEntity : ReadEntity
     {
         private readonly List<RoleResourceReadEntity> _roleResources;
+
         public ResourceReadEntity()
         {
             this._roleResources = new List<RoleResourceReadEntity>();

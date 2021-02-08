@@ -9,11 +9,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Initium.Portal.Queries.EntityTypeConfigurationProviders
 {
-    public class UserNotificationEntityTypeConfigurationProvider : IEntityTypeConfigurationProvider
+    public class ReadUserNotificationEntityTypeConfigurationProvider : IEntityTypeConfigurationProvider
     {
         private readonly FeatureBasedTenantInfo _tenantInfo;
 
-        public UserNotificationEntityTypeConfigurationProvider(FeatureBasedTenantInfo tenantInfo)
+        public ReadUserNotificationEntityTypeConfigurationProvider(FeatureBasedTenantInfo tenantInfo)
         {
             this._tenantInfo = tenantInfo;
         }

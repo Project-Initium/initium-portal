@@ -13,7 +13,7 @@ namespace Initium.Portal.Queries.Entities
         private readonly List<AuthenticatorAppReadEntity> _authenticatorApps;
         private readonly List<AuthenticatorDeviceReadEntity> _authenticatorDevices;
         private readonly List<UserNotificationReadEntity> _userNotifications;
-        
+
         public UserReadEntity()
         {
             this._userRoles = new List<UserRoleReadEntity>();

@@ -6,11 +6,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Initium.Portal.Queries.EntityTypeConfigurationProviders
 {
-    public class UserEntityTypeConfigurationProvider : IEntityTypeConfigurationProvider
+    public class ReadUserEntityTypeConfigurationProvider : IEntityTypeConfigurationProvider
     {
         private readonly FeatureBasedTenantInfo _tenantInfo;
 
-        public UserEntityTypeConfigurationProvider(FeatureBasedTenantInfo tenantInfo)
+        public ReadUserEntityTypeConfigurationProvider(FeatureBasedTenantInfo tenantInfo)
         {
             this._tenantInfo = tenantInfo;
         }

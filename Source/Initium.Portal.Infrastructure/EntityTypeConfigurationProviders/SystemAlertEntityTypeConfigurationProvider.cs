@@ -28,7 +28,7 @@ namespace Initium.Portal.Infrastructure.EntityTypeConfigurationProviders
             systemAlerts.Property(systemAlert => systemAlert.Id).ValueGeneratedNever();
             systemAlerts.Metadata.AddAnnotation("MULTI_TENANT", null);
             systemAlerts.Property<Guid>("TenantId");
-            systemAlerts.HasQueryFilter(systemAlert => EF.Property<Guid>(systemAlert, "TenantId") == Guid.Parse(this._tenantInfo.Id)); 
+            systemAlerts.HasQueryFilter(systemAlert => EF.Property<Guid>(systemAlert, "TenantId") == Guid.Parse(this._tenantInfo.Id));
         }
     }
 }

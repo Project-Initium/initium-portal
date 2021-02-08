@@ -3,6 +3,7 @@
 
 using System;
 using Initium.Portal.Core.MultiTenant;
+using Initium.Portal.Core.Settings;
 
 namespace Initium.Portal.Tests
 {
@@ -53,6 +54,11 @@ namespace Initium.Portal.Tests
         public static readonly FeatureBasedTenantInfo TenantInfo = new FeatureBasedTenantInfo
         {
             Id = TestVariables.TenantId.ToString(),
+        };
+
+        public static readonly MultiTenantSettings MultiTenantSettings = new MultiTenantSettings
+        {
+            DefaultTenantId = TestVariables.DefaultTenantId,
         };
     }
 }
