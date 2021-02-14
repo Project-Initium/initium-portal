@@ -44,7 +44,7 @@ namespace Initium.Portal.Queries
                 {
                     role.Id,
                     role.Name,
-                    Resources = role.RoleResources.Select(resource => resource.ResourceId),
+                    Resources = role.Resources.Select(resource => resource.Id),
                 })
                 .SingleOrDefaultAsync();
 

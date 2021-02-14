@@ -41,6 +41,14 @@ namespace Initium.Portal.Queries.EntityTypeConfigurationProviders
                 .WithOne(x => x.User)
                 .HasForeignKey(x => x.UserId);
             users.Metadata.FindNavigation(nameof(UserReadEntity.UserNotifications)).SetPropertyAccessMode(PropertyAccessMode.Field);
+
+            users
+                .HasMany(x => x.Roles)
+                .WithMany(x => x.Users)
+                .UsingEntity<UserRoleReadEntity>(
+                    x => x.HasOne(xs => xs.Role).WithMany(),
+                    x => x.HasOne(xs => xs.User).WithMany())
+                .HasKey(x => new { x.UserId, x.RoleId });
         }
     }
 }

@@ -9,13 +9,13 @@ namespace Initium.Portal.Queries.Entities
 {
     public class RoleReadEntity : ReadEntity
     {
-        private readonly List<RoleResourceReadEntity> _roleResources;
-        private readonly List<UserRoleReadEntity> _userRoles;
+        private readonly List<ResourceReadEntity> _resources;
+        private readonly List<UserReadEntity> _users;
 
         public RoleReadEntity()
         {
-            this._roleResources = new List<RoleResourceReadEntity>();
-            this._userRoles = new List<UserRoleReadEntity>();
+            this._resources = new List<ResourceReadEntity>();
+            this._users = new List<UserReadEntity>();
         }
 
         public Guid Id { get; private set; }
@@ -26,8 +26,8 @@ namespace Initium.Portal.Queries.Entities
 
         public int UserCount { get; private set; }
 
-        public IReadOnlyList<RoleResourceReadEntity> RoleResources => this._roleResources.AsReadOnly();
+        public IReadOnlyList<ResourceReadEntity> Resources => this._resources.AsReadOnly();
 
-        public IReadOnlyList<UserRoleReadEntity> UserRoles => this._userRoles.AsReadOnly();
+        public IReadOnlyList<UserReadEntity> Users => this._users.AsReadOnly();
     }
 }

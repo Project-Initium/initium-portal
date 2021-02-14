@@ -9,11 +9,11 @@ namespace Initium.Portal.Queries.Entities
 {
     public class ResourceReadEntity : ReadEntity
     {
-        private readonly List<RoleResourceReadEntity> _roleResources;
+        private readonly List<RoleReadEntity> _roles;
 
         public ResourceReadEntity()
         {
-            this._roleResources = new List<RoleResourceReadEntity>();
+            this._roles = new List<RoleReadEntity>();
         }
 
         public Guid Id { get; set; }
@@ -26,7 +26,7 @@ namespace Initium.Portal.Queries.Entities
 
         public string FeatureCode { get; set; }
 
-        public IReadOnlyList<RoleResourceReadEntity> RoleResources => this._roleResources.AsReadOnly();
+        public IReadOnlyList<RoleReadEntity> Roles => this._roles.AsReadOnly();
 
         public ResourceReadEntity ParentResource { get; set; }
     }

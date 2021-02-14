@@ -23,16 +23,6 @@ namespace Initium.Portal.Queries.EntityTypeConfigurationProviders
             userRoles.HasKey(userRole => new { userRole.RoleId, userRole.UserId });
             userRoles.Property<Guid>("TenantId");
             userRoles.HasQueryFilter(e => EF.Property<Guid>(e, "TenantId") == Guid.Parse(this._tenantInfo.Id));
-
-            userRoles
-                .HasOne(userRole => userRole.Role)
-                .WithMany(role => role.UserRoles)
-                .HasForeignKey(userRole => userRole.RoleId);
-
-            userRoles
-                .HasOne(userRole => userRole.User)
-                .WithMany(user => user.UserRoles)
-                .HasForeignKey(userRole => userRole.UserId);
         }
     }
 }

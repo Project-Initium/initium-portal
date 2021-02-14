@@ -9,14 +9,14 @@ namespace Initium.Portal.Queries.Entities
 {
     public class UserReadEntity : ReadEntity
     {
-        private readonly List<UserRoleReadEntity> _userRoles;
+        private readonly List<RoleReadEntity> _roles;
         private readonly List<AuthenticatorAppReadEntity> _authenticatorApps;
         private readonly List<AuthenticatorDeviceReadEntity> _authenticatorDevices;
         private readonly List<UserNotificationReadEntity> _userNotifications;
 
         public UserReadEntity()
         {
-            this._userRoles = new List<UserRoleReadEntity>();
+            this._roles = new List<RoleReadEntity>();
             this._authenticatorApps = new List<AuthenticatorAppReadEntity>();
             this._authenticatorDevices = new List<AuthenticatorDeviceReadEntity>();
             this._userNotifications = new List<UserNotificationReadEntity>();
@@ -46,7 +46,7 @@ namespace Initium.Portal.Queries.Entities
 
         public DateTime? WhenDisabled { get; private set; }
 
-        public IReadOnlyList<UserRoleReadEntity> UserRoles => this._userRoles.AsReadOnly();
+        public IReadOnlyList<RoleReadEntity> Roles => this._roles.AsReadOnly();
 
         public IReadOnlyList<AuthenticatorAppReadEntity> AuthenticatorApps => this._authenticatorApps.AsReadOnly();
 

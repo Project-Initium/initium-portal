@@ -63,7 +63,10 @@ namespace Initium.Portal.Queries
 
         public async Task<Maybe<DetailedUserModel>> GetDetailsOfUserById(Guid userId)
         {
-            var data = await this.QueryableEntity.Where(user => user.Id == userId).Select(user =>
+            var data = await this.QueryableEntity.Where(user => user.Id == userId)
+                .Include(x => x.Roles)
+                .ThenInclude(x=>x.Resources)
+                .Select(user =>
                 new
                 {
                     user.Id,
@@ -73,7 +76,7 @@ namespace Initium.Portal.Queries
                     user.WhenLastAuthenticated,
                     user.WhenLocked,
                     user.IsAdmin,
-                    Resources = user.UserRoles.SelectMany(role => role.Role.RoleResources.Select(resource => resource.ResourceId)),
+                    Resources = user.Roles.Select(role => role.Id),
                     user.WhenDisabled,
                     user.FirstName,
                     user.LastName,
@@ -92,7 +95,7 @@ namespace Initium.Portal.Queries
                 {
                     user.EmailAddress,
                     user.IsAdmin,
-                    Resources = user.UserRoles.SelectMany(role => role.Role.RoleResources.Select(resource => resource.Resource.NormalizedName)),
+                    Resources = user.Roles.SelectMany(role => role.Resources.Select(resource => resource.NormalizedName)),
                     user.FirstName,
                     user.LastName,
                 }).SingleOrDefaultAsync();
