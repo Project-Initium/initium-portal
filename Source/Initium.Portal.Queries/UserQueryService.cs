@@ -65,7 +65,7 @@ namespace Initium.Portal.Queries
         {
             var data = await this.QueryableEntity.Where(user => user.Id == userId)
                 .Include(x => x.Roles)
-                .ThenInclude(x=>x.Resources)
+                .ThenInclude(x => x.Resources)
                 .Select(user =>
                 new
                 {
