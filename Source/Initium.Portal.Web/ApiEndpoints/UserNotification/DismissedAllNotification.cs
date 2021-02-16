@@ -19,8 +19,8 @@ namespace Initium.Portal.Web.ApiEndpoints.UserNotification
 
         public DismissedAllNotification(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IMediator mediator)
         {
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._mediator = mediator;
         }
 
         [ValidateAntiForgeryToken]

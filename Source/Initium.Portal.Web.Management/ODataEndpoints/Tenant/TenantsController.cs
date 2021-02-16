@@ -22,7 +22,7 @@ namespace Initium.Portal.Web.Management.ODataEndpoints.Tenant
 
         public TenantsController(ITenantQueryService tenantQueryService)
         {
-            this._tenantQueryService = tenantQueryService ?? throw new ArgumentNullException(nameof(tenantQueryService));
+            this._tenantQueryService = tenantQueryService;
         }
 
         [HttpPost]

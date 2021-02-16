@@ -18,7 +18,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthEmail
 
         public RequestMfaEmail(IMediator mediator)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._mediator = mediator;
         }
 
         [ValidateAntiForgeryToken]

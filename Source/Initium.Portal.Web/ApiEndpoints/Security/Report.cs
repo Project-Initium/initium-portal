@@ -15,7 +15,7 @@ namespace Initium.Portal.Web.ApiEndpoints.Security
 
         public Report(ILogger<Report> logger)
         {
-            this._logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            this._logger = logger;
         }
 
         [HttpPost("api/security/csp-report", Name = "ReportEndpoint")]

@@ -30,10 +30,10 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
 
         public InitiateAuthAppEnrollment(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IMediator mediator, UrlEncoder urlEncoder, FeatureBasedTenantInfo tenantInfo)
         {
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._urlEncoder = urlEncoder ?? throw new ArgumentNullException(nameof(urlEncoder));
-            this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._mediator = mediator;
+            this._urlEncoder = urlEncoder;
+            this._tenantInfo = tenantInfo;
         }
 
         [HttpPost("api/auth-app/initiate-enrollment", Name = "InitiateAuthAppEnrollmentEndpoint")]

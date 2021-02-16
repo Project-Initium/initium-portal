@@ -18,7 +18,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
 
         public EnrollAuthApp(IMediator mediator)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._mediator = mediator;
         }
 
         [HttpPost("api/auth-app/complete-enrollment", Name = "EnrollAuthAppEndpoint")]

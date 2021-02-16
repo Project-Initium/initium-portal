@@ -21,7 +21,7 @@ namespace Initium.Portal.Web.ODataEndpoints.Role
 
         public RolesController(IRoleQueryService roleQueryService)
         {
-            this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
+            this._roleQueryService = roleQueryService;
         }
 
         [HttpPost]

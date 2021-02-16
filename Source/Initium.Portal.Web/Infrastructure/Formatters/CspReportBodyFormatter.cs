@@ -19,11 +19,6 @@ namespace Initium.Portal.Web.Infrastructure.Formatters
 
         public override bool CanRead(InputFormatterContext context)
         {
-            if (context == null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
             var contentType = context.HttpContext.Request.ContentType;
             return contentType == "application/csp-report";
         }

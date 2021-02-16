@@ -24,12 +24,7 @@ namespace Initium.Portal.Web.Pages.App.Profile
 
         public Password(IMediator mediator, IOptions<SecuritySettings> securitySettings)
         {
-            if (securitySettings == null)
-            {
-                throw new ArgumentNullException(nameof(securitySettings));
-            }
-
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._mediator = mediator;
             this._securitySettings = securitySettings.Value;
         }
 

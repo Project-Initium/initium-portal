@@ -19,7 +19,7 @@ namespace Initium.Portal.Web.Infrastructure
 
         public CurrentAuthenticatedUserProvider(IHttpContextAccessor httpContextAccessor)
         {
-            this._httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
+            this._httpContextAccessor = httpContextAccessor;
         }
 
         public Maybe<ISystemUser> CurrentAuthenticatedUser

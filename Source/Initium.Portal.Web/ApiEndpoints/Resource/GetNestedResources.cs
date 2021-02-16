@@ -19,7 +19,7 @@ namespace Initium.Portal.Web.ApiEndpoints.Resource
 
         public GetNestedResources(IResourceQueryService resourceQueryService)
         {
-            this._resourceQueryService = resourceQueryService ?? throw new ArgumentNullException(nameof(resourceQueryService));
+            this._resourceQueryService = resourceQueryService;
         }
 
         [ResourceBasedAuthorize("resource-list")]

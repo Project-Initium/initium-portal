@@ -15,7 +15,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
 
         public AssertionOptionsPost(ITempDataDictionaryFactory tempDataDictionaryFactory)
         {
-            this._tempDataDictionaryFactory = tempDataDictionaryFactory ?? throw new ArgumentNullException(nameof(tempDataDictionaryFactory));
+            this._tempDataDictionaryFactory = tempDataDictionaryFactory;
         }
 
         [HttpPost]

@@ -20,7 +20,7 @@ namespace Initium.Portal.Web.Management.ApiEndpoints.Tenant
 
         public DisableTenant(IMediator mediator)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._mediator = mediator;
         }
 
         [ValidateAntiForgeryToken]

@@ -21,8 +21,8 @@ namespace Initium.Portal.Web.Pages.App.SystemAlerts
 
         public EditSystemAlert(IMediator mediator, ISystemAlertQueryService systemAlertQueryService)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._systemAlertQueryService = systemAlertQueryService ?? throw new ArgumentNullException(nameof(systemAlertQueryService));
+            this._mediator = mediator;
+            this._systemAlertQueryService = systemAlertQueryService;
         }
 
         [BindProperty(SupportsGet = true)]

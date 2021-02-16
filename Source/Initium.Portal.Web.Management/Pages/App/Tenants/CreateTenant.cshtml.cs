@@ -25,13 +25,8 @@ namespace Initium.Portal.Web.Management.Pages.App.Tenants
 
         public CreateTenant(IMediator mediator, IOptions<MultiTenantSettings> multiTenantSettings, IFeatureManager featureManager)
         {
-            if (multiTenantSettings == null)
-            {
-                throw new ArgumentNullException(nameof(multiTenantSettings));
-            }
-
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._featureManager = featureManager ?? throw new ArgumentNullException(nameof(featureManager));
+            this._mediator = mediator;
+            this._featureManager = featureManager;
             this._multiTenantSettings = multiTenantSettings.Value;
         }
 

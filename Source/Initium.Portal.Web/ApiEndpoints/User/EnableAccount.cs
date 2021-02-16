@@ -21,8 +21,8 @@ namespace Initium.Portal.Web.ApiEndpoints.User
 
         public EnableAccount(IMediator mediator, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
+            this._mediator = mediator;
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
         }
 
         [ValidateAntiForgeryToken]

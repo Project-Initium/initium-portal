@@ -29,9 +29,9 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
 
         public EditUser(IUserQueryService userQueryService, IMediator mediator, IRoleQueryService roleQueryService, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
-            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
+            this._userQueryService = userQueryService;
+            this._mediator = mediator;
+            this._roleQueryService = roleQueryService;
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
         }
 

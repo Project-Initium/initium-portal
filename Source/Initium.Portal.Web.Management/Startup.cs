@@ -16,11 +16,6 @@ namespace Initium.Portal.Web.Management
     {
         public Startup(IWebHostEnvironment env)
         {
-            if (env == null)
-            {
-                throw new ArgumentNullException(nameof(env));
-            }
-
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", true, true)

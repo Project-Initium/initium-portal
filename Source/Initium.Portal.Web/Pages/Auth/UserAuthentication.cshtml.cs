@@ -22,8 +22,8 @@ namespace Initium.Portal.Web.Pages.Auth
 
         public UserAuthentication(IMediator mediator, IAuthenticationService authenticationService)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            this._mediator = mediator;
+            this._authenticationService = authenticationService;
         }
 
         [BindProperty(SupportsGet = true)]

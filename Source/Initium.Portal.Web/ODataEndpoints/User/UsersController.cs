@@ -21,7 +21,7 @@ namespace Initium.Portal.Web.ODataEndpoints.User
 
         public UsersController(IUserQueryService userQueryService)
         {
-            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
+            this._userQueryService = userQueryService;
         }
 
         [HttpPost]

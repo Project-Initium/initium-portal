@@ -19,7 +19,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
 
         public RevokeAuthApp(IMediator mediator)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._mediator = mediator;
         }
 
         [HttpPost("api/auth-app/revoke", Name = "RevokeAuthAppEndpoint")]

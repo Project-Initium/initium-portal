@@ -5,7 +5,6 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Initium.Portal.Core.Contracts;
 using Initium.Portal.Core.Contracts.Domain;
 using Initium.Portal.Core.Contracts.Queries;
 using Initium.Portal.Core.Exceptions;

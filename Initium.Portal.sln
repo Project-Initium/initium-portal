@@ -72,6 +72,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Initium.Portal.Web", "Sourc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Initium.Portal.Data.Build", "Data\Initium.Portal.Data.Build\Initium.Portal.Data.Build.csproj", "{004431C8-9C67-4292-B2A1-F6BE329B18A2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{933ED365-3851-4CE5-AE07-D364909E9AC5}"
+ProjectSection(SolutionItems) = preProject
+	Build\tools\packages.config = Build\tools\packages.config
+EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Shared\Initium.Portal.Shared\Initium.Portal.Shared.projitems*{118dde70-b2cd-4114-ad23-d23e053f3b05}*SharedItemsImports = 5
@@ -208,6 +213,7 @@ Global
 		{118DDE70-B2CD-4114-AD23-D23E053F3B05} = {35A764FB-8948-4DFB-9FE9-7C499130F106}
 		{92635ECF-1D1F-4E0A-91F6-C77AD413FE31} = {35A764FB-8948-4DFB-9FE9-7C499130F106}
 		{004431C8-9C67-4292-B2A1-F6BE329B18A2} = {523A69A7-75D3-4BC1-A9C3-D77D1B8FF0C3}
+		{933ED365-3851-4CE5-AE07-D364909E9AC5} = {6EF45D1E-5322-4EF3-849F-ADF6C1246F2B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {0BA8A014-6B06-41AB-8A28-25A06E50A519}

@@ -21,7 +21,7 @@ namespace Initium.Portal.Web.Pages.Auth
 
         public AccountVerification(IMediator mediator)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._mediator = mediator;
         }
 
         [BindProperty(SupportsGet = true)]

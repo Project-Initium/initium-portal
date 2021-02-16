@@ -19,7 +19,7 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
 
         public RevokeDevice(IMediator mediator)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._mediator = mediator;
         }
 
         [ValidateAntiForgeryToken]

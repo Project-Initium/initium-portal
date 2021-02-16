@@ -17,11 +17,6 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
 
         public ManagementMultiTenantStore(IOptions<MultiTenantSettings> multiTenantSettings)
         {
-            if (multiTenantSettings == null)
-            {
-                throw new ArgumentNullException(nameof(multiTenantSettings));
-            }
-
             this._multiTenantSettings = multiTenantSettings.Value;
         }
 

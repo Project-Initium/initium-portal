@@ -22,8 +22,8 @@ namespace Initium.Portal.Web.Pages.App.Profile
 
         public Details(IMediator mediator, IUserQueryService userQueryService)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
+            this._mediator = mediator;
+            this._userQueryService = userQueryService;
         }
 
         public async Task<IActionResult> OnGetAsync()

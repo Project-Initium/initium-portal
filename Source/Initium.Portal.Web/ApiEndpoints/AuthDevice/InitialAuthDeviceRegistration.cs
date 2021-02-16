@@ -22,8 +22,8 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
 
         public InitialAuthDeviceRegistration(IMediator mediator, ITempDataDictionaryFactory tempDataDictionaryFactory)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._tempDataDictionaryFactory = tempDataDictionaryFactory ?? throw new ArgumentNullException(nameof(tempDataDictionaryFactory));
+            this._mediator = mediator;
+            this._tempDataDictionaryFactory = tempDataDictionaryFactory;
         }
 
         [Authorize]

@@ -21,7 +21,7 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Roles
 
         public CreateRole(IMediator mediator)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._mediator = mediator;
         }
 
         public void OnGet()

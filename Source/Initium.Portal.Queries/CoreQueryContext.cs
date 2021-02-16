@@ -21,12 +21,7 @@ namespace Initium.Portal.Queries
 
         protected CoreQueryContext(FeatureBasedTenantInfo tenantInfo, IOptions<MultiTenantSettings> multiTenantSettings)
         {
-            if (multiTenantSettings == null)
-            {
-                throw new ArgumentNullException(nameof(multiTenantSettings));
-            }
-
-            this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
+            this._tenantInfo = tenantInfo;
             this._multiTenantSettings = multiTenantSettings.Value;
             this.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             this._multiTenantSettings = multiTenantSettings.Value;
@@ -35,7 +30,7 @@ namespace Initium.Portal.Queries
         protected CoreQueryContext(DbContextOptions<CoreQueryContext> options, FeatureBasedTenantInfo tenantInfo, IOptions<MultiTenantSettings> multiTenantSettings)
             : base(options)
         {
-            this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
+            this._tenantInfo = tenantInfo;
             this.ChangeTracker.QueryTrackingBehavior = QueryTrackingBehavior.NoTracking;
             this._multiTenantSettings = multiTenantSettings.Value;
         }

@@ -33,7 +33,7 @@ namespace Initium.Portal.Queries.EntityTypeConfigurationProviders
                 .UsingEntity<RoleResourceReadEntity>(
                     x => x.HasOne(xs => xs.Resource).WithMany(),
                     x => x.HasOne(xs => xs.Role).WithMany())
-                .HasKey(x => new {x.ResourceId, x.RoleId});
+                .HasKey(x => new { x.ResourceId, x.RoleId });
         }
     }
 }
