@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Authentication;
 using Initium.Portal.Core.Contracts;
@@ -17,6 +18,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 using Moq;
+using Moq.EntityFrameworkCore;
 using Xunit;
 
 namespace Initium.Portal.Tests.Queries
@@ -34,20 +36,17 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            var tenantQueryService = new UserNotificationQueryService(context, currentAuthenticatedUserProvider.Object);
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<UserNotificationReadEntity>())
+                .ReturnsDbSet(new List<UserNotificationReadEntity>());
+
+            var tenantQueryService = new UserNotificationQueryService(context.Object, currentAuthenticatedUserProvider.Object);
             var maybe = await tenantQueryService.GetLatestNotifications(1);
             Assert.True(maybe.HasNoValue);
         }
@@ -70,82 +69,69 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            await context.SaveChangesAsync();
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<UserNotificationReadEntity>())
+                .ReturnsDbSet(new List<UserNotificationReadEntity>
+                {
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                    }),
+                });
 
-            var tenantQueryService = new UserNotificationQueryService(context, currentAuthenticatedUserProvider.Object);
+            var tenantQueryService = new UserNotificationQueryService(context.Object, currentAuthenticatedUserProvider.Object);
             var maybe = await tenantQueryService.GetLatestNotifications(top);
             Assert.True(maybe.HasValue);
             Assert.Equal(top, maybe.Value.Count);
@@ -162,20 +148,16 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            var tenantQueryService = new UserNotificationQueryService(context, currentAuthenticatedUserProvider.Object);
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<UserNotificationReadEntity>())
+                .ReturnsDbSet(new List<UserNotificationReadEntity>());
+            var tenantQueryService = new UserNotificationQueryService(context.Object, currentAuthenticatedUserProvider.Object);
             var result = await tenantQueryService.AnyUnread();
             Assert.False(result);
         }
@@ -195,20 +177,16 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            var tenantQueryService = new UserNotificationQueryService(context, currentAuthenticatedUserProvider.Object);
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<UserNotificationReadEntity>())
+                .ReturnsDbSet(new List<UserNotificationReadEntity>());
+            var tenantQueryService = new UserNotificationQueryService(context.Object, currentAuthenticatedUserProvider.Object);
             var result = await tenantQueryService.AnyUnread();
             Assert.False(result);
         }
@@ -228,43 +206,37 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-                WhenViewed = TestVariables.Now,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-                WhenViewed = TestVariables.Now,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-                WhenViewed = TestVariables.Now,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            await context.SaveChangesAsync();
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<UserNotificationReadEntity>())
+                .ReturnsDbSet(new List<UserNotificationReadEntity>
+                {
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                        WhenViewed = TestVariables.Now,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                        WhenViewed = TestVariables.Now,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                        WhenViewed = TestVariables.Now,
+                    }),
+                });
 
-            var tenantQueryService = new UserNotificationQueryService(context, currentAuthenticatedUserProvider.Object);
+            var tenantQueryService = new UserNotificationQueryService(context.Object, currentAuthenticatedUserProvider.Object);
             var result = await tenantQueryService.AnyUnread();
             Assert.False(result);
         }
@@ -284,42 +256,36 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-                WhenViewed = TestVariables.Now,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            (await context.Set<UserNotificationReadEntity>().AddAsync(
-                Helpers.CreateEntity<UserNotificationReadEntity>(new
-            {
-                NotificationId = Guid.NewGuid(),
-                UserId = TestVariables.UserId,
-                WhenViewed = TestVariables.Now,
-            }))).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            await context.SaveChangesAsync();
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<UserNotificationReadEntity>())
+                .ReturnsDbSet(new List<UserNotificationReadEntity>
+                {
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                        WhenViewed = TestVariables.Now,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                    }),
+                    Helpers.CreateEntity<UserNotificationReadEntity>(new
+                    {
+                        NotificationId = Guid.NewGuid(),
+                        UserId = TestVariables.UserId,
+                        WhenViewed = TestVariables.Now,
+                    }),
+                });
 
-            var tenantQueryService = new UserNotificationQueryService(context, currentAuthenticatedUserProvider.Object);
+            var tenantQueryService = new UserNotificationQueryService(context.Object, currentAuthenticatedUserProvider.Object);
             var result = await tenantQueryService.AnyUnread();
             Assert.True(result);
         }

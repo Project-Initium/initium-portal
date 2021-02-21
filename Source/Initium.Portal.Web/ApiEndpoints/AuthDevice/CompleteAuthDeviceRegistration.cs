@@ -15,7 +15,9 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
 {
-    public class CompleteAuthDeviceRegistration : BaseAsyncEndpoint<CompleteAuthDeviceRegistration.EndpointRequest,  CompleteAuthDeviceRegistration.EndpointResponse>
+    public class CompleteAuthDeviceRegistration : BaseAsyncEndpoint
+        .WithRequest<CompleteAuthDeviceRegistration.EndpointRequest>
+        .WithResponse<CompleteAuthDeviceRegistration.EndpointResponse>
     {
         private readonly IMediator _mediator;
         private readonly ITempDataDictionaryFactory _tempDataDictionaryFactory;

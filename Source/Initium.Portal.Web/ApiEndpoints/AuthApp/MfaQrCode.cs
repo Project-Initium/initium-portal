@@ -12,7 +12,9 @@ using QRCoder;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthApp
 {
-    public class MfaQrCode : BaseAsyncEndpoint<MfaQrCode.EndpointRequest, BasicEndpointResponse>
+    public class MfaQrCode : BaseAsyncEndpoint
+        .WithRequest<MfaQrCode.EndpointRequest>
+        .WithResponse<BasicEndpointResponse>
     {
         [HttpGet("api/auth-app/mfa-qrcode.png", Name = "MfaQrCodeEndpoint")]
         public override async Task<ActionResult<BasicEndpointResponse>> HandleAsync([FromQuery] EndpointRequest request, CancellationToken cancellationToken = default)

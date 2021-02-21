@@ -13,7 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
 {
-    public class RevokeDevice : BaseAsyncEndpoint<RevokeDevice.EndpointRequest, BasicEndpointResponse>
+    public class RevokeDevice : BaseAsyncEndpoint
+        .WithRequest<RevokeDevice.EndpointRequest>
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly IMediator _mediator;
 

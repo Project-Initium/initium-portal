@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.UserNotification
 {
-    public class ViewedAllNotifications : BaseAsyncEndpoint<BasicEndpointResponse>
+    public class ViewedAllNotifications : BaseAsyncEndpoint
+        .WithoutRequest
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IMediator _mediator;

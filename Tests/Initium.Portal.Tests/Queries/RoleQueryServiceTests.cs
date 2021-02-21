@@ -11,10 +11,9 @@ using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 using Moq;
+using Moq.EntityFrameworkCore;
 using Xunit;
 
 namespace Initium.Portal.Tests.Queries
@@ -29,20 +28,16 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            var roleQueries = new RoleQueryService(context);
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<RoleReadEntity>())
+                .ReturnsDbSet(new List<RoleReadEntity>());
+            var roleQueries = new RoleQueryService(context.Object);
             var result = await roleQueries.CheckForPresenceOfRoleByName("name");
             Assert.False(result.IsPresent);
         }
@@ -55,27 +50,26 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            context.Add(Helpers.CreateEntity<RoleReadEntity>(new
+            var entity = Helpers.CreateEntity<RoleReadEntity>(new
             {
                 Id = TestVariables.RoleId,
                 Name = "name",
-            })).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            await context.SaveChangesAsync();
+            });
 
-            var roleQueries = new RoleQueryService(context);
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<RoleReadEntity>())
+                .ReturnsDbSet(new List<RoleReadEntity>
+                {
+                    entity,
+                });
+
+            var roleQueries = new RoleQueryService(context.Object);
             var result = await roleQueries.CheckForPresenceOfRoleByName("name");
             Assert.True(result.IsPresent);
         }
@@ -88,28 +82,24 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            var role = context.Add(Helpers.CreateEntity<RoleReadEntity>(new
-            {
-                Id = TestVariables.RoleId,
-                ResourceCount = 1,
-            }));
-            role.Property("TenantId").CurrentValue = TestVariables.TenantId;
-            await context.SaveChangesAsync();
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<RoleReadEntity>())
+                .ReturnsDbSet(new List<RoleReadEntity>
+                {
+                    Helpers.CreateEntity<RoleReadEntity>(new
+                    {
+                        Id = TestVariables.RoleId,
+                        ResourceCount = 1,
+                    }),
+                });
 
-            var roleQueries = new RoleQueryService(context);
+            var roleQueries = new RoleQueryService(context.Object);
             var result = await roleQueries.CheckForRoleUsageById(TestVariables.RoleId);
             Assert.True(result.IsPresent);
         }
@@ -122,25 +112,23 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            var role = context.Add(Helpers.CreateEntity<RoleReadEntity>(new
-            {
-                Id = TestVariables.RoleId,
-            }));
-            role.Property("TenantId").CurrentValue = TestVariables.TenantId;
-            var roleQueries = new RoleQueryService(context);
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<RoleReadEntity>())
+                .ReturnsDbSet(new List<RoleReadEntity>
+                {
+                    Helpers.CreateEntity<RoleReadEntity>(new
+                    {
+                        Id = TestVariables.RoleId,
+                    }),
+                });
+
+            var roleQueries = new RoleQueryService(context.Object);
             var result = await roleQueries.CheckForRoleUsageById(TestVariables.RoleId);
             Assert.False(result.IsPresent);
         }
@@ -153,21 +141,17 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<RoleReadEntity>())
+                .ReturnsDbSet(new List<RoleReadEntity>());
 
-            var roleQueries = new RoleQueryService(context);
+            var roleQueries = new RoleQueryService(context.Object);
             var result = await roleQueries.GetDetailsOfRoleById(TestVariables.RoleId);
             Assert.True(result.HasNoValue);
         }
@@ -180,43 +164,31 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            var roleResource = await context.Set<RoleResourceReadEntity>().AddAsync(
-                Helpers.CreateEntity<RoleResourceReadEntity>(new
-            {
-                Resource = Helpers.CreateEntity<ResourceReadEntity>(new
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<RoleReadEntity>())
+                .ReturnsDbSet(new List<RoleReadEntity>
                 {
-                    Id = TestVariables.ResourceId,
-                }),
-            }));
-            roleResource.Property("TenantId").CurrentValue = TestVariables.TenantId;
+                    Helpers.CreateEntity<RoleReadEntity>(new
+                    {
+                        Id = TestVariables.RoleId,
+                        Name = "name",
+                        Resources = new List<ResourceReadEntity>
+                        {
+                            Helpers.CreateEntity<ResourceReadEntity>(new
+                            {
+                                Id = TestVariables.ResourceId,
+                            }),
+                        },
+                    }),
+                });
 
-            var role = await context.Set<RoleReadEntity>().AddAsync(Helpers.CreateEntity<RoleReadEntity>(new
-            {
-                Id = TestVariables.RoleId,
-                Name = "name",
-                RoleResources = new List<RoleResourceReadEntity>
-                {
-                    roleResource.Entity,
-                },
-            }));
-            role.Property("TenantId").CurrentValue = TestVariables.TenantId;
-
-            await context.SaveChangesAsync();
-
-            var roleQueries = new RoleQueryService(context);
+            var roleQueries = new RoleQueryService(context.Object);
             var result = await roleQueries.GetDetailsOfRoleById(TestVariables.RoleId);
             Assert.True(result.HasValue);
             Assert.Equal(TestVariables.RoleId, result.Value.Id);
@@ -233,21 +205,17 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<RoleReadEntity>())
+                .ReturnsDbSet(new List<RoleReadEntity>());
 
-            var roleQueries = new RoleQueryService(context);
+            var roleQueries = new RoleQueryService(context.Object);
             var result = await roleQueries.GetSimpleRoles();
             Assert.True(result.HasNoValue);
         }
@@ -260,31 +228,24 @@ namespace Initium.Portal.Tests.Queries
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            var role = context.Add(
-                Helpers.CreateEntity<RoleReadEntity>(new
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<RoleReadEntity>())
+                .ReturnsDbSet(new List<RoleReadEntity>
                 {
-                    Id = TestVariables.RoleId,
-                    Name= "name",
-                }));
+                    Helpers.CreateEntity<RoleReadEntity>(new
+                    {
+                        Id = TestVariables.RoleId,
+                        Name= "name",
+                    }),
+                });
 
-            role.Property("TenantId").CurrentValue = TestVariables.TenantId;
-
-            await context.SaveChangesAsync();
-
-            var roleQueries = new RoleQueryService(context);
+            var roleQueries = new RoleQueryService(context.Object);
             var result = await roleQueries.GetSimpleRoles();
             Assert.True(result.HasValue);
             Assert.Single(result.Value);

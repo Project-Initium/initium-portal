@@ -3,6 +3,7 @@
 
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Contracts.Domain;
@@ -15,6 +16,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
+[assembly:InternalsVisibleTo("Initium.Portal.Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
+
 namespace Initium.Portal.Core.Database
 {
     public class GenericDataContext : DbContext, IUnitOfWork
@@ -22,7 +26,14 @@ namespace Initium.Portal.Core.Database
         private readonly IServiceProvider _serviceProvider;
         private readonly FeatureBasedTenantInfo _tenantInfo;
 
-        public GenericDataContext(DbContextOptions<GenericDataContext> options, IServiceProvider serviceProvider, FeatureBasedTenantInfo tenantInfo)
+        public GenericDataContext(IServiceProvider serviceProvider, FeatureBasedTenantInfo tenantInfo)
+        {
+            this._serviceProvider = serviceProvider;
+            this._tenantInfo = tenantInfo;
+        }
+
+        internal GenericDataContext(DbContextOptions<GenericDataContext> options, IServiceProvider serviceProvider,
+            FeatureBasedTenantInfo tenantInfo)
             : base(options)
         {
             this._serviceProvider = serviceProvider;

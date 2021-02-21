@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthApp
 {
-    public class EnrollAuthApp : BaseAsyncEndpoint<EnrollAuthApp.EndpointRequest, BasicEndpointResponse>
+    public class EnrollAuthApp : BaseAsyncEndpoint
+        .WithRequest<EnrollAuthApp.EndpointRequest>
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly IMediator _mediator;
 

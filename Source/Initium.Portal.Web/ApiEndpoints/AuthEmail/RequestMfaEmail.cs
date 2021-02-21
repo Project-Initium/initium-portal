@@ -12,7 +12,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthEmail
 {
-    public class RequestMfaEmail : BaseAsyncEndpoint<BasicEndpointResponse>
+    public class RequestMfaEmail : BaseAsyncEndpoint
+        .WithoutRequest
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly IMediator _mediator;
 

@@ -14,7 +14,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.Management.ApiEndpoints.Tenant
 {
-    public class DisableTenant : BaseAsyncEndpoint<DisableTenant.EndpointRequest, BasicEndpointResponse>
+    public class DisableTenant : BaseAsyncEndpoint
+        .WithRequest<DisableTenant.EndpointRequest>
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly IMediator _mediator;
 

@@ -2,18 +2,17 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Database;
 using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
-using Initium.Portal.Queries;
 using Initium.Portal.Queries.Management;
 using Initium.Portal.Queries.Management.Entities;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.Options;
 using Moq;
+using Moq.EntityFrameworkCore;
 using Xunit;
 
 namespace Initium.Portal.Tests.Queries_Management
@@ -28,20 +27,17 @@ namespace Initium.Portal.Tests.Queries_Management
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            var tenantQueryService = new TenantQueryService(context);
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<TenantReadEntity>())
+                .ReturnsDbSet(new List<TenantReadEntity>());
+
+            var tenantQueryService = new TenantQueryService(context.Object);
             var result = await tenantQueryService.CheckForPresenceOfTenantByIdentifier("identifier");
             Assert.False(result.IsPresent);
         }
@@ -54,27 +50,24 @@ namespace Initium.Portal.Tests.Queries_Management
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            await context.AddAsync(new TenantReadEntity
-            {
-                Id = TestVariables.TenantId,
-                Identifier = "identifier",
-            });
-            await context.SaveChangesAsync();
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<TenantReadEntity>())
+                .ReturnsDbSet(new List<TenantReadEntity>
+                {
+                    Helpers.CreateEntity<TenantReadEntity>(new
+                    {
+                        Id = TestVariables.TenantId,
+                        Identifier = "identifier",
+                    }),
+                });
 
-            var tenantQueryService = new TenantQueryService(context);
+            var tenantQueryService = new TenantQueryService(context.Object);
             var result = await tenantQueryService.CheckForPresenceOfTenantByIdentifier("identifier");
             Assert.True(result.IsPresent);
         }
@@ -87,20 +80,16 @@ namespace Initium.Portal.Tests.Queries_Management
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            var tenantQueryService = new TenantQueryService(context);
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<TenantReadEntity>())
+                .ReturnsDbSet(new List<TenantReadEntity>());
+            var tenantQueryService = new TenantQueryService(context.Object);
             var maybe = await tenantQueryService.GetTenantMetadataById(TestVariables.TenantId);
             Assert.True(maybe.HasNoValue);
         }
@@ -113,26 +102,24 @@ namespace Initium.Portal.Tests.Queries_Management
             serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
                 .Returns(Mock.Of<IMediator>());
 
-            var options = new DbContextOptionsBuilder<GenericDataContext>()
-                .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
-                .UseApplicationServiceProvider(serviceProvider.Object)
-                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
-                .Options;
-
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
             {
                 DefaultTenantId = TestVariables.DefaultTenantId,
             });
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            await context.AddAsync(new TenantReadEntity
-            {
-                Id = TestVariables.TenantId,
-                Identifier = "identifier",
-            });
-            await context.SaveChangesAsync();
-            var tenantQueryService = new TenantQueryService(context);
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<TenantReadEntity>())
+                .ReturnsDbSet(new List<TenantReadEntity>
+                {
+                    Helpers.CreateEntity<TenantReadEntity>(new
+                    {
+                        Id = TestVariables.TenantId,
+                        Identifier = "identifier",
+                    }),
+                });
+
+            var tenantQueryService = new TenantQueryService(context.Object);
 
             var maybe = await tenantQueryService.GetTenantMetadataById(TestVariables.TenantId);
             Assert.True(maybe.HasValue);

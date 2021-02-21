@@ -17,7 +17,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthApp
 {
-    public class InitiateAuthAppEnrollment : BaseAsyncEndpoint<InitiateAuthAppEnrollment.EndpointResponse>
+    public class InitiateAuthAppEnrollment : BaseAsyncEndpoint
+        .WithoutRequest
+        .WithResponse<InitiateAuthAppEnrollment.EndpointResponse>
     {
         [SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded",
         Justification = "This is the fix template used by totp apps")]

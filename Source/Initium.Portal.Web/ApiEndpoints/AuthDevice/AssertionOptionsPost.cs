@@ -9,7 +9,9 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
 {
-    public class AssertionOptionsPost : BaseEndpoint<BasicEndpointResponse>
+    public class AssertionOptionsPost : BaseEndpoint
+        .WithoutRequest
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly ITempDataDictionaryFactory _tempDataDictionaryFactory;
 

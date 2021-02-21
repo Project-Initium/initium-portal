@@ -13,7 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.UserNotification
 {
-    public class ViewedNotification : BaseAsyncEndpoint<ViewedNotification.EndpointRequest, BasicEndpointResponse>
+    public class ViewedNotification : BaseAsyncEndpoint
+        .WithRequest<ViewedNotification.EndpointRequest>
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IMediator _mediator;

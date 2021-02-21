@@ -17,7 +17,9 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
 {
-    public class MakeAssertion : BaseAsyncEndpoint<AuthenticatorAssertionRawResponse, AssertionVerificationResult>
+    public class MakeAssertion : BaseAsyncEndpoint
+        .WithRequest<AuthenticatorAssertionRawResponse>
+        .WithResponse<AssertionVerificationResult>
     {
         private readonly IMediator _mediator;
         private readonly ITempDataDictionaryFactory _tempDataDictionaryFactory;

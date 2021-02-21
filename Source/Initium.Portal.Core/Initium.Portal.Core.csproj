@@ -10,14 +10,14 @@
   <Import Project="..\..\Shared\Initium.Portal.Shared\Initium.Portal.Shared.projitems" Label="Shared" />
 
   <ItemGroup>
-    <PackageReference Include="Finbuckle.MultiTenant" Version="6.1.0" />
-    <PackageReference Include="FluentValidation" Version="9.4.0" />
+    <PackageReference Include="Finbuckle.MultiTenant" Version="6.2.0" />
+    <PackageReference Include="FluentValidation" Version="9.5.1" />
     <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
     <PackageReference Include="MediatR" Version="9.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />
     <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="5.0.0" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.16.0.25740">
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.18.0.27296">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

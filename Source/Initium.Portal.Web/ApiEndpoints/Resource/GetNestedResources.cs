@@ -13,7 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.Resource
 {
-    public class GetNestedResources : BaseAsyncEndpoint<IReadOnlyList<SimpleResourceModel>>
+    public class GetNestedResources : BaseAsyncEndpoint
+        .WithoutRequest
+        .WithResponse<IReadOnlyList<SimpleResourceModel>>
     {
         private readonly IResourceQueryService _resourceQueryService;
 

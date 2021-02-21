@@ -10,15 +10,15 @@
   <Import Project="..\..\Shared\Initium.Portal.Shared\Initium.Portal.Shared.projitems" Label="Shared" />
 
   <ItemGroup>
-    <PackageReference Include="Finbuckle.MultiTenant" Version="6.1.0" />
-    <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="5.0.22" />
+    <PackageReference Include="Finbuckle.MultiTenant" Version="6.2.0" />
+    <PackageReference Include="LinqKit.Microsoft.EntityFrameworkCore" Version="5.0.23" />
     <PackageReference Include="MaybeMonad" Version="1.0.1.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="5.0.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="5.0.0" />
     <PackageReference Include="Microsoft.FeatureManagement" Version="2.2.0" />
-    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.16.0.25740">
+    <PackageReference Include="SonarAnalyzer.CSharp" Version="8.18.0.27296">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -35,9 +35,7 @@
 
   <ItemGroup>
     <Compile Remove="CoreQueryContext.cs" />
-    <None Include="CoreQueryContext.cs" />
     <Compile Remove="ICoreQueryContext.cs" />
-    <None Include="ICoreQueryContext.cs" />
   </ItemGroup>
 
 </Project>

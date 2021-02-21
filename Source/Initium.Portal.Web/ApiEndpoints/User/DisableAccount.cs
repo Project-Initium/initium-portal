@@ -14,7 +14,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.User
 {
-    public class DisableAccount : BaseAsyncEndpoint<DisableAccount.EndpointRequest, BasicEndpointResponse>
+    public class DisableAccount : BaseAsyncEndpoint
+        .WithRequest<DisableAccount.EndpointRequest>
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly IMediator _mediator;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;

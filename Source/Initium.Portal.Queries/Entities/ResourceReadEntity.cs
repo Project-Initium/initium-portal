@@ -16,18 +16,18 @@ namespace Initium.Portal.Queries.Entities
             this._roles = new List<RoleReadEntity>();
         }
 
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
-        public string NormalizedName { get; set; }
+        public string NormalizedName { get; private set; }
 
-        public Guid? ParentResourceId { get; set; }
+        public Guid? ParentResourceId { get; private set; }
 
-        public string FeatureCode { get; set; }
+        public string FeatureCode { get; private set; }
 
         public IReadOnlyList<RoleReadEntity> Roles => this._roles.AsReadOnly();
 
-        public ResourceReadEntity ParentResource { get; set; }
+        public ResourceReadEntity ParentResource { get; private set; }
     }
 }
