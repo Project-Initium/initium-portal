@@ -11,11 +11,9 @@ namespace Initium.Portal.Domain.Commands.RoleAggregate
 {
     public class UpdateRoleCommand : IRequest<ResultWithError<ErrorData>>
     {
-        private readonly List<Guid> _resources;
-
         public UpdateRoleCommand(Guid roleId, string name, List<Guid> resources)
         {
-            this._resources = resources;
+            this.Resources = resources;
             this.RoleId = roleId;
             this.Name = name;
         }
@@ -24,6 +22,6 @@ namespace Initium.Portal.Domain.Commands.RoleAggregate
 
         public string Name { get; }
 
-        public IReadOnlyList<Guid> Resources => this._resources.AsReadOnly();
+        public IReadOnlyList<Guid> Resources { get; }
     }
 }

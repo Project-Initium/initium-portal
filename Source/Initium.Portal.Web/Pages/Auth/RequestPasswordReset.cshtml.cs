@@ -18,7 +18,7 @@ namespace Initium.Portal.Web.Pages.Auth
 
         public RequestPasswordReset(IMediator mediator)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._mediator = mediator;
         }
 
         public async Task<IActionResult> OnPostAsync()

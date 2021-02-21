@@ -12,11 +12,17 @@ namespace Initium.Portal.Web.Infrastructure.OData.EntityBuilders
     {
         public void Configure(ODataConventionModelBuilder builder)
         {
-            var role = builder.EntitySet<RoleReadEntity>("Roles");
-            var function = role.EntityType.Collection.Function("Filtered");
+            var roles = builder.EntitySet<RoleReadEntity>("Roles");
+
+            roles.EntityType.HasKey(role => role.Id);
+            roles.EntityType.Property(role => role.Name);
+            roles.EntityType.Property(role => role.ResourceCount);
+            roles.EntityType.Property(role => role.UserCount);
+
+            var function = roles.EntityType.Collection.Function("Filtered");
             function.ReturnsCollectionFromEntitySet<RoleReadEntity>("Roles");
 
-            function = role.EntityType.Collection.Function("FilteredExport");
+            function = roles.EntityType.Collection.Function("FilteredExport");
             function.Returns<FileResult>();
         }
     }

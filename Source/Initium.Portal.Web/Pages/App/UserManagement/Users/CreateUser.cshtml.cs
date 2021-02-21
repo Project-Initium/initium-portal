@@ -26,8 +26,8 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
 
         public CreateUser(IMediator mediator, IRoleQueryService roleQueryService)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
+            this._mediator = mediator;
+            this._roleQueryService = roleQueryService;
         }
 
         public List<SelectListItem> AvailableRoles { get; set; }

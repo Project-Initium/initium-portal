@@ -5,13 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
-using Initium.Portal.Infrastructure;
-using Initium.Portal.Infrastructure.Admin;
 using Initium.Portal.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Moq;
 using Xunit;
 
@@ -22,11 +22,18 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void UnitOfWork_GivenDataContextSetInConstructor_ExpectSameValud()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new RoleRepository(context);
             Assert.Equal(context, repository.UnitOfWork);
         }
@@ -34,24 +41,38 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Add_GivenArgumentIsNotRole_ExpectArgumentException()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Add(new Mock<IRole>().Object));
-            Assert.Equal("role", exception.Message);
+            Assert.Equal("role", exception.ParamName);
         }
 
         [Fact]
         public void Add_GivenArgumentIsRole_ExpectRoleToBeAddedToTheContext()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             roleRepository.Add(role);
@@ -63,24 +84,38 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Delete_GivenArgumentIsNotRole_ExpectArgumentException()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Delete(new Mock<IRole>().Object));
-            Assert.Equal("role", exception.Message);
+            Assert.Equal("role", exception.ParamName);
         }
 
         [Fact]
         public void Delete_GivenArgumentIsRole_ExpectRoleToBeDeletedInTheContext()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "nane", new List<Guid>());
             roleRepository.Delete(role);
@@ -92,18 +127,20 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public async Task Find_GivenUserDoesExist_ExpectMaybeWithUser()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            var tenantInfo = new FeatureBasedTenantInfo
-            {
-                Id = TestVariables.TenantId.ToString(),
-            };
-
-            await using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), tenantInfo);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
-            await context.Roles.AddAsync(role);
+            await context.Set<Role>().AddAsync(role);
             await context.SaveEntitiesAsync();
             var roleRepository = new RoleRepository(context);
             var maybe = await roleRepository.Find(TestVariables.RoleId);
@@ -113,16 +150,18 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public async Task Find_GivenUserDoesNotExist_ExpectMaybeWithNoData()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            var tenantInfo = new FeatureBasedTenantInfo
-            {
-                Id = TestVariables.TenantId.ToString(),
-            };
-
-            await using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), tenantInfo);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var maybe = await roleRepository.Find(TestVariables.RoleId);
             Assert.True(maybe.HasNoValue);
@@ -131,24 +170,38 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Update_GivenArgumentIsNotRole_ExpectArgumentException()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Update(new Mock<IRole>().Object));
-            Assert.Equal("role", exception.Message);
+            Assert.Equal("role", exception.ParamName);
         }
 
         [Fact]
         public void Update_GivenArgumentIsRole_ExpectRoleToBeUpdatedInTheContext()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             roleRepository.Update(role);

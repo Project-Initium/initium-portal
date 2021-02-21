@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Entities;
 using Initium.Portal.Queries.Models.Messaging;
@@ -15,14 +16,14 @@ namespace Initium.Portal.Queries
 {
     public class SystemAlertQueryService : ISystemAlertQueryService
     {
-        private readonly ICoreQueryContext _context;
+        private readonly GenericDataContext _context;
 
-        public SystemAlertQueryService(ICoreQueryContext context)
+        public SystemAlertQueryService(GenericDataContext context)
         {
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
+            this._context = context;
         }
 
-        public IQueryable<SystemAlertReadEntity> QueryableEntity => this._context.SystemAlerts;
+        public IQueryable<SystemAlertReadEntity> QueryableEntity => this._context.Set<SystemAlertReadEntity>();
 
         public async Task<Maybe<IReadOnlyList<ActiveSystemAlert>>> GetActiveSystemAlerts()
         {

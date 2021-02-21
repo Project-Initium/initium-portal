@@ -13,13 +13,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthApp
 {
-    public class RevokeAuthApp : BaseAsyncEndpoint<RevokeAuthApp.EndpointRequest, BasicEndpointResponse>
+    public class RevokeAuthApp : BaseAsyncEndpoint
+        .WithRequest<RevokeAuthApp.EndpointRequest>
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly IMediator _mediator;
 
         public RevokeAuthApp(IMediator mediator)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._mediator = mediator;
         }
 
         [HttpPost("api/auth-app/revoke", Name = "RevokeAuthAppEndpoint")]

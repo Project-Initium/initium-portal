@@ -12,13 +12,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthEmail
 {
-    public class RequestMfaEmail : BaseAsyncEndpoint<BasicEndpointResponse>
+    public class RequestMfaEmail : BaseAsyncEndpoint
+        .WithoutRequest
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly IMediator _mediator;
 
         public RequestMfaEmail(IMediator mediator)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._mediator = mediator;
         }
 
         [ValidateAntiForgeryToken]

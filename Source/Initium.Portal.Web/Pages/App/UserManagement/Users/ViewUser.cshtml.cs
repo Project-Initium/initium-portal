@@ -20,8 +20,8 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Users
 
         public ViewUser(IUserQueryService userQueryService, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
-            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
+            this._userQueryService = userQueryService;
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
         }
 
         [BindProperty(SupportsGet = true)]

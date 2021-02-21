@@ -3,28 +3,32 @@
 
 using System;
 using System.Collections.Generic;
+using Initium.Portal.Core.Contracts.Queries;
 using Initium.Portal.Core.Infrastructure;
 
 namespace Initium.Portal.Queries.Entities
 {
-    public class RoleReadEntity : ReadEntity
+    public class RoleReadEntity : ReadEntity, IReadOnlyEntity
     {
+        private readonly List<ResourceReadEntity> _resources;
+        private readonly List<UserReadEntity> _users;
+
         public RoleReadEntity()
         {
-            this.RoleResources = new List<RoleResourceReadEntity>();
-            this.UserRoles = new List<UserRoleReadEntity>();
+            this._resources = new List<ResourceReadEntity>();
+            this._users = new List<UserReadEntity>();
         }
 
-        public Guid Id { get;  set; }
+        public Guid Id { get; private set; }
 
-        public string Name { get;  set; }
+        public string Name { get; private set; }
 
-        public int ResourceCount { get;  set; }
+        public int ResourceCount { get; private set; }
 
-        public int UserCount { get;  set; }
+        public int UserCount { get; private set; }
 
-        public List<RoleResourceReadEntity> RoleResources { get;  set; }
+        public IReadOnlyList<ResourceReadEntity> Resources => this._resources.AsReadOnly();
 
-        public List<UserRoleReadEntity> UserRoles { get;  set; }
+        public IReadOnlyList<UserReadEntity> Users => this._users.AsReadOnly();
     }
 }

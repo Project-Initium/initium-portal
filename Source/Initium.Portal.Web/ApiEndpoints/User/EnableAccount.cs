@@ -14,15 +14,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.User
 {
-    public class EnableAccount : BaseAsyncEndpoint<EnableAccount.EndpointRequest, BasicEndpointResponse>
+    public class EnableAccount : BaseAsyncEndpoint
+        .WithRequest<EnableAccount.EndpointRequest>
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly IMediator _mediator;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
         public EnableAccount(IMediator mediator, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
+            this._mediator = mediator;
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
         }
 
         [ValidateAntiForgeryToken]

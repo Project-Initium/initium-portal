@@ -14,7 +14,7 @@ namespace Initium.Portal.Web.Components.ProfilePanel
 
         public ProfilePanelViewComponent(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
         }
 
         public IViewComponentResult Invoke()

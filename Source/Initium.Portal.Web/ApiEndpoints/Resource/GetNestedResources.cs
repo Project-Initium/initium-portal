@@ -13,13 +13,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.Resource
 {
-    public class GetNestedResources : BaseAsyncEndpoint<IReadOnlyList<SimpleResourceModel>>
+    public class GetNestedResources : BaseAsyncEndpoint
+        .WithoutRequest
+        .WithResponse<IReadOnlyList<SimpleResourceModel>>
     {
         private readonly IResourceQueryService _resourceQueryService;
 
         public GetNestedResources(IResourceQueryService resourceQueryService)
         {
-            this._resourceQueryService = resourceQueryService ?? throw new ArgumentNullException(nameof(resourceQueryService));
+            this._resourceQueryService = resourceQueryService;
         }
 
         [ResourceBasedAuthorize("resource-list")]

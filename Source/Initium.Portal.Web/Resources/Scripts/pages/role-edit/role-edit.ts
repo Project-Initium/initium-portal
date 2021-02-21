@@ -27,7 +27,7 @@ export class RoleEdit {
             dataBound: _ => contextThis.treeOnDataBound()
         });
 
-        this.form = document.querySelector('form#role-create') as HTMLFormElement;
+        this.form = document.querySelector('form#page-form') as HTMLFormElement;
         this.validator = new ValidationProvider(this.form, false);
 
         this.form.addEventListener('submit', (e) => { contextThis.formSubmit(e); });

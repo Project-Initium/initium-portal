@@ -26,9 +26,9 @@ namespace Initium.Portal.Web.Management.Pages.App.Tenants
 
         public EditTenant(ITenantQueryService tenantQueryService, IMediator mediator, IFeatureManager featureManager)
         {
-            this._tenantQueryService = tenantQueryService ?? throw new ArgumentNullException(nameof(tenantQueryService));
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._featureManager = featureManager ?? throw new ArgumentNullException(nameof(featureManager));
+            this._tenantQueryService = tenantQueryService;
+            this._mediator = mediator;
+            this._featureManager = featureManager;
         }
 
         [BindProperty(SupportsGet = true)]

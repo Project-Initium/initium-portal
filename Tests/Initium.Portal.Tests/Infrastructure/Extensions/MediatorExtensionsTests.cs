@@ -5,13 +5,13 @@ using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Initium.Portal.Core.Database;
+using Initium.Portal.Core.Extensions;
 using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
-using Initium.Portal.Infrastructure;
-using Initium.Portal.Infrastructure.Admin;
-using Initium.Portal.Infrastructure.Extensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Moq;
 using Xunit;
 
@@ -23,19 +23,24 @@ namespace Initium.Portal.Tests.Infrastructure.Extensions
         public async Task
             DispatchDomainEventsAsync_GivenEntitiesWithEvents_NotificationsArePublishedAndEventsAreCleared()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
             var mediator = new Mock<IMediator>();
 
-            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
-
-            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             var @event = new Mock<INotification>();
             role.AddDomainEvent(@event.Object);
-            await context.Roles.AddAsync(role);
+            await context.Set<Role>().AddAsync(role);
 
             await mediator.Object.DispatchDomainEventsAsync(context);
 
@@ -45,21 +50,26 @@ namespace Initium.Portal.Tests.Infrastructure.Extensions
 
         [Fact]
         public async Task
-            DDispatchIntegrationEventsAsync_GivenEntitiesWithEvents_NotificationsArePublishedAndEventsAreCleared()
+            DispatchIntegrationEventsAsync_GivenEntitiesWithEvents_NotificationsArePublishedAndEventsAreCleared()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
             var mediator = new Mock<IMediator>();
 
-            var tenantInfo = new Mock<FeatureBasedTenantInfo>();
-
-            await using var context = new ManagementDataContext(options, mediator.Object, tenantInfo.Object);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             var @event = new Mock<INotification>();
             role.AddIntegrationEvent(@event.Object);
-            await context.Roles.AddAsync(role);
+            await context.Set<Role>().AddAsync(role);
 
             await mediator.Object.DispatchIntegrationEventsAsync(context);
 

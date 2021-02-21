@@ -2,16 +2,18 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Constants;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Queries;
 using Initium.Portal.Queries.Entities;
-using Initium.Portal.Queries.Management;
-using Microsoft.EntityFrameworkCore;
+using MediatR;
 using Microsoft.Extensions.Options;
 using Moq;
+using Moq.EntityFrameworkCore;
 using Xunit;
 
 namespace Initium.Portal.Tests.Queries
@@ -21,14 +23,10 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetActiveSystemAlerts_GivenNoActiveSystemAlerts_ExpectMaybeWithNoData()
         {
-            var options = new DbContextOptionsBuilder<CoreQueryContext>()
-                .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
-                .Options;
-
-            var tenantInfo = new FeatureBasedTenantInfo
-            {
-                Id = TestVariables.TenantId.ToString(),
-            };
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -36,38 +34,41 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new SystemAlertReadEntity
-            {
-                Id = Guid.NewGuid(),
-                Name = "name-1",
-                Message = "message-1",
-                IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlertReadEntity
-            {
-                Id = Guid.NewGuid(),
-                Name = "name-2",
-                Message = "message-2",
-                IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlertReadEntity
-            {
-                Id = Guid.NewGuid(),
-                Name = "name-3",
-                Message = "message-3",
-                IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlertReadEntity
-            {
-                Id = Guid.NewGuid(),
-                Name = "name-4",
-                Message = "message-4",
-                IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            await context.SaveChangesAsync();
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<SystemAlertReadEntity>())
+                .ReturnsDbSet(new List<SystemAlertReadEntity>
+                {
+                    Helpers.CreateEntity<SystemAlertReadEntity>(new
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "name-1",
+                        Message = "message-1",
+                        IsActive = false,
+                    }),
+                    Helpers.CreateEntity<SystemAlertReadEntity>(new
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "name-2",
+                        Message = "message-2",
+                        IsActive = false,
+                    }),
+                    Helpers.CreateEntity<SystemAlertReadEntity>(new
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "name-3",
+                        Message = "message-3",
+                        IsActive = false,
+                    }),
+                    Helpers.CreateEntity<SystemAlertReadEntity>(new
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "name-4",
+                        Message = "message-4",
+                        IsActive = false,
+                    }),
+                });
 
-            var queries = new SystemAlertQueryService(context);
+            var queries = new SystemAlertQueryService(context.Object);
             var result = await queries.GetActiveSystemAlerts();
 
             Assert.True(result.HasNoValue);
@@ -76,14 +77,10 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetActiveSystemAlerts_GivenActiveSystemAlerts_ExpectMaybeWithData()
         {
-            var options = new DbContextOptionsBuilder<CoreQueryContext>()
-                .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
-                .Options;
-
-            var tenantInfo = new FeatureBasedTenantInfo
-            {
-                Id = TestVariables.TenantId.ToString(),
-            };
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -91,38 +88,41 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new SystemAlertReadEntity
-            {
-                Id = Guid.NewGuid(),
-                Name = "name-1",
-                Message = "message-1",
-                IsActive = true,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlertReadEntity
-            {
-                Id = Guid.NewGuid(),
-                Name = "name-2",
-                Message = "message-2",
-                IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlertReadEntity
-            {
-                Id = Guid.NewGuid(),
-                Name = "name-3",
-                Message = "message-3",
-                IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            context.Add(new SystemAlertReadEntity
-            {
-                Id = Guid.NewGuid(),
-                Name = "name-4",
-                Message = "message-4",
-                IsActive = false,
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
-            await context.SaveChangesAsync();
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<SystemAlertReadEntity>())
+                .ReturnsDbSet(new List<SystemAlertReadEntity>
+                {
+                    Helpers.CreateEntity<SystemAlertReadEntity>(new
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "name-1",
+                        Message = "message-1",
+                        IsActive = true,
+                    }),
+                    Helpers.CreateEntity<SystemAlertReadEntity>(new
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "name-2",
+                        Message = "message-2",
+                        IsActive = false,
+                    }),
+                    Helpers.CreateEntity<SystemAlertReadEntity>(new
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "name-3",
+                        Message = "message-3",
+                        IsActive = false,
+                    }),
+                    Helpers.CreateEntity<SystemAlertReadEntity>(new
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "name-4",
+                        Message = "message-4",
+                        IsActive = false,
+                    }),
+                });
 
-            var queries = new SystemAlertQueryService(context);
+            var queries = new SystemAlertQueryService(context.Object);
             var result = await queries.GetActiveSystemAlerts();
 
             Assert.True(result.HasValue);
@@ -132,14 +132,10 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetDetailedSystemAlertById__GivenNoSystemAlertFound_ExpectMaybeWithNoData()
         {
-            var options = new DbContextOptionsBuilder<CoreQueryContext>()
-                .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
-                .Options;
-
-            var tenantInfo = new FeatureBasedTenantInfo
-            {
-                Id = TestVariables.TenantId.ToString(),
-            };
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -147,21 +143,23 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new SystemAlertReadEntity
-            {
-                Id = Guid.NewGuid(),
-                Name = "name",
-                Message = "message",
-                IsActive = false,
-                Type = SystemAlertType.High,
-                WhenToHide = TestVariables.Now,
-                WhenToShow = TestVariables.Now.AddHours(5),
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<SystemAlertReadEntity>())
+                .ReturnsDbSet(new List<SystemAlertReadEntity>
+                {
+                    Helpers.CreateEntity<SystemAlertReadEntity>(new
+                    {
+                        Id = Guid.NewGuid(),
+                        Name = "name",
+                        Message = "message",
+                        IsActive = false,
+                        Type = SystemAlertType.High,
+                        WhenToHide = TestVariables.Now,
+                        WhenToShow = TestVariables.Now.AddHours(5),
+                    }),
+                });
 
-            await context.SaveChangesAsync();
-
-            var queries = new SystemAlertQueryService(context);
+            var queries = new SystemAlertQueryService(context.Object);
             var result = await queries.GetDetailedSystemAlertById(TestVariables.SystemAlertId);
 
             Assert.True(result.HasNoValue);
@@ -170,14 +168,10 @@ namespace Initium.Portal.Tests.Queries
         [Fact]
         public async Task GetDetailedSystemAlertById__GivenSystemAlertFound_ExpectMaybeWithCorrectlyMappedData()
         {
-            var options = new DbContextOptionsBuilder<CoreQueryContext>()
-                .UseInMemoryDatabase($"ODataContext{Guid.NewGuid()}")
-                .Options;
-
-            var tenantInfo = new FeatureBasedTenantInfo
-            {
-                Id = TestVariables.TenantId.ToString(),
-            };
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
 
             var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
             multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
@@ -185,21 +179,23 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            await using var context = new ManagementQueryContext(options, tenantInfo, multiTenantSettings.Object);
-            context.Add(new SystemAlertReadEntity
-            {
-                Id = TestVariables.SystemAlertId,
-                Name = "name",
-                Message = "message",
-                IsActive = true,
-                Type = SystemAlertType.High,
-                WhenToHide = TestVariables.Now,
-                WhenToShow = TestVariables.Now.AddHours(5),
-            }).Property("TenantId").CurrentValue = TestVariables.TenantId;
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            context.Setup(x => x.Set<SystemAlertReadEntity>())
+                .ReturnsDbSet(new List<SystemAlertReadEntity>
+                {
+                    Helpers.CreateEntity<SystemAlertReadEntity>(new
+                    {
+                        Id = TestVariables.SystemAlertId,
+                        Name = "name",
+                        Message = "message",
+                        IsActive = true,
+                        Type = SystemAlertType.High,
+                        WhenToHide = TestVariables.Now,
+                        WhenToShow = TestVariables.Now.AddHours(5),
+                    }),
+                });
 
-            await context.SaveChangesAsync();
-
-            var queries = new SystemAlertQueryService(context);
+            var queries = new SystemAlertQueryService(context.Object);
             var result = await queries.GetDetailedSystemAlertById(TestVariables.SystemAlertId);
 
             Assert.True(result.HasValue);

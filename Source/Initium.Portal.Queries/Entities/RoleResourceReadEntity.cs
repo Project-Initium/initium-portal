@@ -8,12 +8,12 @@ namespace Initium.Portal.Queries.Entities
 {
     public class RoleResourceReadEntity : ReadEntity
     {
-        public Guid RoleId { get; set; }
+        public Guid RoleId { get; private set; }
 
-        public Guid ResourceId { get; set; }
+        public Guid ResourceId { get; private set; }
 
-        public RoleReadEntity Role { get; set; }
+        public RoleReadEntity Role { get; private set; }
 
-        public ResourceReadEntity Resource { get; set; }
+        public ResourceReadEntity Resource { get; private set; }
     }
 }

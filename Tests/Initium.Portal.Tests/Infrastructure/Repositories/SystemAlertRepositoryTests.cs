@@ -5,13 +5,13 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Constants;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
-using Initium.Portal.Infrastructure;
-using Initium.Portal.Infrastructure.Admin;
 using Initium.Portal.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Moq;
 using Xunit;
 
@@ -20,13 +20,20 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
     public class SystemAlertRepositoryTests
     {
         [Fact]
-        public void UnitOfWork_GivenDataContextSetInConstructor_ExpectSameValud()
+        public void UnitOfWork_GivenDataContextSetInConstructor_ExpectSameValue()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new SystemAlertRepository(context);
             Assert.Equal(context, repository.UnitOfWork);
         }
@@ -34,11 +41,18 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Add_GivenArgumentIsNotSystemAlertType_ExpectException()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new SystemAlertRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Add(new Mock<ISystemAlert>().Object));
             Assert.Equal("systemAlert", exception.Message);
@@ -47,11 +61,18 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Add_GivenArgumentIsSystemAlertType_ExpectReturnedUserToBeIdenticalAsArgument()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
@@ -68,11 +89,18 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Add_GivenArgumentIsSystemAlertType_ExpectSystemAlertToBeAddedToContext()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
@@ -91,11 +119,18 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Delete_GivenArgumentIsNotSystemAlert_ExpectArgumentException()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new SystemAlertRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Delete(new Mock<ISystemAlert>().Object));
             Assert.Equal("systemAlert", exception.Message);
@@ -104,11 +139,18 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Delete_GivenArgumentIsSystemAlert_ExpectSystemAlertToBeDeletedInTheContext()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
@@ -127,17 +169,19 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public async Task Find_GivenSystemAlertDoesExist_ExpectMaybeWithData()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            var tenantInfo = new FeatureBasedTenantInfo
-            {
-                Id = TestVariables.TenantId.ToString(),
-            };
-
-            await using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), tenantInfo);
-            await context.SystemAlerts.AddAsync(new SystemAlert(
+            await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo);
+            await context.Set<SystemAlert>().AddAsync(new SystemAlert(
                 TestVariables.SystemAlertId,
                 "name",
                 "message",
@@ -154,16 +198,18 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public async Task Find_GivenSystemAlertDoesNotExist_ExpectMaybeWithNoValue()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            var tenantInfo = new FeatureBasedTenantInfo
-            {
-                Id = TestVariables.TenantId.ToString(),
-            };
-
-            await using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), tenantInfo);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new SystemAlertRepository(context);
             var maybe = await repository.Find(Guid.Empty);
             Assert.True(maybe.HasNoValue);
@@ -172,11 +218,18 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Update_GivenArgumentIsNotRole_ExpectArgumentException()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new SystemAlertRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Update(new Mock<ISystemAlert>().Object));
             Assert.Equal("systemAlert", exception.Message);
@@ -185,11 +238,18 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
         [Fact]
         public void Update_GivenArgumentIsRole_ExpectSystemAlertToBeDeletedInTheContext()
         {
-            var options = new DbContextOptionsBuilder<CoreDataContext>()
+            var serviceProvider = new Mock<IServiceProvider>();
+            serviceProvider.AddCoreEntityTypeConfigurationProvider();
+            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
+                .Returns(Mock.Of<IMediator>());
+
+            var options = new DbContextOptionsBuilder<GenericDataContext>()
                 .UseInMemoryDatabase($"DataContext{Guid.NewGuid()}")
+                .UseApplicationServiceProvider(serviceProvider.Object)
+                .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new ManagementDataContext(options, Mock.Of<IMediator>(), Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,

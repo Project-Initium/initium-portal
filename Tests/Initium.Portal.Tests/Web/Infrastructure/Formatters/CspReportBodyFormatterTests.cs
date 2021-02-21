@@ -19,13 +19,6 @@ namespace Initium.Portal.Tests.Web.Infrastructure.Formatters
     public class CspReportBodyFormatterTests
     {
         [Fact]
-        public void CanRead_GivenContextIsNull_ExpectException()
-        {
-            var cspReportBodyFormatter = new CspReportBodyFormatter();
-            Assert.Throws<ArgumentNullException>(() => cspReportBodyFormatter.CanRead(null));
-        }
-
-        [Fact]
         public void CanRead_GivenCorrectContentType_ExpectTrue()
         {
             var cspReportBodyFormatter = new CspReportBodyFormatter();
@@ -35,7 +28,7 @@ namespace Initium.Portal.Tests.Web.Infrastructure.Formatters
         }
 
         [Fact]
-        public void CanRead_GivenWrongContentTypeNull_ExpectFasle()
+        public void CanRead_GivenWrongContentTypeNull_ExpectFalse()
         {
             var cspReportBodyFormatter = new CspReportBodyFormatter();
             var httpContext = new DefaultHttpContext();

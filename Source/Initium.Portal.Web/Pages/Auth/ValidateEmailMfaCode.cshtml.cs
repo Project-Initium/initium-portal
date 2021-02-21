@@ -26,9 +26,8 @@ namespace Initium.Portal.Web.Pages.Auth
 
         public ValidateEmailMfaCode(IMediator mediator, IAuthenticationService authenticationService, ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._authenticationService =
-                authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            this._mediator = mediator;
+            this._authenticationService = authenticationService;
             this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
         }
 

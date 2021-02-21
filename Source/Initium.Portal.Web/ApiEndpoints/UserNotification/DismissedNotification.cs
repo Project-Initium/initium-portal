@@ -13,15 +13,17 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.UserNotification
 {
-    public class DismissedNotification : BaseAsyncEndpoint<DismissedNotification.EndpointRequest, BasicEndpointResponse>
+    public class DismissedNotification : BaseAsyncEndpoint
+        .WithRequest<DismissedNotification.EndpointRequest>
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
         private readonly IMediator _mediator;
 
         public DismissedNotification(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IMediator mediator)
         {
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._mediator = mediator;
         }
 
         [ValidateAntiForgeryToken]

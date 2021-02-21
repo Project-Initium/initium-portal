@@ -14,13 +14,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.Management.ApiEndpoints.Tenant
 {
-    public class DisableTenant : BaseAsyncEndpoint<DisableTenant.EndpointRequest, BasicEndpointResponse>
+    public class DisableTenant : BaseAsyncEndpoint
+        .WithRequest<DisableTenant.EndpointRequest>
+        .WithResponse<BasicEndpointResponse>
     {
         private readonly IMediator _mediator;
 
         public DisableTenant(IMediator mediator)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._mediator = mediator;
         }
 
         [ValidateAntiForgeryToken]

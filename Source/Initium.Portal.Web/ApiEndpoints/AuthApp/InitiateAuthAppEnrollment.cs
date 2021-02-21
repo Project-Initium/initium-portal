@@ -17,7 +17,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthApp
 {
-    public class InitiateAuthAppEnrollment : BaseAsyncEndpoint<InitiateAuthAppEnrollment.EndpointResponse>
+    public class InitiateAuthAppEnrollment : BaseAsyncEndpoint
+        .WithoutRequest
+        .WithResponse<InitiateAuthAppEnrollment.EndpointResponse>
     {
         [SuppressMessage("Minor Code Smell", "S1075:URIs should not be hardcoded",
         Justification = "This is the fix template used by totp apps")]
@@ -30,10 +32,10 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthApp
 
         public InitiateAuthAppEnrollment(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IMediator mediator, UrlEncoder urlEncoder, FeatureBasedTenantInfo tenantInfo)
         {
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._urlEncoder = urlEncoder ?? throw new ArgumentNullException(nameof(urlEncoder));
-            this._tenantInfo = tenantInfo ?? throw new ArgumentNullException(nameof(tenantInfo));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._mediator = mediator;
+            this._urlEncoder = urlEncoder;
+            this._tenantInfo = tenantInfo;
         }
 
         [HttpPost("api/auth-app/initiate-enrollment", Name = "InitiateAuthAppEnrollmentEndpoint")]

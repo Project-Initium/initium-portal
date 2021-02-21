@@ -3,15 +3,16 @@
 
 using System;
 using Initium.Portal.Core.Contracts.Domain;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 
 namespace Initium.Portal.Infrastructure.Repositories
 {
     public class NotificationRepository : INotificationRepository
     {
-        private readonly ICoreDataContext _dataContext;
+        private readonly GenericDataContext _dataContext;
 
-        public NotificationRepository(ICoreDataContext dataContext)
+        public NotificationRepository(GenericDataContext dataContext)
         {
             this._dataContext = dataContext;
         }
@@ -23,10 +24,10 @@ namespace Initium.Portal.Infrastructure.Repositories
             var entity = notification as Notification;
             if (entity == null)
             {
-                throw new ArgumentException(nameof(notification));
+                throw new ArgumentException(null, nameof(notification));
             }
 
-            return this._dataContext.Notifications.Add(entity).Entity;
+            return this._dataContext.Set<Notification>().Add(entity).Entity;
         }
     }
 }

@@ -5,6 +5,7 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Contracts.Domain;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
 using MaybeMonad;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +14,9 @@ namespace Initium.Portal.Infrastructure.Repositories
 {
     public class SystemAlertRepository : ISystemAlertRepository
     {
-        private readonly ICoreDataContext _dataContext;
+        private readonly GenericDataContext _dataContext;
 
-        public SystemAlertRepository(ICoreDataContext dataContext)
+        public SystemAlertRepository(GenericDataContext dataContext)
         {
             this._dataContext = dataContext;
         }
@@ -30,12 +31,12 @@ namespace Initium.Portal.Infrastructure.Repositories
                 throw new ArgumentException(nameof(systemAlert));
             }
 
-            return this._dataContext.SystemAlerts.Add(entity).Entity;
+            return this._dataContext.Set<SystemAlert>().Add(entity).Entity;
         }
 
         public async Task<Maybe<ISystemAlert>> Find(Guid id, CancellationToken cancellationToken = default)
         {
-            var systemAlert = await this._dataContext.SystemAlerts.SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
+            var systemAlert = await this._dataContext.Set<SystemAlert>().SingleOrDefaultAsync(x => x.Id == id, cancellationToken);
             await this.Refresh(systemAlert);
             return Maybe.From<ISystemAlert>(systemAlert);
         }
@@ -48,7 +49,7 @@ namespace Initium.Portal.Infrastructure.Repositories
                 throw new ArgumentException(nameof(systemAlert));
             }
 
-            this._dataContext.SystemAlerts.Remove(entity);
+            this._dataContext.Set<SystemAlert>().Remove(entity);
         }
 
         public void Update(ISystemAlert systemAlert)
@@ -59,7 +60,7 @@ namespace Initium.Portal.Infrastructure.Repositories
                 throw new ArgumentException(nameof(systemAlert));
             }
 
-            this._dataContext.SystemAlerts.Update(entity);
+            this._dataContext.Set<SystemAlert>().Update(entity);
         }
 
         private async Task Refresh(SystemAlert systemAlert)

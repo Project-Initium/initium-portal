@@ -5,7 +5,7 @@ namespace Initium.Portal.Web.Management.Infrastructure.Constants
 {
     public static class ODataLocations
     {
-        public const string TenantFilteredExport = "/odata/tenant/tenant.filteredexport";
-        public const string TenantFilteredListing = "/odata/tenant/tenant.filtered";
+        public const string TenantFilteredExport = "/odata/tenants/filteredexport()";
+        public const string TenantFilteredListing = "/odata/tenants/filtered()";
     }
 }

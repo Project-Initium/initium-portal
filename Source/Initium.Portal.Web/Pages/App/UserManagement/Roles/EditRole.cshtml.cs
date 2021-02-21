@@ -24,8 +24,8 @@ namespace Initium.Portal.Web.Pages.App.UserManagement.Roles
 
         public EditRole(IMediator mediator, IRoleQueryService roleQueryService)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._roleQueryService = roleQueryService ?? throw new ArgumentNullException(nameof(roleQueryService));
+            this._mediator = mediator;
+            this._roleQueryService = roleQueryService;
         }
 
         [BindProperty(SupportsGet = true)]

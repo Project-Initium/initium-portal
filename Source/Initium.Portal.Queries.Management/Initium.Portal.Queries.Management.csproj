@@ -13,7 +13,7 @@
     </ItemGroup>
 
 <ItemGroup>
-        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.16.0.25740">
+        <PackageReference Include="SonarAnalyzer.CSharp" Version="8.18.0.27296">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
@@ -22,5 +22,10 @@
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
+
+<ItemGroup>
+  <Compile Remove="IManagementQueryContext.cs" />
+  <Compile Remove="ManagementQueryContext.cs" />
+</ItemGroup>
 
 </Project>

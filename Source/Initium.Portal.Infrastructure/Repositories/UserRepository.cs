@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Contracts.Domain;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using MaybeMonad;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,9 @@ namespace Initium.Portal.Infrastructure.Repositories
 {
     public sealed class UserRepository : IUserRepository
     {
-        private readonly ICoreDataContext _context;
+        private readonly GenericDataContext _context;
 
-        public UserRepository(ICoreDataContext context)
+        public UserRepository(GenericDataContext context)
         {
             this._context = context;
         }
@@ -31,12 +32,12 @@ namespace Initium.Portal.Infrastructure.Repositories
                 throw new ArgumentException(nameof(user));
             }
 
-            this._context.Users.Update(entity);
+            this._context.Set<User>().Update(entity);
         }
 
         public async Task<Maybe<IUser>> Find(Guid userId, CancellationToken cancellationToken = default)
         {
-            var user = await this._context.Users
+            var user = await this._context.Set<User>()
                 .Include(x => x.SecurityTokenMappings)
                 .Include(x => x.AuthenticatorApps)
                 .Include(x => x.AuthenticatorDevices)
@@ -55,12 +56,12 @@ namespace Initium.Portal.Infrastructure.Repositories
                 throw new ArgumentException(nameof(user));
             }
 
-            return this._context.Users.Add(entity).Entity;
+            return this._context.Set<User>().Add(entity).Entity;
         }
 
         public async Task<Maybe<IUser>> FindByEmailAddress(string emailAddress, CancellationToken cancellationToken = default)
         {
-            var user = await this._context.Users
+            var user = await this._context.Set<User>()
                 .Include(x => x.SecurityTokenMappings)
                 .Include(x => x.AuthenticatorApps)
                 .Include(x => x.AuthenticatorDevices)
@@ -73,7 +74,7 @@ namespace Initium.Portal.Infrastructure.Repositories
 
         public async Task<Maybe<IUser>> FindByUserBySecurityToken(Guid tokenId, DateTime expiryDate, CancellationToken cancellationToken = default)
         {
-            var user = await this._context.Users
+            var user = await this._context.Set<User>()
                 .Include(x => x.SecurityTokenMappings)
                 .Include(x => x.AuthenticatorApps)
                 .Include(x => x.AuthenticatorDevices)

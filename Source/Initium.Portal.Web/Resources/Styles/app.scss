@@ -374,3 +374,7 @@ body {
         }
     }
 }
+
+.page-titles .breadcrumb .breadcrumb-item+.breadcrumb-item::before {
+    line-height: 22px;
+}

@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Contracts;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Entities;
 using Initium.Portal.Queries.Models;
@@ -17,18 +18,16 @@ namespace Initium.Portal.Queries
 {
     public sealed class UserQueryService : IUserQueryService
     {
-        private readonly ICoreQueryContext _context;
+        private readonly GenericDataContext _context;
         private readonly ICurrentAuthenticatedUserProvider _currentAuthenticatedUserProvider;
 
-        public UserQueryService(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, ICoreQueryContext context)
+        public UserQueryService(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, GenericDataContext context)
         {
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ??
-                                                     throw new ArgumentNullException(
-                                                         nameof(currentAuthenticatedUserProvider));
-            this._context = context ?? throw new ArgumentNullException(nameof(context));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._context = context;
         }
 
-        public IQueryable<UserReadEntity> QueryableEntity => this._context.Users;
+        public IQueryable<UserReadEntity> QueryableEntity => this._context.Set<UserReadEntity>();
 
         public async Task<StatusCheckModel> CheckForPresenceOfAnyUser()
         {
@@ -64,7 +63,10 @@ namespace Initium.Portal.Queries
 
         public async Task<Maybe<DetailedUserModel>> GetDetailsOfUserById(Guid userId)
         {
-            var data = await this.QueryableEntity.Where(user => user.Id == userId).Select(user =>
+            var data = await this.QueryableEntity.Where(user => user.Id == userId)
+                .Include(x => x.Roles)
+                .ThenInclude(x => x.Resources)
+                .Select(user =>
                 new
                 {
                     user.Id,
@@ -74,7 +76,7 @@ namespace Initium.Portal.Queries
                     user.WhenLastAuthenticated,
                     user.WhenLocked,
                     user.IsAdmin,
-                    Resources = user.UserRoles.SelectMany(role => role.Role.RoleResources.Select(resource => resource.ResourceId)),
+                    Resources = user.Roles.Select(role => role.Id),
                     user.WhenDisabled,
                     user.FirstName,
                     user.LastName,
@@ -93,7 +95,7 @@ namespace Initium.Portal.Queries
                 {
                     user.EmailAddress,
                     user.IsAdmin,
-                    Resources = user.UserRoles.SelectMany(role => role.Role.RoleResources.Select(resource => resource.Resource.NormalizedName)),
+                    Resources = user.Roles.SelectMany(role => role.Resources.Select(resource => resource.NormalizedName)),
                     user.FirstName,
                     user.LastName,
                 }).SingleOrDefaultAsync();

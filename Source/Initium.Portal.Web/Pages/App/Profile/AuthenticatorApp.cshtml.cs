@@ -23,10 +23,8 @@ namespace Initium.Portal.Web.Pages.App.Profile
             IUserQueryService userQueryService,
             ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider)
         {
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ??
-                                                     throw new ArgumentNullException(
-                                                         nameof(currentAuthenticatedUserProvider));
-            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._userQueryService = userQueryService;
         }
 
         public bool IsSetup { get; private set; }

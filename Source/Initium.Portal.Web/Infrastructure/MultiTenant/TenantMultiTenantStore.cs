@@ -26,14 +26,8 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
 
         public TenantMultiTenantStore(IOptions<MultiTenantSettings> multiTenantSettings, IDistributedCache distributedCache, IClock clock)
         {
-            if (multiTenantSettings == null)
-            {
-                throw new ArgumentNullException(nameof(multiTenantSettings));
-            }
-
-            this._distributedCache = distributedCache ?? throw new ArgumentNullException(nameof(distributedCache));
-            this._clock = clock ?? throw new ArgumentNullException(nameof(clock));
-
+            this._distributedCache = distributedCache;
+            this._clock = clock;
             this._multiTenantSettings = multiTenantSettings.Value;
         }
 

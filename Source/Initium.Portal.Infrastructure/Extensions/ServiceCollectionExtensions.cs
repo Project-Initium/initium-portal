@@ -4,6 +4,7 @@
 using System;
 using Destructurama;
 using FluentValidation;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
@@ -11,6 +12,7 @@ using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using Initium.Portal.Domain.CommandValidators.UserAggregate;
 using Initium.Portal.Infrastructure.Behaviors;
+using Initium.Portal.Infrastructure.EntityTypeConfigurationProviders;
 using Initium.Portal.Infrastructure.Repositories;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,6 +57,16 @@ namespace Initium.Portal.Infrastructure.Extensions
             serviceCollection.AddScoped<IRoleRepository, RoleRepository>();
             serviceCollection.AddScoped<INotificationRepository, NotificationRepository>();
             serviceCollection.AddScoped<ISystemAlertRepository, SystemAlertRepository>();
+            return serviceCollection;
+        }
+
+        public static IServiceCollection AddCoreEntityTypeConfigurationProviders(
+            this IServiceCollection serviceCollection)
+        {
+            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, NotificationEntityTypeConfigurationProvider>();
+            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, RoleEntityTypeConfigurationProvider>();
+            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, SystemAlertEntityTypeConfigurationProvider>();
+            serviceCollection.AddScoped<IEntityTypeConfigurationProvider, UserEntityTypeConfigurationProvider>();
             return serviceCollection;
         }
     }

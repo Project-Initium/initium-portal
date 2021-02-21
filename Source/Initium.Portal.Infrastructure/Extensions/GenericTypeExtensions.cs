@@ -3,6 +3,9 @@
 
 using System;
 using System.Linq;
+using System.Runtime.CompilerServices;
+
+[assembly: InternalsVisibleTo("Initium.Portal.Tests")]
 
 namespace Initium.Portal.Infrastructure.Extensions
 {

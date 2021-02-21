@@ -9,22 +9,22 @@ namespace Initium.Portal.Queries.Entities
 {
     public class UserNotificationReadEntity : ReadEntity
     {
-        public Guid NotificationId { get; set; }
+        public Guid NotificationId { get; private set; }
 
-        public Guid UserId { get; set; }
+        public Guid UserId { get; private set; }
 
-        public DateTime WhenNotified { get; set; }
+        public DateTime WhenNotified { get; private set; }
 
-        public NotificationType Type { get; set; }
+        public NotificationType Type { get; private set; }
 
-        public string SerializedEventData { get; set; }
+        public string SerializedEventData { get; private set; }
 
-        public string Subject { get; set; }
+        public string Subject { get; private set; }
 
-        public string Message { get; set; }
+        public string Message { get; private set; }
 
-        public DateTime? WhenViewed { get; set; }
+        public DateTime? WhenViewed { get; private set; }
 
-        public UserReadEntity User { get; set; }
+        public UserReadEntity User { get; private set; }
     }
 }

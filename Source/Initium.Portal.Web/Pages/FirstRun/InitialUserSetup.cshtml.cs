@@ -21,8 +21,8 @@ namespace Initium.Portal.Web.Pages.FirstRun
 
         public InitialUserSetup(IUserQueryService userQueryService, IMediator mediator)
         {
-            this._userQueryService = userQueryService ?? throw new ArgumentNullException(nameof(userQueryService));
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+            this._userQueryService = userQueryService;
+            this._mediator = mediator;
         }
 
         public async Task<IActionResult> OnGet()

@@ -3,8 +3,8 @@ AS
 SELECT 
         r.Id
     ,   r.Name
-    ,   count(rR.RoleId) as ResourceCount
-    ,   count(uR.RoleId) as UserCount
+    ,   count(DISTINCT rR.RoleId) as ResourceCount
+    ,   count(DISTINCT uR.RoleId) as UserCount
     ,   r.TenantId
 FROM [AccessProtection].[Role] r
 LEFT JOIN [AccessProtection].[RoleResource] rR

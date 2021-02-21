@@ -17,8 +17,8 @@ namespace Initium.Portal.Web.Components.TopNav
 
         public TopNavViewComponent(ICurrentAuthenticatedUserProvider currentAuthenticatedUserProvider, IUserNotificationQueryService userNotificationQueryService)
         {
-            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider ?? throw new ArgumentNullException(nameof(currentAuthenticatedUserProvider));
-            this._userNotificationQueryService = userNotificationQueryService ?? throw new ArgumentNullException(nameof(userNotificationQueryService));
+            this._currentAuthenticatedUserProvider = currentAuthenticatedUserProvider;
+            this._userNotificationQueryService = userNotificationQueryService;
         }
 
         public async Task<IViewComponentResult> InvokeAsync()

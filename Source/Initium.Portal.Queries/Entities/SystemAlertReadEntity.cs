@@ -9,18 +9,18 @@ namespace Initium.Portal.Queries.Entities
 {
     public class SystemAlertReadEntity : ReadEntity
     {
-        public Guid Id { get; set; }
+        public Guid Id { get; private set; }
 
-        public string Name { get; set; }
+        public string Name { get; private set; }
 
-        public string Message { get; set; }
+        public string Message { get; private set; }
 
-        public SystemAlertType Type { get; set; }
+        public SystemAlertType Type { get; private set; }
 
-        public DateTime? WhenToShow { get; set; }
+        public DateTime? WhenToShow { get; private set; }
 
-        public DateTime? WhenToHide { get; set; }
+        public DateTime? WhenToHide { get; private set; }
 
-        public bool IsActive { get; set; }
+        public bool IsActive { get; private set; }
     }
 }

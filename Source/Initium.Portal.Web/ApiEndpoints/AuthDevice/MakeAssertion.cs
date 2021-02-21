@@ -17,7 +17,9 @@ using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
 {
-    public class MakeAssertion : BaseAsyncEndpoint<AuthenticatorAssertionRawResponse, AssertionVerificationResult>
+    public class MakeAssertion : BaseAsyncEndpoint
+        .WithRequest<AuthenticatorAssertionRawResponse>
+        .WithResponse<AssertionVerificationResult>
     {
         private readonly IMediator _mediator;
         private readonly ITempDataDictionaryFactory _tempDataDictionaryFactory;
@@ -25,9 +27,9 @@ namespace Initium.Portal.Web.ApiEndpoints.AuthDevice
 
         public MakeAssertion(IMediator mediator, ITempDataDictionaryFactory tempDataDictionaryFactory, IAuthenticationService authenticationService)
         {
-            this._mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            this._tempDataDictionaryFactory = tempDataDictionaryFactory ?? throw new ArgumentNullException(nameof(tempDataDictionaryFactory));
-            this._authenticationService = authenticationService ?? throw new ArgumentNullException(nameof(authenticationService));
+            this._mediator = mediator;
+            this._tempDataDictionaryFactory = tempDataDictionaryFactory;
+            this._authenticationService = authenticationService;
         }
 
         [ValidateAntiForgeryToken]

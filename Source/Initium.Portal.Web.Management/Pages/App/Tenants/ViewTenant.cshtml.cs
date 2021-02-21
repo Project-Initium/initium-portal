@@ -16,7 +16,7 @@ namespace Initium.Portal.Web.Management.Pages.App.Tenants
 
         public ViewTenant(ITenantQueryService tenantQueryService)
         {
-            this._tenantQueryService = tenantQueryService ?? throw new ArgumentNullException(nameof(tenantQueryService));
+            this._tenantQueryService = tenantQueryService;
         }
 
         [BindProperty(SupportsGet = true)]
