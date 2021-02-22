@@ -7,8 +7,8 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Finbuckle.MultiTenant;
+using Initium.Portal.Core.Caching;
 using Initium.Portal.Core.Constants;
-using Initium.Portal.Core.Extensions;
 using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Microsoft.Extensions.Caching.Distributed;
@@ -107,10 +107,6 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
                 return tenantInfo;
             }
 
-            await this._customDistributedCache.AddValue(identifier, new CacheableTenantData(), new DistributedCacheEntryOptions
-            {
-                AbsoluteExpiration = this._clock.GetCurrentInstant().ToDateTimeOffset().AddMinutes(5),
-            });
             return null;
         }
 
@@ -176,10 +172,6 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
                 return tenantInfo;
             }
 
-            await this._customDistributedCache.AddValue(id, new CacheableTenantData(), new DistributedCacheEntryOptions
-            {
-                AbsoluteExpiration = this._clock.GetCurrentInstant().ToDateTimeOffset().AddMinutes(5),
-            });
             return null;
         }
 

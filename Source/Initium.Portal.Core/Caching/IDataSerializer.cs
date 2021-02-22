@@ -1,7 +1,7 @@
 ﻿using MaybeMonad;
 using ResultMonad;
 
-namespace Initium.Portal.Core.Serialization
+namespace Initium.Portal.Core.Caching
 {
     public interface IDataSerializer
     {
