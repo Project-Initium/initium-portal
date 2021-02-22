@@ -122,7 +122,7 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
             this.PasswordHash = OverridePasswordHash;
         }
 
-        public string GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration)
+        public SecurityTokenMapping GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration)
         {
             var token =
                 this._securityTokenMappings.FirstOrDefault(m =>
@@ -130,17 +130,17 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
                     m.Purpose == SecurityTokenPurpose.PasswordReset);
             if (token != null)
             {
-                return token.Token;
+                return token;
             }
 
             token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenPurpose.PasswordReset, whenRequest,
                 whenRequest.Add(duration));
             this._securityTokenMappings.Add(token);
 
-            return token.Token;
+            return token;
         }
 
-        public string GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration)
+        public SecurityTokenMapping GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration)
         {
             var token =
                 this.SecurityTokenMappings.FirstOrDefault(m =>
@@ -148,14 +148,14 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
                     m.Purpose == SecurityTokenPurpose.AccountConfirmation);
             if (token != null)
             {
-                return token.Token;
+                return token;
             }
 
             token = new SecurityTokenMapping(Guid.NewGuid(), SecurityTokenPurpose.AccountConfirmation, whenRequested,
                 whenRequested.Add(duration));
             this._securityTokenMappings.Add(token);
 
-            return token.Token;
+            return token;
         }
 
         public void ChangePassword(string passwordHash, DateTime whenChanged)
