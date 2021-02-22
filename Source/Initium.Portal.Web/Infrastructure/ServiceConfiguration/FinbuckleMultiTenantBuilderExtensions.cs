@@ -1,6 +1,7 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
+using Initium.Portal.Core.Extensions;
 using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Web.Infrastructure.MultiTenant;
@@ -20,7 +21,7 @@ namespace Initium.Portal.Web.Infrastructure.ServiceConfiguration
             {
                 var serviceProvider = provider.CreateScope().ServiceProvider;
                 var multiTenantSettings = serviceProvider.GetRequiredService<IOptions<MultiTenantSettings>>();
-                var distributedCache = serviceProvider.GetRequiredService<IDistributedCache>();
+                var distributedCache = serviceProvider.GetRequiredService<ICustomDistributedCache>();
                 var clock = serviceProvider.GetRequiredService<IClock>();
                 return new TenantMultiTenantStore(multiTenantSettings, distributedCache, clock);
             });

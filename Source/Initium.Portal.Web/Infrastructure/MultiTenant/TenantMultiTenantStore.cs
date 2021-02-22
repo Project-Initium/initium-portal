@@ -21,19 +21,19 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
     public class TenantMultiTenantStore : IMultiTenantStore<FeatureBasedTenantInfo>
     {
         private readonly MultiTenantSettings _multiTenantSettings;
-        private readonly IDistributedCache _distributedCache;
+        private readonly ICustomDistributedCache _customDistributedCache;
         private readonly IClock _clock;
 
-        public TenantMultiTenantStore(IOptions<MultiTenantSettings> multiTenantSettings, IDistributedCache distributedCache, IClock clock)
+        public TenantMultiTenantStore(IOptions<MultiTenantSettings> multiTenantSettings, ICustomDistributedCache customDistributedCache, IClock clock)
         {
-            this._distributedCache = distributedCache;
+            this._customDistributedCache = customDistributedCache;
             this._clock = clock;
             this._multiTenantSettings = multiTenantSettings.Value;
         }
 
         public async Task<bool> TryAddAsync(FeatureBasedTenantInfo tenantInfo)
         {
-            await this._distributedCache.AddValue(tenantInfo.Identifier, new CacheableTenantData(tenantInfo), new DistributedCacheEntryOptions
+            await this._customDistributedCache.AddValue(tenantInfo.Identifier, new CacheableTenantData(tenantInfo), new DistributedCacheEntryOptions
             {
                 AbsoluteExpiration = this._clock.GetCurrentInstant().ToDateTimeOffset().AddMinutes(30),
             });
@@ -47,13 +47,13 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
 
         public async Task<bool> TryRemoveAsync(string identifier)
         {
-            await this._distributedCache.RemoveAsync(identifier);
+            await this._customDistributedCache.RemoveAsync(identifier);
             return true;
         }
 
         public async Task<FeatureBasedTenantInfo> TryGetByIdentifierAsync(string identifier)
         {
-            var maybe = await this._distributedCache.TryGetValue<CacheableTenantData>(identifier);
+            var maybe = await this._customDistributedCache.TryGetValue<CacheableTenantData>(identifier);
             if (maybe.HasValue)
             {
                 if (!maybe.Value.IsSetup)
@@ -100,14 +100,14 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
                     }
                 }
 
-                await this._distributedCache.AddValue(identifier, new CacheableTenantData(tenantInfo), new DistributedCacheEntryOptions
+                await this._customDistributedCache.AddValue(identifier, new CacheableTenantData(tenantInfo), new DistributedCacheEntryOptions
                 {
                     AbsoluteExpiration = this._clock.GetCurrentInstant().ToDateTimeOffset().AddMinutes(5),
                 });
                 return tenantInfo;
             }
 
-            await this._distributedCache.AddValue(identifier, new CacheableTenantData(), new DistributedCacheEntryOptions
+            await this._customDistributedCache.AddValue(identifier, new CacheableTenantData(), new DistributedCacheEntryOptions
             {
                 AbsoluteExpiration = this._clock.GetCurrentInstant().ToDateTimeOffset().AddMinutes(5),
             });
@@ -121,7 +121,7 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
                 return null;
             }
 
-            var maybe = await this._distributedCache.TryGetValue<CacheableTenantData>(id);
+            var maybe = await this._customDistributedCache.TryGetValue<CacheableTenantData>(id);
             if (maybe.HasValue)
             {
                 if (!maybe.Value.IsSetup)
@@ -168,7 +168,7 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
                     }
                 }
 
-                await this._distributedCache.AddValue(id, new CacheableTenantData(tenantInfo), new DistributedCacheEntryOptions
+                await this._customDistributedCache.AddValue(id, new CacheableTenantData(tenantInfo), new DistributedCacheEntryOptions
                 {
                     AbsoluteExpiration = this._clock.GetCurrentInstant().ToDateTimeOffset().AddMinutes(5),
                 });
@@ -176,7 +176,7 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
                 return tenantInfo;
             }
 
-            await this._distributedCache.AddValue(id, new CacheableTenantData(), new DistributedCacheEntryOptions
+            await this._customDistributedCache.AddValue(id, new CacheableTenantData(), new DistributedCacheEntryOptions
             {
                 AbsoluteExpiration = this._clock.GetCurrentInstant().ToDateTimeOffset().AddMinutes(5),
             });
