@@ -1,20 +1,16 @@
 ﻿// Copyright (c) Project Initium. All rights reserved.
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
-using System;
 using System.Collections.Generic;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.MultiTenant;
+using ProtoBuf;
 
 namespace Initium.Portal.Web.Infrastructure.MultiTenant
 {
-    [Serializable]
+    [ProtoContract(SkipConstructor = true)]
     public class CacheableTenantData
     {
-        public CacheableTenantData()
-        {
-        }
-
         public CacheableTenantData(FeatureBasedTenantInfo tenantInfo)
         {
             this.Id = tenantInfo.Id;
@@ -24,15 +20,20 @@ namespace Initium.Portal.Web.Infrastructure.MultiTenant
             this.Features = tenantInfo.Features;
         }
 
-        public IReadOnlyList<SystemFeatures> Features { get; }
+        [ProtoMember(1)]
+        public string Id { get; private set; }
 
-        public string Id { get; }
+        [ProtoMember(2)]
+        public string Identifier { get; private set; }
 
-        public string Identifier { get; }
+        [ProtoMember(3)]
+        public string Name { get; private set; }
 
-        public string Name { get; }
+        [ProtoMember(4)]
+        public string ConnectionString { get; private set; }
 
-        public string ConnectionString { get; }
+        [ProtoMember(5)]
+        public IReadOnlyList<SystemFeatures> Features { get; private set; }
 
         public bool IsSetup => !string.IsNullOrEmpty(this.Id);
     }

@@ -2,17 +2,17 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
-using Initium.Portal.Core.Serialization;
+using Initium.Portal.Core.Caching;
 using ProtoBuf;
 using Xunit;
 
-namespace Initium.Portal.Tests.Core.Serialization
+namespace Initium.Portal.Tests.Core.Caching
 {
     public class ProtoBufDataSerializerTests
     {
         private const string DataAsString = "CHsSBGJ1eno=";
 
-        private static readonly byte[] DataAsByte = new byte[]
+        private static readonly byte[] DataAsByte =
         {
             8, 123, 18, 4, 98, 117, 122, 122,
         };

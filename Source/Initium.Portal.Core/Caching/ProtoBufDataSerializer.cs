@@ -7,7 +7,7 @@ using MaybeMonad;
 using ProtoBuf;
 using ResultMonad;
 
-namespace Initium.Portal.Core.Serialization
+namespace Initium.Portal.Core.Caching
 {
     public class ProtoBufDataSerializer : IDataSerializer
     {

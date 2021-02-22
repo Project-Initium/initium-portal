@@ -4,15 +4,14 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
-using Initium.Portal.Core.Extensions;
-using Initium.Portal.Core.Serialization;
+using Initium.Portal.Core.Caching;
 using MaybeMonad;
 using Microsoft.Extensions.Caching.Distributed;
 using Moq;
 using ResultMonad;
 using Xunit;
 
-namespace Initium.Portal.Tests.Core.Extensions
+namespace Initium.Portal.Tests.Core.Caching
 {
     public class CustomDistributedCacheTests
     {
