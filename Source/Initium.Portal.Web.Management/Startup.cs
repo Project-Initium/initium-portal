@@ -33,6 +33,7 @@ namespace Initium.Portal.Web.Management
         {
             services.AddFeatureManagement();
             services
+                .AddMemoryCacheSettings()
                 .AddCustomizedStaticFiles()
                 .AddCustomizedMultiTenant()
                 .AddDataStores(this.Configuration)

@@ -42,6 +42,7 @@ namespace Initium.Portal.Web.Tenant
             services.AddFeatureManagement()
                 .AddFeatureFilter<TenantFeatureFilter>();
             services
+                .AddMemoryCacheSettings()
                 .AddCustomizedMultiTenant()
                 .AddDataStores()
                 .AddConfigurationRoot()
