@@ -11,9 +11,10 @@ namespace Initium.Portal.Tests.Domain.Commands.UserAggregate
         [Fact]
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
-            var passwordResetCommand = new PasswordResetCommand("token", "new-password");
+            var passwordResetCommand = new PasswordResetCommand(
+                TestVariables.SecurityTokenMappingId, "new-password");
 
-            Assert.Equal("token", passwordResetCommand.Token);
+            Assert.Equal(TestVariables.SecurityTokenMappingId, passwordResetCommand.Token);
             Assert.Equal("new-password", passwordResetCommand.NewPassword);
         }
     }

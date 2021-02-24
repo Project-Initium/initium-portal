@@ -58,9 +58,9 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
 
         void ProcessUnsuccessfulAuthenticationAttempt(DateTime whenAttempted, bool applyLock);
 
-        string GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration);
+        SecurityTokenMapping GenerateNewPasswordResetToken(DateTime whenRequest, TimeSpan duration);
 
-        string GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration);
+        SecurityTokenMapping GenerateNewAccountConfirmationToken(DateTime whenRequested, TimeSpan duration);
 
         void ChangePassword(string passwordHash, DateTime whenChanged);
 

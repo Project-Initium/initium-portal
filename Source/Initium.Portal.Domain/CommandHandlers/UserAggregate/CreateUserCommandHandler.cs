@@ -80,7 +80,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var user = new User(Guid.NewGuid(), request.EmailAddress, GenerateRandomPassword(), request.IsLockable,
                 whenHappened, request.FirstName, request.LastName, request.Roles, request.IsAdmin);
             var token = user.GenerateNewAccountConfirmationToken(whenHappened, TimeSpan.FromMinutes(this._securitySettings.AccountVerificationTokenLifetime));
-            user.AddIntegrationEvent(new AccountConfirmationTokenGeneratedIntegrationEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token));
+            user.AddIntegrationEvent(new AccountConfirmationTokenGeneratedIntegrationEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token.Id, token.WhenExpires));
             this._userRepository.Add(user);
             return Result.Ok<CreateUserCommandResult, ErrorData>(new CreateUserCommandResult(user.Id));
         }

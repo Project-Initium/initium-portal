@@ -3,11 +3,11 @@
 
 using System;
 using Initium.Portal.Core.Constants;
-using Initium.Portal.Core.Infrastructure;
+using Initium.Portal.Core.Contracts.Queries;
 
 namespace Initium.Portal.Queries.Entities
 {
-    public class SystemAlertReadEntity : ReadEntity
+    public class SystemAlertReadEntity : ReadOnlyEntity
     {
         public Guid Id { get; private set; }
 

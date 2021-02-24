@@ -4,6 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Contracts.Domain;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Core.Settings;
@@ -29,6 +30,13 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
             user.Setup(x => x.IsDisabled).Returns(false);
             user.Setup(x => x.IsVerified).Returns(true);
+            user.Setup(x => x.GenerateNewPasswordResetToken(It.IsAny<DateTime>(), It.IsAny<TimeSpan>()))
+                .Returns(new SecurityTokenMapping(
+                    TestVariables.SecurityTokenMappingId,
+                    SecurityTokenPurpose.PasswordReset,
+                    TestVariables.Now,
+                    TestVariables.Now.AddDays(1)));
+
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
@@ -58,6 +66,13 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
             user.Setup(x => x.IsDisabled).Returns(false);
             user.Setup(x => x.IsVerified).Returns(true);
+            user.Setup(x => x.GenerateNewPasswordResetToken(It.IsAny<DateTime>(), It.IsAny<TimeSpan>()))
+                .Returns(new SecurityTokenMapping(
+                    TestVariables.SecurityTokenMappingId,
+                    SecurityTokenPurpose.PasswordReset,
+                    TestVariables.Now,
+                    TestVariables.Now.AddDays(1)));
+
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
@@ -86,6 +101,13 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.Profile).Returns(new Profile(Guid.NewGuid(), "first-name", "last-name"));
             user.Setup(x => x.IsDisabled).Returns(false);
             user.Setup(x => x.IsVerified).Returns(true);
+            user.Setup(x => x.GenerateNewPasswordResetToken(It.IsAny<DateTime>(), It.IsAny<TimeSpan>()))
+                .Returns(new SecurityTokenMapping(
+                    TestVariables.SecurityTokenMappingId,
+                    SecurityTokenPurpose.PasswordReset,
+                    TestVariables.Now,
+                    TestVariables.Now.AddDays(1)));
+
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
             unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);

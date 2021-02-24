@@ -21,8 +21,6 @@ namespace Initium.Portal.Domain.AggregatesModel.UserAggregate
         {
         }
 
-        public string Token => Convert.ToBase64String(this.Id.ToByteArray());
-
         public SecurityTokenPurpose Purpose { get; private set; }
 
         public DateTime WhenCreated { get; private set; }

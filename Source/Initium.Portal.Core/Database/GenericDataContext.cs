@@ -51,7 +51,7 @@ namespace Initium.Portal.Core.Database
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
-            if (this.ChangeTracker.Entries().Any(entityEntry => entityEntry.Entity is IReadOnlyEntity))
+            if (this.ChangeTracker.Entries().Any(entityEntry => entityEntry.Entity is ReadOnlyEntity))
             {
                 throw new CustomException("Trying to save read only entity");
             }

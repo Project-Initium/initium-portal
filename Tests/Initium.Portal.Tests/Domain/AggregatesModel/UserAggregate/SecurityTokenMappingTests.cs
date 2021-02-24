@@ -25,7 +25,6 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.UserAggregate
             Assert.Equal(TestVariables.Now.AddHours(1), securityTokenMapping.WhenExpires);
             Assert.Equal(SecurityTokenPurpose.PasswordReset, securityTokenMapping.Purpose);
             Assert.Null(securityTokenMapping.WhenUsed);
-            Assert.Equal(Convert.ToBase64String(TestVariables.SecurityTokenMappingId.ToByteArray()), securityTokenMapping.Token);
 
             foreach (var prop in securityTokenMapping.GetType().GetProperties().Where(x => x.PropertyType.Name == "IReadOnlyList`1"))
             {

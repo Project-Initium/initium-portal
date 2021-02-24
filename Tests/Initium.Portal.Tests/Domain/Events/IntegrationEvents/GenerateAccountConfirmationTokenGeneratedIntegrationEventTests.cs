@@ -12,12 +12,18 @@ namespace Initium.Portal.Tests.Domain.Events.IntegrationEvents
         public void Constructor_GiveValidArguments_PropertiesAreSet()
         {
             var @event =
-                new AccountConfirmationTokenGeneratedIntegrationEvent("email-address", "first-name", "last-name", "token");
+                new AccountConfirmationTokenGeneratedIntegrationEvent(
+                    "email-address",
+                    "first-name",
+                    "last-name",
+                    TestVariables.SecurityTokenMappingId,
+                    TestVariables.Now);
 
             Assert.Equal("email-address", @event.EmailAddress);
             Assert.Equal("first-name", @event.FirstName);
             Assert.Equal("last-name", @event.LastName);
-            Assert.Equal("token", @event.Token);
+            Assert.Equal(TestVariables.SecurityTokenMappingId, @event.Token);
+            Assert.Equal(TestVariables.Now, @event.WhenExpires);
         }
     }
 }

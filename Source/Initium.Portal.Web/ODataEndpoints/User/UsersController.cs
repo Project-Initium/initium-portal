@@ -7,7 +7,7 @@ using System.Linq;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Entities;
 using Initium.Portal.Web.Infrastructure.Attributes;
-using Initium.Portal.Web.Infrastructure.ODataEndpoints;
+using Initium.Portal.Web.Infrastructure.OData.Endpoints;
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OData.Query;

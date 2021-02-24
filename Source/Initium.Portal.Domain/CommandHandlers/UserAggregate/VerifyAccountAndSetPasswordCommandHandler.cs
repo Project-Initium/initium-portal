@@ -50,9 +50,9 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             VerifyAccountAndSetPasswordCommand request, CancellationToken cancellationToken)
         {
             var whenHappened = this._clock.GetCurrentInstant().ToDateTimeUtc();
-            var convertedToken = new Guid(Convert.FromBase64String(request.Token));
+
             var userResult =
-                await this._userRepository.FindByUserBySecurityToken(convertedToken, whenHappened, cancellationToken);
+                await this._userRepository.FindByUserBySecurityToken(request.Token, whenHappened, cancellationToken);
             if (userResult.HasNoValue)
             {
                 this._logger.LogDebug("Entity not found.");
@@ -71,7 +71,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
 
             user.ChangePassword(BCrypt.Net.BCrypt.HashPassword(request.NewPassword), whenHappened);
 
-            user.CompleteTokenLifecycle(convertedToken, whenHappened);
+            user.CompleteTokenLifecycle(request.Token, whenHappened);
             this._userRepository.Update(user);
             return ResultWithError.Ok<ErrorData>();
         }

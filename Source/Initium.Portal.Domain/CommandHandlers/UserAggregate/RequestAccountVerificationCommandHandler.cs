@@ -76,7 +76,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var token = user.GenerateNewAccountConfirmationToken(
                 this._clock.GetCurrentInstant().ToDateTimeUtc(),
                 TimeSpan.FromHours(this._securitySettings.AccountVerificationTokenLifetime));
-            user.AddIntegrationEvent(new AccountConfirmationTokenGeneratedIntegrationEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token));
+            user.AddIntegrationEvent(new AccountConfirmationTokenGeneratedIntegrationEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token.Id, token.WhenExpires));
 
             this._userRepository.Update(user);
             return ResultWithError.Ok<ErrorData>();

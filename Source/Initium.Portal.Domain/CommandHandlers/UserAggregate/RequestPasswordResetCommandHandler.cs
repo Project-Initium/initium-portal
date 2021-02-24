@@ -80,7 +80,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
                 whenHappened,
                 TimeSpan.FromHours(this._securitySettings.PasswordTokenLifetime));
 
-            user.AddIntegrationEvent(new PasswordResetTokenGeneratedIntegrationEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token));
+            user.AddIntegrationEvent(new PasswordResetTokenGeneratedIntegrationEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName, token.Id, token.WhenExpires));
 
             this._userRepository.Update(user);
             return ResultWithError.Ok<ErrorData>();

@@ -4,11 +4,14 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Initium.Portal.Core.Caching;
 using Initium.Portal.Core.MultiTenant;
 using Initium.Portal.Domain.EventHandlers.IntegrationEventHandlers;
+using Initium.Portal.Domain.EventHandlers.Models;
 using Initium.Portal.Domain.Events.IntegrationEvents;
 using Microsoft.Extensions.Logging;
 using Moq;
+using ResultMonad;
 using Xunit;
 
 namespace Initium.Portal.Tests.Domain.EventHandlers.IntegrationEventHandlers
@@ -23,9 +26,18 @@ namespace Initium.Portal.Tests.Domain.EventHandlers.IntegrationEventHandlers
             {
                 Name = "identifier",
             };
+            var dataSerializer = new Mock<IDataSerializer>();
+            dataSerializer.Setup(x => x.SerializeToBase64(It.IsAny<SecurityToken>()))
+                .Returns(Result.Ok<string>("token"));
 
-            var handler = new ProcessAccountConfirmationToken(logger.Object, tenantInfo);
-            await handler.Handle(new AccountConfirmationTokenGeneratedIntegrationEvent("email-address", "first-name", "last-name", "token"), CancellationToken.None);
+            var handler = new ProcessAccountConfirmationToken(logger.Object, tenantInfo, dataSerializer.Object);
+            await handler.Handle(
+                new AccountConfirmationTokenGeneratedIntegrationEvent(
+                    "email-address",
+                    "first-name",
+                    "last-name",
+                    TestVariables.SecurityTokenMappingId,
+                    TestVariables.Now), CancellationToken.None);
 
             logger.Verify(
                 l => l.Log(
