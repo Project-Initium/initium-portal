@@ -5,41 +5,60 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
+using Initium.Portal.Core.Caching;
+using Initium.Portal.Core.Domain;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Core.Validation;
 using Initium.Portal.Domain.Commands.UserAggregate;
+using Initium.Portal.Domain.EventHandlers.Models;
 using Initium.Portal.Web.Infrastructure.PageModels;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
+using NodaTime;
 
 namespace Initium.Portal.Web.Pages.Auth
 {
     public class AccountVerification : PrgPageModel<AccountVerification.Model>
     {
         private readonly IMediator _mediator;
+        private readonly IDataSerializer _dataSerializer;
+        private readonly IClock _clock;
 
-        public AccountVerification(IMediator mediator)
+        public AccountVerification(IMediator mediator, IDataSerializer dataSerializer, IClock clock)
         {
             this._mediator = mediator;
+            this._dataSerializer = dataSerializer;
+            this._clock = clock;
         }
 
         [BindProperty(SupportsGet = true)]
         public string Token { get; set; }
 
+        [TempData]
+        public bool TokenError { get; private set; }
+
         public void OnGet()
         {
-            this.PageModel ??= new Model
+            var maybe = this._dataSerializer.DeserializeFromBase64<SecurityToken>(this.Token);
+            if (maybe.HasNoValue || DateTimeOffset.FromUnixTimeSeconds(maybe.Value.WhenExpires) < this._clock.GetCurrentInstant().ToDateTimeOffset())
             {
-                Token = this.Token,
-            };
+                this.TokenError = true;
+            }
+            else
+            {
+                this.PageModel ??= new Model
+                {
+                    Token = maybe.Value.Token,
+                };
+            }
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
             if (!this.ModelState.IsValid)
             {
-                return this.RedirectToPage(new { this.PageModel.Token });
+                return this.RedirectToPage(new { this.Token });
             }
 
             var result =
@@ -51,15 +70,15 @@ namespace Initium.Portal.Web.Pages.Auth
                 return this.RedirectToPage();
             }
 
-            this.AddPageNotification("There was an verifying your account. Please try again.", PageNotification.Error);
+            this.TokenError = true;
             this.PrgState = PrgState.Failed;
 
-            return this.RedirectToPage(new { this.PageModel.Token });
+            return this.RedirectToPage(new { this.Token });
         }
 
         public class Model
         {
-            public string Token { get; set; }
+            public Guid Token { get; set; }
 
             public string Password { get; set; }
 

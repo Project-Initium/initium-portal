@@ -3,11 +3,11 @@
 
 using System;
 using System.Collections.Generic;
-using Initium.Portal.Core.Infrastructure;
+using Initium.Portal.Core.Contracts.Queries;
 
 namespace Initium.Portal.Queries.Entities
 {
-    public class ResourceReadEntity : ReadEntity
+    public class ResourceReadEntity : ReadOnlyEntity
     {
         private readonly List<RoleReadEntity> _roles;
 

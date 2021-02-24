@@ -51,9 +51,9 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         private async Task<ResultWithError<ErrorData>> Process(PasswordResetCommand request, CancellationToken cancellationToken)
         {
             var whenHappened = this._clock.GetCurrentInstant().ToDateTimeUtc();
-            var convertedToken = new Guid(Convert.FromBase64String(request.Token));
+
             var userMaybe =
-                await this._userRepository.FindByUserBySecurityToken(convertedToken, whenHappened, cancellationToken);
+                await this._userRepository.FindByUserBySecurityToken(request.Token, whenHappened, cancellationToken);
 
             if (userMaybe.HasNoValue)
             {
@@ -72,7 +72,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             }
 
             user.ChangePassword(BCrypt.Net.BCrypt.HashPassword(request.NewPassword), whenHappened);
-            user.CompleteTokenLifecycle(convertedToken, whenHappened);
+            user.CompleteTokenLifecycle(request.Token, whenHappened);
             user.AddIntegrationEvent(new PasswordChangedIntegrationEvent(user.EmailAddress, user.Profile.FirstName, user.Profile.LastName));
 
             this._userRepository.Update(user);

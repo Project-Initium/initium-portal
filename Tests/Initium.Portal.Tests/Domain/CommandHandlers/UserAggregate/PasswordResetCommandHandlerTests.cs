@@ -46,8 +46,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new PasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<PasswordResetCommandHandler>>());
             var cmd = new PasswordResetCommand(
-                Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
-                new string('*', 6));
+                TestVariables.SecurityTokenMappingId,
+                "new-password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
             Assert.True(result.IsFailure);
@@ -77,7 +77,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new PasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<PasswordResetCommandHandler>>());
             var cmd = new PasswordResetCommand(
-                Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                TestVariables.SecurityTokenMappingId,
                 "new-password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -107,7 +107,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new PasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<PasswordResetCommandHandler>>());
             var cmd = new PasswordResetCommand(
-                Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                TestVariables.SecurityTokenMappingId,
                 "new-password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -132,7 +132,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new PasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<PasswordResetCommandHandler>>());
             var cmd = new PasswordResetCommand(
-                Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                TestVariables.SecurityTokenMappingId,
                 "new-password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 
@@ -166,7 +166,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new PasswordResetCommandHandler(userRepository.Object, Mock.Of<IClock>(), securitySettings.Object, Mock.Of<ILogger<PasswordResetCommandHandler>>());
             var cmd = new PasswordResetCommand(
-                Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                TestVariables.SecurityTokenMappingId,
                 "new-password");
             var result = await handler.Handle(cmd, CancellationToken.None);
 

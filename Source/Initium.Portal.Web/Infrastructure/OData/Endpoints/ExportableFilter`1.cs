@@ -3,7 +3,7 @@
 
 using System.Collections.Generic;
 
-namespace Initium.Portal.Web.Infrastructure.ODataEndpoints
+namespace Initium.Portal.Web.Infrastructure.OData.Endpoints
 {
     public class ExportableFilter<TODataFilter>
         where TODataFilter : IODataFilter

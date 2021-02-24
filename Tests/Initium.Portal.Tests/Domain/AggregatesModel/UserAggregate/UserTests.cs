@@ -226,7 +226,7 @@ namespace Initium.Portal.Tests.Domain.AggregatesModel.UserAggregate
 
             var token = user.GenerateNewPasswordResetToken(TestVariables.Now.AddMinutes(30), TimeSpan.FromHours(1));
 
-            user.CompleteTokenLifecycle(new Guid(Convert.FromBase64String(token)), TestVariables.Now.AddMinutes(30));
+            user.CompleteTokenLifecycle(token.Id, TestVariables.Now.AddMinutes(30));
 
             Assert.Contains(user.SecurityTokenMappings, x => x.WhenUsed == TestVariables.Now.AddMinutes(30));
         }

@@ -7,8 +7,8 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
+using Initium.Portal.Core.Contracts.Queries;
 using Initium.Portal.Core.Exceptions;
-using Initium.Portal.Core.Infrastructure;
 using Initium.Portal.Web.Infrastructure.Extensions;
 using LinqKit;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +18,10 @@ using Microsoft.AspNetCore.OData.Query.Wrapper;
 using Microsoft.AspNetCore.OData.Routing.Controllers;
 using Microsoft.OData;
 
-namespace Initium.Portal.Web.Infrastructure.ODataEndpoints
+namespace Initium.Portal.Web.Infrastructure.OData.Endpoints
 {
     public abstract class BaseODataController<TReadEntity, TFilterModel> : ODataController
-        where TReadEntity : ReadEntity, new()
+        where TReadEntity : ReadOnlyEntity, new()
         where TFilterModel : IODataFilter
     {
         public abstract IActionResult Filtered(ODataQueryOptions<TReadEntity> options, TFilterModel filter);

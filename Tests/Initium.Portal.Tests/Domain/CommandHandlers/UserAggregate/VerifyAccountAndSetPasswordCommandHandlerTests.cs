@@ -32,7 +32,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<VerifyAccountAndSetPasswordCommandHandler>>());
             var cmd = new VerifyAccountAndSetPasswordCommand(
-                Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                TestVariables.SecurityTokenMappingId,
                 "new-password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -53,7 +53,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<VerifyAccountAndSetPasswordCommandHandler>>());
             var cmd = new VerifyAccountAndSetPasswordCommand(
-                Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                TestVariables.SecurityTokenMappingId,
                 "new-password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -72,7 +72,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<VerifyAccountAndSetPasswordCommandHandler>>());
             var cmd = new VerifyAccountAndSetPasswordCommand(
-                Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                TestVariables.SecurityTokenMappingId,
                 "new-password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -94,7 +94,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<VerifyAccountAndSetPasswordCommandHandler>>());
             var cmd = new VerifyAccountAndSetPasswordCommand(
-                Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                TestVariables.SecurityTokenMappingId,
                 "new-password");
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -115,7 +115,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var handler = new VerifyAccountAndSetPasswordCommandHandler(userRepository.Object, Mock.Of<IClock>(), Mock.Of<ILogger<VerifyAccountAndSetPasswordCommandHandler>>());
             var cmd = new VerifyAccountAndSetPasswordCommand(
-                Convert.ToBase64String(Guid.NewGuid().ToByteArray()),
+                TestVariables.SecurityTokenMappingId,
                 "new-password");
 
             await handler.Handle(cmd, CancellationToken.None);
