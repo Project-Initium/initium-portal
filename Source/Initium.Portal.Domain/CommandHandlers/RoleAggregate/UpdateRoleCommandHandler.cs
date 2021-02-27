@@ -5,6 +5,7 @@ using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Domain.Commands.RoleAggregate;
@@ -19,14 +20,12 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
     {
         private readonly ILogger<UpdateRoleCommandHandler> _logger;
         private readonly IResourceQueryService _resourceQueryService;
-        private readonly IRoleQueryService _roleQueryService;
         private readonly IRoleRepository _roleRepository;
 
-        public UpdateRoleCommandHandler(IRoleRepository roleRepository, IRoleQueryService roleQueryService,
-            ILogger<UpdateRoleCommandHandler> logger, IResourceQueryService resourceQueryService)
+        public UpdateRoleCommandHandler(
+            IRoleRepository roleRepository, ILogger<UpdateRoleCommandHandler> logger, IResourceQueryService resourceQueryService)
         {
             this._roleRepository = roleRepository;
-            this._roleQueryService = roleQueryService;
             this._logger = logger;
             this._resourceQueryService = resourceQueryService;
         }
@@ -37,12 +36,18 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._roleRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (dbResult)
+            if (dbResult.IsSuccess)
             {
                 return result;
             }
 
-            this._logger.LogDebug("Failed saving changes.");
+            if (dbResult.Error is UniquePersistenceError)
+            {
+                this._logger.LogDebug("Failed presence check");
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.RoleAlreadyExists));
+            }
+
+            this._logger.LogDebug("Failed saving changes");
             return ResultWithError.Fail(new ErrorData(
                 ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
@@ -53,22 +58,11 @@ namespace Initium.Portal.Domain.CommandHandlers.RoleAggregate
             var roleMaybe = await this._roleRepository.Find(request.RoleId, cancellationToken);
             if (roleMaybe.HasNoValue)
             {
-                this._logger.LogDebug("Entity not found.");
+                this._logger.LogDebug("Entity not found");
                 return ResultWithError.Fail(new ErrorData(ErrorCodes.RoleNotFound));
             }
 
             var role = roleMaybe.Value;
-
-            if (!string.Equals(role.Name, request.Name, StringComparison.InvariantCultureIgnoreCase))
-            {
-                var presenceResult =
-                    await this._roleQueryService.CheckForPresenceOfRoleByName(request.Name);
-                if (presenceResult.IsPresent)
-                {
-                    this._logger.LogDebug("Failed presence check.");
-                    return ResultWithError.Fail(new ErrorData(ErrorCodes.RoleAlreadyExists));
-                }
-            }
 
             var systemResources = await this._resourceQueryService.GetFeatureStatusBasedResources(cancellationToken);
 

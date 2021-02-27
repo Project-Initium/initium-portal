@@ -26,11 +26,6 @@ namespace Initium.Portal.Queries.Management
 
         public IQueryable<TenantReadEntity> QueryableEntity => this._queryContext.Set<TenantReadEntity>();
 
-        public async Task<StatusCheckModel> CheckForPresenceOfTenantByIdentifier(string identifier, CancellationToken cancellationToken = default)
-        {
-            return new StatusCheckModel(await this._queryContext.Set<TenantReadEntity>().AnyAsync(x => x.Identifier == identifier, cancellationToken: cancellationToken));
-        }
-
         public async Task<Maybe<TenantMetadata>> GetTenantMetadataById(Guid id, CancellationToken cancellationToken = default)
         {
             var data = await this._queryContext.Set<TenantReadEntity>().FirstOrDefaultAsync(x => x.Id == id, cancellationToken: cancellationToken);

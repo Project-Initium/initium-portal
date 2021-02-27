@@ -14,6 +14,7 @@ CREATE TABLE [Identity].[User]
     ,   [WhenDisabled] DATETIME2 NULL
     ,   [TenantId] UNIQUEIDENTIFIER NOT NULL
     ,   CONSTRAINT [FK_User_Tenant] FOREIGN KEY ([TenantId]) REFERENCES [Admin].[Tenant]([Id])
+    ,   CONSTRAINT [UC_UserForTenant] UNIQUE ([EmailAddress], [TenantId])
 )
 GO
 

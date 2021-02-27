@@ -14,8 +14,6 @@ namespace Initium.Portal.Queries.Management.Contracts
 {
     public interface ITenantQueryService : IQueryService<TenantReadEntity>
     {
-        Task<StatusCheckModel> CheckForPresenceOfTenantByIdentifier(string identifier, CancellationToken cancellationToken = default);
-
         Task<Maybe<TenantMetadata>> GetTenantMetadataById(Guid id, CancellationToken cancellationToken = default);
     }
 }

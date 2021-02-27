@@ -29,7 +29,7 @@ namespace Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._systemAlertRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (dbResult)
+            if (dbResult.IsSuccess)
             {
                 return result;
             }

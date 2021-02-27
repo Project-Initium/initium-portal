@@ -56,11 +56,6 @@ namespace Initium.Portal.Queries
                 : Maybe.From(new ProfileModel(data.FirstName, data.LastName));
         }
 
-        public async Task<StatusCheckModel> CheckForPresenceOfUserByEmailAddress(string emailAddress)
-        {
-            return new StatusCheckModel(await this.QueryableEntity.AnyAsync(user => user.EmailAddress == emailAddress));
-        }
-
         public async Task<Maybe<DetailedUserModel>> GetDetailsOfUserById(Guid userId)
         {
             var data = await this.QueryableEntity.Where(user => user.Id == userId)

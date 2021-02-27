@@ -18,8 +18,6 @@ namespace Initium.Portal.Queries.Contracts
 
         Task<Maybe<ProfileModel>> GetProfileForCurrentUser();
 
-        Task<StatusCheckModel> CheckForPresenceOfUserByEmailAddress(string emailAddress);
-
         Task<Maybe<DetailedUserModel>> GetDetailsOfUserById(Guid userId);
 
         Task<Maybe<SystemProfileModel>> GetSystemProfileByUserId(Guid userId);

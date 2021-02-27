@@ -7,12 +7,14 @@ using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Contracts.Domain;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.NotificationAggregate;
 using Initium.Portal.Domain.CommandHandlers.NotificationAggregate;
 using Initium.Portal.Domain.Commands.NotificationAggregate;
 using Microsoft.Extensions.Logging;
 using Moq;
+using ResultMonad;
 using Xunit;
 
 namespace Initium.Portal.Tests.Domain.CommandHandlers.NotificationAggregate
@@ -23,7 +25,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.NotificationAggregate
         public async Task Handle_NotificationIsNotSaved_ExpectFailedResult()
         {
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => ResultWithError.Fail(Mock.Of<IPersistenceError>()));
             var notificationRepository = new Mock<INotificationRepository>();
             notificationRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             notificationRepository.Setup(x => x.Add(It.IsAny<INotification>()))
@@ -54,7 +57,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.NotificationAggregate
         {
             INotification notification = null;
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => ResultWithError.Ok<IPersistenceError>());
             var notificationRepository = new Mock<INotificationRepository>();
             notificationRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             notificationRepository.Setup(x => x.Add(It.IsAny<INotification>()))

@@ -6,6 +6,8 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
+using EntityFramework.Exceptions.Common;
+using EntityFramework.Exceptions.SqlServer;
 using Initium.Portal.Core.Contracts.Domain;
 using Initium.Portal.Core.Contracts.Queries;
 using Initium.Portal.Core.Exceptions;
@@ -13,8 +15,8 @@ using Initium.Portal.Core.Extensions;
 using Initium.Portal.Core.MultiTenant;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
+using ResultMonad;
 
 [assembly:InternalsVisibleTo("Initium.Portal.Tests")]
 [assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
@@ -25,28 +27,42 @@ namespace Initium.Portal.Core.Database
     {
         private readonly IServiceProvider _serviceProvider;
         private readonly FeatureBasedTenantInfo _tenantInfo;
+        private readonly IMediator _mediator;
 
-        public GenericDataContext(IServiceProvider serviceProvider, FeatureBasedTenantInfo tenantInfo)
+        public GenericDataContext(IServiceProvider serviceProvider, FeatureBasedTenantInfo tenantInfo, IMediator mediator)
         {
             this._serviceProvider = serviceProvider;
             this._tenantInfo = tenantInfo;
+            this._mediator = mediator;
         }
 
         internal GenericDataContext(DbContextOptions<GenericDataContext> options, IServiceProvider serviceProvider,
-            FeatureBasedTenantInfo tenantInfo)
+            FeatureBasedTenantInfo tenantInfo, IMediator mediator)
             : base(options)
         {
             this._serviceProvider = serviceProvider;
             this._tenantInfo = tenantInfo;
+            this._mediator = mediator;
         }
 
-        public async Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default)
+        public async Task<ResultWithError<IPersistenceError>> SaveEntitiesAsync(CancellationToken cancellationToken = default)
         {
-            var mediator = this.GetService<IMediator>();
-            await mediator.DispatchDomainEventsAsync(this);
-            await this.SaveChangesAsync(cancellationToken);
-            await mediator.DispatchIntegrationEventsAsync(this);
-            return true;
+            await this._mediator.DispatchDomainEventsAsync(this);
+            try
+            {
+                await this.SaveChangesAsync(cancellationToken);
+            }
+            catch (UniqueConstraintException)
+            {
+                return ResultWithError.Fail<IPersistenceError>(new UniquePersistenceError());
+            }
+            catch (ReferenceConstraintException)
+            {
+                return ResultWithError.Fail<IPersistenceError>(new InUsePersistenceError());
+            }
+
+            await this._mediator.DispatchIntegrationEventsAsync(this);
+            return ResultWithError.Ok<IPersistenceError>();
         }
 
         public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
@@ -75,6 +91,7 @@ namespace Initium.Portal.Core.Database
             }
 
             base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseExceptionProcessor();
             optionsBuilder.UseSqlServer(this._tenantInfo.ConnectionString);
         }
 

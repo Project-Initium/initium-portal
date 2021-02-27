@@ -2,6 +2,7 @@
 // Licensed under the MIT License. See LICENSE file in the project root for full license information.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
 using FluentValidation;
@@ -44,8 +45,8 @@ namespace Initium.Portal.Web.Pages.FirstRun
             }
 
             var result =
-                await this._mediator.Send(new CreateInitialUserCommand(
-                    this.PageModel.EmailAddress, this.PageModel.Password, this.PageModel.FirstName, this.PageModel.LastName));
+                await this._mediator.Send(new CreateUserCommand(
+                    this.PageModel.EmailAddress, this.PageModel.FirstName, this.PageModel.LastName, false, true, new List<Guid>()));
 
             if (!result.IsFailure)
             {
@@ -60,11 +61,6 @@ namespace Initium.Portal.Web.Pages.FirstRun
         {
             [Display(Name = "Email Address")]
             public string EmailAddress { get; set; }
-
-            public string Password { get; set; }
-
-            [Display(Name = "Password Confirmation")]
-            public string PasswordConfirmation { get; set; }
 
             [Display(Name = "First Name")]
             public string FirstName { get; set; }
@@ -84,10 +80,6 @@ namespace Initium.Portal.Web.Pages.FirstRun
                     .NotEmpty().WithMessage("Please enter your first name");
                 this.RuleFor(x => x.LastName)
                     .NotEmpty().WithMessage("Please enter your last name");
-                this.RuleFor(x => x.Password)
-                    .NotEmpty().WithMessage("Please enter a password");
-                this.RuleFor(x => x.PasswordConfirmation)
-                    .Equal(x => x.Password).WithMessage("The passwords don't seem to match.");
             }
         }
     }

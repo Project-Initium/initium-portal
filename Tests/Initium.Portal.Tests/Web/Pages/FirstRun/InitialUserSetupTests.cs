@@ -4,6 +4,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Domain;
+using Initium.Portal.Domain.CommandResults.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using Initium.Portal.Queries.Contracts;
 using Initium.Portal.Queries.Models;
@@ -57,8 +58,8 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
         {
             var userQueries = new Mock<IUserQueryService>();
             var mediator = new Mock<IMediator>();
-            mediator.Setup(x => x.Send(It.IsAny<CreateInitialUserCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(ResultWithError.Fail(new ErrorData(ErrorCodes.SavingChanges)));
+            mediator.Setup(x => x.Send(It.IsAny<CreateUserCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.SavingChanges)));
 
             var page = new InitialUserSetup(userQueries.Object, mediator.Object)
             {
@@ -75,8 +76,8 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
         {
             var userQueries = new Mock<IUserQueryService>();
             var mediator = new Mock<IMediator>();
-            mediator.Setup(x => x.Send(It.IsAny<CreateInitialUserCommand>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(ResultWithError.Ok<ErrorData>());
+            mediator.Setup(x => x.Send(It.IsAny<CreateUserCommand>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Ok<CreateUserCommandResult, ErrorData>(new CreateUserCommandResult(TestVariables.UserId)));
 
             var page = new InitialUserSetup(userQueries.Object, mediator.Object)
             {
@@ -109,8 +110,6 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
                 var model = new InitialUserSetup.Model
                 {
                     EmailAddress = "a@b.com",
-                    Password = "password",
-                    PasswordConfirmation = "password",
                     FirstName = "first-name",
                     LastName = "last-name",
                 };
@@ -125,8 +124,6 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
                 var model = new InitialUserSetup.Model
                 {
                     EmailAddress = string.Empty,
-                    Password = "password",
-                    PasswordConfirmation = "password",
                     FirstName = "first-name",
                     LastName = "last-name",
                 };
@@ -142,8 +139,6 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
                 var model = new InitialUserSetup.Model
                 {
                     EmailAddress = null,
-                    Password = "password",
-                    PasswordConfirmation = "password",
                     FirstName = "first-name",
                     LastName = "last-name",
                 };
@@ -159,8 +154,6 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
                 var model = new InitialUserSetup.Model
                 {
                     EmailAddress = "email-address",
-                    Password = "password",
-                    PasswordConfirmation = "password",
                     FirstName = "first-name",
                     LastName = "last-name",
                 };
@@ -171,64 +164,11 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
             }
 
             [Fact]
-            public void Validate_GivenPasswordDoesNotMatchPasswordConfirmation_ExpectValidationFailure()
-            {
-                var model = new InitialUserSetup.Model
-                {
-                    EmailAddress = "a@b.com",
-                    Password = "password",
-                    PasswordConfirmation = "password-confirmation",
-                    FirstName = "first-name",
-                    LastName = "last-name",
-                };
-                var validator = new InitialUserSetup.Validator();
-                var result = validator.Validate(model);
-                Assert.False(result.IsValid);
-                Assert.Contains(result.Errors, x => x.PropertyName == "PasswordConfirmation");
-            }
-
-            [Fact]
-            public void Validate_GivenPasswordIsEmpty_ExpectValidationFailure()
-            {
-                var model = new InitialUserSetup.Model
-                {
-                    EmailAddress = "a@b.com",
-                    Password = string.Empty,
-                    PasswordConfirmation = string.Empty,
-                    FirstName = "first-name",
-                    LastName = "last-name",
-                };
-                var validator = new InitialUserSetup.Validator();
-                var result = validator.Validate(model);
-                Assert.False(result.IsValid);
-                Assert.Contains(result.Errors, x => x.PropertyName == "Password");
-            }
-
-            [Fact]
-            public void Validate_GivenPasswordIsNull_ExpectValidationFailure()
-            {
-                var model = new InitialUserSetup.Model
-                {
-                    EmailAddress = "a@b.com",
-                    Password = null,
-                    PasswordConfirmation = null,
-                    FirstName = "first-name",
-                    LastName = "last-name",
-                };
-                var validator = new InitialUserSetup.Validator();
-                var result = validator.Validate(model);
-                Assert.False(result.IsValid);
-                Assert.Contains(result.Errors, x => x.PropertyName == "Password");
-            }
-
-            [Fact]
             public void Validate_GivenFirstNameIsEmpty_ExpectValidationFailure()
             {
                 var model = new InitialUserSetup.Model
                 {
                     EmailAddress = string.Empty,
-                    Password = "password",
-                    PasswordConfirmation = "password",
                     FirstName = string.Empty,
                     LastName = "last-name",
                 };
@@ -244,8 +184,6 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
                 var model = new InitialUserSetup.Model
                 {
                     EmailAddress = null,
-                    Password = "password",
-                    PasswordConfirmation = "password",
                     FirstName = null,
                     LastName = "last-name",
                 };
@@ -261,8 +199,6 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
                 var model = new InitialUserSetup.Model
                 {
                     EmailAddress = string.Empty,
-                    Password = "password",
-                    PasswordConfirmation = "password",
                     FirstName = "first-name",
                     LastName = string.Empty,
                 };
@@ -278,8 +214,6 @@ namespace Initium.Portal.Tests.Web.Pages.FirstRun
                 var model = new InitialUserSetup.Model
                 {
                     EmailAddress = null,
-                    Password = "password",
-                    PasswordConfirmation = "password",
                     FirstName = "first-name",
                     LastName = null,
                 };

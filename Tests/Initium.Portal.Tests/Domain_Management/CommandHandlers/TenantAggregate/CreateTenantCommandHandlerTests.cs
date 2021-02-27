@@ -9,11 +9,13 @@ using Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate;
 using Initium.Portal.Common.Domain.Commands.TenantAggregate;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Contracts.Domain;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Queries.Management.Contracts;
 using Initium.Portal.Queries.Models;
 using Microsoft.Extensions.Logging;
 using Moq;
+using ResultMonad;
 using Xunit;
 
 namespace Initium.Portal.Tests.Domain_Management.CommandHandlers.TenantAggregate
@@ -23,17 +25,14 @@ namespace Initium.Portal.Tests.Domain_Management.CommandHandlers.TenantAggregate
         [Fact]
         public async Task Handle_GivenSavingFails_ExpectFailedResult()
         {
-            var tenantQueries = new Mock<ITenantQueryService>();
-            tenantQueries.Setup(x => x.CheckForPresenceOfTenantByIdentifier(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                 .ReturnsAsync(() => new StatusCheckModel(false));
             var tenantRepository = new Mock<ITenantRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => ResultWithError.Fail(Mock.Of<IPersistenceError>()));
             tenantRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
             var logger = new Mock<ILogger<CreateTenantCommandHandler>>();
 
-            var handler = new CreateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
+            var handler = new CreateTenantCommandHandler(tenantRepository.Object, logger.Object);
             var cmd = new CreateTenantCommand(
                 TestVariables.TenantId,
                 "identifier",
@@ -50,17 +49,14 @@ namespace Initium.Portal.Tests.Domain_Management.CommandHandlers.TenantAggregate
         [Fact]
         public async Task Handle_GivenSavingSucceeds_ExpectSuccessfulResult()
         {
-            var tenantQueries = new Mock<ITenantQueryService>();
-            tenantQueries.Setup(x => x.CheckForPresenceOfTenantByIdentifier(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => new StatusCheckModel(false));
             var tenantRepository = new Mock<ITenantRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             tenantRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
             var logger = new Mock<ILogger<CreateTenantCommandHandler>>();
 
-            var handler = new CreateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
+            var handler = new CreateTenantCommandHandler(tenantRepository.Object, logger.Object);
             var cmd = new CreateTenantCommand(
                 TestVariables.TenantId,
                 "identifier",
@@ -76,17 +72,14 @@ namespace Initium.Portal.Tests.Domain_Management.CommandHandlers.TenantAggregate
         [Fact]
         public async Task Handle_GivenTenantAlreadyExists_ExpectFailedResult()
         {
-            var tenantQueries = new Mock<ITenantQueryService>();
-            tenantQueries.Setup(x => x.CheckForPresenceOfTenantByIdentifier(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => new StatusCheckModel(true));
             var tenantRepository = new Mock<ITenantRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(ResultWithError.Fail<IPersistenceError>(new UniquePersistenceError()));
             tenantRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
             var logger = new Mock<ILogger<CreateTenantCommandHandler>>();
 
-            var handler = new CreateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
+            var handler = new CreateTenantCommandHandler(tenantRepository.Object, logger.Object);
             var cmd = new CreateTenantCommand(
                 TestVariables.TenantId,
                 "identifier",
@@ -101,19 +94,16 @@ namespace Initium.Portal.Tests.Domain_Management.CommandHandlers.TenantAggregate
         }
 
         [Fact]
-        public async Task Handle_GivenTenantDoesNotExists_ExpectTenantAdded()
+        public async Task Handle_ExpectTenantAdded()
         {
-            var tenantQueries = new Mock<ITenantQueryService>();
-            tenantQueries.Setup(x => x.CheckForPresenceOfTenantByIdentifier(It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(() => new StatusCheckModel(false));
             var tenantRepository = new Mock<ITenantRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             tenantRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
 
             var logger = new Mock<ILogger<CreateTenantCommandHandler>>();
 
-            var handler = new CreateTenantCommandHandler(tenantRepository.Object, logger.Object, tenantQueries.Object);
+            var handler = new CreateTenantCommandHandler(tenantRepository.Object, logger.Object);
             var cmd = new CreateTenantCommand(
                 TestVariables.TenantId,
                 "identifier",

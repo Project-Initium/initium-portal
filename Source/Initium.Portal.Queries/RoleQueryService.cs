@@ -26,16 +26,6 @@ namespace Initium.Portal.Queries
 
         public IQueryable<RoleReadEntity> QueryableEntity => this._context.Set<RoleReadEntity>();
 
-        public async Task<StatusCheckModel> CheckForPresenceOfRoleByName(string name)
-        {
-            return new StatusCheckModel(await this.QueryableEntity.AnyAsync(x => x.Name == name));
-        }
-
-        public async Task<StatusCheckModel> CheckForRoleUsageById(Guid roleId)
-        {
-            return new StatusCheckModel(await this.QueryableEntity.AnyAsync(x => x.Id == roleId && x.ResourceCount > 0));
-        }
-
         public async Task<Maybe<DetailedRoleModel>> GetDetailsOfRoleById(Guid roleId)
         {
             var data = await this.QueryableEntity

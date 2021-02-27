@@ -36,7 +36,7 @@ namespace Initium.Portal.Tests.Infrastructure.Extensions
 
             var mediator = new Mock<IMediator>();
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             var @event = new Mock<INotification>();
             role.AddDomainEvent(@event.Object);
@@ -65,7 +65,7 @@ namespace Initium.Portal.Tests.Infrastructure.Extensions
 
             var mediator = new Mock<IMediator>();
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             var @event = new Mock<INotification>();
             role.AddIntegrationEvent(@event.Object);

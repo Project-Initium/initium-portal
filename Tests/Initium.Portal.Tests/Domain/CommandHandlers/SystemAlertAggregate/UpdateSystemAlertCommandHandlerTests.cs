@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Contracts.Domain;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.SystemAlertAggregate;
 using Initium.Portal.Domain.CommandHandlers.SystemAlertAggregate;
@@ -13,6 +14,7 @@ using Initium.Portal.Domain.Commands.SystemAlertAggregate;
 using MaybeMonad;
 using Microsoft.Extensions.Logging;
 using Moq;
+using ResultMonad;
 using Xunit;
 
 namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
@@ -23,7 +25,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
         public async Task Handle_GivenSavingFails_ExpectFailedResult()
         {
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => ResultWithError.Fail(Mock.Of<IPersistenceError>()));
             var systemAlertRepository = new Mock<ISystemAlertRepository>();
             systemAlertRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             systemAlertRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -50,7 +53,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
         public async Task Handle_GivenSavingSucceeds_ExpectSuccessResult()
         {
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             var systemAlertRepository = new Mock<ISystemAlertRepository>();
             systemAlertRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             systemAlertRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -77,7 +81,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
         {
             var systemAlert = new Mock<ISystemAlert>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             var systemAlertRepository = new Mock<ISystemAlertRepository>();
             systemAlertRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             systemAlertRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
@@ -103,7 +108,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.SystemAlertAggregate
         public async Task Handle_GivenSystemAlertDoesNotExist_ExpectFailedResult()
         {
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             var systemAlertRepository = new Mock<ISystemAlertRepository>();
             systemAlertRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             systemAlertRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))

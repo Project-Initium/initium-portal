@@ -14,10 +14,6 @@ namespace Initium.Portal.Queries.Contracts
 {
     public interface IRoleQueryService : IQueryService<RoleReadEntity>
     {
-        Task<StatusCheckModel> CheckForPresenceOfRoleByName(string name);
-
-        Task<StatusCheckModel> CheckForRoleUsageById(Guid roleId);
-
         Task<Maybe<DetailedRoleModel>> GetDetailsOfRoleById(Guid roleId);
 
         Task<Maybe<List<SimpleRoleModel>>> GetSimpleRoles();

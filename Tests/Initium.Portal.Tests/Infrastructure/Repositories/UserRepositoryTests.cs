@@ -33,7 +33,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new UserRepository(context);
             Assert.Equal(context, repository.UnitOfWork);
         }
@@ -52,7 +52,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var userRepository = new UserRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => userRepository.Add(new Mock<IUser>().Object));
             Assert.Equal("user", exception.Message);
@@ -72,7 +72,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var userRepository = new UserRepository(context);
             var user = new User(
                 TestVariables.UserId,
@@ -106,7 +106,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var userRepository = new UserRepository(context);
             var user = new User(
                 TestVariables.UserId,
@@ -141,7 +141,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo, Mock.Of<IMediator>());
             await context.Set<User>().AddAsync(new User(
                 TestVariables.UserId,
                 "email-address",
@@ -176,7 +176,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var userRepository = new UserRepository(context);
             var maybe = await userRepository.Find(Guid.Empty);
             Assert.True(maybe.HasNoValue);
@@ -196,7 +196,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var userRepository = new UserRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => userRepository.Update(new Mock<IUser>().Object));
             Assert.Equal("user", exception.Message);
@@ -216,7 +216,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var userRepository = new UserRepository(context);
             var user = new User(
                 TestVariables.UserId,
@@ -268,7 +268,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
             user.GenerateNewPasswordResetToken(TestVariables.Now, TimeSpan.FromHours(2));
             var tokenId = user.SecurityTokenMappings.First().Id;
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo, Mock.Of<IMediator>());
             await context.Set<User>().AddAsync(user);
             await context.SaveChangesAsync();
             var userRepository = new UserRepository(context);
@@ -291,7 +291,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var userRepository = new UserRepository(context);
             var maybe = await userRepository.FindByUserBySecurityToken(Guid.Empty, DateTime.UtcNow);
             Assert.True(maybe.HasNoValue);
@@ -325,7 +325,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 },
                 true);
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo, Mock.Of<IMediator>());
             await context.Set<User>().AddAsync(user);
             await context.SaveChangesAsync();
             var userRepository = new UserRepository(context);
@@ -348,7 +348,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var userRepository = new UserRepository(context);
             var maybe = await userRepository.FindByEmailAddress(string.Empty);
             Assert.True(maybe.HasNoValue);
