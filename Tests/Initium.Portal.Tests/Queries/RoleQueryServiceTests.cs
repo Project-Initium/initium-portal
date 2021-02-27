@@ -21,119 +21,6 @@ namespace Initium.Portal.Tests.Queries
     public class RoleQueryServiceTests
     {
         [Fact]
-        public async Task CheckForPresenceOfRoleByName_GivenRoleDoesNotExist_ExpectNotPresentStatus()
-        {
-            var serviceProvider = new Mock<IServiceProvider>();
-            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
-            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
-                .Returns(Mock.Of<IMediator>());
-
-            var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
-            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
-            {
-                DefaultTenantId = TestVariables.TenantId,
-            });
-
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            context.Setup(x => x.Set<RoleReadEntity>())
-                .ReturnsDbSet(new List<RoleReadEntity>());
-            var roleQueries = new RoleQueryService(context.Object);
-            var result = await roleQueries.CheckForPresenceOfRoleByName("name");
-            Assert.False(result.IsPresent);
-        }
-
-        [Fact]
-        public async Task CheckForPresenceOfRoleByName_GivenRoleDoesExist_ExpectPresentStatus()
-        {
-            var serviceProvider = new Mock<IServiceProvider>();
-            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
-            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
-                .Returns(Mock.Of<IMediator>());
-
-            var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
-            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
-            {
-                DefaultTenantId = TestVariables.TenantId,
-            });
-
-            var entity = Helpers.CreateEntity<RoleReadEntity>(new
-            {
-                Id = TestVariables.RoleId,
-                Name = "name",
-            });
-
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            context.Setup(x => x.Set<RoleReadEntity>())
-                .ReturnsDbSet(new List<RoleReadEntity>
-                {
-                    entity,
-                });
-
-            var roleQueries = new RoleQueryService(context.Object);
-            var result = await roleQueries.CheckForPresenceOfRoleByName("name");
-            Assert.True(result.IsPresent);
-        }
-
-        [Fact]
-        public async Task CheckForRoleUsageById_GivenRoleIsInUse_ExpectPresentStatus()
-        {
-            var serviceProvider = new Mock<IServiceProvider>();
-            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
-            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
-                .Returns(Mock.Of<IMediator>());
-
-            var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
-            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
-            {
-                DefaultTenantId = TestVariables.TenantId,
-            });
-
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            context.Setup(x => x.Set<RoleReadEntity>())
-                .ReturnsDbSet(new List<RoleReadEntity>
-                {
-                    Helpers.CreateEntity<RoleReadEntity>(new
-                    {
-                        Id = TestVariables.RoleId,
-                        ResourceCount = 1,
-                    }),
-                });
-
-            var roleQueries = new RoleQueryService(context.Object);
-            var result = await roleQueries.CheckForRoleUsageById(TestVariables.RoleId);
-            Assert.True(result.IsPresent);
-        }
-
-        [Fact]
-        public async Task CheckForRoleUsageById_GivenRoleIsNotInUse_ExpectNotPresentStatus()
-        {
-            var serviceProvider = new Mock<IServiceProvider>();
-            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
-            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
-                .Returns(Mock.Of<IMediator>());
-
-            var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
-            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
-            {
-                DefaultTenantId = TestVariables.TenantId,
-            });
-
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            context.Setup(x => x.Set<RoleReadEntity>())
-                .ReturnsDbSet(new List<RoleReadEntity>
-                {
-                    Helpers.CreateEntity<RoleReadEntity>(new
-                    {
-                        Id = TestVariables.RoleId,
-                    }),
-                });
-
-            var roleQueries = new RoleQueryService(context.Object);
-            var result = await roleQueries.CheckForRoleUsageById(TestVariables.RoleId);
-            Assert.False(result.IsPresent);
-        }
-
-        [Fact]
         public async Task GetDetailsOfRoleById_GivenDataIsFound_ExpectMaybeWithMappedData()
         {
             var serviceProvider = new Mock<IServiceProvider>();
@@ -147,7 +34,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<RoleReadEntity>())
                 .ReturnsDbSet(new List<RoleReadEntity>());
 
@@ -170,7 +57,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<RoleReadEntity>())
                 .ReturnsDbSet(new List<RoleReadEntity>
                 {
@@ -211,7 +98,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<RoleReadEntity>())
                 .ReturnsDbSet(new List<RoleReadEntity>());
 
@@ -234,7 +121,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<RoleReadEntity>())
                 .ReturnsDbSet(new List<RoleReadEntity>
                 {

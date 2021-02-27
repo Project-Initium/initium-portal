@@ -29,7 +29,6 @@ namespace Initium.Portal.Infrastructure.Extensions
                 .Destructure.ByIgnoringProperties<PasswordResetCommand>(u => u.NewPassword)
                 .Destructure.ByIgnoringProperties<ChangePasswordCommand>(u => u.NewPassword)
                 .Destructure.ByIgnoringProperties<ChangePasswordCommand>(u => u.CurrentPassword)
-                .Destructure.ByIgnoringProperties<CreateInitialUserCommand>(u => u.Password)
                 .Destructure.ByIgnoringProperties<VerifyAccountAndSetPasswordCommand>(u => u.NewPassword)
                 .MinimumLevel.Information()
                 .WriteTo.Console()
@@ -44,7 +43,7 @@ namespace Initium.Portal.Infrastructure.Extensions
         {
             serviceCollection.AddScoped(typeof(ValidatorBehavior<,>), typeof(IPipelineBehavior<,>));
             serviceCollection.Scan(scan =>
-                scan.FromAssemblyOf<CreateInitialUserCommandValidator>()
+                scan.FromAssemblyOf<AuthenticateUserCommand>()
                     .AddClasses(filter => filter.Where(t => t.BaseType == typeof(AbstractValidator<>)))
                     .AsMatchingInterface());
 

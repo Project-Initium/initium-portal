@@ -4,11 +4,13 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Initium.Portal.Core.Database;
+using ResultMonad;
 
 namespace Initium.Portal.Core.Contracts.Domain
 {
     public interface IUnitOfWork : IDisposable
     {
-        Task<bool> SaveEntitiesAsync(CancellationToken cancellationToken = default(CancellationToken));
+        Task<ResultWithError<IPersistenceError>> SaveEntitiesAsync(CancellationToken cancellationToken = default);
     }
 }

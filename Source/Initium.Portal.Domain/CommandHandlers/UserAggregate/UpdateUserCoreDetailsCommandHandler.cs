@@ -4,6 +4,7 @@
 using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
@@ -17,13 +18,11 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
     public class UpdateUserCoreDetailsCommandHandler : IRequestHandler<UpdateUserCoreDetailsCommand, ResultWithError<ErrorData>>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IUserQueryService _userQueryService;
         private readonly ILogger<UpdateUserCoreDetailsCommandHandler> _logger;
 
-        public UpdateUserCoreDetailsCommandHandler(IUserRepository userRepository, IUserQueryService userQueryService, ILogger<UpdateUserCoreDetailsCommandHandler> logger)
+        public UpdateUserCoreDetailsCommandHandler(IUserRepository userRepository, ILogger<UpdateUserCoreDetailsCommandHandler> logger)
         {
             this._userRepository = userRepository;
-            this._userQueryService = userQueryService;
             this._logger = logger;
         }
 
@@ -33,9 +32,15 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (dbResult)
+            if (dbResult.IsSuccess)
             {
                 return result;
+            }
+
+            if (dbResult.Error is UniquePersistenceError)
+            {
+                this._logger.LogDebug("Failed presence check.");
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.UserAlreadyExists));
             }
 
             this._logger.LogDebug("Failed saving changes.");
@@ -55,16 +60,6 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             }
 
             var user = userMaybe.Value;
-            if (!string.Equals(request.EmailAddress, user.EmailAddress, StringComparison.InvariantCultureIgnoreCase))
-            {
-                var statusCheck =
-                    await this._userQueryService.CheckForPresenceOfUserByEmailAddress(request.EmailAddress);
-                if (statusCheck.IsPresent)
-                {
-                    this._logger.LogDebug("Failed presence check.");
-                    return ResultWithError.Fail(new ErrorData(ErrorCodes.UserAlreadyExists));
-                }
-            }
 
             user.UpdateSystemAccessDetails(request.EmailAddress, request.IsLockable);
             user.UpdateProfile(request.FirstName, request.LastName);

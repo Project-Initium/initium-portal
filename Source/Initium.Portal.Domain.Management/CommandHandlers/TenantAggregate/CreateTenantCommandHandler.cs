@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
 using Initium.Portal.Common.Domain.Commands.TenantAggregate;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Queries.Management.Contracts;
 using MediatR;
@@ -17,23 +18,27 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
     {
         private readonly ITenantRepository _tenantRepository;
         private readonly ILogger _logger;
-        private readonly ITenantQueryService _tenantQueryService;
 
-        public CreateTenantCommandHandler(ITenantRepository tenantRepository, ILogger<CreateTenantCommandHandler> logger, ITenantQueryService tenantQueryService)
+        public CreateTenantCommandHandler(ITenantRepository tenantRepository, ILogger<CreateTenantCommandHandler> logger)
         {
             this._tenantRepository = tenantRepository;
             this._logger = logger;
-            this._tenantQueryService = tenantQueryService;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(CreateTenantCommand request, CancellationToken cancellationToken)
         {
-            var result = await this.Process(request);
+            var result = this.Process(request);
             var dbResult = await this._tenantRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (dbResult)
+            if (dbResult.IsSuccess)
             {
                 return result;
+            }
+
+            if (dbResult.Error is UniquePersistenceError)
+            {
+                this._logger.LogDebug("Failed presence check");
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.TenantAlreadyExists));
             }
 
             this._logger.LogDebug("Failed saving changes");
@@ -41,15 +46,8 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
                 ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
 
-        private async Task<ResultWithError<ErrorData>> Process(CreateTenantCommand request)
+        private ResultWithError<ErrorData> Process(CreateTenantCommand request)
         {
-            var presenceResult = await this._tenantQueryService.CheckForPresenceOfTenantByIdentifier(request.Identifier);
-            if (presenceResult.IsPresent)
-            {
-                this._logger.LogDebug("Failed presence check");
-                return ResultWithError.Fail(new ErrorData(ErrorCodes.TenantAlreadyExists));
-            }
-
             var tenant = new Tenant(request.TenantId, request.Identifier, request.Name, request.ConnectionString);
             tenant.SetSystemFeatures(request.SystemFeatures);
             this._tenantRepository.Add(tenant);

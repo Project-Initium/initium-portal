@@ -32,7 +32,7 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._tenantRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (dbResult)
+            if (dbResult.IsSuccess)
             {
                 return result;
             }

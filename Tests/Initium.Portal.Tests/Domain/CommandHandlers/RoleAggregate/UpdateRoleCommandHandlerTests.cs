@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Core.Contracts.Domain;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Domain.AggregatesModel.RoleAggregate;
 using Initium.Portal.Domain.CommandHandlers.RoleAggregate;
@@ -17,6 +18,7 @@ using Initium.Portal.Queries.Models.Resource;
 using MaybeMonad;
 using Microsoft.Extensions.Logging;
 using Moq;
+using ResultMonad;
 using Xunit;
 
 namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
@@ -29,12 +31,10 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             var role = new Mock<IRole>();
             role.Setup(x => x.Name).Returns(string.Empty);
             role.Setup(x => x.RoleResources).Returns(new List<RoleResource>());
-            var roleQueries = new Mock<IRoleQueryService>();
-            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
-                .ReturnsAsync(() => new StatusCheckModel(false));
             var roleRepository = new Mock<IRoleRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(role.Object));
@@ -43,7 +43,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             resourceQueryService.Setup(x => x.GetFeatureStatusBasedResources(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<FeatureStatusBasedResource>());
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), resourceQueryService.Object);
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), resourceQueryService.Object);
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -53,21 +53,20 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         }
 
         [Fact]
-        public async Task Handle_GivenRoleDoesExistAndNameHasChangedButIsNotUnique_ExpectFailedResult()
+        public async Task Handle_GivenRoleDoesExistButIsNotUnique_ExpectFailedResult()
         {
             var role = new Mock<IRole>();
-            role.Setup(x => x.Name).Returns(string.Empty);
-            var roleQueries = new Mock<IRoleQueryService>();
-            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
-                .ReturnsAsync(() => new StatusCheckModel(true));
+            role.Setup(x => x.Name).Returns("name");
+            role.Setup(x => x.RoleResources).Returns(new List<RoleResource>());
             var roleRepository = new Mock<IRoleRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Fail<IPersistenceError>(new UniquePersistenceError()));
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(role.Object));
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), Mock.Of<IResourceQueryService>());
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), Mock.Of<IResourceQueryService>());
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -84,7 +83,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             role.Setup(x => x.RoleResources).Returns(new List<RoleResource>());
             var roleRepository = new Mock<IRoleRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(role.Object));
@@ -93,7 +92,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             resourceQueryService.Setup(x => x.GetFeatureStatusBasedResources(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<FeatureStatusBasedResource>());
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, Mock.Of<IRoleQueryService>(), Mock.Of<ILogger<UpdateRoleCommandHandler>>(), resourceQueryService.Object);
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), resourceQueryService.Object);
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -107,12 +106,12 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         {
             var roleRepository = new Mock<IRoleRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe<IRole>.Nothing);
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, new Mock<IRoleQueryService>().Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), Mock.Of<IResourceQueryService>());
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), Mock.Of<IResourceQueryService>());
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -126,12 +125,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         {
             var role = new Mock<IRole>();
             role.Setup(x => x.RoleResources).Returns(new List<RoleResource>());
-            var roleQueries = new Mock<IRoleQueryService>();
-            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
-                .ReturnsAsync(() => new StatusCheckModel(false));
             var roleRepository = new Mock<IRoleRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => ResultWithError.Fail(Mock.Of<IPersistenceError>()));
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(role.Object));
@@ -140,7 +136,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             resourceQueryService.Setup(x => x.GetFeatureStatusBasedResources(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<FeatureStatusBasedResource>());
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), resourceQueryService.Object);
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), resourceQueryService.Object);
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -154,12 +150,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         {
             var role = new Mock<IRole>();
             role.Setup(x => x.RoleResources).Returns(new List<RoleResource>());
-            var roleQueries = new Mock<IRoleQueryService>();
-            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
-                .ReturnsAsync(() => new StatusCheckModel(false));
             var roleRepository = new Mock<IRoleRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(role.Object));
@@ -168,7 +161,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             resourceQueryService.Setup(x => x.GetFeatureStatusBasedResources(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(new List<FeatureStatusBasedResource>());
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), resourceQueryService.Object);
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), resourceQueryService.Object);
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             var result = await handler.Handle(cmd, CancellationToken.None);
@@ -184,12 +177,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
             {
                 new RoleResource(TestVariables.ResourceId),
             });
-            var roleQueries = new Mock<IRoleQueryService>();
-            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
-                .ReturnsAsync(() => new StatusCheckModel(false));
             var roleRepository = new Mock<IRoleRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(role.Object));
@@ -201,7 +191,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
                     new FeatureStatusBasedResource(TestVariables.ResourceId, false),
                 });
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), resourceQueryService.Object);
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), resourceQueryService.Object);
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             await handler.Handle(cmd, CancellationToken.None);
@@ -216,12 +206,9 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
         {
             var role = new Mock<IRole>();
             role.Setup(x => x.RoleResources).Returns(new List<RoleResource>());
-            var roleQueries = new Mock<IRoleQueryService>();
-            roleQueries.Setup(x => x.CheckForPresenceOfRoleByName(It.IsAny<string>()))
-                .ReturnsAsync(() => new StatusCheckModel(false));
             var roleRepository = new Mock<IRoleRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             roleRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             roleRepository.Setup(x => x.Find(It.IsAny<Guid>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(role.Object));
@@ -233,7 +220,7 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.RoleAggregate
                     new FeatureStatusBasedResource(TestVariables.ResourceId, false),
                 });
 
-            var handler = new UpdateRoleCommandHandler(roleRepository.Object, roleQueries.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), resourceQueryService.Object);
+            var handler = new UpdateRoleCommandHandler(roleRepository.Object, Mock.Of<ILogger<UpdateRoleCommandHandler>>(), resourceQueryService.Object);
             var cmd = new UpdateRoleCommand(TestVariables.RoleId, "name", new List<Guid>());
 
             await handler.Handle(cmd, CancellationToken.None);

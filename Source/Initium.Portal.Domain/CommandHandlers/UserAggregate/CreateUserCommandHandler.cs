@@ -5,13 +5,13 @@ using System;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
 using Initium.Portal.Domain.CommandResults.UserAggregate;
 using Initium.Portal.Domain.Commands.UserAggregate;
 using Initium.Portal.Domain.Events.IntegrationEvents;
-using Initium.Portal.Queries.Contracts;
 using MediatR;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
@@ -23,18 +23,15 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
     public class CreateUserCommandHandler : IRequestHandler<CreateUserCommand, Result<CreateUserCommandResult, ErrorData>>
     {
         private readonly IClock _clock;
-        private readonly IUserQueryService _userQueryService;
         private readonly IUserRepository _userRepository;
         private readonly SecuritySettings _securitySettings;
         private readonly ILogger<CreateUserCommandHandler> _logger;
 
         public CreateUserCommandHandler(IUserRepository userRepository, IClock clock,
-            IUserQueryService userQueryService, IOptions<SecuritySettings> securitySettings,
-            ILogger<CreateUserCommandHandler> logger)
+            IOptions<SecuritySettings> securitySettings, ILogger<CreateUserCommandHandler> logger)
         {
             this._userRepository = userRepository;
             this._clock = clock;
-            this._userQueryService = userQueryService;
             this._logger = logger;
             this._securitySettings = securitySettings.Value;
         }
@@ -42,15 +39,21 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
         public async Task<Result<CreateUserCommandResult, ErrorData>> Handle(
             CreateUserCommand request, CancellationToken cancellationToken)
         {
-            var result = await this.Process(request);
+            var result = this.Process(request);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (dbResult)
+            if (dbResult.IsSuccess)
             {
                 return result;
             }
 
-            this._logger.LogDebug("Failed saving changes.");
+            if (dbResult.Error is UniquePersistenceError)
+            {
+                this._logger.LogDebug("Failed presence check");
+                return Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.UserAlreadyExists));
+            }
+
+            this._logger.LogDebug("Failed saving changes");
             return Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(
                 ErrorCodes.SavingChanges, "Failed To Save Database"));
         }
@@ -65,17 +68,9 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             }
         }
 
-        private async Task<Result<CreateUserCommandResult, ErrorData>> Process(
+        private Result<CreateUserCommandResult, ErrorData> Process(
             CreateUserCommand request)
         {
-            var statusCheck =
-                await this._userQueryService.CheckForPresenceOfUserByEmailAddress(request.EmailAddress);
-            if (statusCheck.IsPresent)
-            {
-                this._logger.LogDebug("Failed presence check.");
-                return Result.Fail<CreateUserCommandResult, ErrorData>(new ErrorData(ErrorCodes.UserAlreadyExists));
-            }
-
             var whenHappened = this._clock.GetCurrentInstant().ToDateTimeUtc();
             var user = new User(Guid.NewGuid(), request.EmailAddress, GenerateRandomPassword(), request.IsLockable,
                 whenHappened, request.FirstName, request.LastName, request.Roles, request.IsAdmin);

@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Initium.Portal.Common.Domain.AggregatesModel.TenantAggregate;
 using Initium.Portal.Common.Domain.Commands.TenantAggregate;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Queries.Management.Contracts;
 using MediatR;
@@ -18,13 +19,11 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
     {
         private readonly ITenantRepository _tenantRepository;
         private readonly ILogger _logger;
-        private readonly ITenantQueryService _tenantQueryService;
 
-        public UpdateTenantCommandHandler(ITenantRepository tenantRepository, ILogger<UpdateTenantCommandHandler> logger, ITenantQueryService tenantQueryService)
+        public UpdateTenantCommandHandler(ITenantRepository tenantRepository, ILogger<UpdateTenantCommandHandler> logger)
         {
             this._tenantRepository = tenantRepository;
             this._logger = logger;
-            this._tenantQueryService = tenantQueryService;
         }
 
         public async Task<ResultWithError<ErrorData>> Handle(UpdateTenantCommand request, CancellationToken cancellationToken)
@@ -32,9 +31,15 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._tenantRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (dbResult)
+            if (dbResult.IsSuccess)
             {
                 return result;
+            }
+
+            if (dbResult.Error is UniquePersistenceError)
+            {
+                this._logger.LogDebug("Failed presence check.");
+                return ResultWithError.Fail(new ErrorData(ErrorCodes.TenantAlreadyExists));
             }
 
             this._logger.LogDebug("Failed saving changes.");
@@ -52,18 +57,6 @@ namespace Initium.Portal.Common.Domain.CommandHandlers.TenantAggregate
             }
 
             var tenant = tenantMaybe.Value;
-
-            if (!string.Equals(tenant.Identifier, request.Identifier, StringComparison.InvariantCultureIgnoreCase))
-            {
-                var presenceResult =
-                    await this._tenantQueryService
-                        .CheckForPresenceOfTenantByIdentifier(request.Identifier, cancellationToken);
-                if (presenceResult.IsPresent)
-                {
-                    this._logger.LogDebug("Failed presence check.");
-                    return ResultWithError.Fail(new ErrorData(ErrorCodes.TenantAlreadyExists));
-                }
-            }
 
             tenant.UpdateDetails(request.Identifier, tenant.Name, tenant.ConnectionString);
 

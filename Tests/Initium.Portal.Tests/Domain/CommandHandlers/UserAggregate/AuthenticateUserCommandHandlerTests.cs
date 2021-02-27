@@ -9,6 +9,7 @@ using Fido2NetLib;
 using Fido2NetLib.Objects;
 using Initium.Portal.Core.Constants;
 using Initium.Portal.Core.Contracts.Domain;
+using Initium.Portal.Core.Database;
 using Initium.Portal.Core.Domain;
 using Initium.Portal.Core.Settings;
 using Initium.Portal.Domain.AggregatesModel.UserAggregate;
@@ -21,6 +22,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 using NodaTime;
+using ResultMonad;
 using Xunit;
 
 namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
@@ -39,7 +41,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => false);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(() => ResultWithError.Fail(Mock.Of<IPersistenceError>()));
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
@@ -67,7 +70,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
@@ -87,7 +91,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
         {
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe<IUser>.Nothing);
@@ -111,7 +116,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.IsDisabled).Returns(true);
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
@@ -136,7 +142,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
             user.Setup(x => x.IsVerified).Returns(false);
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
@@ -161,7 +168,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
@@ -187,7 +195,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
@@ -213,7 +222,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
@@ -245,7 +255,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
@@ -283,7 +294,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));
@@ -328,7 +340,8 @@ namespace Initium.Portal.Tests.Domain.CommandHandlers.UserAggregate
 
             var userRepository = new Mock<IUserRepository>();
             var unitOfWork = new Mock<IUnitOfWork>();
-            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>())).ReturnsAsync(() => true);
+            unitOfWork.Setup(x => x.SaveEntitiesAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(ResultWithError.Ok<IPersistenceError>);
             userRepository.Setup(x => x.UnitOfWork).Returns(unitOfWork.Object);
             userRepository.Setup(x => x.FindByEmailAddress(It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(() => Maybe.From(user.Object));

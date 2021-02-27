@@ -33,7 +33,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new SystemAlertRepository(context);
             Assert.Equal(context, repository.UnitOfWork);
         }
@@ -52,7 +52,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new SystemAlertRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Add(new Mock<ISystemAlert>().Object));
             Assert.Equal("systemAlert", exception.Message);
@@ -72,7 +72,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
@@ -100,7 +100,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
@@ -130,7 +130,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new SystemAlertRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Delete(new Mock<ISystemAlert>().Object));
             Assert.Equal("systemAlert", exception.Message);
@@ -150,7 +150,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,
@@ -180,7 +180,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo, Mock.Of<IMediator>());
             await context.Set<SystemAlert>().AddAsync(new SystemAlert(
                 TestVariables.SystemAlertId,
                 "name",
@@ -209,7 +209,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new SystemAlertRepository(context);
             var maybe = await repository.Find(Guid.Empty);
             Assert.True(maybe.HasNoValue);
@@ -229,7 +229,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new SystemAlertRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Update(new Mock<ISystemAlert>().Object));
             Assert.Equal("systemAlert", exception.Message);
@@ -249,7 +249,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new SystemAlertRepository(context);
             var systemAlert = new SystemAlert(
                 TestVariables.SystemAlertId,

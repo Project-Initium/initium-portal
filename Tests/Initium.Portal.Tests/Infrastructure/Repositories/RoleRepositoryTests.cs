@@ -33,7 +33,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new RoleRepository(context);
             Assert.Equal(context, repository.UnitOfWork);
         }
@@ -52,7 +52,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Add(new Mock<IRole>().Object));
             Assert.Equal("role", exception.ParamName);
@@ -72,7 +72,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             roleRepository.Add(role);
@@ -95,7 +95,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Delete(new Mock<IRole>().Object));
             Assert.Equal("role", exception.ParamName);
@@ -115,7 +115,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "nane", new List<Guid>());
             roleRepository.Delete(role);
@@ -138,7 +138,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo);
+            await using var context = new GenericDataContext(options, serviceProvider.Object, TestVariables.TenantInfo, Mock.Of<IMediator>());
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             await context.Set<Role>().AddAsync(role);
             await context.SaveEntitiesAsync();
@@ -161,7 +161,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            await using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var roleRepository = new RoleRepository(context);
             var maybe = await roleRepository.Find(TestVariables.RoleId);
             Assert.True(maybe.HasNoValue);
@@ -181,7 +181,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var roleRepository = new RoleRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => roleRepository.Update(new Mock<IRole>().Object));
             Assert.Equal("role", exception.ParamName);
@@ -201,7 +201,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var roleRepository = new RoleRepository(context);
             var role = new Role(TestVariables.RoleId, "name", new List<Guid>());
             roleRepository.Update(role);

@@ -33,7 +33,7 @@ namespace Initium.Portal.Domain.CommandHandlers.UserAggregate
             var result = await this.Process(request, cancellationToken);
             var dbResult = await this._userRepository.UnitOfWork.SaveEntitiesAsync(cancellationToken);
 
-            if (dbResult)
+            if (dbResult.IsSuccess)
             {
                 return result;
             }

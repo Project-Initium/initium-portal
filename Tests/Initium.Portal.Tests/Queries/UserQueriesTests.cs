@@ -36,7 +36,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>
                 {
@@ -66,7 +66,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>());
 
@@ -94,7 +94,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>
                 {
@@ -132,7 +132,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>());
 
@@ -159,65 +159,13 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>());
 
             var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context.Object);
             var result = await userQueries.GetProfileForCurrentUser();
             Assert.True(result.HasNoValue);
-        }
-
-        [Fact]
-        public async Task CheckForPresenceOfUserByEmailAddress_GivenUserDoesExist_ExpectPresentStatus()
-        {
-            var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            var serviceProvider = new Mock<IServiceProvider>();
-            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
-            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
-                .Returns(Mock.Of<IMediator>());
-
-            var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
-            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
-            {
-                DefaultTenantId = TestVariables.TenantId,
-            });
-
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            context.Setup(x => x.Set<UserReadEntity>())
-                .ReturnsDbSet(new List<UserReadEntity>
-                {
-                    Helpers.CreateEntity<UserReadEntity>(new
-                    {
-                        EmailAddress = "email-address",
-                    }),
-                });
-            var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context.Object);
-            var result = await userQueries.CheckForPresenceOfUserByEmailAddress("email-address");
-            Assert.True(result.IsPresent);
-        }
-
-        [Fact]
-        public async Task CheckForPresenceOfUserByEmailAddress_GivenUserDoesNotExist_ExpectNotPresentStatus()
-        {
-            var currentAuthenticatedUserProvider = new Mock<ICurrentAuthenticatedUserProvider>();
-            var serviceProvider = new Mock<IServiceProvider>();
-            serviceProvider.AddCoreReadEntityTypeConfigurationProvider();
-            serviceProvider.Setup(x => x.GetService(typeof(IMediator)))
-                .Returns(Mock.Of<IMediator>());
-
-            var multiTenantSettings = new Mock<IOptions<MultiTenantSettings>>();
-            multiTenantSettings.Setup(x => x.Value).Returns(new MultiTenantSettings
-            {
-                DefaultTenantId = TestVariables.TenantId,
-            });
-
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
-            context.Setup(x => x.Set<UserReadEntity>())
-                .ReturnsDbSet(new List<UserReadEntity>());
-            var userQueries = new UserQueryService(currentAuthenticatedUserProvider.Object, context.Object);
-            var result = await userQueries.CheckForPresenceOfUserByEmailAddress("email-address");
-            Assert.False(result.IsPresent);
         }
 
         [Fact]
@@ -235,7 +183,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>());
 
@@ -259,7 +207,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>
                 {
@@ -318,7 +266,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>());
 
@@ -343,7 +291,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>
                 {
@@ -398,7 +346,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>
                 {
@@ -432,7 +380,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>());
 
@@ -460,7 +408,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>
                 {
@@ -494,7 +442,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>
                 {
@@ -533,7 +481,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>());
 
@@ -564,7 +512,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>());
 
@@ -595,7 +543,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>
                 {
@@ -632,7 +580,7 @@ namespace Initium.Portal.Tests.Queries
                 DefaultTenantId = TestVariables.TenantId,
             });
 
-            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            var context = new Mock<GenericDataContext>(serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             context.Setup(x => x.Set<UserReadEntity>())
                 .ReturnsDbSet(new List<UserReadEntity>
                 {

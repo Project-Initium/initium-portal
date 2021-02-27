@@ -32,7 +32,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new NotificationRepository(context);
             Assert.Equal(context, repository.UnitOfWork);
         }
@@ -51,7 +51,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new NotificationRepository(context);
             var exception = Assert.Throws<ArgumentException>(() => repository.Add(new Mock<Initium.Portal.Domain.AggregatesModel.NotificationAggregate.INotification>().Object));
             Assert.Equal("notification", exception.ParamName);
@@ -71,7 +71,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new NotificationRepository(context);
 
             var notification = new Notification(TestVariables.NotificationId, "subject", "message", NotificationType.AlphaNotification, "serialized-event-data", TestVariables.Now);
@@ -94,7 +94,7 @@ namespace Initium.Portal.Tests.Infrastructure.Repositories
                 .ReplaceService<IModelCacheKeyFactory, NoCacheModelCacheKeyFactory>()
                 .Options;
 
-            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>());
+            using var context = new GenericDataContext(options, serviceProvider.Object, Mock.Of<FeatureBasedTenantInfo>(), Mock.Of<IMediator>());
             var repository = new NotificationRepository(context);
 
             var notification = new Notification(TestVariables.NotificationId, "subject", "message", NotificationType.AlphaNotification, "serialized-event-data", TestVariables.Now);
